@@ -326,10 +326,10 @@ function Shop:getBestItemSupplierLocator_SOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
 
     -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop:getBestItemSupplierLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
+    if type(item) ~= "table" then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
 
     -- select ItemSuppliers than can provide items
     local canProvideItemSupplierLocators = self:getCanProvideItemSuppliers(item)
@@ -339,7 +339,7 @@ function Shop:getBestItemSupplierLocator_SOSrv(...)
     for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
         bestItemSupplierLocator = self:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
     end
-    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop:getBestItemSupplierLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
+    if not bestItemSupplierLocator then corelog.Warning("Shop:getBestItemSupplierLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
 
     -- end
     return {
@@ -393,45 +393,49 @@ function Shop:provideItemsTo_AOSrv(...)
     local iStep = 0
     -- ToDo: do this in parallel by extending enterprise_projects to handle parallel project steps.
     for itemName, itemCount in pairs(provideItems) do
-        -- step index
-        iStep = iStep + 1
-        local iStepStr = tostring(iStep)
+        if itemCount == 0 then
+            corelog.Warning("Shop:provideItemsTo_AOSrv: Requesting 0 "..itemName.."'s => skip")
+        else
+            -- step index
+            iStep = iStep + 1
+            local iStepStr = tostring(iStep)
 
-        -- add step determining best ItemSupplier for item
-        local itemKey = "item"..iStepStr
-        table.insert(projectSteps,
-            { stepType = "SOSrv", stepTypeDef = { className = "Shop", serviceName = "getBestItemSupplierLocator_SOSrv", objStep = 0, objKeyDef = "shop" }, stepDataDef = {
-                { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = itemKey },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
-                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-            }}
-        )
+            -- add step determining best ItemSupplier for item
+            local itemKey = "item"..iStepStr
+            table.insert(projectSteps,
+                { stepType = "SOSrv", stepTypeDef = { className = "Shop", serviceName = "getBestItemSupplierLocator_SOSrv", objStep = 0, objKeyDef = "shop" }, stepDataDef = {
+                    { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = itemKey },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                    { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                }}
+            )
 
-        -- add step data
-        local item = { [itemName] = itemCount }
-        projectData[itemKey] = item
+            -- add step data
+            local item = { [itemName] = itemCount }
+            projectData[itemKey] = item
 
-        -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
+            -- add success stepDataDef
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
 
-        --have best ItemSupplier provide item
-        iStep = iStep + 1
-        iStepStr = tostring(iStep)
-        table.insert(projectSteps,
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = iStep - 1, locatorKeyDef = "bestItemSupplierLocator" }, stepDataDef = {
-                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = itemKey },  -- note: from item to items as provideItemsTo_AOSrv method could handle multiple
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
-                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }}
-        )
+            --have best ItemSupplier provide item
+            iStep = iStep + 1
+            iStepStr = tostring(iStep)
+            table.insert(projectSteps,
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = iStep - 1, locatorKeyDef = "bestItemSupplierLocator" }, stepDataDef = {
+                    { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = itemKey },  -- note: from item to items as provideItemsTo_AOSrv method could handle multiple
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                    { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }}
+            )
 
-        -- add combine stepDataDef
-        table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, sourceKeyDef = "destinationItemsLocator" })
+            -- add combine stepDataDef
+            table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, sourceKeyDef = "destinationItemsLocator" })
 
-        -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
+            -- add success stepDataDef
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
+        end
     end
 
     -- set remaining projectData
@@ -443,18 +447,24 @@ function Shop:provideItemsTo_AOSrv(...)
     projectData.shop = self:copy() -- ToDo: consider providing locator at some point, to allow for things to change while performing async project
 
     -- add combining URL's
-    iStep = iStep + 1
-    table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "AddItemsLocators_SSrv" }, stepDataDef = addItemLocatorsStepDataDef}
-    )
-    local iAddItemsLocatorStep = iStep
+    local returnData = {}
+    if iStep > 0 then
+        iStep = iStep + 1
+        table.insert(projectSteps,
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "AddItemsLocators_SSrv" }, stepDataDef = addItemLocatorsStepDataDef}
+        )
+        local iAddItemsLocatorStep = iStep
+
+        table.insert(returnData, { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, sourceKeyDef = "itemsLocator" })
+    else
+        corelog.Warning("Shop:provideItemsTo_AOSrv: Nothing to provide => use destinationItemsLocator = itemDepotLocator = "..itemDepotLocator:getURI())
+        table.insert(returnData, { keyDef = "destinationItemsLocator", sourceStep = 0, sourceKeyDef = "itemDepotLocator" })
+    end
 
     -- create project service data
     local projectDef = {
         steps = projectSteps,
-        returnData  = {
-            { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, sourceKeyDef = "itemsLocator" },
-        }
+        returnData  = returnData
     }
     local projectServiceData = {
         projectDef  = projectDef,
@@ -529,35 +539,38 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
         if type(itemName) ~= "string" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
         local item = { [itemName] = itemCount }
+        if itemCount == 0 then
+            corelog.Warning("Shop:needsTo_ProvideItemsTo_SOSrv: Requesting 0 "..itemName.."'s => skip")
+        else
+            -- get bestItemSupplierLocator
+            local bestItemSupplierLocator = self:getBestItemSupplierLocator_SOSrv({
+                item                            = item,
+                itemDepotLocator                = itemDepotLocator,
+                ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
+            ).bestItemSupplierLocator
+            if not bestItemSupplierLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
-        -- get bestItemSupplierLocator
-        local bestItemSupplierLocator = self:getBestItemSupplierLocator_SOSrv({
-            item                            = item,
-            itemDepotLocator                = itemDepotLocator,
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
-        ).bestItemSupplierLocator
-        if not bestItemSupplierLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
+            -- get provide needs
+            local bestItemSupplier = ObjHost.GetObject(bestItemSupplierLocator)
+            if type(bestItemSupplier) ~= "table" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: bestItemSupplier "..bestItemSupplierLocator:getURI().." not found.") return {success = false} end
+            local serviceResults = bestItemSupplier:needsTo_ProvideItemsTo_SOSrv({
+                provideItems                    = item,
+                itemDepotLocator                = itemDepotLocator,
+                ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+            })
+            if not serviceResults.success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
 
-        -- get provide needs
-        local bestItemSupplier = ObjHost.GetObject(bestItemSupplierLocator)
-        if type(bestItemSupplier) ~= "table" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: bestItemSupplier "..bestItemSupplierLocator:getURI().." not found.") return {success = false} end
-        local serviceResults = bestItemSupplier:needsTo_ProvideItemsTo_SOSrv({
-            provideItems                    = item,
-            itemDepotLocator                = itemDepotLocator,
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        })
-        if not serviceResults.success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+            -- get fuelNeed to provide
+            local fuelNeed_Provide = serviceResults.fuelNeed
 
-        -- get fuelNeed to provide
-        local fuelNeed_Provide = serviceResults.fuelNeed
+            -- add fuelNeed
+    --        corelog.WriteToLog("S  fuelNeed_Provide="..fuelNeed_Provide.." for "..itemCount.." "..itemName.."'s")
+            fuelNeed = fuelNeed + fuelNeed_Provide
 
-        -- add fuelNeed
---        corelog.WriteToLog("S  fuelNeed_Provide="..fuelNeed_Provide.." for "..itemCount.." "..itemName.."'s")
-        fuelNeed = fuelNeed + fuelNeed_Provide
-
-        -- add ingredientsNeed
-        local itemIngredientsNeed = serviceResults.ingredientsNeed
-        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+            -- add ingredientsNeed
+            local itemIngredientsNeed = serviceResults.ingredientsNeed
+            if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+        end
     end
 
     -- end
