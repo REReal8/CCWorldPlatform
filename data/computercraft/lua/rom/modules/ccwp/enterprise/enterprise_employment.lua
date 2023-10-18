@@ -329,7 +329,7 @@ function enterprise_employment:getCurrentWorkerLocator()
             local parentId = parent.getID()
 
             -- get birth workerLocator
---            workerLocator = self:getAndRemoveBirthWorkerLocator(parentId)
+            workerLocator = self:getAndRemoveBirthWorkerLocator(parentId)
             if not workerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed getting workerLocator with parentId "..parentId) return false end
 
             -- get Worker object
@@ -609,7 +609,7 @@ end
 
 function enterprise_employment.Fuel_Callback(...)
     -- get & check input from description
-    local checkSuccess, turtleLocator = InputChecker.Check([[
+    local checkSuccess, turtleLocator, serviceResults = InputChecker.Check([[
         This callback should cleanup after enterprise_energy.ProvideFuelTo_ASrv is finished
 
         Return value:
@@ -622,6 +622,9 @@ function enterprise_employment.Fuel_Callback(...)
             serviceResults          + (table) result of service that calls back
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_employment.Fuel_Callback: Invalid input") return {success = false} end
+
+    -- check refuel was a success
+    if serviceResults.success == false then corelog.Error("enterprise_employment.Fuel_Callback: Refuel of turtle "..turtleLocator:getURI().." failed") return {success = false} end
 
     -- get Turtle
     local turtleObj = enterprise_employment:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_employment.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
