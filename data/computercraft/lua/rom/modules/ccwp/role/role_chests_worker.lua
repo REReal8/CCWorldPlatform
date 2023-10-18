@@ -117,7 +117,7 @@ function role_chests_worker.FetchChestSlotsInventory_Task(...)
         Return value:
                                 - (table)
                 success         - (boolean) when the inventory was successfully retrieved
-                slots           - (table) the slots inventory of a chest
+                inventory       - (Inventory) the Inventory of the chest
 
         Parameters:
             taskData            - (table) data about the chest
@@ -316,9 +316,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
         if not MakeSlotEmpty(chestName, firstSlot) then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed making slot "..firstSlot.." empty.") return {success = false} end
 
         -- transfer to first slot and suck until enough
---        slots = chest.list()
         local remainingItemsToMove = requestItemCount
---        for slot, chestItem in pairs(slots) do
         for iSlot = 1, chest.size() do
                 -- skip firstSlot
             if iSlot ~= firstSlot then
@@ -411,7 +409,7 @@ function role_chests_worker.PutItemsFromTurtleIntoChest_Task(...)
         Return value:
                                 - (table)
                 success         - (boolean) whether the items were successfully put
-                slots           - (table) the slots inventory of the chest (after the items have been put)
+                inventory       - (Inventory) the Inventory of the chest (after the items have been put)
 
         Parameters:
             taskData            - (table) data about the task
