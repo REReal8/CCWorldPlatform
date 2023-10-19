@@ -316,7 +316,7 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
                 { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
-            }},
+            }, description = "Saving chest "..self:getId()},
         },
         returnData  = {
         }

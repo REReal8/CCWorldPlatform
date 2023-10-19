@@ -81,9 +81,8 @@ function t_chests.GetHostAndUpdateChestProjectDef()
                 { keyDef = "constructParameters", sourceStep = 0, sourceKeyDef = "constructParameters" },
             }},
             -- update Chest
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "UpdateChestRecord_ASrv" }, stepDataDef = {
-                { keyDef = "chestLocator"       , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            }},
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "updateChestRecord_AOSrv", locatorStep = 1, locatorKeyDef = "mobjLocator" }, stepDataDef = {
+            }, description = "Updating Chest record"},
         },
         returnData = {
             { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "mobjLocator" },

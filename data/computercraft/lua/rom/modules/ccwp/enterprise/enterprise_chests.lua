@@ -7,13 +7,11 @@ local enterprise_chests = Class.NewClass(MObjHost)
     The enterprise_chests is a MObjHost. It hosts Chest's.
 
     It provides the following specific enterprise services
-        UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 --]]
 
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -48,36 +46,6 @@ end
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
-
-function enterprise_chests.UpdateChestRecord_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, chestLocator, callback = InputChecker.Check([[
-        This async public service brings the records of a chest up-to-date by fetching information and (re)setting the chest records.
-
-        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
-        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
-
-        Return value:
-                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData         - (table) data about the service
-                chestLocator    + (URL) locating the chest
-            callback            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get chest
-    local chest = enterprise_chests:getObject(chestLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
-
-    -- have chest update it's records
-    return chest:updateChestRecord_AOSrv({}, callback)
-end
 
 -- ToDo: consider getting from/ moving to Chest
 function enterprise_chests.GetItemsLocations_SSrv(...)
