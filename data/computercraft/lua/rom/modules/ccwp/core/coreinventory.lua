@@ -26,30 +26,34 @@ function coreinventory.Init()
 	if turtle and next(dbFile) == nil then
 
         -- no db file found check for peripheral on the left
-        local peripheralName = peripheral.getType("left")
-        db['left'] = (peripheralName or "")
+        db['left'] = (peripheral.getType("left") or "")
 
-        -- no db file found, check for tool on the right
-        coreinventory.GetEmptySlot()
-        local itemDetails = turtle.getItemDetail()
+        -- check for tool on the right
+        if coreinventory.GetEmptySlot() then
 
-        -- confirm slot is empty
-        if itemDetails == nil then
+            -- should be no peripheral on the right
+            if peripheral.getType("right") then
 
-            -- remove any item on the right
-            turtle.equipRight()
-
-            -- anything present?
-            itemDetails = turtle.getItemDetail()
-
-            -- anything present?
-            if itemDetails ~= nil then
-
-                -- remember
-                db['right'] = itemDetails.name
-
-                -- re-equip
+                -- not welcome on the right side
                 turtle.equipRight()
+
+            else
+
+                -- remove any item on the right
+                turtle.equipRight()
+
+                -- anything present?
+                local itemDetails = turtle.getItemDetail()
+
+                -- anything present?
+                if itemDetails ~= nil then
+
+                    -- remember
+                    db['right'] = itemDetails.name
+
+                    -- re-equip
+                    turtle.equipRight()
+                end
             end
         end
 
@@ -110,7 +114,7 @@ function coreinventory.GetItemDetail(slot)
     local data = turtle.getItemDetail(slot)
 
     -- controleren of dit item al bekend is
-    if data and not coredht.GetData("allItems", data.name) then
+    if data and not coredht.GetData("allItems", data.name) and coredht.IsReady() then
         coredht.SaveData({
             name        = data.name,
             stackSize   = turtle.getItemCount(slot) + turtle.getItemSpace(slot),
@@ -292,8 +296,18 @@ function coreinventory.Equip(itemName, requestedSide)
     -- right side is default
     requestedSide = requestedSide or 'right'
 
-    -- already equiped? might be the wrong side but we don't care about that
-    if db.left == itemName or db.right == itemName then return true end
+    -- already equiped? We DO care about the right side!
+    if (requestedSide == 'left' and db.left == itemName) or (requestedSide == 'right' and db.right == itemName) then return true end
+
+    -- maybe the wrond side?
+    if (requestedSide == 'left' and db.right == itemName) or (requestedSide == 'right' and db.left == itemName) then
+
+        -- just unequip, the rest of the code  will take of equiping
+        coreinventory.GetEmptySlot()
+        if db.right == itemName then turtle.equipRight()
+                                else turtle.equipLeft()
+        end
+    end
 
     -- find empty spot (remove current equiped to the right when we have an empty spot)
     if coreinventory.GetEmptySlot() then

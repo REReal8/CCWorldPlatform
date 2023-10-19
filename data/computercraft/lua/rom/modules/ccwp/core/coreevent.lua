@@ -68,7 +68,9 @@ end
 -- functie om de modem te initializeren
 function ActivateModem()
     -- activate the modem
-    modem = peripheral.find("modem")
+	if turtle	then modem = peripheral.wrap("left")
+				else modem = peripheral.find("modem")
+	end
 
 	-- find a modem
 	if not modem and coreinventory.GetEmptySlot() then

@@ -29,11 +29,13 @@ function core.Init()
     -- only if the system is just booted
     if coresystem.getStatus() ~= "booted" then return end
 
+	-- first things first
+	coreinventory.Init()
+
 	-- init other stuff
 	coredht.Init()
 	coredisplay.Init()
 	coreevent.Init()
-	coreinventory.Init()
 	coreassignment.Init()
 	coremove.Init()
 	coretask.Init()
