@@ -222,7 +222,7 @@ function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
     local obj = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
-    local chestLocator = enterprise_chests:getObjectLocator(obj)
+    local chestLocator = enterprise_chests:saveObject(obj)
 
     local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
         ["chestLocator"] = chestLocator,
