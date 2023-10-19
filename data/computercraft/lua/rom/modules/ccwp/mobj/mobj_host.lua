@@ -71,7 +71,7 @@ function MObjHost:buildAndHostMObj_ASrv(...)
                 mobjLocator                     - (URL) locating the build and hosted MObj
 
         Parameters:
-            serviceData                         - (table) data about this site
+            serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the MObj
                 constructParameters             + (table) parameters for constructing the MObj
                 materialsItemSupplierLocator    + (URL) locating the host for building materials

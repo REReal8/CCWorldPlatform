@@ -256,7 +256,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_SOSrv(...)
                 success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                         - (table) data about this site
+            serviceData                         - (table) data about this service
                 queueId                         + (string) with the id of the WIP queue
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_SOSrv: Invalid input") return {success = false} end
@@ -288,7 +288,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
                 success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                         - (table) data about this site
+            serviceData                         - (table) data about this service
                 queueId                         + (string) with the id of the WIP queue
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))

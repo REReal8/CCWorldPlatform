@@ -305,7 +305,8 @@ function enterprise_employment:getCurrentWorkerLocator()
 --        if turtle then direction = "top" end
 
         -- determine birth information
-        local father = peripheral.wrap(direction)
+        local father = peripheral.wrap(direction) -- note: we access low level turtle functionality directly
+        -- ToDo: consider if we these low level functionality should be either moved into core OR into a role, as an enterprise is not supposed to do this
         local className = nil
         local constructParameters = nil
         local birthLocation = nil
@@ -410,7 +411,7 @@ function enterprise_employment:registerBirthCertificate(...)
                                                 - (boolean) whether the service was scheduled successfully
 
         Parameters:
-            serviceData                         - (table) data about this site
+            serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the Worker
                 constructParameters             + (table) parameters for constructing the Worker
     ]], table.unpack(arg))
@@ -450,7 +451,7 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
                 success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                         - (table) data about this site
+            serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the Worker
                 constructParameters             + (table) parameters for constructing the Worker
                 materialsItemSupplierLocator    + (URL) locating the host for building materials
@@ -494,7 +495,7 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
             { stepType = "LSMtd", stepTypeDef = { methodName = "registerBirthCertificate", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-            }, description = "Register new born Worker"},
+            }, description = "Register new Worker"},
             -- boot new Worker
             -- ToDo:
         },
