@@ -145,8 +145,7 @@ end
 function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")
-    local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, baseLocation1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(

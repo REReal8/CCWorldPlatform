@@ -2,7 +2,6 @@ local t_employment = {}
 
 local corelog = require "corelog"
 
-local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 local Location = require "obj_location"
 
@@ -164,7 +163,7 @@ end
 function t_employment.T_hostMObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest0 = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey)
+    local fieldsTest0 = T_Turtle.CreateInitialisedTest(nil, workerId1, location1, fuelPriorityKey)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)
@@ -262,6 +261,5 @@ function t_employment.T_buildHostRegisterAndBootWorker_ASrv_Turtle()
     -- return mobjLocator
     return serviceResults.mobjLocator
 end
-
 
 return t_employment
