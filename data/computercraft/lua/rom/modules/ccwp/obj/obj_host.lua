@@ -303,6 +303,7 @@ function ObjHost.GetClassName(...)
 
     -- get className from path
     local className = objectLocator:getPath():match(classNamePattern)
+    if not className then corelog.Warning("ObjHost:getClassName: no className in objectLocator "..objectLocator:getURI()) return nil end
 
     -- end
     return className

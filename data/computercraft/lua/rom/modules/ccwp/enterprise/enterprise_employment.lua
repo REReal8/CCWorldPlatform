@@ -48,11 +48,25 @@ local function GetATurtle()
     local turtles = enterprise_employment:getObjects(Turtle:getClassName())
     if not turtles then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining Turtle's") return nil end
 
-    -- select first Turtle
-    -- ToDo: consider selecting a free Turtle (also based on some criteria) (maybe do this via assignments?)
-    local _, turtleObjTable = next(turtles) -- first Turtle
-    if not turtleObjTable then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining a Turtle") return nil end
-    local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+    -- try find a Turtle
+    local turtleObj = nil
+    -- are we (the Worker running this code) a turtle?
+    if turtle then
+        local turtleWorkerId = os.getComputerID()
+
+        -- find our turtleObj
+        for _, turtleObjTable in pairs(turtles) do
+            turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+            if turtleObj:getWorkerId() == turtleWorkerId then
+                break
+            end
+        end
+    else
+        -- select first Turtle
+        local _, turtleObjTable = next(turtles) -- first Turtle
+        if not turtleObjTable then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining a Turtle") return nil end
+        turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+    end
 
     -- end
     return turtleObj
@@ -79,7 +93,7 @@ function enterprise_employment:getObject(...)
         local turtleObj = GetATurtle()
 
         -- return Turtle
-        -- corelog.WriteToLog("Selecting Turtle "..turtleObj:getWorkerId().." as 'any Turtle'")
+        -- corelog.WriteToLog("Selected Turtle "..turtleObj:getWorkerId().." as 'any Turtle'")
         return turtleObj
     end
 
@@ -590,6 +604,7 @@ function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
+        if refuelAmount == 0 then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: refuelAmount = 0 while turtleFuelLevel(="..turtleFuelLevel..") < fuelLevel_Assignment(="..fuelLevel_Assignment.."). Apparently enterprise_energy enterpriseLevel = 0. This should not happen here! => skip asking for this and fix this!") return end
         local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_employment
         local wasteItemDepotLocator = turtleLocator:copy()                      -- ToDo: somehow get this passed into enterprise_employment
         local serviceData = {

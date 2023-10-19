@@ -144,6 +144,9 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- check there is actually fuel requested
+    if fuelAmount == 0 then corelog.Warning("enterprise_energy.ProvideFuelTo_ASrv: Requesting 0 fuel for Turtle"..turtleLocator:getURI().." => skip") return callback:call({success = true}) end
+
     -- determine fuelItemsNeed
     local fuelItemsNeed = FuelItemsForFuel(fuelAmount)
 
