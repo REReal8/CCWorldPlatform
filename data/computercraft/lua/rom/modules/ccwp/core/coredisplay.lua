@@ -245,7 +245,7 @@ function ExecuteCode(t, code)
 			question    = nil
 		})
 	else
-		local f, err = loadstring(code)
+		local f, err = loadstring(code) -- Function loadstring is deprecated. Use load instead; it now accepts string arguments and are exactly equivalent to loadstring.
 
 		-- valid function?
 		if f then
