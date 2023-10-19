@@ -18,10 +18,11 @@ local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 local ObjHost = require "obj_host"
 local ObjTable = require "obj_table"
-local ObjArray = require "obj_array"
 local URL = require "obj_url"
 local Location  = require "obj_location"
 
+local IMObj = require "i_mobj"
+local IWorker = require "i_worker"
 local Turtle = require "mobj_turtle"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -121,73 +122,43 @@ end
 --    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
 --     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
 
-local function GetWorkLocatorsPath()
-    return ObjHost.GetObjectPath(ObjTable:getClassName(), "workerLocators")
-end
+local function GetContainer(employmentHost, className, refName)
+    -- get containerLocator
+    local containerPath = ObjHost.GetObjectPath(className, refName)
+    local containerLocator = employmentHost:getResourceLocator(containerPath)
+    if not containerLocator then corelog.Error("enterprise_employment.GetContainer: Failed obtaining containerLocator") return nil end
 
-local function GetNewWorkLocatorsPath()
-    return ObjHost.GetObjectPath(ObjArray:getClassName(), "newWorkerLocators")
-end
+    -- get container
+    local containerTable = employmentHost:getResource(containerLocator)
+    if not containerTable then
+        corelog.WriteToLog("enterprise_employment.GetContainer: Creating new "..className.." "..refName)
 
-local function GetWorkerLocators(employmentHost, newLocators)
-    -- check input
-    newLocators = newLocators or false
-
-    -- get workerLocatorsLocator
-    local workerLocatorsPath = nil
-    if newLocators then
-        workerLocatorsPath = GetNewWorkLocatorsPath()
-    else
-        workerLocatorsPath = GetWorkLocatorsPath()
-    end
-
-    local workerLocatorsLocator = employmentHost:getResourceLocator(workerLocatorsPath)
-    if not workerLocatorsLocator then corelog.Error("enterprise_employment.GetWorkerLocators: Failed obtaining workerLocatorsLocator") return nil end
-
-    -- get workerLocators
-    local workerLocatorsTable = employmentHost:getResource(workerLocatorsLocator)
-    if not workerLocatorsTable then
-        corelog.WriteToLog("enterprise_employment.GetWorkerLocators: Creating new workerLocatorsTable (newLocators="..tostring(newLocators)..")")
-
-        -- (re)set workerLocators
-        local workerLocators = ObjTable:newInstance(URL:getClassName())
-        employmentHost:saveResource(workerLocators, workerLocatorsPath)
+        -- (re)set container
+        local container = ObjTable:newInstance(URL:getClassName())
+        employmentHost:saveResource(container, containerPath)
 
         -- retrieve again
-        workerLocatorsTable = employmentHost:getResource(workerLocatorsLocator)
-        if not workerLocatorsTable then corelog.Error("enterprise_employment.GetWorkerLocators: Failed (re)setting workerLocators") return nil end
+        containerTable = employmentHost:getResource(containerLocator)
+        if not containerTable then corelog.Error("enterprise_employment.GetContainer: Failed (re)setting container") return nil end
     end
 
-    -- convert to ObjTable
-    local workerLocators = nil
-    if newLocators then
-        workerLocators = ObjArray:new(workerLocatorsTable)
-    else
-        workerLocators = ObjTable:new(workerLocatorsTable)
-    end
-    if not workerLocators then corelog.Error("enterprise_employment.GetWorkerLocators: failed converting workerLocatorsTable(="..textutils.serialise(workerLocatorsTable)..") to ObjTable object for workerLocatorsLocator="..workerLocatorsLocator:getURI()) return nil end
+    -- convert to container
+    local container = objectFactory:create(className, containerTable)
+    if not container then corelog.Error("enterprise_employment.GetContainer: failed converting containerTable(="..textutils.serialise(containerTable)..") to "..className.." object for containerLocator="..containerLocator:getURI()) return nil end
 
     -- end
-    return workerLocators
+    return container
 end
 
-local function SaveWorkerLocators(employmentHost, workerLocators, newLocators)
-    -- check input
-    newLocators = newLocators or false
+local function SaveContainer(employmentHost, container, className, refName)
+    -- get containerLocator
+    local containerPath = ObjHost.GetObjectPath(className, refName)
 
-    -- get workerLocatorsLocator
-    local workerLocatorsPath = nil
-    if newLocators then
-        workerLocatorsPath = GetNewWorkLocatorsPath()
-    else
-        workerLocatorsPath = GetWorkLocatorsPath()
-    end
-
-    -- save workerLocators
-    local workerLocatorsLocator = employmentHost:saveResource(workerLocators, workerLocatorsPath)
+    -- save container
+    local containerLocator = employmentHost:saveResource(container, containerPath)
 
     -- end
-    return workerLocatorsLocator
+    return containerLocator
 end
 
 function enterprise_employment:getRegistered(...)
@@ -204,7 +175,7 @@ function enterprise_employment:getRegistered(...)
     if not checkSuccess then corelog.Error("enterprise_employment:getRegistered: Invalid input") return nil end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(self)
+    local workerLocators = GetContainer(self, "ObjTable", "workerLocators")
     if not workerLocators then corelog.Error("enterprise_employment:getRegistered: Failed obtaining workerLocators") return nil end
 
     -- get workerLocator
@@ -236,7 +207,7 @@ function enterprise_employment:register(...)
     if not checkSuccess then corelog.Error("enterprise_employment:register: Invalid input") return false end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(self)
+    local workerLocators = GetContainer(self, "ObjTable", "workerLocators")
     if not workerLocators then corelog.Error("enterprise_employment:register: Failed obtaining workerLocators") return false end
 
     -- register the Worker
@@ -244,7 +215,7 @@ function enterprise_employment:register(...)
     workerLocators[workerId] = theWorkerLocator
 
     -- save workerLocators
-    local workerLocatorsLocator = SaveWorkerLocators(self, workerLocators)
+    local workerLocatorsLocator = SaveContainer(self, workerLocators, "ObjTable", "workerLocators")
     if not workerLocatorsLocator then corelog.Error("enterprise_employment:register: Failed saving workerLocators") return false end
 
     -- end
@@ -265,7 +236,7 @@ function enterprise_employment:isRegistered(...)
     if not checkSuccess then corelog.Error("enterprise_employment:isRegistered: Invalid input") return false end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(self)
+    local workerLocators = GetContainer(self, "ObjTable", "workerLocators")
     if not workerLocators then corelog.Error("enterprise_employment:isRegistered: Failed obtaining workerLocators") return false end
 
     -- check if registered
@@ -291,7 +262,7 @@ function enterprise_employment:delist(...)
     if not checkSuccess then corelog.Error("enterprise_employment:delist: Invalid input") return false end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(self)
+    local workerLocators = GetContainer(self, "ObjTable", "workerLocators")
     if not workerLocators then corelog.Error("enterprise_employment:delist: Failed obtaining workerLocators") return false end
 
     -- get Workers
@@ -303,7 +274,7 @@ function enterprise_employment:delist(...)
             workerLocators[registeredWorkedId] = nil
 
             -- save workerLocators
-            local workerLocatorsLocator = SaveWorkerLocators(self, workerLocators)
+            local workerLocatorsLocator = SaveContainer(self, workerLocators, "ObjTable", "workerLocators")
             if not workerLocatorsLocator then corelog.Error("enterprise_employment:delist: Failed saving workerLocators") return false end
 
             -- found and delisted it!
@@ -395,7 +366,7 @@ end
 
 function enterprise_employment:getAndRemoveBirthWorkerLocator(parentId)
     -- get newWorkerLocators
-    local newWorkerLocators = GetWorkerLocators(self, true)
+    local newWorkerLocators = GetContainer(self, "ObjArray", "newWorkerLocators")
     if not newWorkerLocators then corelog.Error("enterprise_employment:getAndRemoveBirthWorkerLocator: Failed obtaining newWorkerLocators") return nil end
 
     -- get newWorkerLocator
@@ -405,8 +376,8 @@ function enterprise_employment:getAndRemoveBirthWorkerLocator(parentId)
             table.remove(newWorkerLocators, iCerticate)
 
             -- save newWorkerLocators
-            local workerLocatorsLocator = SaveWorkerLocators(self, newWorkerLocators, true)
-            if not workerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthWorkerLocator: Failed saving newWorkerLocators") return false end
+            local newWorkerLocatorsLocator = SaveContainer(self, newWorkerLocators, "ObjArray", "newWorkerLocators")
+            if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthWorkerLocator: Failed saving newWorkerLocators") return false end
 
             --
             return birthCertificate.workerLocator
@@ -441,7 +412,7 @@ function enterprise_employment:registerBirthWorkerLocator(...)
     end
 
     -- get newWorkerLocators
-    local newWorkerLocators = GetWorkerLocators(self, true)
+    local newWorkerLocators = GetContainer(self, "ObjArray", "newWorkerLocators")
     if not newWorkerLocators then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Failed obtaining newWorkerLocators") return false end
 
     -- add birthCertificate
@@ -452,8 +423,8 @@ function enterprise_employment:registerBirthWorkerLocator(...)
     table.insert(newWorkerLocators, birthCertificate)
 
     -- save newWorkerLocators
-    local workerLocatorsLocator = SaveWorkerLocators(self, newWorkerLocators, true)
-    if not workerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Failed saving newWorkerLocators") return false end
+    local newWorkerLocatorsLocator = SaveContainer(self, newWorkerLocators, "ObjArray", "newWorkerLocators")
+    if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Failed saving newWorkerLocators") return false end
 
     -- end
     return true
