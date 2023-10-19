@@ -17,7 +17,7 @@ function t_utilities.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_utilities.T_hostAndBuildMObj_ASrv_UtilStation()
+    local mobjLocator = t_utilities.T_buildAndHostMObj_ASrv_UtilStation()
     t_utilities.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
 end
 
@@ -55,11 +55,11 @@ end
 
 local mobjLocator_UtilStation = nil
 
-function t_utilities.T_hostAndBuildMObj_ASrv_UtilStation()
+function t_utilities.T_buildAndHostMObj_ASrv_UtilStation()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_utilities, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_utilities, testMObjClassName, constructParameters, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

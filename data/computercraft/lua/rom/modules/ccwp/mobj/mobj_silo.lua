@@ -306,25 +306,29 @@ local function Storage_layer()
     )
 end
 
-function Silo:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the Silo in the physical minecraft world.
+function Silo.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, nTopChests, nLayers = InputChecker.Check([[
+        This method returns a blueprint for building a Silo in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the Silo
+                baseLocation            + (Location) base location of the Silo
+                nTopChests              + (number, 2) # of top chests
+                nLayers                 + (number, 2) # of layers
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
-    local nTopChests = self:getNTopChests()
-    if nTopChests ~= 2 then corelog.Warning("Silo:getBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
+    if nTopChests ~= 2 then corelog.Warning("Silo.GetBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
     local layerList = {
         { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopL0_layer()}, -- ToDo: use nTopChests
         { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = Shaft_layer()},
     }
-    local nLayers = self:getNStorageLayers()
     for i=1, nLayers, 1 do
         table.insert(layerList, { startpoint = Location:newInstance(2, 2, -1-i), buildDirection = "Up", layer = Storage_layer()})
     end
@@ -338,7 +342,7 @@ function Silo:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

@@ -21,16 +21,19 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultTest:_init(methodName, resultTest, ...)
+function MethodResultTest:_init(methodName, isStaticMethod, resultTest, ...)
     -- check input
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
+    local isStaticMethodType = type(isStaticMethod)
+    assert(isStaticMethodType == "boolean", "type isStaticMethod(="..isStaticMethodType..") not a boolean")
     assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
     local methodArguments = {...}
 
     -- initialisation
     self._resultTest        = resultTest
     self._methodName        = methodName
+    self._isStaticMethod    = isStaticMethod
     self._methodArguments   = methodArguments
 end
 
@@ -67,7 +70,12 @@ function MethodResultTest:test(testObj, testObjName, indent, logOk)
     assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
 
     -- test (via _resultTest)
-    local methodResults = {method(testObj, table.unpack(self._methodArguments))} -- note: collect possible multiple results
+    local methodResults = nil
+    if self._isStaticMethod then
+        methodResults = {method(table.unpack(self._methodArguments))} -- note: collect possible multiple results
+    else
+        methodResults = {method(testObj, table.unpack(self._methodArguments))} -- note: collect possible multiple results
+    end
     self._resultTest:test(methodResults, testFieldStr, indent.."  ", logOk)
 
     -- complete test

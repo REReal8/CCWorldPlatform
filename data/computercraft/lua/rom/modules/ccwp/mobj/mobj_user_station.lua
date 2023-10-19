@@ -264,16 +264,20 @@ local function Dismantle_layer()
     )
 end
 
-function UserStation:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the UserStation in the physical minecraft world.
+function UserStation.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation = InputChecker.Check([[
+        This method returns a blueprint for building a UserStation in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the UserStation
+                baseLocation            + (Location) base location of the UserStation
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UserStation.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- layer list
     local layerList = {
@@ -297,7 +301,7 @@ function UserStation:getBuildBlueprint()
     }
 
     -- buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

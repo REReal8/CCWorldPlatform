@@ -317,9 +317,9 @@ function T_Factory.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj1, testObjName1, isBlueprintTest, logOk)
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj2, testObjName2, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj1, testObjName1, constructParameters1, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj2, testObjName2, constructParameters2, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 

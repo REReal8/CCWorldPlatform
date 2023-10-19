@@ -36,7 +36,7 @@ function t_employment.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_employment.T_hostAndBuildMObj_ASrv_Turtle()
+    local mobjLocator = t_employment.T_buildAndHostMObj_ASrv_Turtle()
     t_employment.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
 end
 
@@ -175,11 +175,11 @@ end
 
 local mobjLocator_Turtle = nil
 
-function t_employment.T_hostAndBuildMObj_ASrv_Turtle()
+function t_employment.T_buildAndHostMObj_ASrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -233,13 +233,13 @@ function t_employment.T_IRegistry_All()
     T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
 end
 
-function t_employment.T_hostBuildRegisterAndBootWorker_ASrv_Turtle()
+function t_employment.T_buildHostRegisterAndBootWorker_ASrv_Turtle()
     -- prepare test
-    corelog.WriteToLog("* enterprise_employment:hostBuildRegisterAndBootWorker_ASrv() tests (of Turtle)")
+    corelog.WriteToLog("* enterprise_employment:buildHostRegisterAndBootWorker_ASrv() tests (of Turtle)")
     t_employment = t_employment or require "test.t_employment"
 
     -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(enterprise_employment, "hostBuildRegisterAndBootWorker_ASrv", {
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(enterprise_employment, "buildHostRegisterAndBootWorker_ASrv", {
         className                   = testMObjClassName,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
@@ -250,7 +250,7 @@ function t_employment.T_hostBuildRegisterAndBootWorker_ASrv_Turtle()
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    -- check: Worker hosted on MObjHost (full check done in pt_hostAndBuildMObj_ASrv)
+    -- check: Worker hosted on MObjHost (full check done in pt_buildAndHostMObj_ASrv)
     local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
     local mobj = enterprise_employment:getObject(mobjLocator)
     assert(mobj, "Worker(="..mobjLocator:getURI()..") not hosted by "..enterprise_employment:getHostName())

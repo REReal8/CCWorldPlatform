@@ -23,9 +23,10 @@ function MethodResultEqualTest:_init(methodName, expectedResult, ...)
     -- check input
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
+    local isStaticMethod = false -- ToDo: consider making an argument to allow testing static methods for equality
 
     -- initialisation
-    MethodResultTest._init(self, methodName, MultipleValuesTest:newInstance(ValueEqualTest:newInstance(expectedResult)), ...)
+    MethodResultTest._init(self, methodName, isStaticMethod, MultipleValuesTest:newInstance(ValueEqualTest:newInstance(expectedResult)), ...)
 end
 
 --    _____ ____  _     _                  _   _               _

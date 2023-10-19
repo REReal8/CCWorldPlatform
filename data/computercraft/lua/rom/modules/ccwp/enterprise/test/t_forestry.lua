@@ -26,17 +26,17 @@ function t_forestry.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_Lm1T1()
+    local mobjLocator = t_forestry.T_buildAndHostMObj_ASrv_BirchForest_Lm1T1()
     t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L0T1(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L0T1()
+    mobjLocator = t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L0T1()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
+    mobjLocator = t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L1T2()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
+    mobjLocator = t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L1T2()
     t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L2T2()
+    mobjLocator = t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L2T2()
     t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
 end
@@ -119,11 +119,11 @@ end
 
 local mobjLocator_BirchForest = nil
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_Lm1T1()
+function t_forestry.T_buildAndHostMObj_ASrv_BirchForest_Lm1T1()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_Lm1T1, testMObjNamem1, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_Lm1T1, testMObjNamem1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -133,11 +133,11 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_Lm1T1()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L0T1()
+function t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L0T1()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -147,11 +147,11 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L0T1()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
+function t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L1T2()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -161,11 +161,11 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L2T2()
+function t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L2T2()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L2T2, testMObjName2, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L2T2, testMObjName2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

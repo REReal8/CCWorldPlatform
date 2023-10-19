@@ -30,14 +30,14 @@ function t_manufacturing.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
+    local mobjLocator = t_manufacturing.T_buildAndHostMObj_ASrv_Factory0()
     t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
-    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+    mobjLocator = t_manufacturing.T_buildAndHostMObj_ASrv_Factory1()
     t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
-    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+    mobjLocator = t_manufacturing.T_buildAndHostMObj_ASrv_Factory1()
     t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
     t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
-    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory2()
+    mobjLocator = t_manufacturing.T_buildAndHostMObj_ASrv_Factory2()
     t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
 end
 
@@ -123,11 +123,11 @@ end
 
 local mobjLocator_Factory = nil
 
-function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
+function t_manufacturing.T_buildAndHostMObj_ASrv_Factory0()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -137,11 +137,11 @@ function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
     return serviceResults.mobjLocator
 end
 
-function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+function t_manufacturing.T_buildAndHostMObj_ASrv_Factory1()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -151,11 +151,11 @@ function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
     return serviceResults.mobjLocator
 end
 
-function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory2()
+function t_manufacturing.T_buildAndHostMObj_ASrv_Factory2()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters2, testMObjName2, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters2, testMObjName2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

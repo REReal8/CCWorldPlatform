@@ -183,7 +183,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
             }, description = "Setting coordinates"},
             -- host, build and register initial (L0) Factory (crafting spot, i.e. in place hole in the ground)
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters0" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -193,7 +193,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- host, build and register initial (L-1) BirchForest (1 sapling in front of turtle)
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters_Lm1T1" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -231,7 +231,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
             }, description = "Getting cobblestone"},
             -- host, build and register new L1 Factory (crafting + smelting spot)
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters1" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -298,7 +298,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending Factory to L2"},
             -- host, build and register Silo
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },

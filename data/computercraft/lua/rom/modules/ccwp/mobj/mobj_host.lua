@@ -55,12 +55,12 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
-function MObjHost:hostAndBuildMObj_ASrv(...)
+function MObjHost:buildAndHostMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service hosts and builds a new MObj. It consist of
-            - hosting a new MObj
-            - building the MObj in the world
+        This async public service builds and hosts a new MObj. It consist of
+            - building a MObj in the world
+            - hosting the new MObj
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -68,7 +68,7 @@ function MObjHost:hostAndBuildMObj_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the hosted and build MObj
+                mobjLocator                     - (URL) locating the build and hosted MObj
 
         Parameters:
             serviceData                         - (table) data about this site
@@ -78,20 +78,16 @@ function MObjHost:hostAndBuildMObj_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MObjHost:hostAndBuildMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- hosting new MObj
-    local serviceResult = self:hostMObj_SSrv({ className = className, constructParameters = constructParameters})
-    if not serviceResult or not serviceResult.success then corelog.Error("MObjHost:hostAndBuildMObj_ASrv: Failed hosting a new "..className..".") return Callback.ErrorCall(callback) end
-
-    -- get MObj
-    local mobjLocator = serviceResult.mobjLocator
-    local mobj = self:getObject(mobjLocator)
-    if not mobj then corelog.Error("MObjHost:hostAndBuildMObj_ASrv: Failed obtaining "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    -- get class
+    local class = objectFactory:getClass(className)
+    if not class then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
 
     -- get blueprint
-    local buildLocation, blueprint = mobj:getBuildBlueprint()
-    if not buildLocation or not blueprint then corelog.Error("MObjHost:hostAndBuildMObj_ASrv: Failed obtaining build blueprint for "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    local buildLocation, blueprint = class.GetBuildBlueprint(constructParameters)
+    if not buildLocation or not blueprint then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local projectData = {
@@ -100,7 +96,10 @@ function MObjHost:hostAndBuildMObj_ASrv(...)
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = wasteItemDepotLocator,
 
-        mobjLocator                 = mobjLocator,
+        hostLocator                 = self:getHostLocator(),
+
+        className                   = className,
+        constructParameters         = constructParameters,
     }
     local projectDef = {
         steps   = {
@@ -110,10 +109,15 @@ function MObjHost:hostAndBuildMObj_ASrv(...)
                 { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }},
+            }, description = "Building "..className},
+            -- host MObj
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
+            }, description = "Hosting "..className},
         },
         returnData  = {
-            { keyDef = "mobjLocator"                , sourceStep = 0, sourceKeyDef = "mobjLocator" },
+            { keyDef = "mobjLocator"                        , sourceStep = 2, sourceKeyDef = "mobjLocator" },
         }
     }
     local projectServiceData = {

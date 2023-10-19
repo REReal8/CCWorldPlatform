@@ -136,35 +136,38 @@ function T_IMObj.pt_getWIPId(className, obj, objName, logOk)
     test:test(obj, objName, "", logOk)
 end
 
-function T_IMObj.pt_getBlueprint(className, methodName, obj, objName, isBlueprintTest, logOk, ...)
+function T_IMObj.pt_getBlueprint(className, methodName, isStaticMethod, obj, objName, isBlueprintTest, logOk, ...)
     -- prepare test
     assert(className, "no className provided")
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
+    local isStaticMethodType = type(isStaticMethod)
+    assert(isStaticMethodType == "boolean", "type methodName(="..isStaticMethodType..") not a boolean")
     assert(obj, "no obj provided")
     assert(objName, "no objName provided")
     assert(isBlueprintTest, "no isBlueprintTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":"..methodName.."() tests (with "..objName..")")
+    local methodOperator = ":" if isStaticMethod then methodOperator = "." end
+    corelog.WriteToLog("* "..className..methodOperator..methodName.."() tests (with "..objName..")")
 
     -- test
-    local test = MethodResultTest:newInstance(methodName, isBlueprintTest, ...)
+    local test = MethodResultTest:newInstance(methodName, isStaticMethod, isBlueprintTest, ...)
     test:test(obj, objName, "", logOk)
 end
 
-function T_IMObj.pt_getBuildBlueprint(className, obj, objName, isBlueprintTest, logOk)
+function T_IMObj.pt_GetBuildBlueprint(className, obj, objName, constructParameters, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getBuildBlueprint", obj, objName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBlueprint(className, "GetBuildBlueprint", true, obj, objName, isBlueprintTest, logOk, constructParameters)
 end
 
 function T_IMObj.pt_getDismantleBlueprint(className, obj, objName, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getDismantleBlueprint", obj, objName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBlueprint(className, "getDismantleBlueprint", false, obj, objName, isBlueprintTest, logOk)
 end
 
 function T_IMObj.pt_getExtendBlueprint(className, obj, objName, upgradeParameters, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getExtendBlueprint", obj, objName, isBlueprintTest, logOk, upgradeParameters)
+    T_IMObj.pt_getBlueprint(className, "getExtendBlueprint", false, obj, objName, isBlueprintTest, logOk, upgradeParameters)
 end
 
 return T_IMObj

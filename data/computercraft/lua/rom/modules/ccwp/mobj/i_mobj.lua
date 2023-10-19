@@ -95,9 +95,9 @@ function IMObj:getWIPId()
     return "???"
 end
 
-function IMObj:getBuildBlueprint()
+function IMObj.GetBuildBlueprint(...)
     --[[
-        This method returns a blueprint for building the XXXMObj in the physical minecraft world.
+        This method returns a blueprint for building a XXXMObj in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
@@ -106,7 +106,7 @@ function IMObj:getBuildBlueprint()
         Parameters:
     ]]
 
-    IInterface.UnimplementedMethodError("IMObj", "getBuildBlueprint")
+    IInterface.UnimplementedMethodError("IMObj", "GetBuildBlueprint")
 
     -- end
     return nil, nil

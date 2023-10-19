@@ -319,8 +319,8 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest_Lm1, logOk)
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, objm1, testObjNamem1, constructParameters_Lm1T1, isBlueprintTest_Lm1, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters_L0T1, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo_L1T2, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo_L2T4, isBlueprintTest_FromL1T2_ToL2T4, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)

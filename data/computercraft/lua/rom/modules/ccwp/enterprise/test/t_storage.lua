@@ -26,7 +26,7 @@ function t_storage.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_storage.T_hostAndBuildMObj_ASrv_Silo()
+    local mobjLocator = t_storage.T_buildAndHostMObj_ASrv_Silo()
     t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
 end
 
@@ -78,12 +78,12 @@ end
 
 local mobjLocator_Silo = nil
 
-function t_storage.T_hostAndBuildMObj_ASrv_Silo()
+function t_storage.T_buildAndHostMObj_ASrv_Silo()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_storage, testMObjClassName, constructParameters1, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_storage, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

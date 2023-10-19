@@ -191,16 +191,21 @@ local function Chest_layer()
     )
 end
 
-function Chest:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the Chest in the physical minecraft world.
+function Chest.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation = InputChecker.Check([[
+        This method returns a blueprint for building a Chest in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the Chest
+                baseLocation            + (Location) base location of the Chest
+                accessDirection         - (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Chest.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
     local layerList = {
@@ -215,7 +220,7 @@ function Chest:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

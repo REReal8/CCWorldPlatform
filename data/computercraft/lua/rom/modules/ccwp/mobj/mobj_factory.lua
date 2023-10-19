@@ -453,20 +453,24 @@ local function TopL2Dismantle_layer()
     )
 end
 
-function Factory:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the Factory in the physical minecraft world.
+function Factory.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, level, baseLocation = InputChecker.Check([[
+        This method returns a blueprint for building a Factory in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the Factory
+                level                   + (number) with Factory level
+                baseLocation            + (Location) base location of the Factory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- determine layerList
     local layerList = {}
-    local level = self:getLevel()
     if level == 0 then
         table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildDirection = "Down", layer = Shaft_layer()})
     elseif level == 1 then
@@ -481,7 +485,7 @@ function Factory:getBuildBlueprint()
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildDirection = "Up", layer = Furnance_layer()})
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildDirection = "Down", layer = CraftingSpotChest_layer()})
     else
-        corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..level)
+        corelog.Warning("Factory.GetBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..level)
     end
 
     -- determine escapeSequence
@@ -497,7 +501,7 @@ function Factory:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

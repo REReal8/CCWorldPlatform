@@ -187,16 +187,20 @@ function TestMObj:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-function TestMObj:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the TestMObj in the physical minecraft world.
+function TestMObj.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation = InputChecker.Check([[
+        This method returns a blueprint for building a TestMObj in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the TestMObj
+                baseLocation            + (Location) base location of the TestMObj
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
     local layerList = {
@@ -211,7 +215,7 @@ function TestMObj:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

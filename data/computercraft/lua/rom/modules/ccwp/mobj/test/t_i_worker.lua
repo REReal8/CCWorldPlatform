@@ -80,7 +80,7 @@ function T_IWorker.pt_getWorkerResume(className, obj, objName, workerResumeTest,
     corelog.WriteToLog("* "..className..":getWorkerResume() tests")
 
     -- test
-    local test = MethodResultTest:newInstance("getWorkerResume", MultipleValuesTest:newInstance(workerResumeTest))
+    local test = MethodResultTest:newInstance("getWorkerResume", false, MultipleValuesTest:newInstance(workerResumeTest))
     test:test(obj, objName, "", logOk)
 end
 
@@ -94,7 +94,7 @@ function T_IWorker.pt_getMainUIMenu(className, obj, objName, isMainUIMenuTest, l
     corelog.WriteToLog("* "..className..":getMainUIMenu() tests")
 
     -- test
-    local test = MethodResultTest:newInstance("getMainUIMenu", MultipleValuesTest:newInstance(isMainUIMenuTest))
+    local test = MethodResultTest:newInstance("getMainUIMenu", false, MultipleValuesTest:newInstance(isMainUIMenuTest))
     test:test(obj, objName, "", logOk)
 end
 
@@ -108,7 +108,7 @@ function T_IWorker.pt_getAssignmentFilter(className, obj, objName, assignmentFil
     corelog.WriteToLog("* "..className..":getAssignmentFilter() tests")
 
     -- test
-    local test = MethodResultTest:newInstance("getAssignmentFilter", MultipleValuesTest:newInstance(assignmentFilterTest))
+    local test = MethodResultTest:newInstance("getAssignmentFilter", false, MultipleValuesTest:newInstance(assignmentFilterTest))
     test:test(obj, objName, "", logOk)
 end
 

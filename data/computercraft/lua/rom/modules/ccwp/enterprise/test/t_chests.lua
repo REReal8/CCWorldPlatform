@@ -23,7 +23,7 @@ function t_chests.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_chests.T_hostAndBuildMObj_ASrv_Chest()
+    local mobjLocator = t_chests.T_buildAndHostMObj_ASrv_Chest()
     t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
 end
 
@@ -112,11 +112,11 @@ end
 
 local mobjLocator_Chest = nil
 
-function t_chests.T_hostAndBuildMObj_ASrv_Chest()
+function t_chests.T_buildAndHostMObj_ASrv_Chest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters1, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

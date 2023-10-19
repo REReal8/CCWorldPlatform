@@ -214,7 +214,7 @@ function T_UtilStation.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test

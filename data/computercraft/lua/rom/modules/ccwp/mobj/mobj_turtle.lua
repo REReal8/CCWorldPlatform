@@ -177,19 +177,22 @@ local function Turtle_layer()
     )
 end
 
-function Turtle:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the Turtle in the physical minecraft world.
+function Turtle.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, location = InputChecker.Check([[
+        This method returns a blueprint for building a Turtle in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the Turtle
+                location                + (Location) location of the Turtle
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Turtle.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- buildLocation
-    local location = self:getLocation()
     local buildLocation = location:copy()
 
     -- layerList

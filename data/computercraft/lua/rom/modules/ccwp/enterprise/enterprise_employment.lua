@@ -459,10 +459,10 @@ function enterprise_employment:registerBirthWorkerLocator(...)
     return true
 end
 
-function enterprise_employment:hostBuildRegisterAndBootWorker_ASrv(...)
+function enterprise_employment:buildHostRegisterAndBootWorker_ASrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service hosts, builds, registers and boots a new Worker.
+        This async public service builds, hosts, registers and boots a new Worker.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -480,9 +480,9 @@ function enterprise_employment:hostBuildRegisterAndBootWorker_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:hostBuildRegisterAndBootWorker_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_employment:buildHostRegisterAndBootWorker_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    corelog.WriteToLog("enterprise_employment:hostBuildRegisterAndBootWorker_ASrv(...) is zojuist gestart")
+    corelog.WriteToLog("enterprise_employment:buildHostRegisterAndBootWorker_ASrv(...) is zojuist gestart")
 
     -- create project definition
     local projectData = {
@@ -496,7 +496,7 @@ function enterprise_employment:hostBuildRegisterAndBootWorker_ASrv(...)
     local projectDef = {
         steps   = {
             -- host and build new Worker
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },

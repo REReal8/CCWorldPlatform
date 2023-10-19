@@ -42,7 +42,7 @@ function T_MObjHost.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
+    local mobjLocator = T_MObjHost.T_buildAndHostMObj_ASrv_TestMObj()
     T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 end
@@ -171,18 +171,18 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     return serviceResults
 end
 
-function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, objName, logOk)
+function T_MObjHost.pt_buildAndHostMObj_ASrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
     assert(type(objName) == "string", "no objName provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (of "..objName..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":buildAndHostMObj_ASrv() tests (of "..objName..")")
     t_employment = t_employment or require "test.t_employment"
 
     -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "buildAndHostMObj_ASrv", {
         className                   = className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
@@ -384,12 +384,12 @@ end
 
 local mobjLocator_TestMObj = nil
 
-function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
+function T_MObjHost.T_buildAndHostMObj_ASrv_TestMObj()
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

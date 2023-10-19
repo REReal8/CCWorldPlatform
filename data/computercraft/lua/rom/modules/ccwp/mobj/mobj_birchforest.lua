@@ -425,27 +425,30 @@ local function Tree_layer(level)
     else                    corelog.Error("Tree_layer: Don't know layer for level "..level) return nil end
 end
 
-function BirchForest:getBuildBlueprint()
-    --[[
-        This method returns a blueprint for building the BirchForest in the physical minecraft world.
+function BirchForest.GetBuildBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, level, baseLocation, nTrees = InputChecker.Check([[
+        This method returns a blueprint for building a BirchForest in the physical minecraft world.
 
         Return value:
             buildLocation               - (Location) the location to build the blueprint
             blueprint                   - (table) the blueprint
 
         Parameters:
-    ]]
+            constructParameters         - (table) parameters for constructing the BirchForest
+                level                   + (number) with BirchForest level
+                baseLocation            + (Location) base location of the BirchForest
+                nTrees                  + (number) number of trees
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- nTrees
-    local nTrees = self:getNTrees()
-    if nTrees > 6 then corelog.Error("BirchForest:getBuildBlueprint: "..nTrees.." trees not (yet) supported") return nil end
+    if nTrees > 6 then corelog.Error("BirchForest.GetBuildBlueprint: "..nTrees.." trees not (yet) supported") return nil end
 
     -- level
-    local level = self:getLevel()
-    if level < -1 or level > 2 then corelog.Error("BirchForest:getBuildBlueprint: Don't know how to build a BirchForest of level "..level) return nil end
+    if level < -1 or level > 2 then corelog.Error("BirchForest.GetBuildBlueprint: Don't know how to build a BirchForest of level "..level) return nil end
 
     -- buildLocation
-    local baseLocation = self:getBaseLocation()
     local buildLocation = baseLocation:copy()
 
     -- layerList
@@ -455,7 +458,7 @@ function BirchForest:getBuildBlueprint()
     local treeLayer = Tree_layer(level)
     local yOffset = 0
     if level == -1 then
-        if nTrees ~= 1 then corelog.Error("BirchForest:getBuildBlueprint: "..nTrees.." trees not supported for level -1") return nil end
+        if nTrees ~= 1 then corelog.Error("BirchForest.GetBuildBlueprint: "..nTrees.." trees not supported for level -1") return nil end
 
         -- specific values for -1 level
         buildDirection = "Front"

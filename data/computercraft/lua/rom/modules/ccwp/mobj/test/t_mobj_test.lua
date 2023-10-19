@@ -190,7 +190,7 @@ function T_TestMObj.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj, testObjName, upgradeParameters, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
