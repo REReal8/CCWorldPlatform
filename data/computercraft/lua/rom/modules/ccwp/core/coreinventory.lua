@@ -289,7 +289,7 @@ end
 function coreinventory.Equip(itemName, requestedSide)
     local slot = nil
 
-    -- rightt side is default
+    -- right side is default
     requestedSide = requestedSide or 'right'
 
     -- already equiped? might be the wrong side but we don't care about that
