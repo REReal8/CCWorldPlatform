@@ -115,12 +115,12 @@ function enterprise_employment:getClassName()
     return "enterprise_employment"
 end
 
---                       _             _                     _
---                      | |           | |                   | |
---   __      _____  _ __| | _____ _ __| |     ___   ___ __ _| |_ ___  _ __
---   \ \ /\ / / _ \| '__| |/ / _ \ '__| |    / _ \ / __/ _` | __/ _ \| '__|
---    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
---     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
+--   __          __        _
+--   \ \        / /       | |
+--    \ \  /\  / /__  _ __| | _____ _ __
+--     \ \/  \/ / _ \| '__| |/ / _ \ '__|
+--      \  /\  / (_) | |  |   <  __/ |
+--       \/  \/ \___/|_|  |_|\_\___|_|
 
 local function GetContainer(employmentHost, className, refName)
     -- get containerLocator
@@ -305,24 +305,24 @@ function enterprise_employment:getCurrentWorkerLocator()
 --        if turtle then direction = "top" end
 
         -- determine birth information
-        local parent = peripheral.wrap(direction)
-        local workerLocator = nil
+        local father = peripheral.wrap(direction)
+        local className = nil
+        local constructParameters = nil
         local birthLocation = nil
-        -- check if parent
-        if parent and parent.getID then
-            -- get parent id
-            local parentId = parent.getID()
+        -- check if there is a father
+        if father and father.getID then
+            -- get father id
+            local fatherId = father.getID()
 
-            -- get birth workerLocator
-            workerLocator = self:getAndRemoveBirthWorkerLocator(parentId)
-            if not workerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed getting workerLocator with parentId "..parentId) return false end
+            -- get birthCertificate
+            local birthCertificate = self:getAndRemoveBirthCertificate(fatherId)
+            if not birthCertificate then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed getting birthCertificate from fatherId "..fatherId) return false end
 
-            -- get Worker object
-            local workerObj = self:getObject(workerLocator)
-            if not workerObj then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed getting workerObj for "..workerLocator:getURI()) return false end
-
-            -- birthLocation
-            birthLocation = workerObj:getLocation()
+            -- determine hosting information
+            className = birthCertificate.className
+            constructParameters = birthCertificate.constructParameters
+            constructParameters.workerId = workerId
+            birthLocation = constructParameters.location
         else
             -- we seem to be alone, are we the first Turtle?
             if self:getNumberOfObjects("Turtle") == 0 and turtle then
@@ -330,28 +330,30 @@ function enterprise_employment:getCurrentWorkerLocator()
                 -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
                 --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
 
-                -- host the first Turtle
-                local coremove_location = Location:new(coremove.GetLocation())
-                workerLocator = self:hostMObj_SSrv({ className = "Turtle", constructParameters = {
+                -- determine hosting information
+                birthLocation = Location:newInstance(3, 2, 1, 0, 1)
+                className = "Turtle"
+                constructParameters = {
                     workerId    = workerId,
-                    location    = coremove_location,
-                }}).mobjLocator
-                if not workerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed hosting 1st Turtle "..workerId) return nil end
+                    location    = birthLocation,
+                }
             else
                 corelog.Error("enterprise_employment:getCurrentWorkerLocator: Real orphan "..workerId.." found. This should not happen!")
                 return nil
             end
-
-            -- birthLocation
-            birthLocation = Location:newInstance(3, 2, 1, 0, 1)
         end
 
+        -- host Worker
+        local workerLocator = self:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator
+        if not workerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed hosting new Worker "..workerId) return nil end
+
         -- set location
+        -- ToDo: consider removing/ doing differently?
         coremove.SetLocation(birthLocation)
 
         -- register Worker
         local registered = self:register(workerId, workerLocator)
-        if not registered then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed registering Worker "..workerId) return nil end
+        if not registered then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed registering new Worker "..workerId) return nil end
 
         -- define this as new workerLocator
         currentWorkerLocator = workerLocator
@@ -364,73 +366,78 @@ function enterprise_employment:getCurrentWorkerLocator()
     return currentWorkerLocator:copy()
 end
 
-function enterprise_employment:getAndRemoveBirthWorkerLocator(parentId)
-    -- get newWorkerLocators
-    local newWorkerLocators = GetContainer(self, "ObjArray", "newWorkerLocators")
-    if not newWorkerLocators then corelog.Error("enterprise_employment:getAndRemoveBirthWorkerLocator: Failed obtaining newWorkerLocators") return nil end
+function enterprise_employment:getAndRemoveBirthCertificate(fatherId)
+    --[[
+        This method provides the birthCertificate of Worker created by other Worker 'fatherId'.
 
-    -- get newWorkerLocator
-    for iCerticate, birthCertificate in ipairs(newWorkerLocators) do
-        if type(birthCertificate) == "table" and birthCertificate.fatherId == parentId then
+        Return value:
+            workerLocator       - (URL) locating the current Worker
+
+        Parameters:
+            fatherId            + (number) workerId of the father
+    --]]
+
+    -- get birthCertificates
+    local birthCertificates = GetContainer(self, "ObjArray", "birthCertificates")
+    if not birthCertificates then corelog.Error("enterprise_employment:getAndRemoveBirthCertificate: Failed obtaining birthCertificates") return nil end
+
+    -- get birthCertificate
+    for iCerticate, birthCertificate in ipairs(birthCertificates) do
+        if type(birthCertificate) == "table" and birthCertificate.fatherId == fatherId then
             -- remove certificate
-            table.remove(newWorkerLocators, iCerticate)
+            table.remove(birthCertificates, iCerticate)
 
-            -- save newWorkerLocators
-            local newWorkerLocatorsLocator = SaveContainer(self, newWorkerLocators, "ObjArray", "newWorkerLocators")
-            if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthWorkerLocator: Failed saving newWorkerLocators") return false end
+            -- save birthCertificates
+            local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "ObjArray", "birthCertificates")
+            if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthCertificate: Failed saving birthCertificates") return false end
 
-            --
-            return birthCertificate.workerLocator
+            -- end
+            return birthCertificate
         end
     end
 
     -- end
-    corelog.Warning("enterprise_employment:getAndRemoveBirthWorkerLocator: workerLocator for parent "..parentId.." not found")
+    corelog.Warning("enterprise_employment:getAndRemoveBirthCertificate: birthCertificate from father "..fatherId.." not found")
     return nil
 end
 
-function enterprise_employment:registerBirthWorkerLocator(...)
+function enterprise_employment:registerBirthCertificate(...)
     -- get & check input from description
-    local checkSuccess, parentId, newWorkerLocator = InputChecker.Check([[
-        This method bla bla bla
+    local checkSuccess, className, constructParameters = InputChecker.Check([[
+        This method registers birth information. The new born baby Worker should host itself in enterprise_employment using this birth information.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
 
         Parameters:
             serviceData                         - (table) data about this site
-                parentId                        + (number, -1) with the workerId of the parent
-                newWorkerLocator                + (URL) locating the new Worker
+                className                       + (string, "") with the name of the class of the Worker
+                constructParameters             + (table) parameters for constructing the Worker
     ]], table.unpack(arg))
-    -- ToDo for Guido:
-    --    parentId                        + (number, os.getComputerID<>) with the workerId of the parent
-    if not checkSuccess then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Invalid input") return false end
+    if not checkSuccess then corelog.Error("enterprise_employment:registerBirthCertificate: Invalid input") return false end
 
-    -- extra check input
-    if parentId == -1 then
-        parentId = os.getComputerID()
-    end
-
-    -- get newWorkerLocators
-    local newWorkerLocators = GetContainer(self, "ObjArray", "newWorkerLocators")
-    if not newWorkerLocators then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Failed obtaining newWorkerLocators") return false end
+    -- get birthCertificates
+    local birthCertificates = GetContainer(self, "ObjArray", "birthCertificates")
+    if not birthCertificates then corelog.Error("enterprise_employment:registerBirthCertificate: Failed obtaining birthCertificates") return false end
 
     -- add birthCertificate
+    local fatherId = os.getComputerID()
     local birthCertificate = {
-        fatherId = parentId,
-        workerLocator = newWorkerLocator,
+        fatherId            = fatherId,
+        className           = className,
+        constructParameters = constructParameters,
     }
-    table.insert(newWorkerLocators, birthCertificate)
+    table.insert(birthCertificates, birthCertificate)
 
-    -- save newWorkerLocators
-    local newWorkerLocatorsLocator = SaveContainer(self, newWorkerLocators, "ObjArray", "newWorkerLocators")
-    if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthWorkerLocator: Failed saving newWorkerLocators") return false end
+    -- save birthCertificates
+    local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "ObjArray", "birthCertificates")
+    if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthCertificate: Failed saving birthCertificates") return false end
 
     -- end
     return true
 end
 
-function enterprise_employment:buildHostRegisterAndBootWorker_ASrv(...)
+function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds, hosts, registers and boots a new Worker.
@@ -441,48 +448,57 @@ function enterprise_employment:buildHostRegisterAndBootWorker_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the hosted and build MObj
 
         Parameters:
             serviceData                         - (table) data about this site
-                className                       + (string, "") with the name of the class of the MObj
-                constructParameters             + (table) parameters for constructing the MObj
+                className                       + (string, "") with the name of the class of the Worker
+                constructParameters             + (table) parameters for constructing the Worker
                 materialsItemSupplierLocator    + (URL) locating the host for building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:buildHostRegisterAndBootWorker_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_employment:buildRegisterAndBootWorker_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    corelog.WriteToLog("enterprise_employment:buildHostRegisterAndBootWorker_ASrv(...) is zojuist gestart")
+    -- get class
+    local class = objectFactory:getClass(className)
+    if not class then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
+    if not Class.IsInstanceOf(class, IWorker) then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." is not an IWorker") return Callback.ErrorCall(callback) end
+
+    -- get blueprint
+    local buildLocation, blueprint = class.GetBuildBlueprint(constructParameters)
+    if not buildLocation or not blueprint then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local projectData = {
-        className                   = className,
-        constructParameters         = constructParameters,
+        buildLocation               = buildLocation,
+        blueprint                   = blueprint,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = wasteItemDepotLocator,
+
+        className                   = className,
+        constructParameters         = constructParameters,
 
         hostLocator                 = self:getHostLocator()
     }
     local projectDef = {
         steps   = {
-            -- host and build new Worker
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
+            -- build MObj in the world
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildBlueprint_ASrv" }, stepDataDef = {
+                { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
+                { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "host and build Worker"},
+            }, description = "Building "..className},
             -- register new born Worker
-            { stepType = "LSMtd", stepTypeDef = { methodName = "registerBirthWorkerLocator", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
---                { keyDef = "parentId"                       , sourceStep = 0, sourceKeyDef = "nil" },
-                { keyDef = "newWorkerLocator"               , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            }, description = "register new born Worker"},
+            { stepType = "LSMtd", stepTypeDef = { methodName = "registerBirthCertificate", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
+            }, description = "Register new born Worker"},
             -- boot new Worker
             -- ToDo:
         },
         returnData  = {
-            { keyDef = "mobjLocator"                , sourceStep = 1, sourceKeyDef = "mobjLocator" },
         }
     }
     local projectServiceData = {
