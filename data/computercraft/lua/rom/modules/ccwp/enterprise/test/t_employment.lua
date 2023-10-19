@@ -2,7 +2,6 @@ local t_employment = {}
 
 local corelog = require "corelog"
 
-local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 local Location = require "obj_location"
 
@@ -49,7 +48,7 @@ local workerId1 = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey = ""
 
-local constructParameters = {
+local constructParameters0 = {
     workerId        = workerId1,
     location        = location1,
 }
@@ -164,10 +163,10 @@ end
 function t_employment.T_hostMObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest0 = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey)
+    local fieldsTest0 = T_Turtle.CreateInitialisedTest(nil, workerId1, location1, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -179,7 +178,7 @@ function t_employment.T_buildAndHostMObj_ASrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -193,7 +192,7 @@ function t_employment.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -241,7 +240,7 @@ function t_employment.T_buildHostRegisterAndBootWorker_ASrv_Turtle()
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(enterprise_employment, "buildHostRegisterAndBootWorker_ASrv", {
         className                   = testMObjClassName,
-        constructParameters         = constructParameters,
+        constructParameters         = constructParameters0,
         materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     })
@@ -262,6 +261,5 @@ function t_employment.T_buildHostRegisterAndBootWorker_ASrv_Turtle()
     -- return mobjLocator
     return serviceResults.mobjLocator
 end
-
 
 return t_employment

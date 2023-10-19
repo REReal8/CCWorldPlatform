@@ -12,6 +12,7 @@ local Turtle = Class.NewClass(ObjBase, IMObj, IWorker, IItemSupplier, IItemDepot
 --]]
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 local coreinventory = require "coreinventory"
 local coremove = require "coremove"
 local coredisplay = require "coredisplay"
@@ -41,10 +42,11 @@ local enterprise_employment
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, workerId, location, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, workerId, location, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
+            id                      + (string) id of the Turtle
             workerId                + (number) workerId of the Turtle
             location                + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
@@ -53,6 +55,7 @@ function Turtle:_init(...)
 
     -- initialisation
     ObjBase._init(self)
+    self._id                = id
     self._workerId          = workerId
     self._location          = location
     self._fuelPriorityKey   = fuelPriorityKey
@@ -66,7 +69,8 @@ function Turtle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _workerId               + (number) workerId of the Turtle
+                _id                     - (string) id of the Turtle
+                _workerId               - (number) workerId of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
@@ -131,7 +135,8 @@ function Turtle:construct(...)
     if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
 
     -- construct new Turtle
-    local obj = Turtle:newInstance(workerId, location)
+    local id = coreutils.NewId()
+    local obj = Turtle:newInstance(id, workerId, location)
 
     -- end
     return obj
@@ -155,7 +160,7 @@ function Turtle:destruct()
 end
 
 function Turtle:getId()
-    return tostring(self._workerId)
+    return self._id
 end
 
 function Turtle:getWIPId()
