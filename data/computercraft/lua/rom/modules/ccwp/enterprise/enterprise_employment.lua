@@ -301,17 +301,15 @@ function enterprise_employment:getCurrentWorkerLocator()
     local currentWorkerLocator = self:getRegistered(workerId)
     if not currentWorkerLocator then
         -- get direction
-        local direction = "top" -- default for computer
---        if turtle then direction = "top" end
+        local direction = "top" -- note: maybe we do not want to have this fixed in the future
 
         -- determine birth information
-        local father = peripheral.wrap(direction) -- note: we access low level turtle functionality directly
-        -- ToDo: consider if we these low level functionality should be either moved into core OR into a role, as an enterprise is not supposed to do this
         local className = nil
         local constructParameters = nil
         local birthLocation = nil
-        -- check if there is a father
-        if father and father.getID then
+        local father = peripheral.wrap(direction) -- note: we access low level computer functionality directly
+        -- ToDo: consider if this low level functionality should be either moved into core OR into a role, as an enterprise is not supposed to access this
+        if father and father.getID then -- is there a father present?
             -- get father id
             local fatherId = father.getID()
 
@@ -324,24 +322,21 @@ function enterprise_employment:getCurrentWorkerLocator()
             constructParameters = birthCertificate.constructParameters
             constructParameters.workerId = workerId
             birthLocation = constructParameters.location
-        else
-            -- we seem to be alone, are we the first Turtle?
-            if self:getNumberOfObjects("Turtle") == 0 and turtle then
-                corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
-                -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
-                --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
+        elseif self:getNumberOfObjects("Turtle") == 0 and turtle then -- are we the first Turtle?
+            corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
+            -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
+            --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
 
-                -- determine hosting information
-                birthLocation = Location:newInstance(3, 2, 1, 0, 1)
-                className = "Turtle"
-                constructParameters = {
-                    workerId    = workerId,
-                    location    = birthLocation,
-                }
-            else
-                corelog.Error("enterprise_employment:getCurrentWorkerLocator: Real orphan "..workerId.." found. This should not happen!")
-                return nil
-            end
+            -- determine hosting information
+            birthLocation = Location:newInstance(3, 2, 1, 0, 1)
+            className = "Turtle"
+            constructParameters = {
+                workerId    = workerId,
+                location    = birthLocation,
+            }
+        else -- forgotten (not in dht) or abandonded (by father)
+            corelog.Error("enterprise_employment:getCurrentWorkerLocator: Worker "..workerId.." seems to have been forgotten or abandoned. => bailing out")
+            return nil
         end
 
         -- host Worker
