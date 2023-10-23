@@ -81,7 +81,7 @@ function role_interactor.TurnOnWorker_Task(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_interactor.TurnOnWorker_Task: Invalid input") return {success = false} end
 
-    corelog.WriteToLog("Starting TurnOnWorker_Task:")
+    corelog.WriteToLog("   starting TurnOnWorker_Task...")
 
     -- move adjacent to Worker
     local workingLocation = workerLocation:getWorkingLocation(accessDirection)
@@ -120,6 +120,8 @@ function role_interactor.TurnOnWorker_Task(...)
     if not workerLocator then corelog.Warning("role_interactor.TurnOnWorker_Task: Could not find workerLocator for worker "..workerId) return {success = false} end
     -- corelog.WriteToLog("workerLocator:")
     -- corelog.WriteToLog(workerLocator)
+
+    corelog.WriteToLog("  completed TurnOnWorker_Task...")
 
     -- end
     local result = {
