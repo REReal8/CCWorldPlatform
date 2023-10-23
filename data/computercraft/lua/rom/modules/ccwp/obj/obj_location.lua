@@ -300,6 +300,42 @@ function Location:getRelativeLocationRight(steps)
     return newLocation
 end
 
+function Location:getWorkingLocation(...)
+    -- get & check input from description
+    local checkSuccess, accessDirection = InputChecker.Check([[
+        This function returns the working location (including orientation) to access an MObj from an 'accessDirection'.
+
+        Return value:
+                            - (table) working location
+
+        Parameters:
+            accessDirection + (string) whether to access MObj from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Location:getWorkingLocation: Invalid input") return nil end
+
+    -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
+    local workingDirection = self:copy()
+    if accessDirection == "bottom" then
+        workingDirection = workingDirection:getRelativeLocationDown()
+    elseif accessDirection == "top" then
+        workingDirection = workingDirection:getRelativeLocationUp()
+    elseif accessDirection == "left" then
+        workingDirection = workingDirection:getRelativeLocationRight()
+        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
+    elseif accessDirection == "right" then
+        workingDirection = workingDirection:getRelativeLocationLeft()
+        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
+    elseif accessDirection == "front" then
+        workingDirection = workingDirection:getRelativeLocationFront()
+        workingDirection = workingDirection:getRelativeLocationLeft(2) -- ensure facing back to location
+    elseif accessDirection == "back" then
+        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
+    else corelog.Error("Location:getWorkingLocation: Unsupported accessDirection="..accessDirection) return nil end
+
+    -- end
+    return workingDirection
+end
+
 function Location:blockDistanceTo(o)
     -- check input
     if not Class.IsInstanceOf(o, Location) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return Location.FarX() + Location.FarY() + Location.FarZ() end

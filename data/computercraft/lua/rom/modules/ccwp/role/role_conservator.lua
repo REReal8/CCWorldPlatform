@@ -22,43 +22,6 @@ local enterprise_employment
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-local function GetWorkingLocation(...)
-    -- get & check input from description
-    local checkSuccess, location, accessDirection = InputChecker.Check([[
-        This function returns the working location (including orientation) for a Chest.
-
-        Return value:
-                            - (table) working location
-
-        Parameters:
-            location        + (Location) location of the chest
-            accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_conservator.GetWorkingLocation: Invalid input") return nil end
-
-    -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
-    local workingDirection = location:copy()
-    if accessDirection == "bottom" then
-        workingDirection = workingDirection:getRelativeLocationDown()
-    elseif accessDirection == "top" then
-        workingDirection = workingDirection:getRelativeLocationUp()
-    elseif accessDirection == "left" then
-        workingDirection = workingDirection:getRelativeLocationRight()
-        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
-    elseif accessDirection == "right" then
-        workingDirection = workingDirection:getRelativeLocationLeft()
-        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
-    elseif accessDirection == "front" then
-        workingDirection = workingDirection:getRelativeLocationFront()
-        workingDirection = workingDirection:getRelativeLocationLeft(2) -- ensure facing back to location
-    elseif accessDirection == "back" then
-        workingDirection = workingDirection:getRelativeLocationFront(- 1) -- back
-    else corelog.Error("role_conservator.GetWorkingLocation: Unsupported accessDirection="..accessDirection) return nil end
-
-    -- end
-    return workingDirection
-end
-
 function role_conservator.FetchChestSlotsInventory_MetaData(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection = InputChecker.Check([[
@@ -68,14 +31,14 @@ function role_conservator.FetchChestSlotsInventory_MetaData(...)
                                 - (table) metadata
 
         Parameters:
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
             taskData            - (table) data about the Chest
                 location        + (Location) location of the Chest
+                accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_MetaData: Invalid input") return {} end
 
     -- determine needed items
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if not workingLocation then corelog.Error("role_conservator.FetchChestSlotsInventory_MetaData: Failed to determine workingLocation") return {} end
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
@@ -119,14 +82,14 @@ function role_conservator.FetchChestSlotsInventory_Task(...)
                 inventory       - (Inventory) the Inventory of the Chest
 
         Parameters:
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
             taskData            - (table) data about the Chest
                 location        + (Location) location of the Chest
+                accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if type(workingLocation) ~= "table" then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
@@ -159,15 +122,15 @@ function role_conservator.FetchItemsFromChestIntoTurtle_MetaData(...)
         Parameters:
             taskData            - (table) data about the task
                 turtleId        + (number, -1) optional id of the turtle that should get the items
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 location        + (Location) location of the Chest
+                accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 itemsQuery      - (table) which items to be fetched
                 priorityKey     + (string, "") priorityKey for this assignment
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_MetaData: Invalid input") return { } end
 
     -- determine needed items
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if not workingLocation then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_MetaData: Failed to determine workingLocation") return {} end
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
@@ -279,15 +242,15 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
         Parameters:
             taskData                    - (table) data about the task
                 turtleId                - (number, -1) optional id of the turtle that should get the items
-                accessDirection         + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 location                + (Location) location of the Chest
+                accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 itemsQuery              + (table) which items to be fetched
                 workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if type(workingLocation) ~= "table" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
@@ -375,14 +338,14 @@ function role_conservator.PutItemsFromTurtleIntoChest_MetaData(...)
             taskData            - (table) data about the task
                 turtleId        + (number) id of the turtle that has the items
                 itemsQuery      - (table) which items to be put
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 location        + (Location) location of the Chest
+                accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 priorityKey     + (string, "") priorityKey for this assignment
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if not workingLocation then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_MetaData: Failed to determine workingLocation") return {} end
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
@@ -414,8 +377,8 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
             taskData            - (table) data about the task
                 turtleId        + (number) id of the turtle that has the items
                 itemsQuery      + (table) which items to be put
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 location        + (Location) location of the Chest
+                accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: Invalid input") return {success = false} end
 
@@ -424,7 +387,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
     if currentTurtleId ~= turtleId then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: incorrect turtle(id="..currentTurtleId..") to execute specific turtle(id="..turtleId..")") return {success = false} end
 
     -- move to workingLocation
-    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local workingLocation = location:getWorkingLocation(accessDirection)
     if type(workingLocation) ~= "table" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
