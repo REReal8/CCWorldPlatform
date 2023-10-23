@@ -371,12 +371,12 @@ function Chest:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check if ItemDepot is a Worker (Turtle)
+    -- check if ItemDepot is a Turtle
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local workerId = -1
-    if enterprise_employment:isLocatorFromHost(itemDepotLocator) then
-        local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
-        workerId = turtleObj:getWorkerId()
+    local depotTurtleId = -1
+    if ObjHost.GetClassName(itemDepotLocator) == Turtle:getClassName() and not itemDepotLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
+        local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining Turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
+        depotTurtleId = turtleObj:getWorkerId()
     end
 
     -- create project definition
@@ -385,7 +385,7 @@ function Chest:provideItemsTo_AOSrv(...)
         accessDirection = self:getAccessDirection(),
         itemsQuery      = provideItems,
 
-        turtleId        = workerId,
+        turtleId        = depotTurtleId,
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
