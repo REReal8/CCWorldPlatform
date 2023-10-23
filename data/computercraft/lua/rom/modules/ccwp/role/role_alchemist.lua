@@ -251,7 +251,7 @@ function role_alchemist.Craft_Task(...)
     PrepareCraftingArea(recipe, times)
     turtle.craft()
 
-    -- re-take the stuff from the chest below
+    -- re-take the stuff from the Chest below
     coreinventory.GetAllItems("down")
 
     -- determine output items

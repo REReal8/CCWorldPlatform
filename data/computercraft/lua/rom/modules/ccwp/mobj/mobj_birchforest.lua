@@ -48,8 +48,8 @@ function BirchForest:_init(...)
             level                   + (number) level of the BirchForest
             baseLocation            + (Location) base location of the BirchForest
             nTrees                  + (number) # trees in the BirchForest
-            localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a chest)
-            localSaplingsLocator    + (URL) locating the local ItemSupplier of saplings (e.g. a chest)
+            localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a Chest)
+            localSaplingsLocator    + (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("BirchForest:_init: Invalid input") return nil end
 
@@ -75,8 +75,8 @@ function BirchForest:new(...)
                 _level                  - (number) level of the BirchForest
                 _baseLocation           - (Location) base location of the BirchForest
                 _nTrees                 - (number) # trees in the BirchForest
-                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
-                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
+                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a Chest)
+                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return nil end
 

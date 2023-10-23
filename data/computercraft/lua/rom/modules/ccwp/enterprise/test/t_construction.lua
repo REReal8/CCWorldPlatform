@@ -93,12 +93,12 @@ end
 
 function t_construction.T_BuildLayer_ASrv_FromChest()
     -- test service
-    corelog.WriteToLog("* BuildLayer_ASrv (from chest) test")
+    corelog.WriteToLog("* BuildLayer_ASrv (from Chest) test")
 
     -- create project definition
     local buildRectangularPattern_ASrvProjectDef = {
         steps   = {
-            -- host and update chest
+            -- host and update Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "StartProject_ASrv" }, stepDataDef = {
                 { keyDef = "projectDef"             , sourceStep = 0, sourceKeyDef = "projectDef" },
                 { keyDef = "projectData"            , sourceStep = 0, sourceKeyDef = "projectData" },
@@ -122,7 +122,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
     local projectServiceData = {
         projectDef  = buildRectangularPattern_ASrvProjectDef,
         projectData = {
-            -- chest
+            -- Chest
             projectDef  = t_chests.GetHostAndUpdateChestProjectDef(),
             projectData = {
                 hostLocator         = enterprise_chests:getHostLocator(),

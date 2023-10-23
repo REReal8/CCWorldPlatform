@@ -72,7 +72,7 @@ function t_foresting.T_BirchGrow()
         logs        = coreinventory.CountItem("minecraft:birch_log")
         sticks      = coreinventory.CountItem("minecraft:stick")
 
-        -- sapling in the chest
+        -- sapling in the Chest
         coreinventory.DropAll("minecraft:birch_sapling", "down")
 
         -- use as fuel what we can

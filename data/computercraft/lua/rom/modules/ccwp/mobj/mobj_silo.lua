@@ -7,7 +7,7 @@ local IItemDepot = require "i_item_depot"
 local Silo = Class.NewClass(ObjBase, IMObj, IItemSupplier, IItemDepot)
 
 --[[
-    The Silo mobj represents a chest in the minecraft world and provides services to operate on that Silo.
+    The Silo mobj represents a Silo in the minecraft world and provides services to operate on that Silo.
 
     The following design decisions are made
         - The actual Silo's should never be accessed directly but only via the services of this mobj.
@@ -47,10 +47,10 @@ function Silo:_init(...)
             id                      + (string) id of the Silo
             baseLocation            + (Location) base location of the Silo
             entryLocation           + (Location) entry location of the Silo
-            dropLocation            + (number) top chest index
-            pickupLocation          + (number) top chest index
-            topChests               + (ObjArray) with top chests
-            storageChests           + (ObjArray) with storage chests
+            dropLocation            + (number) top Chest index
+            pickupLocation          + (number) top Chest index
+            topChests               + (ObjArray) with top Chest's
+            storageChests           + (ObjArray) with storage Chest's
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:_init: Invalid input") return nil end
 
@@ -76,10 +76,10 @@ function Silo:new(...)
                 _id                     - (string) id of the Silo
                 _baseLocation           - (Location) base location of the Silo
                 _entryLocation          - (Location) entry location of the Silo
-                _dropLocation           - (number) top chest index
-                _pickupLocation         - (number) top chest index
-                _topChests              - (ObjArray) with top chests
-                _storageChests          - (ObjArray) with storage chests
+                _dropLocation           - (number) top Chest index
+                _pickupLocation         - (number) top Chest index
+                _topChests              - (ObjArray) with top Chest's
+                _storageChests          - (ObjArray) with storage Chest's
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
 
@@ -482,13 +482,13 @@ function Silo:provideItemsTo_AOSrv(...)
     }
     local projectDef = {
         steps   = {
-            -- roept functie aan die goederen uit de silo naar de top chest brengt
+            -- roept functie aan die goederen uit de Silo naar de top Chest brengt
             { stepType = "AOSrv", stepTypeDef = { className = "Silo", serviceName = "fromSiloIntoTopchest_AOSrv", objStep = 0, objKeyDef = "silo" }, stepDataDef = {
                 { keyDef = "provideItems"           , sourceStep = 0, sourceKeyDef = "provideItems" },
                 { keyDef = "pickupLocator"          , sourceStep = 0, sourceKeyDef = "pickupLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
-            -- roept functie aan die goederen van top chest naar destination brengt
+            -- roept functie aan die goederen van top Chest naar destination brengt
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
@@ -533,16 +533,16 @@ function Silo:can_ProvideItems_QOSrv(...)
     --    return {success = false, message = "silo not operational"}
     end
 
-    -- loop all storage chests to see if we can deliver
-    -- version 0.2, only intersted if 1 chest can fully deliver (no partial deliveries yet)
+    -- loop all storage Chest's to see if we can deliver
+    -- version 0.2, only intersted if 1 Chest can fully deliver (no partial deliveries yet)
     for i, chestLocator in ipairs(self._storageChests) do
-        -- get the chest
+        -- get the Chest
         local chest     = ObjHost.GetObject(chestLocator)
 
         -- valid opbject?
         if chest then
 
-            -- get the inventory of this chest
+            -- get the inventory of this Chest
             local inventory = chest:getInventory()
 
             -- valid object?
@@ -914,13 +914,13 @@ end
 --]]
 
 function Silo:IntegretyCheck(...)
-    -- check all top chests
+    -- check all top Chest's
     for i, chestLocator in ipairs(self._topChests) do
         local chest = ObjHost.GetObject(chestLocator)
         if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
     end
 
-    -- check all storage chests
+    -- check all storage Chest's
     for i, chestLocator in ipairs(self._storageChests) do
         local chest = ObjHost.GetObject(chestLocator)
         if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
@@ -929,7 +929,7 @@ end
 
 function Silo:GetChestInventory(chestLocator)
     local chest = ObjHost.GetObject(chestLocator)
-    if chest then corelog.WriteToLog("Getting chest inventory") return chest:getInventory() end
+    if chest then corelog.WriteToLog("Getting Chest inventory") return chest:getInventory() end
 end
 
 return Silo

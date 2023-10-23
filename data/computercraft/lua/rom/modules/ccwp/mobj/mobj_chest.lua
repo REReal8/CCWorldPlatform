@@ -27,6 +27,8 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
+local Turtle = require "mobj_turtle"
+
 local role_energizer = require "role_energizer"
 local role_conservator = require "role_conservator"
 
@@ -133,7 +135,7 @@ function Chest:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Chest
                 baseLocation            + (Location) base location of the Chest
-                accessDirection         + (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+                accessDirection         + (string, "top") whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:construct: Invalid input") return nil end
 
@@ -203,7 +205,7 @@ function Chest.GetBuildBlueprint(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Chest
                 baseLocation            + (Location) base location of the Chest
-                accessDirection         - (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+                accessDirection         - (string, "top") whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest.GetBuildBlueprint: Invalid input") return nil, nil end
 
@@ -277,10 +279,10 @@ end
 function Chest:updateChestRecord_AOSrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
-        This async service brings the records of the chest up-to-date by fetching information and (re)setting the chest records.
+        This async service brings the records of the Chest up-to-date by fetching information and (re)setting the Chest records.
 
         Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
-        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
+        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the Chest records could have been corrupted.
 
         Return value:
                                 - (boolean) whether the service was scheduled successfully
@@ -288,7 +290,7 @@ function Chest:updateChestRecord_AOSrv(...)
         Async service return value (to Callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
-                chest           - (table) the chest
+                chest           - (table) the Chest
 
         Parameters:
             serviceData         - (table) data about the service
@@ -314,14 +316,14 @@ function Chest:updateChestRecord_AOSrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
-            }, description = "Fetching chest inventory"},
-            -- save chest
+            }, description = "Fetching Chest inventory"},
+            -- save Chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
                 { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
-            }, description = "Saving chest "..self:getId()},
+            }, description = "Saving Chest "..self:getId()},
         },
         returnData  = {
         }
@@ -399,12 +401,12 @@ function Chest:provideItemsTo_AOSrv(...)
     }
     local projectDef = {
         steps   = {
-            -- put items from chest
+            -- put items from Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
-            -- save chest
+            -- save Chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
@@ -484,7 +486,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
         if type(itemName) ~= "string" then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
-        -- fuelNeed from chest to itemDepotLocator
+        -- fuelNeed from Chest to itemDepotLocator
         local serviceData = {
             itemDepotLocator = itemDepotLocator,
         }
@@ -588,14 +590,14 @@ function Chest:storeItemsFrom_AOSrv(...)
             -- obtain workerId
             { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
-            -- put items into chest
+            -- put items into Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "metaData.needTurtleId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
                 { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "methodResults" },
             }},
-            -- save chest
+            -- save Chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },

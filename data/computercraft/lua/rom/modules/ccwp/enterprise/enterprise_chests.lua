@@ -66,7 +66,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
-    -- get chest
+    -- get Chest
     local chest = enterprise_chests:getObject(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
 
@@ -98,7 +98,7 @@ function enterprise_chests.GetItemDepotLocation_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
-    -- get chest
+    -- get Chest
     local chest = enterprise_chests:getObject(itemDepotLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
 

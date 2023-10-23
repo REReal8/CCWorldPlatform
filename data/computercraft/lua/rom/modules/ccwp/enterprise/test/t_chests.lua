@@ -50,7 +50,7 @@ local constructParameters1 = {
 --   |___/\___|_|    \_/ |_|\___\___|
 
 function t_chests.T_hostAndUpdateChest()
-    corelog.WriteToLog("* Test host and update chest")
+    corelog.WriteToLog("* Test host and update Chest")
     local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
 
     -- create project
@@ -65,7 +65,7 @@ function t_chests.T_hostAndUpdateChest()
     local projectServiceData = {
         projectDef  = t_chests.GetHostAndUpdateChestProjectDef(),
         projectData = projectData,
-        projectMeta = { title = "Testing", description = "Register and update chest" },
+        projectMeta = { title = "Testing", description = "Register and update Chest" },
     }
 
     -- start project

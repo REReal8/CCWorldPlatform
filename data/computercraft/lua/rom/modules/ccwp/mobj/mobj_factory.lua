@@ -25,9 +25,9 @@ local Factory = Class.NewClass(ObjBase, IMObj, IItemSupplier)
             - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed.
             - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
         - Level 2:
-            - an ingredient input chest
-            - an product output chest
-            - one crafting spot. Below the crafting spot is a chest as a temporary ItemDepot for items not needed.
+            - an ingredient input Chest
+            - an product output Chest
+            - one crafting spot. Below the crafting spot is a Chest as a temporary ItemDepot for items not needed.
             - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
 --]]
 
@@ -1019,8 +1019,8 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
 
         Parameters:
             serviceData                 - (table) data to the query
-                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
-                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
+                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
+                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
                 productionSpot          + (ProductionSpot) production spot
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
@@ -1072,8 +1072,8 @@ function Factory.ProduceItem_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data for the service
-                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
-                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
+                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
+                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
                 productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce

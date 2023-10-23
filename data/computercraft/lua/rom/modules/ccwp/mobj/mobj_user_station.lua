@@ -42,8 +42,8 @@ function UserStation:_init(...)
         Parameters:
             workerId                + (number) workerId of the UserStation
             baseLocation            + (Location) base location of the UserStation
-            inputLocator            + (URL) input  chest of the UserStation (where items will be picked up from)
-            outputLocator           + (URL) output chest of the UserStation (where items will be delivered)
+            inputLocator            + (URL) input Chest of the UserStation (where items will be picked up from)
+            outputLocator           + (URL) output Chest of the UserStation (where items will be delivered)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:_init: Invalid input") return nil end
 
@@ -65,8 +65,8 @@ function UserStation:new(...)
             o                           + (table, {}) with object fields
                 _workerId               + (number) workerId of the UserStation
                 _baseLocation           - (Location) location of the UserStation
-                _inputLocator           - (URL) input chest of the UserStation
-                _outputLocator          - (URL) output chest of the UserStation
+                _inputLocator           - (URL) input Chest of the UserStation
+                _outputLocator          - (URL) output Chest of the UserStation
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:new: Invalid input") return nil end
 
@@ -455,11 +455,11 @@ function UserStation:storeItemsFrom_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get output chest
+    -- get output Chest
     local outputChest = enterprise_chests:getObject(self._outputLocator)
     if not outputChest then corelog.Error("UserStation:storeItemsFrom_AOSrv: Failed getting outputChest object") return Callback.ErrorCall(callback) end
 
-    -- pass to output chest
+    -- pass to output Chest
     return outputChest:storeItemsFrom_AOSrv(table.unpack(arg))
 end
 
@@ -480,11 +480,11 @@ function UserStation:can_StoreItems_QOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
-    -- get output chest
+    -- get output Chest
     local outputChest = enterprise_chests:getObject(self._outputLocator)
     if not outputChest then corelog.Error("UserStation:can_StoreItems_QOSrv: Failed getting outputChest object") return {success = false} end
 
-    -- pass to output chest
+    -- pass to output Chest
     return outputChest:can_StoreItems_QOSrv(table.unpack(arg))
 end
 
@@ -506,11 +506,11 @@ function UserStation:needsTo_StoreItemsFrom_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
-    -- get output chest
+    -- get output Chest
     local outputChest = enterprise_chests:getObject(self._outputLocator)
     if not outputChest then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Failed getting outputChest object") return {success = false} end
 
-    -- pass to output chest
+    -- pass to output Chest
     return outputChest:needsTo_StoreItemsFrom_SOSrv(table.unpack(arg))
 end
 

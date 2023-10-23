@@ -68,9 +68,9 @@ function role_conservator.FetchChestSlotsInventory_MetaData(...)
                                 - (table) metadata
 
         Parameters:
-            taskData            - (table) data about the chest
-                location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+            taskData            - (table) data about the Chest
+                location        + (Location) location of the Chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_MetaData: Invalid input") return {} end
 
@@ -109,19 +109,19 @@ end
 function role_conservator.FetchChestSlotsInventory_Task(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection = InputChecker.Check([[
-        This Task function fetches the slots inventory of a chest.
+        This Task function fetches the slots inventory of a Chest.
 
         The slots inventory is retrieved by the list method as described here: https://tweaked.cc/generic_peripheral/inventory.html
 
         Return value:
                                 - (table)
                 success         - (boolean) when the inventory was successfully retrieved
-                inventory       - (Inventory) the Inventory of the chest
+                inventory       - (Inventory) the Inventory of the Chest
 
         Parameters:
-            taskData            - (table) data about the chest
-                location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+            taskData            - (table) data about the Chest
+                location        + (Location) location of the Chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: Invalid input") return {success = false} end
 
@@ -131,10 +131,10 @@ function role_conservator.FetchChestSlotsInventory_Task(...)
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
-    -- get access to chest
+    -- get access to Chest
     local peripheralName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(peripheralName)
-    if type(chest) ~= "table" then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- get inventory
     local slots = chest.list()
@@ -159,8 +159,8 @@ function role_conservator.FetchItemsFromChestIntoTurtle_MetaData(...)
         Parameters:
             taskData            - (table) data about the task
                 turtleId        + (number, -1) optional id of the turtle that should get the items
-                location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                location        + (Location) location of the Chest
                 itemsQuery      - (table) which items to be fetched
                 priorityKey     + (string, "") priorityKey for this assignment
     ]], table.unpack(arg))
@@ -193,7 +193,7 @@ end
 
 local function MakeSlotEmpty(chestName, slotToClear)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_conservator.MakeSlotEmpty: No chest with chestName = "..chestName..".") return false end
+    if type(chest) ~= "table" then corelog.Error("role_conservator.MakeSlotEmpty: No Chest with chestName = "..chestName..".") return false end
 
     -- get slots inventory
     local slots = chest.list()
@@ -268,19 +268,19 @@ end
 function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection, itemsQuery, turtleLocator = InputChecker.Check([[
-        This Task function fetches items from a chest into the inventory of a turtle.
+        This Task function fetches items from a Chest into the inventory of a turtle.
 
         Return value:
                                         - (table)
                 success                 - (boolean) whether the items were successfully fetched
-                inventory               - (Inventory) the Inventory of the chest (after the items have been removed)
+                inventory               - (Inventory) the Inventory of the Chest (after the items have been removed)
                 turtleOutputItemsLocator- (URL) locating the items that where fetched (into a turtle)
 
         Parameters:
             taskData                    - (table) data about the task
                 turtleId                - (number, -1) optional id of the turtle that should get the items
-                location                + (Location) location of the chest
                 accessDirection         + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                location                + (Location) location of the Chest
                 itemsQuery              + (table) which items to be fetched
                 workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
@@ -292,10 +292,10 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
-    -- get access to chest
+    -- get access to Chest
     local chestName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- loop on requested items
     local itemResultQuery = {}
@@ -303,12 +303,12 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
---        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
+--        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from Chest into Turtle")
 
         -- check enough items
         local inventory = Inventory:newInstance(chest.list())
         local items = inventory:getItemTable()
-        if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in chest.") return {success = false} end
+        if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in Chest.") return {success = false} end
 
         -- empty first slot
         local firstSlot = 1
@@ -333,7 +333,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
                     -- suck the items
                     local itemsSucked = Suck(chestName, countToMove)
 --                    corelog.WriteToLog("   itemsSucked "..itemsSucked)
-                    if itemsSucked ~= countToMove then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..countToMove..") "..requestItemName.." items sucked (="..itemsSucked..") from chest.") return {success = false} end
+                    if itemsSucked ~= countToMove then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..countToMove..") "..requestItemName.." items sucked (="..itemsSucked..") from Chest.") return {success = false} end
                     itemResultQuery[requestItemName] = (itemResultQuery[requestItemName] or 0) + tonumber(itemsSucked)
 
                     -- more to move for this requested item?
@@ -375,8 +375,8 @@ function role_conservator.PutItemsFromTurtleIntoChest_MetaData(...)
             taskData            - (table) data about the task
                 turtleId        + (number) id of the turtle that has the items
                 itemsQuery      - (table) which items to be put
-                location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                location        + (Location) location of the Chest
                 priorityKey     + (string, "") priorityKey for this assignment
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_MetaData: Invalid input") return {success = false} end
@@ -403,19 +403,19 @@ end
 function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
     -- get & check input from description
     local checkSuccess, turtleId, itemsQuery, location, accessDirection = InputChecker.Check([[
-        This Task function puts items from a the inventory of a turtle into a chest.
+        This Task function puts items from a the inventory of a Turtle into a Chest.
 
         Return value:
                                 - (table)
                 success         - (boolean) whether the items were successfully put
-                inventory       - (Inventory) the Inventory of the chest (after the items have been put)
+                inventory       - (Inventory) the Inventory of the Chest (after the items have been put)
 
         Parameters:
             taskData            - (table) data about the task
                 turtleId        + (number) id of the turtle that has the items
                 itemsQuery      + (table) which items to be put
-                location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                location        + (Location) location of the Chest
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: Invalid input") return {success = false} end
 
@@ -429,24 +429,24 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
-    -- get access to chest
+    -- get access to Chest
     local chestName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- loop on requested items
     for requestItemName, requestItemCount in pairs(itemsQuery) do
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
---        corelog.WriteToLog("   putting "..requestItemCount.." "..requestItemName.."'s from turtle into chest")
+--        corelog.WriteToLog("   putting "..requestItemCount.." "..requestItemName.."'s from turtle into Chest")
 
         -- check enough items
         local turtleInventory = coreinventory.GetInventoryDetail()
         if turtleInventory.items[requestItemName] < requestItemCount then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..turtleInventory.items[requestItemName]..") in inventory of turtle.") return {success = false} end
 
-        -- drop the items into chest
-        -- ToDo: handling (not enough) space in chest
+        -- drop the items into Chest
+        -- ToDo: handling (not enough) space in Chest
         local remainingItemsToDrop = requestItemCount
         for slot, turtleItem in pairs(turtleInventory.slots) do
             -- check
@@ -459,7 +459,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
 
                 -- move items to
                 local countToDrop = math.min(remainingItemsToDrop, turtleItem.itemCount)
---                corelog.WriteToLog("   dropping "..countToDrop.." "..turtleItem.itemName.." from turtle slot "..slot.." to chest")
+--                corelog.WriteToLog("   dropping "..countToDrop.." "..turtleItem.itemName.." from turtle slot "..slot.." to Chest")
                 local itemsDropped = Drop(chestName, countToDrop)
 
                 -- more to move for this requested item?
@@ -471,7 +471,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
 
     -- get final inventory
     local slots = chest.list()
-    -- ToDo: consider double checking only exactly the requested items were put into the chest
+    -- ToDo: consider double checking only exactly the requested items were put into the Chest
     local inventory = Inventory:newInstance(slots)
 
     -- end

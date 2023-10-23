@@ -112,8 +112,8 @@ end
 function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
 
-    -- setup timer for input chest checking
-    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_user_station", "input chest timer")
+    -- setup timer for input Chest checking
+    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_user_station", "input Chest timer")
 
     -- check input box for the first time!
     DoEventInputChestTimer()
@@ -133,7 +133,7 @@ function DoEventInputChestTimer()
     coretask.AddWork(CheckInputChest, {})
 
     -- create new event
-    coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", "input chest timer")
+    coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", "input Chest timer")
 end
 
 function CheckInputChest()
