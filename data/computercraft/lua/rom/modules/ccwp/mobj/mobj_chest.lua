@@ -369,7 +369,7 @@ function Chest:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check if ItemDepot is a turtle
+    -- check if ItemDepot is a Worker (Turtle)
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerId = -1
     if enterprise_employment:isLocatorFromHost(itemDepotLocator) then
