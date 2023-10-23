@@ -72,7 +72,7 @@ R  use MObjHost class                                                           
       R  generalize specific enterprise_employment methods to handle any IWorker                                        (done)
       R  modify bootstrapping users of enterprise_workforce/ Turtle to use generalised enterprise_workforce methods     (done)
       -  enable booting a new IWorker, possibly after supplying it with some starting resources
-         -  in general: startup, getComputerID, set in Obj, reboot
+         R  in general: startup, getComputerID, set in Obj, reboot                                                      (done)
          -  in case of a turtle: provide with some fuel?, maybe a pickaxe, a modem and a crafting station?
 
 -  consider merging enterprise_chest into enterprise_storage
