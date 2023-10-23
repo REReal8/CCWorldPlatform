@@ -589,9 +589,18 @@ function Silo:needsTo_ProvideItemsTo_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
+    -- determine fuelNeed
+    corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: coarse estimated provided => better needed")
     -- ToDo: implement
-    corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: not yet implemented")
-    return {success = true, fuelNeed = 10 + #self._storageChests}
+    local fuelNeed = 10 + #self._storageChests
+
+    -- end
+    local ingredientsNeed = {}
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
+    }
 end
 
 --    _____ _____ _                 _____                   _
