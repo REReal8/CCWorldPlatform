@@ -590,7 +590,7 @@ function Silo:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Silo:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- determine fuelNeed
-    corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: coarse estimated provided => better needed")
+    corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: coarse estimate of fuel provided => better needed")
     -- ToDo: implement
     local fuelNeed = 10 + #self._storageChests
 
