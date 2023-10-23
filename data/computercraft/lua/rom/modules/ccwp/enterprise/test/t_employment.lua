@@ -252,6 +252,11 @@ function t_employment.T_buildRegisterAndBootWorker_ASrv_Turtle()
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
+    -- check: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
+    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
+    local mobj = enterprise_employment:getObject(mobjLocator)
+    assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..enterprise_employment:getHostName())
+
     -- check: Worker registered/ booted
     -- ToDo: implement this once we add booting
 

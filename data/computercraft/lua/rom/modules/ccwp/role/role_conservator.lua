@@ -54,8 +54,6 @@ function role_conservator.FetchChestSlotsInventory_MetaData(...)
     }
 end
 
-
-
 function role_conservator.FetchChestSlotsInventory_Task(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection = InputChecker.Check([[

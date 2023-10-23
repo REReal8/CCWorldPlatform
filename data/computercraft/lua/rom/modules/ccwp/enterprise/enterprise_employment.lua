@@ -13,6 +13,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
@@ -24,6 +25,8 @@ local Location  = require "obj_location"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local Turtle = require "mobj_turtle"
+
+local role_interactor = require "role_interactor"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_shop = require "enterprise_shop"
@@ -307,6 +310,7 @@ function enterprise_employment:getCurrentWorkerLocator()
         local className = nil
         local constructParameters = nil
         local birthLocation = nil
+        local workerName = "<unknown>"
         local father = peripheral.wrap(direction) -- note: we access low level computer functionality directly
         -- ToDo: consider if this low level functionality should be either moved into core OR into a role, as an enterprise is not supposed to access this
         if father and father.getID then -- is there a father present?
@@ -322,6 +326,9 @@ function enterprise_employment:getCurrentWorkerLocator()
             constructParameters = birthCertificate.constructParameters
             constructParameters.workerId = workerId
             birthLocation = constructParameters.location
+
+            -- determine workerName
+            workerName = className..""..tostring(workerId).." van der Turtle"..tostring(fatherId)
         elseif self:getNumberOfObjects("Turtle") == 0 and turtle then -- are we the first Turtle?
             corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
             -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
@@ -334,6 +341,9 @@ function enterprise_employment:getCurrentWorkerLocator()
                 workerId    = workerId,
                 location    = birthLocation,
             }
+
+            -- determine workerName
+            workerName = className.." "..tostring(workerId).." van der Creator"
         else -- forgotten (not in dht) or abandonded (by father)
             corelog.Error("enterprise_employment:getCurrentWorkerLocator: Worker "..workerId.." seems to have been forgotten or abandoned. => bailing out")
             return nil
@@ -350,6 +360,9 @@ function enterprise_employment:getCurrentWorkerLocator()
         -- register Worker
         local registered = self:register(workerId, workerLocator)
         if not registered then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed registering new Worker "..workerId) return nil end
+
+        -- set label
+        os.setComputerLabel(workerName)
 
         -- define this as new workerLocator
         currentWorkerLocator = workerLocator
@@ -397,24 +410,26 @@ function enterprise_employment:getAndRemoveBirthCertificate(fatherId)
     return nil
 end
 
-function enterprise_employment:registerBirthCertificate(...)
+function enterprise_employment:registerBirthCertificate_SOSrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters = InputChecker.Check([[
-        This method registers birth information. The new born baby Worker should host itself in enterprise_employment using this birth information.
+        This public service registers birth information. The new born baby Worker should host itself in enterprise_employment using this birth information.
 
         Return value:
-                                                - (boolean) whether the service was scheduled successfully
+            task result                         - (table)
+                success                         - (boolean) whether the assignment was scheduled successfully
+                fatherId                        - (number) workerId of the Worker registering the birth information
 
         Parameters:
             serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the Worker
                 constructParameters             + (table) parameters for constructing the Worker
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:registerBirthCertificate: Invalid input") return false end
+    if not checkSuccess then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Invalid input") return {success = false} end
 
     -- get birthCertificates
     local birthCertificates = GetContainer(self, "ObjArray", "birthCertificates")
-    if not birthCertificates then corelog.Error("enterprise_employment:registerBirthCertificate: Failed obtaining birthCertificates") return false end
+    if not birthCertificates then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Failed obtaining birthCertificates") return {success = false} end
 
     -- add birthCertificate
     local fatherId = os.getComputerID()
@@ -427,10 +442,13 @@ function enterprise_employment:registerBirthCertificate(...)
 
     -- save birthCertificates
     local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "ObjArray", "birthCertificates")
-    if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthCertificate: Failed saving birthCertificates") return false end
+    if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Failed saving birthCertificates") return {success = false} end
 
     -- end
-    return true
+    return {
+        success     = true,
+        fatherId    = fatherId,
+    }
 end
 
 function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
@@ -444,6 +462,7 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
+                mobjLocator                     - (URL) locating the build and hosted Worker
 
         Parameters:
             serviceData                         - (table) data about this service
@@ -466,6 +485,13 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
     if not buildLocation or not blueprint then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
+    local workerLocation = constructParameters.location:copy()
+    local accessDirection = "top"
+    local taskData = {
+        turtleId        = -1,
+        workerLocation  = workerLocation,
+        accessDirection = accessDirection,
+    }
     local projectData = {
         buildLocation               = buildLocation,
         blueprint                   = blueprint,
@@ -475,7 +501,10 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
         className                   = className,
         constructParameters         = constructParameters,
 
-        hostLocator                 = self:getHostLocator()
+        hostLocator                 = self:getHostLocator(),
+
+        metaData                    = role_interactor.TurnOnWorker_MetaData(taskData),
+        taskCall                    = TaskCall:newInstance("role_interactor", "TurnOnWorker_Task", taskData),
     }
     local projectDef = {
         steps   = {
@@ -487,14 +516,19 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building "..className},
             -- register new born Worker
-            { stepType = "LSMtd", stepTypeDef = { methodName = "registerBirthCertificate", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerBirthCertificate_SOSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-            }, description = "Register new Worker"},
+            }, description = "Register new "..className},
             -- boot new Worker
-            -- ToDo:
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
+                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "fatherId" },
+                { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
+            }, description = "Turn on new "..className},
         },
         returnData  = {
+            { keyDef = "mobjLocator"                        , sourceStep = 3, sourceKeyDef = "workerLocator" },
         }
     }
     local projectServiceData = {
