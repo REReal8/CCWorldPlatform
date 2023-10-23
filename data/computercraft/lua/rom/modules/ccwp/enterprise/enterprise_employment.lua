@@ -189,7 +189,7 @@ function enterprise_employment:getRegistered(...)
     end
 
     -- end
-    corelog.Warning("enterprise_employment:getRegistered: workerLocator for Worker "..workerId.." not found")
+    corelog.Warning("enterprise_employment:getRegistered: Worker "..workerId.." not yet registered")
     return nil
 end
 
