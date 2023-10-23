@@ -307,9 +307,16 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 22, sourceKeyDef = "mobjLocator" },
             }},
+            -- delist current Turtle from Shop
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            }},
+            --
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_dump", serviceName = "ListItemDepot_SSrv" }, stepDataDef = {
                 { keyDef = "itemDepotLocator"               , sourceStep = 22, sourceKeyDef = "mobjLocator" },
             }},
+            -- dump all gathered waste from current Turtle
+            -- ToDo: implement
             -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
