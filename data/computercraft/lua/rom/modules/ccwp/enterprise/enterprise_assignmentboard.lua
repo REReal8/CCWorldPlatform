@@ -23,7 +23,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local Location = require "obj_location"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 local db = {
     dhtRoot         = "enterprise_assignmentboard",
@@ -116,7 +116,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
 
         -- maxFuelNeed_Travel
         if statisticsChanged then
-            statistics.maxFuelNeed_Travel = role_fuel_worker.NeededFuelToFrom(newMinLocation, newMaxLocation)
+            statistics.maxFuelNeed_Travel = role_energizer.NeededFuelToFrom(newMinLocation, newMaxLocation)
         end
     end
 
@@ -439,7 +439,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
         if metaData.location then -- optionally include traveling to assignment location from current location
             local metaDataLocation = Location:new(metaData.location) -- ToDo: consider doing elsewhere
             local location = workerResume.location
-            fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaDataLocation, location)
+            fuelNeeded = fuelNeeded + role_energizer.NeededFuelToFrom(metaDataLocation, location)
         end
         if fuelNeeded > 0 then
             -- check fuel available

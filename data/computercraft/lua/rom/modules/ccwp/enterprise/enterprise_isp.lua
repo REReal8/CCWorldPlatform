@@ -20,7 +20,7 @@ local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 --                        _
 --                       (_)
@@ -76,7 +76,7 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     local fuelNeed = 0
     for i, itemlocation in ipairs(itemsLocations) do
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        fuelNeed = fuelNeed + role_fuel_worker.NeededFuelToFrom(itemDepotLocation, itemlocation)
+        fuelNeed = fuelNeed + role_energizer.NeededFuelToFrom(itemDepotLocation, itemlocation)
     end
 
     -- end

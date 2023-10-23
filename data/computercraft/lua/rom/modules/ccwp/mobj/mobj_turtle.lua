@@ -28,7 +28,7 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_employment
@@ -457,7 +457,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
         local serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv(serviceData)
         if not serviceResults or not serviceResults.success then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: failed obtaining location for ItemDepot "..type(itemDepotLocator)..".") return {success = false} end
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromTurtleToItemDepot = role_fuel_worker.NeededFuelToFrom(serviceResults.location, turtleLocation)
+        local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(serviceResults.location, turtleLocation)
 
         -- add fuelNeed
 --        corelog.WriteToLog("T  fuelNeed_FromTurtleToItemDepot="..fuelNeed_FromTurtleToItemDepot)

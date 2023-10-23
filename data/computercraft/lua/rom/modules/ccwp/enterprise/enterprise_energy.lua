@@ -9,7 +9,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -106,8 +106,8 @@ local function Refuel_ASrv(...)
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         wasteItemDepotLocator           = wasteItemDepotLocator,
 
-        refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
-        refuelTaskCall                  = TaskCall:newInstance("role_fuel_worker", "Refuel_Task", refuelTaskData),
+        refuelMetaData                  = role_energizer.Refuel_MetaData(refuelTaskData),
+        refuelTaskCall                  = TaskCall:newInstance("role_energizer", "Refuel_Task", refuelTaskData),
 
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }
@@ -204,7 +204,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         -- determine fuelNeed for traveling
         local forestLocation = forest:getBaseLocation()
         local factoryLocation = factory:getProductionLocation_Att(items)
-        local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
+        local fuelNeed_ForestFactoryTravel = role_energizer.NeededFuelToFrom(factoryLocation, forestLocation)
 
         -- add fuelNeed
 --        corelog.WriteToLog("E  fuelNeed_Harvest="..fuelNeed_Harvest..", fuelNeed_ExtraTree="..fuelNeed_ExtraTree..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)

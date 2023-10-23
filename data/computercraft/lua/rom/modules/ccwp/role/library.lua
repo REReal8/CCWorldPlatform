@@ -14,7 +14,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("role_builder")
     moduleRegistry:requireAndRegisterModule("role_conservator")
     moduleRegistry:requireAndRegisterModule("role_forester")
-    moduleRegistry:requireAndRegisterModule("role_fuel_worker")
+    moduleRegistry:requireAndRegisterModule("role_energizer")
     moduleRegistry:requireAndRegisterModule("role_settler")
 
     -- register library modules test modules

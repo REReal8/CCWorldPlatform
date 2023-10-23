@@ -2,7 +2,7 @@ local T_Chest = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 local Callback = require "obj_callback"
 
@@ -319,7 +319,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
-    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation())
+    local expectedFuelNeed = 1 * role_energizer.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation())
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")

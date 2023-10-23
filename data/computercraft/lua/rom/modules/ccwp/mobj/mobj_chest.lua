@@ -27,7 +27,7 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 local role_conservator = require "role_conservator"
 
 local enterprise_isp = require "enterprise_isp"
@@ -491,7 +491,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
         local serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv(serviceData)
         if not serviceResults or not serviceResults.success then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: failed obtaining location for ItemDepot "..type(itemDepotLocator)..".") return {success = false} end
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromChestToItemDepot = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
+        local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(serviceResults.location, chestLocation)
 
         -- add fuelNeed
 --        corelog.WriteToLog("C  fuelNeed_FromChestToItemDepot="..fuelNeed_FromChestToItemDepot)

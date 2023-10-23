@@ -14,7 +14,7 @@ local coreinventory = require "coreinventory"
 local InputChecker = require "input_checker"
 local Location = require "obj_location"
 
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -83,7 +83,7 @@ function role_builder.BuildBlueprint_MetaData(...)
         local startLocation = layerBuildData.startpoint:getRelativeLocation(offsetX, offsetY, offsetZ)
 
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + role_energizer.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
         for layerItemName, layerItemCount in pairs(layerMetaData.itemsNeeded) do
             -- increment item counter
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
@@ -105,7 +105,7 @@ function role_builder.BuildBlueprint_MetaData(...)
     -- update metadata with escapeSequence (if present)
     for i, escapeLocation in ipairs(escapeSequence) do
         escapeLocation = Location:new(escapeLocation)
-        metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(escapeLocation, lastLocation)
+        metaData.fuelNeeded = metaData.fuelNeeded + role_energizer.NeededFuelToFrom(escapeLocation, lastLocation)
 
         lastLocation = escapeLocation
     end

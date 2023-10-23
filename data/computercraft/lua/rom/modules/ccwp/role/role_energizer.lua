@@ -1,5 +1,5 @@
 -- define role
-local role_fuel_worker = {}
+local role_energizer = {}
 
 -- ToDo: add proper module description
 --[[
@@ -18,7 +18,7 @@ local InputChecker = require "input_checker"
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-function role_fuel_worker.Refuel_MetaData(...)
+function role_energizer.Refuel_MetaData(...)
     -- get & check input from description
     local checkSuccess, turtleId, fuelItems, priorityKey = InputChecker.Check([[
         This function returns the MetaData for Refuel_Task.
@@ -33,7 +33,7 @@ function role_fuel_worker.Refuel_MetaData(...)
                 fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
                 priorityKey             + (string, "") priorityKey for this assignment
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("role_energizer.Refuel_MetaData: Invalid input") return {success = false} end
 
     -- end
     return {
@@ -78,7 +78,7 @@ local function Refuel(fuel)
     return true
 end
 
-function role_fuel_worker.Refuel_Task(...)
+function role_energizer.Refuel_Task(...)
     -- get & check input from description
     local checkSuccess, turtleId, fuelItems = InputChecker.Check([[
         This Task function (re)fuels a (the current) turtle.
@@ -92,16 +92,16 @@ function role_fuel_worker.Refuel_Task(...)
                 turtleId                + (number) id of the turtle to (re)fuel
                 fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_fuel_worker.Refuel_Task: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("role_energizer.Refuel_Task: Invalid input") return {success = false} end
 
     -- check correct turtle
     local currentTurtleId = os.getComputerID()
-    if currentTurtleId ~= turtleId then corelog.Error("role_fuel_worker.Refuel_Task: Current turtle(id="..currentTurtleId..") not equal to targeted turtle(id="..turtleId..")") return {success = false} end
+    if currentTurtleId ~= turtleId then corelog.Error("role_energizer.Refuel_Task: Current turtle(id="..currentTurtleId..") not equal to targeted turtle(id="..turtleId..")") return {success = false} end
 
     -- fuel from all fuelItems
     for itemName, itemCount in pairs(fuelItems) do
         local refuelResult = Refuel({itemName = itemName,  itemCount = itemCount})
-        if refuelResult == false then corelog.Warning("role_fuel_worker.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
+        if refuelResult == false then corelog.Warning("role_energizer.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
 
         corelog.WriteToLog(">Refueled with "..itemCount.." "..itemName.."'s to "..turtle.getFuelLevel())
     end
@@ -110,7 +110,7 @@ function role_fuel_worker.Refuel_Task(...)
     return {success = true}
 end
 
-function role_fuel_worker.NeededFuelToFrom(...)
+function role_energizer.NeededFuelToFrom(...)
     local enterprise_energy = require "enterprise_energy"
 
     -- get & check input from description
@@ -124,10 +124,10 @@ function role_fuel_worker.NeededFuelToFrom(...)
             locationB               + (Location) with destination location
             locationA               + (Location) with start location
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+    if not checkSuccess then corelog.Error("role_energizer.NeededFuelToFrom: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- end
     return locationA:blockDistanceTo(locationB)
 end
 
-return role_fuel_worker
+return role_energizer

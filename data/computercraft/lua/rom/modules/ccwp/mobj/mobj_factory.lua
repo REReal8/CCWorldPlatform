@@ -49,7 +49,7 @@ local ObjHost = require "obj_host"
 local ProductionSpot = require "mobj_production_spot"
 
 local role_alchemist = require "role_alchemist"
-local role_fuel_worker = require "role_fuel_worker"
+local role_energizer = require "role_energizer"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
@@ -1030,7 +1030,7 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
     local fuelNeed_ToProductionlocation = 0
     for i, location in ipairs(serviceResults.locations) do
-        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionSpot:getBaseLocation(), location)
+        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_energizer.NeededFuelToFrom(productionSpot:getBaseLocation(), location)
     end
 
     -- fuelNeed for production
@@ -1042,7 +1042,7 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- fuelNeed from productionSpot to localOutputLocator
     serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
-    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionSpot:getBaseLocation())
+    local fuelNeed_FromProductionLocation = role_energizer.NeededFuelToFrom(serviceResults.location, productionSpot:getBaseLocation())
 
     -- end
 --    corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
