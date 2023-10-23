@@ -28,7 +28,7 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local role_fuel_worker = require "role_fuel_worker"
-local role_chests_worker = require "role_chests_worker"
+local role_conservator = require "role_conservator"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
@@ -306,8 +306,8 @@ function Chest:updateChestRecord_AOSrv(...)
         className       = "Chest",
         chest           = self:copy(),
 
-        metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
-        taskCall        = TaskCall:newInstance("role_chests_worker", "FetchChestSlotsInventory_Task", taskData),
+        metaData        = role_conservator.FetchChestSlotsInventory_MetaData(taskData),
+        taskCall        = TaskCall:newInstance("role_conservator", "FetchChestSlotsInventory_Task", taskData),
     }
     local projectDef = {
         steps   = {
@@ -391,8 +391,8 @@ function Chest:provideItemsTo_AOSrv(...)
         className               = "Chest",
         chest                   = self:copy(),
 
-        metaData                = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
-        taskCall                = TaskCall:newInstance("role_chests_worker", "FetchItemsFromChestIntoTurtle_Task", taskData),
+        metaData                = role_conservator.FetchItemsFromChestIntoTurtle_MetaData(taskData),
+        taskCall                = TaskCall:newInstance("role_conservator", "FetchItemsFromChestIntoTurtle_Task", taskData),
 
         itemDepotLocator        = itemDepotLocator,
         assignmentsPriorityKey  = assignmentsPriorityKey,
@@ -567,8 +567,8 @@ function Chest:storeItemsFrom_AOSrv(...)
         className               = "Chest",
         chest                   = self:copy(),
 
-        metaData                = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
-        taskCall                = TaskCall:newInstance("role_chests_worker", "PutItemsFromTurtleIntoChest_Task", taskData),
+        metaData                = role_conservator.PutItemsFromTurtleIntoChest_MetaData(taskData),
+        taskCall                = TaskCall:newInstance("role_conservator", "PutItemsFromTurtleIntoChest_Task", taskData),
 
         itemsLocator            = itemsLocator,
         turtleLocator           = enterprise_employment.GetAnyTurtleLocator(),
