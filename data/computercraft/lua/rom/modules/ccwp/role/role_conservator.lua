@@ -12,6 +12,7 @@ local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
 local Inventory = require "obj_inventory"
+local Location = require "obj_location"
 
 local enterprise_employment
 
@@ -53,21 +54,7 @@ function role_conservator.FetchChestSlotsInventory_MetaData(...)
     }
 end
 
-local function GetPeripheralName(accessDirection)
-    -- check input
-    if type(accessDirection) ~= "string" then corelog.Error("role_conservator.GetPeripheralName: invalid accessDirection") return nil end
 
-    -- determine peripheralName from accessDirection
-    local peripheralName = "front"
-    if accessDirection == "bottom" then
-        peripheralName = "top"
-    elseif accessDirection == "top" then
-        peripheralName = "bottom"
-    end
-
-    -- end
-    return peripheralName
-end
 
 function role_conservator.FetchChestSlotsInventory_Task(...)
     -- get & check input from description
@@ -95,7 +82,7 @@ function role_conservator.FetchChestSlotsInventory_Task(...)
     coremove.GoTo(workingLocation)
 
     -- get access to Chest
-    local peripheralName = GetPeripheralName(accessDirection)
+    local peripheralName = Location.ConvertAccessDirectionToPeripheralName(accessDirection)
     local chest = peripheral.wrap(peripheralName)
     if type(chest) ~= "table" then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
@@ -256,7 +243,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
     coremove.GoTo(workingLocation)
 
     -- get access to Chest
-    local chestName = GetPeripheralName(accessDirection)
+    local chestName = Location.ConvertAccessDirectionToPeripheralName(accessDirection)
     local chest = peripheral.wrap(chestName)
     if type(chest) ~= "table" then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
@@ -393,7 +380,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
     coremove.GoTo(workingLocation)
 
     -- get access to Chest
-    local chestName = GetPeripheralName(accessDirection)
+    local chestName = Location.ConvertAccessDirectionToPeripheralName(accessDirection)
     local chest = peripheral.wrap(chestName)
     if type(chest) ~= "table" then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: No Chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 

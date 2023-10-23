@@ -366,4 +366,31 @@ function Location.FarLocation()
     return Location:newInstance(Location.FarX(), Location.FarY(), Location.FarZ())
 end
 
+-- ToDo: find a better module for this code
+function Location.ConvertAccessDirectionToPeripheralName(...)
+    -- get & check input from description
+    local checkSuccess, accessDirection = InputChecker.Check([[
+        Converts an accessDirection to a MObj to the peripheralName for the Worker standing next to the MObj.
+
+        Parameters:
+            accessDirection         + (string) whether to access a MObj from "bottom", "top", "left", "right", "front" or "back"
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Location.ConvertAccessDirectionToPeripheralName: Invalid input") return nil end
+
+    -- check input
+    if type(accessDirection) ~= "string" then corelog.Error("Location.ConvertAccessDirectionToPeripheralName: invalid accessDirection") return nil end
+
+    -- determine peripheralName from accessDirection
+    local peripheralName = accessDirection
+    -- ToDo: do we need to convert the others as well?
+    if accessDirection == "bottom" then
+        peripheralName = "top"
+    elseif accessDirection == "top" then
+        peripheralName = "bottom"
+    end
+
+    -- end
+    return peripheralName
+end
+
 return Location
