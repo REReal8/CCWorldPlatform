@@ -36,11 +36,11 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     -- prepare test
     corelog.WriteToLog("* enterprise_assignmentboard.MetaDataConditionsMet() tests")
     local now = coreutils.UniversalTime()
-    local computerId = os.getComputerID()
+    local workerId = os.getComputerID()
     local metaData = {
         startTime = now,
         needTurtle = false,
-        needWorkerId = computerId,
+        needWorkerId = workerId,
         needTool = false,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -49,7 +49,9 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     local assignmentFilter = {
         priorityKeyNeeded   = "",
     }
-    local workerResume = nil
+    local workerResume = {
+        workerId = workerId
+    }
 
     -- test startTime
     corelog.WriteToLog("  # Test startTime condition")
@@ -91,28 +93,32 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     metaData.priorityKey = ""
     assignmentFilter.priorityKeyNeeded = ""
 
-    -- test needTurtle
-    corelog.WriteToLog("  # Test needTurtle")
-    metaData.needTurtle = true
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
-    expectedconditionsMet = false
-    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    workerResume = { }
-
     -- test needWorkerId
     corelog.WriteToLog("  # Test needWorkerId (other workerId)")
-    workerResume.workerId = computerId
-    metaData.needWorkerId = computerId + 1000
+    metaData.needWorkerId = workerId + 1000
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.needWorkerId = computerId
+    metaData.needWorkerId = workerId
 
     corelog.WriteToLog("  # Test needWorkerId (current workerId)")
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.needWorkerId = nil
+
+    -- test needTurtle
+    corelog.WriteToLog("  # Test needTurtle (is not a Turtle)")
+    metaData.needTurtle = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = false
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
+
+    corelog.WriteToLog("  # Test needTurtle (is Turtle)")
+    workerResume.isTurtle = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = true
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     -- test fuelNeeded
     -- ToDo: consider also testing with workerResume.location
@@ -183,7 +189,7 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     corelog.WriteToLog("  # Test Other conditions")
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     if not conditionsMet then
-        corelog.WriteToLog("    ondition not met: "..skipReason)
+        corelog.WriteToLog("    condition not met: "..skipReason)
     else
         corelog.WriteToLog("    conditions met")
     end

@@ -5,7 +5,7 @@ local enterprise_assignmentboard = {}
     The AssignmentBoard is an enterprise that offers services for the handling of Assignments.
 
     Assignments allow for a sequence of things to be done (e.g. moving, rotating, placing etc) without interruption
-    by a turtle in the physical minecraft world.
+    by a Turtle in the physical minecraft world.
 
     The enterprise maintains a list of assignments that were posted to it. It offers services for finding, applying to,
     selecting, taking and ending (removing) these assignments.
@@ -68,12 +68,12 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     -- set metaData defaults  ToDo: consider doing with CheckInput
     metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
     metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
-    metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
+    metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de Turtle zelf voor een tool moet zorgen
     metaData.needTurtle     = metaData.needTurtle   or true
     metaData.needWorkerId   = metaData.needWorkerId or nil      --> nil-waarde voor needWorkerId geeft aan dat workerId geen rol speelt bij de selectie
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
-    metaData.priorityKey    = metaData.priorityKey  or ""       --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
+    metaData.priorityKey    = metaData.priorityKey  or ""       --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a Turtle, it will only take assignments with that key)
 
     -- create assignment
     local assignmentId  = coreutils.NewId()
@@ -138,7 +138,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
 
     -- end
-    return true -- note: this implies scheduling the assignment was succesfull, it will be executed once it is pickedup by a turtle
+    return true -- note: this implies scheduling the assignment was succesfull, it will be executed once it is pickedup by a Turtle
 end
 
 local function ResetStatistics()
@@ -419,19 +419,19 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
         end
     end
 
-    -- check optional turtle conditions
-    if metaData.needTurtle then
-        -- check mandatory turtle
-        if not workerResume then
-            return false, "mandatory turtle (resume) not present"
+    -- check needWorkerId
+    local workerId = workerResume.workerId
+    if metaData.needWorkerId then
+        if workerId ~= metaData.needWorkerId then
+            return false, "Worker does not have(="..workerId..") mandatory workerId (="..metaData.needWorkerId..")"
         end
+    end
 
-        -- check needWorkerId
-        local workerId = workerResume.workerId
-        if metaData.needWorkerId then
-            if workerId ~= metaData.needWorkerId then
-                return false, "Worker does not have(="..workerId..") mandatory workerId (="..metaData.needWorkerId..")"
-            end
+    -- check optional Turtle conditions
+    if metaData.needTurtle then
+        -- check mandatory Turtle
+        if not workerResume.isTurtle then
+            return false, "mandatory Turtle not present"
         end
 
         -- check enough fuel for assignment
@@ -445,7 +445,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
             -- check fuel available
             local fuelLevel = workerResume.fuelLevel
             if fuelLevel < fuelNeeded then
-                return false, "turtle does not have(="..fuelLevel..") enough(="..fuelNeeded..") fuel"
+                return false, "Turtle does not have(="..fuelLevel..") enough(="..fuelNeeded..") fuel"
             end
         end
 
@@ -454,7 +454,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
             -- check mandatory pickaxe
             local axePresent = workerResume.axePresent
             if not axePresent then
-                return false, "turtle does not have mandatory pickaxe"
+                return false, "Turtle does not have mandatory pickaxe"
             end
         end
 
@@ -474,7 +474,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
 
             -- enough?
             if availableItemCount < itemCount then
-                return false, "turtle does not have(="..availableItemCount..") enough(="..itemCount..") "..itemName.." available"
+                return false, "Turtle does not have(="..availableItemCount..") enough(="..itemCount..") "..itemName.." available"
             end
         end
     end
