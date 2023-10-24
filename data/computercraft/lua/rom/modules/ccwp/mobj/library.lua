@@ -1,14 +1,47 @@
 -- define library
 local library = {}
 
+local libraryName = "mobj"
+
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/mobj/?;/rom/modules/ccwp/mobj/?.lua"
+    package.path = package.path..";/rom/modules/ccwp/"..libraryName.."/?;/rom/modules/ccwp/"..libraryName.."/?.lua"
+end
+
+function library.T_All()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library tests ***")
+
+    local T_TestMObj = require "test.t_mobj_test"
+    local T_BirchForest = require "test.t_mobj_birchforest"
+    local T_Chest = require "test.t_mobj_chest"
+    local T_ProductionSpot = require "test.t_mobj_production_spot"
+    local T_Factory = require "test.t_mobj_factory"
+    local T_Silo = require "test.t_mobj_silo"
+    local T_Shop = require "test.t_mobj_shop"
+    local T_Turtle = require "test.t_mobj_turtle"
+    local T_UtilStation = require "test.t_mobj_user_station"
+    local t_mobj_host = require "test.t_mobj_host"
+
+    -- library tests
+    T_TestMObj.T_All()
+    t_mobj_host.T_All()
+    T_BirchForest.T_All()
+    T_Chest.T_All()
+    T_Factory.T_All()
+    T_ProductionSpot.T_All()
+    T_Silo.T_All()
+    T_Shop.T_All()
+    T_Turtle.T_All()
+    T_UtilStation.T_All()
 end
 
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
+		{key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_MObjLibrary"}},
+
 		{key = "h", desc = "MObjHost",			func = ExecuteLibraryTest, param = {filename = "T_MObjHost"}},
 		{key = "1", desc = "TestMObj",			func = ExecuteLibraryTest, param = {filename = "T_TestMObj"}},
 		{key = "b", desc = "BirchForest",		func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
@@ -48,6 +81,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("IMObj", "i_mobj")
 
     -- register library modules test modules
+    moduleRegistry:requireAndRegisterModule("T_MObjLibrary", libraryName..".library")
+
     moduleRegistry:requireAndRegisterModule("T_TestMObj", "test.t_mobj_test")
 
     moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
@@ -62,7 +97,7 @@ function library.Setup()
 
     -- add library test menu
     local coredisplay = require "coredisplay"
-    coredisplay.MainMenuAddItem("m", "mobj lib tests", ExecuteLibraryTest, {})
+    coredisplay.MainMenuAddItem("m", libraryName.." lib tests", ExecuteLibraryTest, {})
 
     -- do other stuff
 end

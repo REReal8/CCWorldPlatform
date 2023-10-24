@@ -1,14 +1,47 @@
 -- define library
 local library = {}
 
+local libraryName = "enterprise"
+
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/enterprise/?;/rom/modules/ccwp/enterprise/?.lua"
+    package.path = package.path..";/rom/modules/ccwp/"..libraryName.."/?;/rom/modules/ccwp/"..libraryName.."/?.lua"
+end
+
+function library.T_All()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library tests ***")
+
+    local t_test = require "test.t_test"
+    local t_assignmentboard = require "test.t_assignmentboard"
+    local t_projects = require "test.t_projects"
+    local t_isp = require "test.t_isp"
+    local t_energy = require "test.t_energy"
+    local t_chests = require "test.t_chests"
+    local t_manufacturing = require "test.t_manufacturing"
+    local t_forestry = require "test.t_forestry"
+    local t_shop = require "test.t_shop"
+    local t_employment = require "test.t_employment"
+
+    -- library tests
+    t_test.T_All()
+    t_assignmentboard.T_All()
+    t_projects.T_All()
+    t_isp.T_All()
+    t_forestry.T_All()
+    t_manufacturing.T_All()
+    t_energy.T_All()
+    t_chests.T_All()
+    t_shop.T_All()
+    t_employment.T_All()
 end
 
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
+		{key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_EnterpriseLibrary"}},
+
 		{key = "1", desc = "enterprise_test",	func = ExecuteLibraryTest, param = {filename = "t_test"}},
 		{key = "a", desc = "assignmentboard",	func = ExecuteLibraryTest, param = {filename = "t_assignmentboard"}},
 		{key = "t", desc = "employment", 		func = ExecuteLibraryTest, param = {filename = "t_employment"}},
@@ -52,6 +85,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_administration")
 
     -- register library modules test modules
+    moduleRegistry:requireAndRegisterModule("T_EnterpriseLibrary", libraryName..".library")
+
     moduleRegistry:requireAndRegisterModuleTests("t_assignmentboard")
     moduleRegistry:requireAndRegisterModuleTests("t_chests")
     moduleRegistry:requireAndRegisterModuleTests("t_colonization")
