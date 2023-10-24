@@ -623,7 +623,7 @@ function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
         if refuelAmount == 0 then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: refuelAmount = 0 while turtleFuelLevel(="..turtleFuelLevel..") < fuelLevel_Assignment(="..fuelLevel_Assignment.."). Apparently enterprise_energy enterpriseLevel = 0. This should not happen here! => skip asking for this and fix this!") return end
         local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_employment
-        local wasteItemDepotLocator = turtleLocator:copy()                      -- ToDo: somehow get this passed into enterprise_employment
+        local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator() -- ToDo: introduce and use proper WasteDump + somehow get this passed into enterprise_employment
         local serviceData = {
             turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,

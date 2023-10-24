@@ -65,11 +65,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- ToDo: instelling van de 3,2,1 coordianten bij start, lijkt nu niet meer te werken
 
-    -- register current turtle in shop
-    -- ToDo: figure out where/ how to register (other) turtles that get added
+    -- get currentTurtleLocator
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
-    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return Callback.ErrorCall(callback) end
 
     -- construct arguments
     local startLocation             = Location:newInstance(3, 2, 1, 0, 1)
@@ -85,15 +83,15 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local nTreeswanted = 6
     local projectData = {
-        materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
+        currentTurtleLocator            = currentTurtleLocator:copy(),
+        shopLocator                     = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
+
         wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:newInstance("role_settler", "InitialiseCoordinates_Task", initialiseCoordinatesTaskData),
-
-        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",
@@ -173,46 +171,50 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- create project definition
     local projectDef = {
         steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap create steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
+            -- register current Turtle in Shop
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 0, sourceKeyDef = "currentTurtleLocator" },
+            }, description = "Registering current Turtle"},
             -- initial (L0) enterprise_energy (refuelAmount = 0, fuelNeed_Refuel = 0)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
+                { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
             -- initialise coordinates
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
-                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
+                { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
+                { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
             }, description = "Setting coordinates"},
             -- host, build and register initial (L0) Factory (crafting spot, i.e. in place hole in the ground)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters0" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building first Factory"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 4, sourceKeyDef = "mobjLocator" },
             }},
             -- host, build and register initial (L-1) BirchForest (1 sapling in front of turtle)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters_Lm1T1" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building first BirchForest"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 6, sourceKeyDef = "mobjLocator" },
             }},
             -- update enterprise_energy to L1 (refuelAmount = 1 log = 60, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
-                { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+                { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL1" },
+                { keyDef = "forestLocator"                  , sourceStep = 6, sourceKeyDef = "mobjLocator" },
+                { keyDef = "factoryLocator"                 , sourceStep = 4, sourceKeyDef = "mobjLocator" },
             }},
             -- upgrade BirchForest to L0 (1 tree/ sapling)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL0T1" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 -- if "no OR low on fuel"
                 --  => HarvestForest_Task ("Waiting for first tree" => chop first log) => refuel to 60
@@ -221,107 +223,107 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Extending BirchForest to L0 and 1 tree"},
             -- update enterprise_energy to L2 (refuelAmount = 1 tree = 300, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
-                { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+                { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL2" },
+                { keyDef = "forestLocator"                  , sourceStep = 6, sourceKeyDef = "mobjLocator" },
+                { keyDef = "factoryLocator"                 , sourceStep = 4, sourceKeyDef = "mobjLocator" },
             }},
             -- collect some cobblestone for furnance
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
-                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
+                { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
+                { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
             }, description = "Getting cobblestone"},
             -- host, build and register new L1 Factory (crafting + smelting spot)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters1" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building a better Factory"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 12, sourceKeyDef = "mobjLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" }, -- ToDo: back to wanted energyL2
+                { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL3" }, -- ToDo: back to wanted energyL2
                 -- ToDo: investigate how we can postpone L3 to later ... somehow this sometimes fails. Is this because we do not yet claim resources inside the turtle??
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
-                { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "mobjLocator" },
+                { keyDef = "forestLocator"                  , sourceStep = 6, sourceKeyDef = "mobjLocator" },
+                { keyDef = "factoryLocator"                 , sourceStep = 12, sourceKeyDef = "mobjLocator" },
             }},
             -- delist, dismantle and release initial crafting spot
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 4, sourceKeyDef = "mobjLocator" },
             }},
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "dismantleAndReleaseMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 3, sourceKeyDef = "mobjLocator" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 4, sourceKeyDef = "mobjLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Removing initial Factory"},
             -- upgrade BirchForest to L1 with 1 tree
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL1T1" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending BirchForest to L1 and 1 tree"},
             -- upgrade BirchForest to L1 with 2 trees
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL1T2" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending BirchForest to L1 and 2 trees"},
             -- upgrade BirchForest to L1 with 4 trees
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL1T4" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending BirchForest to L1 and 4 trees"},
             -- upgrade BirchForest to L1 with 6 trees
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL1T6" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending BirchForest to L1 and 6 trees"},
             -- upgrade BirchForest to L2 (in/out chests + 6 trees)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 6, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToForestL2T6" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending BirchForest to L2 and 6 trees"},
             -- upgrade/ replace existing L1 Factory to/ with L2 Factory (in/out chests, crafting + smelting spot)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "extendAndUpgradeMObj_ASrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 11, sourceKeyDef = "mobjLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 12, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParametersToFactory2" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Extending Factory to L2"},
             -- host, build and register Silo
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "buildAndHostMObj_ASrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "shopLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building silo"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"            , sourceStep = 22, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 23, sourceKeyDef = "mobjLocator" },
             }},
             -- delist current Turtle from Shop
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"            , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 0, sourceKeyDef = "currentTurtleLocator" },
             }},
             --
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_dump", serviceName = "ListItemDepot_SSrv" }, stepDataDef = {
-                { keyDef = "itemDepotLocator"               , sourceStep = 22, sourceKeyDef = "mobjLocator" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 23, sourceKeyDef = "mobjLocator" },
             }},
             -- dump all gathered waste from current Turtle
             -- ToDo: implement
             -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
-                { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "mobjLocator" },
+                { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL3" },
+                { keyDef = "forestLocator"                  , sourceStep = 6, sourceKeyDef = "mobjLocator" },
+                { keyDef = "factoryLocator"                 , sourceStep = 12, sourceKeyDef = "mobjLocator" },
             }},
         },
         returnData  = {
@@ -353,17 +355,13 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Invalid input") return { success = false } end
 
-    -- register current turtle in shop
-    -- ToDo: figure out where/ how to register (other) turtles that get added
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
-    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return { success = false } end
-
     -- construct arguments
     local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local nTreeswanted = 6
     local projectData = {
+        shopLocator                     = enterprise_shop.GetShopLocator(),
+
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",
         factoryConstructParameters      = {
@@ -401,23 +399,23 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters" },
             }, description = "Hosting Factory"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 1, sourceKeyDef = "mobjLocator" },
             }},
             -- host and register Factory
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters" },
             }, description = "Hosting Factory"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- host and register Silo
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
             }, description = "Hosting Silo"},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 5, sourceKeyDef = "mobjLocator" },
             }},
             -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
