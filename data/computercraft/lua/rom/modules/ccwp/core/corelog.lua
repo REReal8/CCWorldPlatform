@@ -95,7 +95,7 @@ function corelog.WriteToLog(message, writeMode)
 	writeMode = writeMode or "append"
 
 	-- write to the logfile
-	coreutils.WriteToFile(db.logfile, message, writeMode)
+	coreutils.WriteToFile(db.logfile, coreutils.UniversalTime()..': '..message, writeMode)
 
 	-- might be a table
 	if type(message) == "table" then message = textutils.serialize(message) end
