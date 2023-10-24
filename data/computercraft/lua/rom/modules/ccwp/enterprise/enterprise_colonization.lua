@@ -353,12 +353,6 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Invalid input") return { success = false } end
 
-    -- register current turtle in shop
-    -- ToDo: figure out where/ how to register (other) turtles that get added
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
-    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return { success = false } end
-
     -- construct arguments
     local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
