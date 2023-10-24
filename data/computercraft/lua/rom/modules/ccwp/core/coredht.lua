@@ -14,6 +14,7 @@ local coretask = require "coretask"
 local InputChecker
 
 local db                = { _version = 0 }
+local dbHistory         = {}
 local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false
