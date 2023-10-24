@@ -234,12 +234,24 @@ function t_assignmentboard.T_BestCandidate()
     }
 
     -- test needWorkerId
-    corelog.WriteToLog("  # Test needWorkerId is a preferred candidate")
+    corelog.WriteToLog("  # Test needWorkerId is the preferred candidate")
     local currentWorkerId = os.getComputerID()
     candidateData2.metaData.needWorkerId = currentWorkerId
     local bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
     assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
     candidateData2.metaData.needWorkerId = nil
+
+    -- test startTime
+    corelog.WriteToLog("  # Test oldest startTime is the preferred candidate")
+    candidateData1.metaData.startTime = now + 10
+    bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
+    assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
+    candidateData1.metaData.startTime = now
+
+    candidateData2.metaData.startTime = now + 10
+    bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
+    assert(bestCandidate == candidateData1, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData1, compact)..")")
+    candidateData2.metaData.startTime = now
 
     -- cleanup test
 end

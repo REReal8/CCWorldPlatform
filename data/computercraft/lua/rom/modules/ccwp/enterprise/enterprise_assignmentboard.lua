@@ -398,7 +398,13 @@ function enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2
     -- ToDo implement
 
     -- check age
-    -- ToDo implement
+    local startTime1 = candidateData1.metaData.startTime
+    local startTime2 = candidateData2.metaData.startTime
+    if startTime1 <= startTime2 then
+        return candidateData1
+    else
+        return candidateData2
+    end
 
     -- nothing else distinquishes the candidates => take first
     return candidateData1
