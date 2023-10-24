@@ -9,7 +9,8 @@ end
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
-		{key = "g", desc = "global", 			func = ExecuteLibraryTest, param = {filename = "t_main"}},
+		{key = "a", desc = "All", 			func = ExecuteLibraryTest, param = {filename = "t_main"}},
+
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "test", options, ExecuteLibraryTest)
