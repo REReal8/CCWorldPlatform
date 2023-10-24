@@ -91,7 +91,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
+                { keyDef = "metaData.needWorkerId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }, description = "Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true})},
         },
@@ -189,7 +189,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
+                { keyDef = "metaData.needWorkerId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
         },

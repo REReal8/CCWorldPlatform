@@ -36,11 +36,11 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     -- prepare test
     corelog.WriteToLog("* enterprise_assignmentboard.MetaDataConditionsMet() tests")
     local now = coreutils.UniversalTime()
-    local computerId = os.getComputerID()
+    local workerId = os.getComputerID()
     local metaData = {
         startTime = now,
         needTurtle = false,
-        needTurtleId = computerId,
+        needWorkerId = workerId,
         needTool = false,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -49,7 +49,9 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     local assignmentFilter = {
         priorityKeyNeeded   = "",
     }
-    local workerResume = nil
+    local workerResume = {
+        workerId = workerId
+    }
 
     -- test startTime
     corelog.WriteToLog("  # Test startTime condition")
@@ -91,28 +93,32 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     metaData.priorityKey = ""
     assignmentFilter.priorityKeyNeeded = ""
 
+    -- test needWorkerId
+    corelog.WriteToLog("  # Test needWorkerId (other workerId)")
+    metaData.needWorkerId = workerId + 1000
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = false
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
+    metaData.needWorkerId = workerId
+
+    corelog.WriteToLog("  # Test needWorkerId (current workerId)")
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = true
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
+    metaData.needWorkerId = nil
+
     -- test needTurtle
-    corelog.WriteToLog("  # Test needTurtle")
+    corelog.WriteToLog("  # Test needTurtle (is not a Turtle)")
     metaData.needTurtle = true
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    workerResume = { }
 
-    -- test needTurtleId
-    corelog.WriteToLog("  # Test needTurtleId (other id)")
-    workerResume.workerId = computerId
-    metaData.needTurtleId = computerId + 1000
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
-    expectedconditionsMet = false
-    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.needTurtleId = computerId
-
-    corelog.WriteToLog("  # Test needTurtleId (current id)")
+    corelog.WriteToLog("  # Test needTurtle (is Turtle)")
+    workerResume.isTurtle = true
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.needTurtleId = nil
 
     -- test fuelNeeded
     -- ToDo: consider also testing with workerResume.location
@@ -183,7 +189,7 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     corelog.WriteToLog("  # Test Other conditions")
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     if not conditionsMet then
-        corelog.WriteToLog("    ondition not met: "..skipReason)
+        corelog.WriteToLog("    condition not met: "..skipReason)
     else
         corelog.WriteToLog("    conditions met")
     end
@@ -199,7 +205,7 @@ function t_assignmentboard.T_BestCandidate()
     local metaData1 = {
         startTime = now,
         needTurtle = true,
-        needTurtleId = nil,
+        needWorkerId = nil,
         needTool = true,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -215,7 +221,7 @@ function t_assignmentboard.T_BestCandidate()
     local metaData2 = {
         startTime = now,
         needTurtle = true,
-        needTurtleId = nil,
+        needWorkerId = nil,
         needTool = true,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -227,13 +233,25 @@ function t_assignmentboard.T_BestCandidate()
         metaData = metaData2,
     }
 
-    -- test needTurtleId
-    corelog.WriteToLog("  # Test needTurtleId is a preferred candidate")
-    local currentTurtleId = os.getComputerID()
-    candidateData2.metaData.needTurtleId = currentTurtleId
+    -- test needWorkerId
+    corelog.WriteToLog("  # Test needWorkerId is the preferred candidate")
+    local currentWorkerId = os.getComputerID()
+    candidateData2.metaData.needWorkerId = currentWorkerId
     local bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
     assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
-    candidateData2.metaData.needTurtleId = nil
+    candidateData2.metaData.needWorkerId = nil
+
+    -- test startTime
+    corelog.WriteToLog("  # Test oldest startTime is the preferred candidate")
+    candidateData1.metaData.startTime = now + 10
+    bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
+    assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
+    candidateData1.metaData.startTime = now
+
+    candidateData2.metaData.startTime = now + 10
+    bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
+    assert(bestCandidate == candidateData1, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData1, compact)..")")
+    candidateData2.metaData.startTime = now
 
     -- cleanup test
 end

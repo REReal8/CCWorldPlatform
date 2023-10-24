@@ -44,9 +44,9 @@ function role_interactor.TurnOnWorker_MetaData(...)
     local fuelNeeded = 0 -- task starts at workingLocation, 0 movement from there
 
     -- check if specific turtle is needed
-    local needTurtleId = nil
+    local needWorkerId = nil
     if (turtleId >= 0) then
-        needTurtleId = turtleId
+        needWorkerId = turtleId
     end
 
     -- return metadata
@@ -55,7 +55,7 @@ function role_interactor.TurnOnWorker_MetaData(...)
         location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
-        needTurtleId= needTurtleId,
+        needWorkerId= needWorkerId,
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 

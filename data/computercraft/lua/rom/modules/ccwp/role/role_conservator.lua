@@ -120,9 +120,9 @@ function role_conservator.FetchItemsFromChestIntoTurtle_MetaData(...)
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
     -- check if specific turtle is needed
-    local needTurtleId = nil
+    local needWorkerId = nil
     if (turtleId >= 0) then
-        needTurtleId = turtleId
+        needWorkerId = turtleId
     end
 
     -- return metadata
@@ -131,7 +131,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_MetaData(...)
         location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
-        needTurtleId= needTurtleId,
+        needWorkerId= needWorkerId,
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 
@@ -340,7 +340,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_MetaData(...)
         location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
-        needTurtleId= turtleId,
+        needWorkerId= turtleId,
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 
