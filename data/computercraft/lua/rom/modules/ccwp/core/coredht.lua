@@ -165,7 +165,7 @@ local function DoEventSaveData(subject, envelope)
     end
 
     -- versie bijwerken
-    db._version = envelope.message.version
+    if db._version < envelope.message.version then db._version = envelope.message.version end
 
 	-- just save the data like a normal request from this computer
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
