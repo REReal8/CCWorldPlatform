@@ -21,7 +21,7 @@ local db = {
 	toSend			= {},		-- list of messages that still need to be send because the modem was down
 	toBulkSend		= {},		-- list of messages that still need to be send because of bulk sending
 	toProcess		= {},		-- list of messages from a bulk message that still needs processsing
-	bulkMode		= true,		-- send messages in bulk per tick, not one by one
+	bulkMode		= false,	-- send messages in bulk per tick, not one by one
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
 
