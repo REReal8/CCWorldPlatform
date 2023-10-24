@@ -235,8 +235,8 @@ function t_assignmentboard.T_BestCandidate()
 
     -- test needWorkerId
     corelog.WriteToLog("  # Test needWorkerId is a preferred candidate")
-    local currentTurtleId = os.getComputerID()
-    candidateData2.metaData.needWorkerId = currentTurtleId
+    local currentWorkerId = os.getComputerID()
+    candidateData2.metaData.needWorkerId = currentWorkerId
     local bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
     assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
     candidateData2.metaData.needWorkerId = nil

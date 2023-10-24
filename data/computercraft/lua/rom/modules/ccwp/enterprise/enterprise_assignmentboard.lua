@@ -385,11 +385,11 @@ function enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2
     end
 
     -- check needWorkerId
-    local needTurtleId1 = candidateData1.metaData.needWorkerId
-    local needTurtleId2 = candidateData2.metaData.needWorkerId
-    if needTurtleId1 and not needTurtleId2 then
+    local needWorkerId1 = candidateData1.metaData.needWorkerId
+    local needWorkerId2 = candidateData2.metaData.needWorkerId
+    if needWorkerId1 and not needWorkerId2 then
         return candidateData1
-    elseif needTurtleId2 and not needTurtleId1 then
+    elseif needWorkerId2 and not needWorkerId1 then
         return candidateData2
     else -- both are equal w.r.t. this condition
     end
