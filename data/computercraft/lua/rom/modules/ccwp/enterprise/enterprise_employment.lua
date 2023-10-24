@@ -47,29 +47,27 @@ local enterprise_projects = require "enterprise_projects"
 --          - adopt other classes to these changes
 enterprise_employment._hostName   = "enterprise_employment"
 
-local function GetATurtle()
+local function GetATurtle(employmentHost)
     -- get all Turtles
     local turtles = enterprise_employment:getObjects(Turtle:getClassName())
     if not turtles then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining Turtle's") return nil end
 
     -- try find a Turtle
     local turtleObj = nil
-    -- are we (the Worker running this code) a turtle?
+    -- are we (the Worker running this code) a Turtle?
     if turtle then
-        local turtleWorkerId = os.getComputerID()
+        -- get currentTurtleLocator
+        local workerId = os.getComputerID()
+        local currentTurtleLocator = employmentHost:getRegistered(workerId)
+        if not currentTurtleLocator then corelog.Warning("enterprise_employment.GetATurtle: workerLocator for (current) Turtle "..workerId.." not found") return nil end
 
-        -- find our turtleObj
-        for _, turtleObjTable in pairs(turtles) do
-            turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
-            if turtleObj:getWorkerId() == turtleWorkerId then
-                break
-            end
-        end
+        -- get turtleObj
+        turtleObj = ObjHost.getObject(employmentHost, currentTurtleLocator) -- note base class ObjHost provides the object
     else
         -- select first Turtle
         local _, turtleObjTable = next(turtles) -- first Turtle
-        if not turtleObjTable then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining a Turtle") return nil end
-        turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+        if not turtleObjTable then corelog.Error("enterprise_employment.GetATurtle: Failed obtaining a Turtle") return nil end
+        turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting Turtle objTable to Turtle") return nil end
     end
 
     -- end
@@ -94,7 +92,7 @@ function enterprise_employment:getObject(...)
         -- ToDo: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
 
         -- get a Turtle
-        local turtleObj = GetATurtle()
+        local turtleObj = GetATurtle(enterprise_employment)
 
         -- return Turtle
         -- corelog.WriteToLog("Selected Turtle "..turtleObj:getWorkerId().." as 'any Turtle'")
