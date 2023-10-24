@@ -67,7 +67,7 @@ local function GetATurtle(employmentHost)
         -- select first Turtle
         local _, turtleObjTable = next(turtles) -- first Turtle
         if not turtleObjTable then corelog.Error("enterprise_employment.GetATurtle: Failed obtaining a Turtle") return nil end
-        turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting Turtle objTable to Turtle") return nil end
+        turtleObj = objectFactory:create(Turtle:getClassName(), turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting Turtle objTable to Turtle") return nil end
     end
 
     -- end
@@ -327,14 +327,14 @@ function enterprise_employment:getCurrentWorkerLocator()
 
             -- determine workerName
             workerName = className..""..tostring(workerId).." van der Turtle"..tostring(fatherId)
-        elseif self:getNumberOfObjects("Turtle") == 0 and turtle then -- are we the first Turtle?
+        elseif self:getNumberOfObjects(Turtle:getClassName()) == 0 and turtle then -- are we the first Turtle?
             corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
             -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
             --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
 
             -- determine hosting information
             birthLocation = Location:newInstance(3, 2, 1, 0, 1)
-            className = "Turtle"
+            className = Turtle:getClassName()
             constructParameters = {
                 workerId    = workerId,
                 location    = birthLocation,
@@ -550,13 +550,13 @@ end
 
 function enterprise_employment:reset()
     -- get Turtle's
-    local turtles = self:getObjects("Turtle")
+    local turtles = self:getObjects(Turtle:getClassName())
     if not turtles then corelog.Error("enterprise_employment:reset: Failed obtaining Turtle's") return nil end
 
     -- reset all Turtle's
     for id, turtleObjTable in pairs(turtles) do
         -- convert to Turtle
-        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
+        local turtleObj = objectFactory:create(Turtle:getClassName(), turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
 
         -- reset Turtle
         turtleObj:setFuelPriorityKey("")
@@ -578,7 +578,7 @@ local function GetTurtleLocator(turtleIdStr)
     --]]
 
     -- get resourcePath
-    local objectPath = ObjHost.GetObjectPath("Turtle", turtleIdStr)
+    local objectPath = ObjHost.GetObjectPath(Turtle:getClassName(), turtleIdStr)
     if not objectPath then corelog.Error("enterprise_employment.GetTurtleLocator: Failed obtaining objectPath") return nil end
 
     -- get objectLocator
