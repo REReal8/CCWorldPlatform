@@ -70,7 +70,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
     metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     metaData.needTurtle     = metaData.needTurtle   or true
-    metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat workerId geen rol speelt bij de selectie
+    metaData.needWorkerId   = metaData.needWorkerId or nil      --> nil-waarde voor needWorkerId geeft aan dat workerId geen rol speelt bij de selectie
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
     metaData.priorityKey    = metaData.priorityKey  or ""       --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
@@ -384,9 +384,9 @@ function enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2
         return candidateData1
     end
 
-    -- check needTurtleId
-    local needTurtleId1 = candidateData1.metaData.needTurtleId
-    local needTurtleId2 = candidateData2.metaData.needTurtleId
+    -- check needWorkerId
+    local needTurtleId1 = candidateData1.metaData.needWorkerId
+    local needTurtleId2 = candidateData2.metaData.needWorkerId
     if needTurtleId1 and not needTurtleId2 then
         return candidateData1
     elseif needTurtleId2 and not needTurtleId1 then
@@ -426,11 +426,11 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
             return false, "mandatory turtle (resume) not present"
         end
 
-        -- check needTurtleId
+        -- check needWorkerId
         local workerId = workerResume.workerId
-        if metaData.needTurtleId then
-            if workerId ~= metaData.needTurtleId then
-                return false, "Worker does not have(="..workerId..") mandatory workerId (="..metaData.needTurtleId..")"
+        if metaData.needWorkerId then
+            if workerId ~= metaData.needWorkerId then
+                return false, "Worker does not have(="..workerId..") mandatory workerId (="..metaData.needWorkerId..")"
             end
         end
 

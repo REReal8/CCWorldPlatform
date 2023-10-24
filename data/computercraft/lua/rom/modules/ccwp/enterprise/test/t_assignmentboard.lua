@@ -40,7 +40,7 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     local metaData = {
         startTime = now,
         needTurtle = false,
-        needTurtleId = computerId,
+        needWorkerId = computerId,
         needTool = false,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -99,20 +99,20 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     workerResume = { }
 
-    -- test needTurtleId
-    corelog.WriteToLog("  # Test needTurtleId (other id)")
+    -- test needWorkerId
+    corelog.WriteToLog("  # Test needWorkerId (other workerId)")
     workerResume.workerId = computerId
-    metaData.needTurtleId = computerId + 1000
+    metaData.needWorkerId = computerId + 1000
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.needTurtleId = computerId
+    metaData.needWorkerId = computerId
 
-    corelog.WriteToLog("  # Test needTurtleId (current id)")
+    corelog.WriteToLog("  # Test needWorkerId (current workerId)")
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.needTurtleId = nil
+    metaData.needWorkerId = nil
 
     -- test fuelNeeded
     -- ToDo: consider also testing with workerResume.location
@@ -199,7 +199,7 @@ function t_assignmentboard.T_BestCandidate()
     local metaData1 = {
         startTime = now,
         needTurtle = true,
-        needTurtleId = nil,
+        needWorkerId = nil,
         needTool = true,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -215,7 +215,7 @@ function t_assignmentboard.T_BestCandidate()
     local metaData2 = {
         startTime = now,
         needTurtle = true,
-        needTurtleId = nil,
+        needWorkerId = nil,
         needTool = true,
         fuelNeeded = 0,
         itemsNeeded = {},
@@ -227,13 +227,13 @@ function t_assignmentboard.T_BestCandidate()
         metaData = metaData2,
     }
 
-    -- test needTurtleId
-    corelog.WriteToLog("  # Test needTurtleId is a preferred candidate")
+    -- test needWorkerId
+    corelog.WriteToLog("  # Test needWorkerId is a preferred candidate")
     local currentTurtleId = os.getComputerID()
-    candidateData2.metaData.needTurtleId = currentTurtleId
+    candidateData2.metaData.needWorkerId = currentTurtleId
     local bestCandidate = enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
     assert(bestCandidate == candidateData2, "gotten BestCandidate(="..textutils.serialize(bestCandidate, compact)..") not the same as expected(="..textutils.serialize(candidateData2, compact)..")")
-    candidateData2.metaData.needTurtleId = nil
+    candidateData2.metaData.needWorkerId = nil
 
     -- cleanup test
 end

@@ -42,7 +42,7 @@ function role_energizer.Refuel_MetaData(...)
         needTool    = false,
         needTurtle  = true,
         fuelNeeded  = 0,
-        needTurtleId= turtleId,
+        needWorkerId= turtleId,
         itemsNeeded = coreutils.DeepCopy(fuelItems),
 
         priorityKey = priorityKey,

@@ -593,7 +593,7 @@ function Chest:storeItemsFrom_AOSrv(...)
             -- put items into Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
+                { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
                 { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "methodResults" },
             }},
