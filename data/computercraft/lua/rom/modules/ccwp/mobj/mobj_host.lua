@@ -180,6 +180,8 @@ function MObjHost:upgradeMObj_SSrv(...)
     local checkSuccess, mobjLocator, upgradeParameters = InputChecker.Check([[
         This async public service upgrades a MObj in the MObjHost.
 
+        Note that downgrading is not supported as it implies stopping running businesss etc.
+
         Note that the MObj is not physically extended in the world. If this is also required extendAndUpgradeMObj_ASrv should be called.
 
         Return value:
