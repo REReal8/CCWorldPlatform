@@ -129,6 +129,8 @@ end
 function t_main.T_ResetWorld()
     coreinventory.ResetAllItems()
     coreassignment.Reset()
+
+    -- enterprise resets
     enterprise_assignmentboard.Reset()
     enterprise_administration:reset()
     enterprise_projects.DeleteProjects()

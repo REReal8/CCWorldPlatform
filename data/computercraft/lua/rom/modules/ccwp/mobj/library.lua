@@ -6,6 +6,24 @@ function library.Init()
     package.path = package.path..";/rom/modules/ccwp/mobj/?;/rom/modules/ccwp/mobj/?.lua"
 end
 
+local function ExecuteLibraryTest(t)
+	-- forward call with options
+	local options	= {
+		{key = "h", desc = "MObjHost",			func = ExecuteLibraryTest, param = {filename = "T_MObjHost"}},
+		{key = "1", desc = "TestMObj",			func = ExecuteLibraryTest, param = {filename = "T_TestMObj"}},
+		{key = "b", desc = "BirchForest",		func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
+		{key = "c", desc = "Chest",				func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
+		{key = "f", desc = "Factory",			func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
+		{key = "p", desc = "ProductionSpot",	func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
+		{key = "s", desc = "Silo",				func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
+		{key = "w", desc = "Shop",				func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
+		{key = "t", desc = "Turtle",			func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
+		{key = "u", desc = "Util Station",		func = ExecuteLibraryTest, param = {filename = "T_UtilStation"}},
+		{key = "x", desc = "Back to main menu", func = function () return true end }
+	}
+	return ExecuteXObjTest(t, "mobj", options, ExecuteLibraryTest)
+end
+
 function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
@@ -41,6 +59,10 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_user_station")
+
+    -- add library test menu
+    local coredisplay = require "coredisplay"
+    coredisplay.MainMenuAddItem("m", "mobj lib tests", ExecuteLibraryTest, {})
 
     -- do other stuff
 end

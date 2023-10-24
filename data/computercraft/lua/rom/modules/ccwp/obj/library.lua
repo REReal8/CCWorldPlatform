@@ -6,6 +6,35 @@ function library.Init()
     package.path = package.path..";/rom/modules/ccwp/obj/?"..";/rom/modules/ccwp/obj/?.lua"
 end
 
+local function ExecuteLibraryTest(t)
+	-- forward call with options
+	local options	= {
+		{key = "m", desc = "ModuleRegistry", 	func = ExecuteLibraryTest, param = {filename = "T_ModuleRegistry"}},
+		{key = "1", desc = "Class", 			func = ExecuteLibraryTest, param = {filename = "T_Class"}},
+		{key = "f", desc = "ObjectFactory", 	func = ExecuteLibraryTest, param = {filename = "T_ObjectFactory"}},
+		{key = "2", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
+		{key = "a", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
+		{key = "o", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
+		{key = "d", desc = "CallDef", 			func = ExecuteLibraryTest, param = {filename = "T_CallDef"}},
+		{key = "c", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},
+		{key = "t", desc = "TaskCall", 			func = ExecuteLibraryTest, param = {filename = "T_TaskCall"}},
+		{key = "e", desc = "MethodExecutor", 	func = ExecuteLibraryTest, param = {filename = "T_MethodExecutor"}},
+		{key = "u", desc = "URL", 				func = ExecuteLibraryTest, param = {filename = "T_URL"}},
+		{key = "h", desc = "Host", 				func = ExecuteLibraryTest, param = {filename = "T_Host"}},
+		{key = "j", desc = "ObjHost", 			func = ExecuteLibraryTest, param = {filename = "T_ObjHost"}},
+		{key = "l", desc = "Location",			func = ExecuteLibraryTest, param = {filename = "T_Location"}},
+		{key = "b", desc = "Block",				func = ExecuteLibraryTest, param = {filename = "T_Block"}},
+		{key = "p", desc = "CodeMap",			func = ExecuteLibraryTest, param = {filename = "T_CodeMap"}},
+		{key = "r", desc = "LayerRectangle",	func = ExecuteLibraryTest, param = {filename = "T_LayerRectangle"}},
+		{key = "i", desc = "Inventory",			func = ExecuteLibraryTest, param = {filename = "T_Inventory"}},
+		{key = "g", desc = "ItemTable",			func = ExecuteLibraryTest, param = {filename = "T_ItemTable"}},
+		{key = "q", desc = "WIPQueue",			func = ExecuteLibraryTest, param = {filename = "T_WIPQueue"}},
+		{key = "w", desc = "WIPAdministrator",	func = ExecuteLibraryTest, param = {filename = "T_WIPAdministrator"}},
+		{key = "x", desc = "Back to main menu", func = function () return true end }
+	}
+	return ExecuteXObjTest(t, "obj", options, ExecuteLibraryTest)
+end
+
 function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
@@ -64,6 +93,10 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_ItemTable", "test.t_obj_item_table")
     moduleRegistry:requireAndRegisterModule("T_WIPQueue", "test.t_obj_wip_queue")
     moduleRegistry:requireAndRegisterModule("T_WIPAdministrator", "test.t_obj_wip_administrator")
+
+    -- add library test menu
+    local coredisplay = require "coredisplay"
+    coredisplay.MainMenuAddItem("o", "obj lib tests", ExecuteLibraryTest, {})
 
     -- do other stuff
 end

@@ -39,20 +39,14 @@ function coredisplay.Init()
 			intro   = "Choose your action",
 			option  = {
 				{key = "1", desc = "Exec code",  		func = ExecuteCode,	    		param = {step = 1}},
-				{key = "2", desc = "General tests",		func = ExecuteTest,	    		param = {}},
-				{key = "3", desc = "Core tests", 		func = ExecuteCoreTest,	    	param = {}},
-				{key = "4", desc = "Role tests",		func = ExecuteRoleTest,			param = {}},
-				{key = "5", desc = "obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "6", desc = "mobj tests",		func = ExecuteMObjTest,			param = {}},
-				{key = "7", desc = "Enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
-				{key = "8", desc = "Load event",		func = LoadEvent,				param = {}},
+				{key = "2", desc = "Load event",		func = LoadEvent,				param = {}},
 				{key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
 		}
 
 		-- alleen een turtle kan bewogen worden
-		if turtle then coredisplay.MainMenuAddItem("m", "Move turtle", MoveTurtle) end
+		if turtle then coredisplay.MainMenuAddItem("3", "Move turtle", MoveTurtle) end
 	end
 end
 
@@ -260,105 +254,6 @@ function ExecuteCode(t, code)
 
 	-- done
 	return true
-end
-
-function ExecuteTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "g", desc = "general", 			func = ExecuteTest, param = {filename = "t_main"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "general", options, ExecuteTest)
-end
-
-function ExecuteCoreTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "m", desc = "coremove", 			func = ExecuteCoreTest, param = {filename = "t_coremove"}},
-		{key = "d", desc = "coredht", 			func = ExecuteCoreTest, param = {filename = "t_coredht"}},
-		{key = "i", desc = "coreinventory",		func = ExecuteCoreTest, param = {filename = "t_coreinventory"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "core", options, ExecuteCoreTest)
-end
-
-function ExecuteRoleTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "a", desc = "alchemist", 		func = ExecuteRoleTest, param = {filename = "t_alchemist"}},
-		{key = "b", desc = "builder", 			func = ExecuteRoleTest, param = {filename = "t_builder"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "role", options, ExecuteRoleTest)
-end
-
-function ExecuteObjTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "m", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
-		{key = "1", desc = "Class", 			func = ExecuteObjTest, param = {filename = "T_Class"}},
-		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
-		{key = "2", desc = "ObjBase", 			func = ExecuteObjTest, param = {filename = "T_ObjBase"}},
-		{key = "a", desc = "ObjArray", 			func = ExecuteObjTest, param = {filename = "T_ObjArray"}},
-		{key = "o", desc = "ObjTable", 			func = ExecuteObjTest, param = {filename = "T_ObjTable"}},
-		{key = "d", desc = "CallDef", 			func = ExecuteObjTest, param = {filename = "T_CallDef"}},
-		{key = "c", desc = "Callback", 			func = ExecuteObjTest, param = {filename = "T_Callback"}},
-		{key = "t", desc = "TaskCall", 			func = ExecuteObjTest, param = {filename = "T_TaskCall"}},
-		{key = "e", desc = "MethodExecutor", 	func = ExecuteObjTest, param = {filename = "T_MethodExecutor"}},
-		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
-		{key = "h", desc = "Host", 				func = ExecuteObjTest, param = {filename = "T_Host"}},
-		{key = "j", desc = "ObjHost", 			func = ExecuteObjTest, param = {filename = "T_ObjHost"}},
-		{key = "l", desc = "Location",			func = ExecuteObjTest, param = {filename = "T_Location"}},
-		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
-		{key = "p", desc = "CodeMap",			func = ExecuteObjTest, param = {filename = "T_CodeMap"}},
-		{key = "r", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
-		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
-		{key = "g", desc = "ItemTable",			func = ExecuteObjTest, param = {filename = "T_ItemTable"}},
-		{key = "q", desc = "WIPQueue",			func = ExecuteObjTest, param = {filename = "T_WIPQueue"}},
-		{key = "w", desc = "WIPAdministrator",	func = ExecuteObjTest, param = {filename = "T_WIPAdministrator"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "obj", options, ExecuteObjTest)
-end
-
-function ExecuteMObjTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "h", desc = "MObjHost",			func = ExecuteMObjTest, param = {filename = "T_MObjHost"}},
-		{key = "1", desc = "TestMObj",			func = ExecuteMObjTest, param = {filename = "T_TestMObj"}},
-		{key = "b", desc = "BirchForest",		func = ExecuteMObjTest, param = {filename = "T_BirchForest"}},
-		{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {filename = "T_Chest"}},
-		{key = "f", desc = "Factory",			func = ExecuteMObjTest, param = {filename = "T_Factory"}},
-		{key = "p", desc = "ProductionSpot",	func = ExecuteMObjTest, param = {filename = "T_ProductionSpot"}},
-		{key = "s", desc = "Silo",				func = ExecuteMObjTest, param = {filename = "T_Silo"}},
-		{key = "w", desc = "Shop",				func = ExecuteMObjTest, param = {filename = "T_Shop"}},
-		{key = "t", desc = "Turtle",			func = ExecuteMObjTest, param = {filename = "T_Turtle"}},
-		{key = "u", desc = "Util Station",		func = ExecuteMObjTest, param = {filename = "T_UtilStation"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "mobj", options, ExecuteMObjTest)
-end
-
-function ExecuteEnterpriseTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "1", desc = "enterprise_test",	func = ExecuteEnterpriseTest, param = {filename = "t_test"}},
-		{key = "a", desc = "assignmentboard",	func = ExecuteEnterpriseTest, param = {filename = "t_assignmentboard"}},
-		{key = "t", desc = "employment", 		func = ExecuteEnterpriseTest, param = {filename = "t_employment"}},
-		{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {filename = "t_projects"}},
-		{key = "e", desc = "energy", 			func = ExecuteEnterpriseTest, param = {filename = "t_energy"}},
-		{key = "c", desc = "chests", 			func = ExecuteEnterpriseTest, param = {filename = "t_chests"}},
-		{key = "i", desc = "isp", 				func = ExecuteEnterpriseTest, param = {filename = "t_isp"}},
-		{key = "b", desc = "construction", 		func = ExecuteEnterpriseTest, param = {filename = "t_construction"}},
-		{key = "s", desc = "storage", 			func = ExecuteEnterpriseTest, param = {filename = "t_storage"}},
-		{key = "m", desc = "manufacturing", 	func = ExecuteEnterpriseTest, param = {filename = "t_manufacturing"}},
-		{key = "f", desc = "forestry", 			func = ExecuteEnterpriseTest, param = {filename = "t_forestry"}},
-		{key = "o", desc = "shop", 				func = ExecuteEnterpriseTest, param = {filename = "t_shop"}},
-		{key = "n", desc = "colonization", 		func = ExecuteEnterpriseTest, param = {filename = "t_colonization"}},
-		{key = "u", desc = "utilities", 		func = ExecuteEnterpriseTest, param = {filename = "t_utilities"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "enterprise", options, ExecuteEnterpriseTest)
 end
 
 function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
