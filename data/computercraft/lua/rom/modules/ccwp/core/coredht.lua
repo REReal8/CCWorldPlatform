@@ -83,6 +83,11 @@ local function SaveDataToDB(data, ...)
         listOfNodes[#listOfNodes + 1] = node
     end
 
+    -- history bijwerken
+    dbHistory[ dbHistory["_next"] ] = { data = data, listOfNodes = listOfNodes, version = db._version }
+    dbHistory[ "_next" ]            = dbHistory[ "_next" ] % dbHistory[ "_max" ] + 1
+    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")   -- temporary
+
     -- check for all data
     if #listOfNodes == 0 then
         -- wow, overwriting the root is dangerous!
@@ -167,11 +172,6 @@ local function DoEventSaveData(subject, envelope)
 
     -- versie bijwerken
     if db._version < envelope.message.version then db._version = envelope.message.version end
-
-    -- history bijwerken
-    dbHistory[ dbHistory["_next"] ] = envelope.message
-    dbHistory["_next"]              = dbHistory["_next"] % dbHistory["_max"] + 1
-    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")
 
 	-- just save the data like a normal request from this computer
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
