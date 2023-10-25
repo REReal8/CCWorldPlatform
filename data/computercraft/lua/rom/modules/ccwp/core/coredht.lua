@@ -86,7 +86,7 @@ local function SaveDataToDB(data, ...)
     -- history bijwerken
     dbHistory[ dbHistory["_next"] ] = { data = data, listOfNodes = listOfNodes, version = db._version }
     dbHistory[ "_next" ]            = dbHistory[ "_next" ] % dbHistory[ "_max" ] + 1
-    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")   -- temporary
+--    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")   -- temporary
 
     -- check for all data
     if #listOfNodes == 0 then
