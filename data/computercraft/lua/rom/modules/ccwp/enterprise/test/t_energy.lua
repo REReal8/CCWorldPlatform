@@ -2,6 +2,8 @@ local t_energy = {}
 
 local corelog = require "corelog"
 
+local Location = require "obj_location"
+
 local T_BirchForest = require "test.t_mobj_birchforest"
 
 local enterprise_energy = require "enterprise_energy"
@@ -33,24 +35,18 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
--- print("GetParameters="..textutils.serialize(enterprise_energy.GetParameters()))
-
--- print("GetFuelNeed_Refuel_Att="..textutils.serialize(enterprise_energy.GetFuelNeed_Refuel_Att()))
 function t_energy.T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
-    local T_Turtle = require "test.t_mobj_turtle"
-    local workerId1 = os.getComputerID()
-    local turtleObj = T_Turtle.CreateTestObj(nil, workerId1) assert (turtleObj, "Failed obtaining Turtle")
-    local turtleLocation = turtleObj:getLocation()
-    local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
+    local factoryLocaton1 = Location:newInstance(0, 0, 1, 0, 1)
+    local forestLocation = factoryLocaton1:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local factoryConstructParameters = {
         level           = 0,
 
-        baseLocation    = turtleLocation:copy(),
+        baseLocation    = factoryLocaton1:copy(),
     }
     local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
     local factoryLocator1 = result.mobjLocator
@@ -73,7 +69,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator, factoryLocator = factoryLocator1})
     fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
-    expectedFuelNeed = 41
+    expectedFuelNeed = 36 + 0 + 0 + 5
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
     -- test L2
@@ -83,7 +79,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator, factoryLocator = factoryLocator1})
     fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
-    expectedFuelNeed = 89
+    expectedFuelNeed = 36 + 48 + 0 + 5
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
     result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
