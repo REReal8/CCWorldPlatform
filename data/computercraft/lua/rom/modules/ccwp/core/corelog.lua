@@ -94,11 +94,13 @@ function corelog.WriteToLog(message, writeMode)
 	-- set the default
 	writeMode = writeMode or "append"
 
+	-- might be a table
+	if type(message) == "table" then message = textutils.serialize(message)
+								else message = tostring(message)
+	end
+
 	-- write to the logfile
 	coreutils.WriteToFile(db.logfile, coreutils.UniversalTime()..': '..message, writeMode)
-
-	-- might be a table
-	if type(message) == "table" then message = textutils.serialize(message) end
 
 	-- send message
 	if monitorLeft then
