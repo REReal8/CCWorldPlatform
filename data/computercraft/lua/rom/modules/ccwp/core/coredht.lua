@@ -14,7 +14,7 @@ local coretask = require "coretask"
 local InputChecker
 
 local db                = { _version = 0 }
-local dbHistory         = {}
+local dbHistory         = { _next = 1, _max = 30}
 local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false
@@ -167,6 +167,11 @@ local function DoEventSaveData(subject, envelope)
 
     -- versie bijwerken
     if db._version < envelope.message.version then db._version = envelope.message.version end
+
+    -- history bijwerken
+    dbHistory[ dbHistory["_next"] ] = envelope.message
+    dbHistory["_next"]              = dbHistory["_next"] % dbHistory["_max"] + 1
+    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")
 
 	-- just save the data like a normal request from this computer
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
