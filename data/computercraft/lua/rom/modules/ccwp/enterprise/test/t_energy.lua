@@ -9,6 +9,7 @@ local enterprise_forestry = require "enterprise_forestry"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
 function t_energy.T_All()
+    -- service
     t_energy.T_GetFuelNeed_Refuel_Att()
     t_energy.T_GetRefuelAmount_Att()
 end
@@ -24,6 +25,13 @@ local factoryClassName = "Factory"
 function t_energy.T_ResetParameters()
     enterprise_energy.ResetParameters()
 end
+
+--                        _
+--                       (_)
+--    ___  ___ _ ____   ___  ___ ___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \
+--   \__ \  __/ |   \ V /| | (_|  __/
+--   |___/\___|_|    \_/ |_|\___\___|
 
 -- print("GetParameters="..textutils.serialize(enterprise_energy.GetParameters()))
 
@@ -95,7 +103,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator, factoryLocator = factoryLocator2})
     fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
-    expectedFuelNeed = 970
+    expectedFuelNeed = 888 + 48 + 0 + 12
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test

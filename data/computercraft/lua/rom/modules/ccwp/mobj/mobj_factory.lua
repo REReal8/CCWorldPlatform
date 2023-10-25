@@ -692,54 +692,73 @@ end
 function Factory:getFuelNeed_Production_Att(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
-        Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
-        assuming the ingredients are available in a turtle and the results are to be delivered to the turtle)
+        Factory attribute for the current fuelNeed for producing items.
+
+        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the Factory baseLocation
+        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the Factory.
+
+        Return value:
+            fuelNeed        - (number) amount of fuel needed to produce items
 
         Parameters:
-            items   + (table) items to produce
+            items           + (table) items to produce
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
-    -- create locator
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleLocator = enterprise_employment.GetAnyTurtleLocator() if not turtleLocator then corelog.Error("Factory:getFuelNeed_Production_Att: Failed obtaining turtleLocator") return enterprise_energy.GetLargeFuelAmount_Att() end
+    -- cache Factory fields
+    local baseLocation = self:getBaseLocation()
+    local level = self:getLevel()
 
-    -- determine fuelNeed
-    local serviceResults = self:needsTo_ProvideItemsTo_SOSrv({
-        provideItems                    = items,
-        itemDepotLocator                = turtleLocator:copy(),
-        ingredientsItemSupplierLocator  = turtleLocator:copy(),
-    })
-    if not serviceResults.success then corelog.Error("Factory:getFuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.GetLargeFuelAmount_Att() end
-    local fuelNeed = serviceResults.fuelNeed
+    -- determine local inputLocation
+    local inputLocation = baseLocation
+    if level == 2 then
+         -- get local input Chest
+        local inputChestLocator = self:getAvailableInputLocator()
+        local inputChest = ObjHost.GetObject(inputChestLocator)
+        if not inputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No inputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        inputLocation = inputChest:getBaseLocation()
+    end
+
+    -- determine local inputLocation
+    local outputLocation = baseLocation
+    if level == 2 then
+        -- get local output Chest
+        local outputChestLocator = self:getAvailableOutputLocator()
+        local outputChest = ObjHost.GetObject(outputChestLocator)
+        if not outputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No outputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        outputLocation = outputChest:getBaseLocation()
+    end
+
+    -- loop on items
+    local fuelNeed_Production = 0
+    for itemName, itemCount in pairs(items) do
+        -- get recipe to provide item
+        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
+        if type(recipe) ~= "table" then corelog.Error("Factory:getFuelNeed_Production_Att: Factory does not provide "..itemName.."'s") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+        -- get productionSpot
+        local productionSpot = self:getAvailableProductionSpot(recipe)
+        if not productionSpot then corelog.Error("Factory:getFuelNeed_Production_Att: No ProductionSpot available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        local productionSpotlocation = productionSpot:getBaseLocation()
+
+        -- fuelNeed to productionSpot
+        local fuelNeed_ToProductionlocation = role_energizer.NeededFuelToFrom(inputLocation, baseLocation) + role_energizer.NeededFuelToFrom(productionSpotlocation, inputLocation)
+
+        -- fuelNeed for productionSpot
+        local item = { itemName = itemCount }
+        local fuelNeed_ProductionSpot = productionSpot:getFuelNeed_Production_Att(item)
+
+        -- fuelNeed from productionSpot
+        local fuelNeed_FromProductionLocation = role_energizer.NeededFuelToFrom(productionSpotlocation, outputLocation) + role_energizer.NeededFuelToFrom(baseLocation, outputLocation)
+
+        -- end
+        -- corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_ProductionSpot="..fuelNeed_ProductionSpot..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
+        fuelNeed_Production = fuelNeed_Production + fuelNeed_ToProductionlocation + fuelNeed_ProductionSpot + fuelNeed_FromProductionLocation
+    end
 
     -- end
-    return fuelNeed
-end
-
-function Factory:getProductionLocation_Att(...)
-    -- get & check input from description
-    local checkSuccess, items = InputChecker.Check([[
-        Factory attribute for the location of the current available ProductionSpot for producing items.
-
-        Parameters:
-            items   + (table) items to produce
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Factory:getSiteLocation_Att: Invalid input") return Location.FarLocation() end
-
-    -- check for recipe to provide items
-    local itemName, itemCount = next(items, nil)
-    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
-    local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("Factory:getSiteLocation_Att: Factory does not provide "..itemName.."'s") return Location.FarLocation() end
-
-    -- get location
-    local productionSpot = self:getAvailableProductionSpot(recipe)
-    if not productionSpot then corelog.Error("Factory:getSiteLocation_Att: No ProductionSpot available.") return Location.FarLocation() end
-    local location = productionSpot:getBaseLocation()
-
-    -- end
-    return location
+    return fuelNeed_Production
 end
 
 --    _____ _____ _                  _____                   _ _
@@ -959,7 +978,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         local itemIngredientsNeed = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
-        -- fuelNeed ingredients
+        -- fuelNeed ingredients supply
         local localInputLocator = self:getAvailableInputLocator():copy()
         local serviceResults = ingredientsItemSupplier:needsTo_ProvideItemsTo_SOSrv({
             provideItems                    = itemIngredientsNeed,
@@ -970,23 +989,15 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
-        local localInputItemsLocator = localInputLocator:copy()
-        localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
-        local localOutputLocator = self:getAvailableOutputLocator():copy()
-        local serviceData = {
-            localInputItemsLocator  = localInputItemsLocator,
-            localOutputLocator      = localOutputLocator,
-            productionSpot          = productionSpot:copy(),
-        }
-        serviceResults = Factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for production at site") return {success = false} end
-        local fuelNeed_SiteProduction = serviceResults.fuelNeed
+        local item = { itemName = itemCount }
+        local fuelNeed_SiteProduction = self:getFuelNeed_Production_Att(item)
 
         -- fuelNeed output transfer
+        local localOutputLocator = self:getAvailableOutputLocator():copy()
         local localOutputItemsLocator = localOutputLocator:copy()
         local items = { [itemName] = itemCount }
         localOutputItemsLocator:setQuery(items)
-        serviceData = {
+        local serviceData = {
             sourceItemsLocator          = localOutputItemsLocator,
             destinationItemDepotLocator = itemDepotLocator,
         }
@@ -995,7 +1006,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         local fuelNeed_ProductsSupply = serviceResults.fuelNeed
 
         -- add fuelNeed
---        corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
+        -- corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
         fuelNeed = fuelNeed + fuelNeed_IngredientsSupply + fuelNeed_SiteProduction + fuelNeed_ProductsSupply
     end
 
@@ -1004,52 +1015,6 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         success         = true,
         fuelNeed        = fuelNeed,
         ingredientsNeed = ingredientsNeed,
-    }
-end
-
-function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productionSpot = InputChecker.Check([[
-        This sync public service returns the needs for the site to produce specific items to an ItemDepot.
-
-        Return value:
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                fuelNeed                - (number) amount of fuel needed to supply items
-
-        Parameters:
-            serviceData                 - (table) data to the query
-                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
-                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
-                productionSpot          + (ProductionSpot) production spot
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
-
-    -- fuelNeed from localInputItemsLocator to productionSpot
-    local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = localInputItemsLocator })
-    if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
-    local fuelNeed_ToProductionlocation = 0
-    for i, location in ipairs(serviceResults.locations) do
-        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_energizer.NeededFuelToFrom(productionSpot:getBaseLocation(), location)
-    end
-
-    -- fuelNeed for production
-    local fuelNeed_Production = 0
-    if productionSpot:isCraftingSpot() then fuelNeed_Production = 0 -- craft
-    else fuelNeed_Production = 4 + 4 -- smelt + pickup
-    end
-
-    -- fuelNeed from productionSpot to localOutputLocator
-    serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
-    if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
-    local fuelNeed_FromProductionLocation = role_energizer.NeededFuelToFrom(serviceResults.location, productionSpot:getBaseLocation())
-
-    -- end
---    corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
-    local fuelNeed = fuelNeed_ToProductionlocation + fuelNeed_Production + fuelNeed_FromProductionLocation
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
     }
 end
 

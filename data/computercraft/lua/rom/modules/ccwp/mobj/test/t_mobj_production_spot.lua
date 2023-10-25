@@ -22,6 +22,7 @@ function T_ProductionSpot.T_All()
     T_ProductionSpot.T_IObj_All()
 
     -- specific
+    T_ProductionSpot.T_getFuelNeed_Production_Att()
 end
 
 local testClassName = "ProductionSpot"
@@ -42,7 +43,9 @@ local compact = { compact = true }
 function T_ProductionSpot.CreateTestObj(baseLocation, isCraftingSpot)
     -- check input
     baseLocation = baseLocation or baseLocation1
-    isCraftingSpot = isCraftingSpot or isCraftingSpot1
+    if type(isCraftingSpot) == "nil" then
+        isCraftingSpot = isCraftingSpot1
+    end
 
     -- create testObj
     local testObj = ProductionSpot:newInstance(baseLocation:copy(), isCraftingSpot)
@@ -119,5 +122,29 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function T_ProductionSpot.T_getFuelNeed_Production_Att()
+    -- prepare test crafting
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (crafting)")
+    local objCraft = T_ProductionSpot.CreateTestObj(baseLocation1, true) assert(objCraft, "Failed obtaining "..testClassName)
+    local craftItems = { ["minecraft:birch_planks"] = 4 }
+
+    -- test crafting
+    local fuelNeed = objCraft:getFuelNeed_Production_Att(craftItems)
+    local expectedFuelNeed = 0
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- prepare test smelting
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (smelting)")
+    local objSmelt = T_ProductionSpot.CreateTestObj(baseLocation1, false) assert(objCraft, "Failed obtaining "..testClassName)
+    local smeltItems = { ["minecraft:charcoal"] = 8 }
+
+    -- test smelting
+    fuelNeed = objSmelt:getFuelNeed_Production_Att(smeltItems)
+    expectedFuelNeed = 4 + 4
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
 
 return T_ProductionSpot

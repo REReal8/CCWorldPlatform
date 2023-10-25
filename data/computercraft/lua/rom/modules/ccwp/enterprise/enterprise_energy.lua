@@ -181,7 +181,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         forest = enterprise_forestry:getObject(forestLocator)
         if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
-        -- determine fuelNeed by forest
+        -- determine fuelNeed by BirchForest
         local fuelNeed_Harvest = forest:getFuelNeed_Harvest_Att()
 
         -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
@@ -197,17 +197,17 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         factory = enterprise_manufacturing:getObject(factoryLocator)
         if type(factory) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: factory "..factoryLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
-        -- determine fuelNeed by factory
+        -- determine fuelNeed by Factory
         local items = FuelItemsForFuel(1)
         local fuelNeed_Production = factory:getFuelNeed_Production_Att(items)
 
-        -- determine fuelNeed for traveling
+        -- determine fuelNeed for traveling between BirchForest and Factory
         local forestLocation = forest:getBaseLocation()
-        local factoryLocation = factory:getProductionLocation_Att(items)
+        local factoryLocation = factory:getBaseLocation()
         local fuelNeed_ForestFactoryTravel = role_energizer.NeededFuelToFrom(factoryLocation, forestLocation)
 
         -- add fuelNeed
---        corelog.WriteToLog("E  fuelNeed_Harvest="..fuelNeed_Harvest..", fuelNeed_ExtraTree="..fuelNeed_ExtraTree..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)
+        -- corelog.WriteToLog("E  fuelNeed_Harvest="..fuelNeed_Harvest..", fuelNeed_ExtraTree="..fuelNeed_ExtraTree..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)
         fuelNeed = fuelNeed + fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel
     end
 

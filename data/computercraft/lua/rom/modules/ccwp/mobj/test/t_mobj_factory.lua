@@ -54,7 +54,6 @@ function T_Factory.T_All()
 
     -- service
     T_Factory.T_getFuelNeed_Production_Att()
-    T_Factory.T_getProductionLocation_Att()
 
     -- IItemSupplier
     T_Factory.T_IItemSupplier_All()
@@ -393,47 +392,39 @@ end
 --   |___/\___|_|    \_/ |_|\___\___|
 
 function T_Factory.T_getFuelNeed_Production_Att()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() tests")
-    local T_Turtle = require "test.t_mobj_turtle"
-    local workerId1 = os.getComputerID()
-    local turtleObj = T_Turtle.CreateTestObj(nil, workerId1) assert (turtleObj, "Failed obtaining Turtle")
-    local location2 = turtleObj:getLocation()
-    local craftingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -4), true)
-    local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -3), false)
-    local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot2, })
-    local obj = T_Factory.CreateTestObj(nil, level1, location2, inputLocators0, outputLocators0, craftingSpots2, smeltingSpots2) assert(obj, "Failed obtaining "..testClassName)
+    -- prepare test L1
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 1 crafting)")
+    local objL1 = T_Factory.CreateTestObj(nil, level1) assert(objL1, "Failed obtaining "..testClassName)
+    local expectedFuelNeedCraftingSpot = 0
+    local craftItems = { ["minecraft:birch_planks"] = 4 }
 
-    -- test
-    local items = { ["minecraft:birch_planks"] = 4 }
-    local fuelNeed = obj:getFuelNeed_Production_Att(items)
-    local expectedFuelNeed = 20
+    -- test L1
+    local fuelNeed = objL1:getFuelNeed_Production_Att(craftItems)
+    local expectedFuelNeed = (3+3+4) + expectedFuelNeedCraftingSpot + (3+3+4)
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- prepare test L2
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
+    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
+    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
+    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
+    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
+    local objL2 = T_Factory.CreateTestObj(nil, level2, baseLocation1, inputLocators2, outputLocators2) assert(objL2, "Failed obtaining "..testClassName)
+
+    -- test L2
+    fuelNeed = objL2:getFuelNeed_Production_Att(craftItems)
+    expectedFuelNeed = (2+5+0) + (1+2+4) + expectedFuelNeedCraftingSpot + (1+2+4) + (4+5+0)
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-end
-
-function T_Factory.T_getProductionLocation_Att()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getProductionLocation_Att() tests")
-    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test craft
-    local itemName = "minecraft:birch_planks"
-    local itemCount = 10
-    local productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    local expectedLocation = craftingSpot1:getBaseLocation()
-    assert(productionLocation:isEqual(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
-
-    -- test smelt
-    itemName = "minecraft:charcoal"
-    itemCount = 5
-    productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    expectedLocation = smeltingSpot1:getBaseLocation()
-    assert(productionLocation:isEqual(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
-
-    -- cleanup test
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
 end
 
 --    _____ _____ _                  _____                   _ _

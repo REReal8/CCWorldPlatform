@@ -18,6 +18,8 @@ local InputChecker = require "input_checker"
 
 local role_alchemist = require "role_alchemist"
 
+local enterprise_energy = require "enterprise_energy"
+
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
@@ -92,6 +94,37 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function ProductionSpot:getFuelNeed_Production_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        ProductionSpot attribute for the current fuelNeed for producing items.
+
+        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the ProductionSpot baseLocation
+        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the ProductionSpot.
+
+        Return value:
+            fuelNeed        - (number) amount of fuel needed to produce items
+
+        Parameters:
+            items           + (table) items to produce
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ProductionSpot:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+    -- fuelNeed for production of items
+    local fuelNeed_Production = 0
+    for _, _ in pairs(items) do
+        if self:isCraftingSpot() then
+            fuelNeed_Production = fuelNeed_Production + 0 -- craft
+        else
+            fuelNeed_Production = fuelNeed_Production + 4 + 4 -- smelt + pickup
+        end
+    end
+
+    -- end
+    return fuelNeed_Production
+end
+
 
 function ProductionSpot:produceIngredientsNeeded(...)
     -- get & check input from description
