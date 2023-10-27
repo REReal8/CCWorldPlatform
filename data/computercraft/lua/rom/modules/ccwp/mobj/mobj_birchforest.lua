@@ -740,7 +740,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                ingredientsItemSupplierLocator  + (URL) locating where possible ingredients needed to provide can be retrieved
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
@@ -809,21 +809,23 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 steps = {
                     -- ToDo: consider retrieving birchSapling from it's local localItemSupplierLocator
                     --          (or will this be part of harvestForest?)
+                    -- harvest BirchForest
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                         { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }, description = "Harvesting "..textutils.serialise(item, {compact = true}).." task"},
-                    -- store logs to localLogsLocator
+                    -- store harvested logs to localLogsLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localLogsLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputLogsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
-                    -- store saplings to localSaplingsLocator
+                    -- store harvested saplings to localSaplingsLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localSaplingsLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputSaplingsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
-                    -- store waste (e.g. sticks) to wasteItemDepotLocator
+                    -- store input saplings to localSaplingsLocator
+                    -- store gathered waste (e.g. sticks) to wasteItemDepotLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleWasteItemsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },

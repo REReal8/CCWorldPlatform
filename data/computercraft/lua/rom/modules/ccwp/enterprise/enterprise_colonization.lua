@@ -174,7 +174,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             -- register current Turtle in Shop
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 0, sourceKeyDef = "currentTurtleLocator" },
-            }, description = "Registering current Turtle"},
+            }, description = "Registering current Turtle in Shop"},
             -- initial (L0) enterprise_energy (refuelAmount = 0, fuelNeed_Refuel = 0)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"                , sourceStep = 0, sourceKeyDef = "energyL0" },
@@ -312,7 +312,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             -- delist current Turtle from Shop
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 0, sourceKeyDef = "currentTurtleLocator" },
-            }},
+            }, description = "Delisting current Turtle from Shop"},
             --
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_dump", serviceName = "ListItemDepot_SSrv" }, stepDataDef = {
                 { keyDef = "itemDepotLocator"               , sourceStep = 23, sourceKeyDef = "mobjLocator" },
