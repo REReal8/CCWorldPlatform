@@ -989,13 +989,12 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
-        local item = { itemName = itemCount }
-        local fuelNeed_SiteProduction = self:getFuelNeed_Production_Att(item)
+        local items = { [itemName] = itemCount }
+        local fuelNeed_SiteProduction = self:getFuelNeed_Production_Att(items)
 
         -- fuelNeed output transfer
         local localOutputLocator = self:getAvailableOutputLocator():copy()
         local localOutputItemsLocator = localOutputLocator:copy()
-        local items = { [itemName] = itemCount }
         localOutputItemsLocator:setQuery(items)
         local serviceData = {
             sourceItemsLocator          = localOutputItemsLocator,
