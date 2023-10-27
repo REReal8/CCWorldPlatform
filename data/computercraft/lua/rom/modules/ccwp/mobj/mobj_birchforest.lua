@@ -712,6 +712,22 @@ function BirchForest:getFuelNeedExtraTree_Att()
     return fuelNeed_OneTreeExtra - fuelNeed_Current
 end
 
+function BirchForest:getSaplingHarvestNorm_Att()
+    --[[
+        Attribute with the norm for the number of saplings to start a harvesting round with.
+    --]]
+
+    -- determine norm saplings
+    local nNormSaplings = 0
+    if self:getLevel() >= 1 then
+        nNormSaplings = 1
+    end
+
+    -- end
+    return nNormSaplings
+end
+
+
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -789,6 +805,10 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 assignmentsPriorityKey          = assignmentsPriorityKey,
             }, callback)
         else
+            -- get # input (i.e. available from norm) saplings
+            local normSaplings = self:getSaplingHarvestNorm_Att()
+            local inputSaplings = { ["minecraft:birch_sapling"] = normSaplings }
+
             -- get locator for this BirchForest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
             local forestLocator = host:getObjectLocator(self)
@@ -807,27 +827,41 @@ function BirchForest:provideItemsTo_AOSrv(...)
             -- create project service data
             local projectDef = {
                 steps = {
-                    -- ToDo: consider retrieving birchSapling from it's local localItemSupplierLocator
-                    --          (or will this be part of harvestForest?)
+                    -- get input saplings from localSaplingsLocator into a Turtle
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "localSaplingsLocator" }, stepDataDef = {
+                        { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "inputSaplings" },
+                        { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "anyTurtleLocator" },
+                        { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                        { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+                        { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    }, description = "Gathering "..normSaplings.." input sapling(s)"},
+                    -- obtain workerId (of Turtle)
+                    { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+                    }},
                     -- harvest BirchForest
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                         { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
+                        { keyDef = "metaData.needWorkerId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }, description = "Harvesting "..textutils.serialise(item, {compact = true}).." task"},
                     -- store harvested logs to localLogsLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localLogsLocator" }, stepDataDef = {
-                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputLogsLocator" },
+                        { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "turtleOutputLogsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- store harvested saplings to localSaplingsLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localSaplingsLocator" }, stepDataDef = {
-                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputSaplingsLocator" },
+                        { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "turtleOutputSaplingsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- store input saplings to localSaplingsLocator
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localSaplingsLocator" }, stepDataDef = {
+                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                        { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    }},
                     -- store gathered waste (e.g. sticks) to wasteItemDepotLocator
                     { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
-                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleWasteItemsLocator" },
+                        { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "turtleWasteItemsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- recursive call to provide (remaining) items
@@ -840,10 +874,13 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     }, description = "Providing "..textutils.serialise(item, {compact = true}).." recursively"},
                 },
                 returnData  = {
-                    { keyDef = "destinationItemsLocator"            , sourceStep = 5, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "destinationItemsLocator"            , sourceStep = 8, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
             local projectData = {
+                inputSaplings                   = inputSaplings,
+                anyTurtleLocator                = enterprise_employment.GetAnyTurtleLocator(),
+
                 forestLocator                   = forestLocator,
                 item                            = item, -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
                 ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
