@@ -75,8 +75,8 @@ function role_builder.BuildBlueprint_MetaData(...)
         elseif buildDirection == "Up" then
             offsetZ = -1
         elseif buildDirection == "Front" then
-            offsetX = startpoint:getDX()
-            offsetY = startpoint:getDY()
+            offsetX = -startpoint:getDX() -- note: in "Front" so -dx or -dy
+            offsetY = -startpoint:getDY()
         else
             corelog.Error("role_builder.BuildBlueprint_MetaData: Don't know how to determine offsets for buildDirection '"..buildDirection.."'") return {success = false}
         end
@@ -195,7 +195,7 @@ function role_builder.BuildLayer_MetaData(...)
     elseif buildDirection == "Up" then
         offsetZ = -1
     elseif buildDirection == "Front" then
-        offsetX = -startpoint:getDX()
+        offsetX = -startpoint:getDX() -- note: in "Front" so -dx or -dy
         offsetY = -startpoint:getDY()
     else
         corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to determine offsets for buildDirection '"..buildDirection.."'") return nil
