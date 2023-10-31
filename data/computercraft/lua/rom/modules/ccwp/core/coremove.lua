@@ -147,7 +147,17 @@ function coremove.Forward(c, force, callback)
 		local success	= turtle.forward()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then callback() end
+		if not success and type(callback) == "function" then
+
+			-- remember current location
+			local currentLocation = coremove.GetLocation()
+
+			-- do the callback
+			callback()
+
+			-- this should do nothing (or we have a naughty callback)!
+			coremove.GoTo(currentLocation)
+		end
 
 		-- if it did not work, attack the space in front of us
 		if not success and force then
