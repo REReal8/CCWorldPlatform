@@ -216,7 +216,17 @@ function coremove.Backward(c, force, callback)
 		if turtle.back() ~= true then
 
 			-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-			if type(callback) == "function" then callback() end
+			if type(callback) == "function" then
+
+				-- remember current location
+				local currentLocation = coremove.GetLocation()
+
+				-- do the callback
+				callback()
+
+				-- this should do nothing (or we have a naughty callback)!
+				coremove.GoTo(currentLocation)
+			end
 
 			-- can we use force?
 			if force then
@@ -259,7 +269,17 @@ function coremove.Up(c, force, callback)
 		local success = turtle.up()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then callback() end
+		if not success and type(callback) == "function" then
+
+			-- remember current location
+			local currentLocation = coremove.GetLocation()
+
+			-- do the callback
+			callback()
+
+			-- this should do nothing (or we have a naughty callback)!
+			coremove.GoTo(currentLocation)
+		end
 
 		-- did we move up?
 		while not success and force do
@@ -306,7 +326,17 @@ function coremove.Down(c, force, callback)
 		local success = turtle.down()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then callback() end
+		if not success and type(callback) == "function" then
+
+			-- remember current location
+			local currentLocation = coremove.GetLocation()
+
+			-- do the callback
+			callback()
+
+			-- this should do nothing (or we have a naughty callback)!
+			coremove.GoTo(currentLocation)
+		end
 
 		-- did we go down?
 		while not success and force do
