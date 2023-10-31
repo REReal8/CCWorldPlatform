@@ -494,33 +494,32 @@ function Below( t )
 	}
 end
 
-local function SimpleMoveTo(l, force)
+local function SimpleMoveTo(l, force, callback)
 	-- local function, checking parameter no longer done, you take care of that yourself!
 
 	-- might be a difficult route, try more times
 	for i=1,3 do
 		-- first, get to the right z
-		if l._z > db.z	then coremove.Up(l._z - db.z, force) end
+		if l._z > db.z	then coremove.Up(l._z - db.z, force, callback) end
 
 		-- next is the right y
 		if l._y > db.y then coremove.TurnTo({ _dx = 0, _dy =  1 })
 		elseif l._y < db.y then coremove.TurnTo({ _dx = 0, _dy = -1 })
 		end
-		coremove.Forward( math.abs( l._y - db.y ), force )
+		coremove.Forward( math.abs( l._y - db.y ), force, callback)
 
 		-- next is the right x
 				if l._x > db.x then coremove.TurnTo({ _dx =  1, _dy = 0 })
 		elseif l._x < db.x then coremove.TurnTo({ _dx = -1, _dy = 0 })
 		end
-		coremove.Forward( math.abs( l._x - db.x ), force )
+		coremove.Forward( math.abs( l._x - db.x ), force, callback)
 
 		-- now go down
-		if l._z < db.z then coremove.Down(db.z - l._z, force) end
+		if l._z < db.z then coremove.Down(db.z - l._z, force, callback) end
 	end
-
 end
 
-function coremove.MoveTo(l, force)
+function coremove.MoveTo(l, force, callback)
 	if l == nil then
 		print("Cannot move to nil location")
 		corelog.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
@@ -536,7 +535,7 @@ function coremove.MoveTo(l, force)
 	l._dy = l._dy or db.dy
 
 	-- do the movement
-	SimpleMoveTo(l, force)
+	SimpleMoveTo(l, force, callback)
 
 	-- did we get there?
 	if l._x ~= db.x or l._y ~= db.y or l._z ~= db.z then
@@ -546,11 +545,11 @@ function coremove.MoveTo(l, force)
 		l._z			= 2
 
 		-- try again
-		SimpleMoveTo(l, force)
+		SimpleMoveTo(l, force, callback)
 
 		-- and now to the requested location
 		l._z			= targetZ
-		SimpleMoveTo(l, force)
+		SimpleMoveTo(l, force, callback)
 	end
 end
 
@@ -579,9 +578,9 @@ function coremove.TurnTo( t )
 	end
 end
 
-function coremove.GoTo( l, force )
-	coremove.MoveTo( l, force )
-	coremove.TurnTo( l )
+function coremove.GoTo(l, force, callback)
+	coremove.MoveTo(l, force, callback)
+	coremove.TurnTo(l)
 end
 
 return coremove
