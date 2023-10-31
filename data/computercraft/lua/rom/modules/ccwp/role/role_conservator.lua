@@ -391,7 +391,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
 
         -- check enough items
         local turtleInventory = coreinventory.GetInventoryDetail()
-        if turtleInventory.items[requestItemName] < requestItemCount then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..turtleInventory.items[requestItemName]..") in inventory of turtle.") return {success = false} end
+        if requestItemCount ~=0 and turtleInventory.items[requestItemName] < requestItemCount then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..turtleInventory.items[requestItemName]..") in inventory of turtle.") return {success = false} end
 
         -- drop the items into Chest
         -- ToDo: handling (not enough) space in Chest
