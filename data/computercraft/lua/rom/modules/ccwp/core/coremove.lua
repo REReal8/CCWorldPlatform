@@ -380,6 +380,7 @@ function NeedSappling()
 end
 --]]
 function coremove.GetLocation()
+	-- returns current location as a new table ToDo: return a location object
 	return {
 		_x = db.x,
 		_y = db.y,
