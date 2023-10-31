@@ -210,5 +210,10 @@ function t_builder.T_BuildLayer_Task_Front()
 
     -- cleanup test
 end
-
+--[[
+local role_forester = require "role_forester"
+function t_builder.T_MoveCallback()
+    role_forester.TestMoveCallback()
+end
+]]
 return t_builder
