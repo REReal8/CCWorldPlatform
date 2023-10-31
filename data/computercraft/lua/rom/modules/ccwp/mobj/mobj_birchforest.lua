@@ -805,9 +805,16 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 assignmentsPriorityKey          = assignmentsPriorityKey,
             }, callback)
         else
-            -- get # input (i.e. available from norm) saplings
+            -- get # available input (i.e. available from norm) saplings
             local normSaplings = self:getSaplingHarvestNorm_Att()
+            local localSaplingsSupplier = ObjHost.GetObject(localSaplingsLocator)
+            if type(localSaplingsSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: localSaplingsSupplier "..localSaplingsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
             local inputSaplings = { ["minecraft:birch_sapling"] = normSaplings }
+            if not localSaplingsSupplier:can_ProvideItems_QOSrv({ provideItems = inputSaplings }).success then
+                -- ToDo: consider using the number of saplings that ARE available once IItemSupplier is improved with a method that returns what IS available
+                normSaplings = 0
+                inputSaplings = { ["minecraft:birch_sapling"] = 0 }
+            end
 
             -- get locator for this BirchForest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
