@@ -81,10 +81,10 @@ function T_Turtle.CreateTestObj(id, workerId, location, fuelPriorityKey)
     fuelPriorityKey = fuelPriorityKey or fuelPriorityKey1
 
     -- create Turtle object
-    local turtle = Turtle:newInstance(id, workerId, location, fuelPriorityKey)
+    local turtleObj = Turtle:newInstance(id, workerId, location, fuelPriorityKey)
 
     -- end
-    return turtle
+    return turtleObj
 end
 
 function T_Turtle.CreateInitialisedTest(id, workerId, location, fuelPriorityKey)
