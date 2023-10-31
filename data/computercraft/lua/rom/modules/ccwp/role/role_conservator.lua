@@ -256,7 +256,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
         -- check enough items
         local inventory = Inventory:newInstance(chest.list())
         local items = inventory:getItemTable()
-        if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in Chest.") return {success = false} end
+        if requestItemCount ~= 0 and (not items[requestItemName] or items[requestItemName] < requestItemCount) then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in Chest.") return {success = false} end
 
         -- empty first slot
         local firstSlot = 1
