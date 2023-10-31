@@ -790,18 +790,12 @@ function BirchForest:provideItemsTo_AOSrv(...)
         -- check items already available in localItemSupplierLocator
         local item = { [itemName] = itemCount }
         if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
-            -- get localItemsLocator
-            local localItemsLocator = localItemSupplierLocator:copy()
-            localItemsLocator:setQuery(item)
-
-            -- get ItemDepot
-            local itemDepot = ObjHost.GetObject(itemDepotLocator)
-            if type(itemDepot) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
-
-            -- yes: store items from local ItemSupplier to requested ItemDepot
---            corelog.WriteToLog(">Storing "..localItemsLocator:getURI().." from BirchForest to "..itemDepotLocator:getURI())
-            scheduleResult = scheduleResult and itemDepot:storeItemsFrom_AOSrv({
-                itemsLocator                    = localItemsLocator,
+            -- provide items from localItemSupplier to requested ItemDepot
+            scheduleResult = scheduleResult and itemSupplier:provideItemsTo_AOSrv({
+                provideItems                    = provideItems,
+                itemDepotLocator                = itemDepotLocator,
+                ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+                wasteItemDepotLocator           = wasteItemDepotLocator,
                 assignmentsPriorityKey          = assignmentsPriorityKey,
             }, callback)
         else
