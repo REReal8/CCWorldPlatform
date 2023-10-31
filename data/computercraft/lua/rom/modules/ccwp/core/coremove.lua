@@ -147,7 +147,7 @@ function coremove.Forward(c, force, callback)
 		local success	= turtle.forward()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and callback then callback() end
+		if not success and type(callback) == "function" then callback() end
 
 		-- if it did not work, attack the space in front of us
 		if not success and force then
@@ -206,7 +206,7 @@ function coremove.Backward(c, force, callback)
 		if turtle.back() ~= true then
 
 			-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-			if callback then callback() end
+			if type(callback) == "function" then callback() end
 
 			-- can we use force?
 			if force then
@@ -249,7 +249,7 @@ function coremove.Up(c, force, callback)
 		local success = turtle.up()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and callback then callback() end
+		if not success and type(callback) == "function" then callback() end
 
 		-- did we move up?
 		while not success and force do
@@ -296,7 +296,7 @@ function coremove.Down(c, force, callback)
 		local success = turtle.down()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and callback then callback() end
+		if not success and type(callback) == "function" then callback() end
 
 		-- did we go down?
 		while not success and force do
