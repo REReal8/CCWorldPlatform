@@ -290,6 +290,18 @@ function Vooruit(aantal)
         end
     end
 end
+--[[
+function role_forester.TestMoveCallback()
+    coremove.Forward(6*5 + 1, true, KapBoomCallback)
+    coremove.GoTo({x = 3, y = 0, z = 0, dx = 0, dy = 1}, true, KapBoomCallback)
+    coremove.GoTo({x = 0, y = 0, z = 0, dx = 0, dy = 1}, true, KapBoomCallback)
+end
+]]
+-- te gebruiken voor de callback functie van coremove
+function KapBoomCallback()
+    -- staat er een boom recht voor ons? Dan omhakken!
+    if DetecteedBoom() then return KapBoom() end
+end
 
 function DetecteedBoom()
     local success, data = turtle.inspect()
@@ -346,6 +358,9 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
         if coreinventory.SelectItem("minecraft:birch_sapling")  then turtle.placeDown()
                                                                 else corelog.Error("No birch sapling to plant") end
     end
+
+    -- there is no other way then succes, way of being
+    return true
 end
 
 function OogstBladerenVolledig()
