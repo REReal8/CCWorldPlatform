@@ -63,10 +63,8 @@ function role_forester.HarvestForest_MetaData(...)
     -- determine itemsNeeded
     local itemsNeeded = {
         ["minecraft:crafting_table"] = 1,
+        -- ToDo: figure out why is this need actually there (it is a remnent of old times that can be removed, or is it really needed? check also starting with a fresh and empty Turtle)
     }
-    if forestLevel >= 2 then
-        itemsNeeded["minecraft:birch_sapling"] = nTrees
-    end
 
     -- end
     return {
