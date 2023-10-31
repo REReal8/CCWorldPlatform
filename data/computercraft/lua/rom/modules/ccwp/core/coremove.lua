@@ -147,17 +147,7 @@ function coremove.Forward(c, force, callback)
 		local success	= turtle.forward()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then
-
-			-- remember current location
-			local currentLocation = coremove.GetLocation()
-
-			-- do the callback
-			callback()
-
-			-- this should do nothing (or we have a naughty callback)!
-			coremove.GoTo(currentLocation)
-		end
+		if not success and type(callback) == "function" then success = callback() end
 
 		-- if it did not work, attack the space in front of us
 		if not success and force then
@@ -213,45 +203,38 @@ function coremove.Backward(c, force, callback)
 	for i=1,c do
 
 		-- can we move backward?
-		if turtle.back() ~= true then
+		local success = turtle.back()
 
-			-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-			if type(callback) == "function" then
+		-- not moved but a callback has been given?	-- ToDo: Check for location change, not allowed for the callback
+		if not success and type(callback) == "function" then success = callback() end
 
-				-- remember current location
-				local currentLocation = coremove.GetLocation()
+		-- still not moved?
+		if success then
 
-				-- do the callback
-				callback()
-
-				-- this should do nothing (or we have a naughty callback)!
-				coremove.GoTo(currentLocation)
-			end
-
-			-- can we use force?
-			if force then
-
-				-- turn around to attack the block
-				coremove.Left(2)
-				local success = coremove.Forward(1, force)
-				coremove.Right(2)
-
-				-- did it work?
-				if not success then return false end
-			else
-				-- we are not using force, but we cannot move backwards
-				return false
-			end
-		else
 			-- update db
 			db.x = db.x - db.dx
 			db.y = db.y - db.dy
 
 			-- save db
 			SaveDB()
-		end
+
+		-- force might be the solution!
+		else if force then
+
+			-- turn around to attack the block
+			coremove.Left(2)
+			success = coremove.Forward(1, force)
+			coremove.Right(2)
+
+			-- did it work?
+			if not success then return false end
+		else
+			-- we are not using force, but we cannot move backwards
+			return false
+		end end
 	end
 
+	-- still here means we were successfull (ofcourse)
 	return true
 end
 
@@ -269,17 +252,7 @@ function coremove.Up(c, force, callback)
 		local success = turtle.up()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then
-
-			-- remember current location
-			local currentLocation = coremove.GetLocation()
-
-			-- do the callback
-			callback()
-
-			-- this should do nothing (or we have a naughty callback)!
-			coremove.GoTo(currentLocation)
-		end
+		if not success and type(callback) == "function" then success = callback() end
 
 		-- did we move up?
 		while not success and force do
@@ -326,17 +299,7 @@ function coremove.Down(c, force, callback)
 		local success = turtle.down()
 
 		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
-		if not success and type(callback) == "function" then
-
-			-- remember current location
-			local currentLocation = coremove.GetLocation()
-
-			-- do the callback
-			callback()
-
-			-- this should do nothing (or we have a naughty callback)!
-			coremove.GoTo(currentLocation)
-		end
+		if not success and type(callback) == "function" then success = callback() end
 
 		-- did we go down?
 		while not success and force do
