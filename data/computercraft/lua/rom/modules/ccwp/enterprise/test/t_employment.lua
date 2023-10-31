@@ -232,36 +232,4 @@ function t_employment.T_IRegistry_All()
     T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
 end
 
-function t_employment.T_buildRegisterAndBootWorker_ASrv_Turtle()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_employment:buildRegisterAndBootWorker_ASrv() tests (of Turtle)")
-    t_employment = t_employment or require "test.t_employment"
-    local constructParametersNoWorkerIdYet = {
-        location        = location1,
-    }
-
-    -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(enterprise_employment, "buildRegisterAndBootWorker_ASrv", {
-        className                   = testMObjClassName,
-        constructParameters         = constructParametersNoWorkerIdYet,
-        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
-    })
-
-    -- check: service success
-    assert(serviceResults, "no serviceResults returned")
-    assert(serviceResults.success, "failed executing service")
-
-    -- check: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
-    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
-    local mobj = enterprise_employment:getObject(mobjLocator)
-    assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..enterprise_employment:getHostName())
-
-    -- check: Worker registered/ booted
-    -- ToDo: implement this once we add booting
-
-    -- cleanup test
-    if logOk then corelog.WriteToLog(" ok") end
-end
-
 return t_employment

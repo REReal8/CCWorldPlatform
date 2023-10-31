@@ -449,7 +449,6 @@ function enterprise_employment:registerBirthCertificate_SOSrv(...)
     }
 end
 
-function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
 --    __  __  ____  _     _ _    _           _
 --   |  \/  |/ __ \| |   (_) |  | |         | |
 --   | \  / | |  | | |__  _| |__| | ___  ___| |_
@@ -459,6 +458,7 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
 --                      _/ |
 --                     |__/
 
+function enterprise_employment:buildAndHostMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds, hosts, registers and boots a new Worker.
@@ -478,18 +478,24 @@ function enterprise_employment:buildRegisterAndBootWorker_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host for building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:buildRegisterAndBootWorker_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    ]], ...)
+    if not checkSuccess then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get class
     local class = objectFactory:getClass(className)
-    if not class then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
-    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
-    if not Class.IsInstanceOf(class, IWorker) then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Class "..className.." is not an IWorker") return Callback.ErrorCall(callback) end
+    if not class then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
+
+    -- check (not) IWorker
+    if not Class.IsInstanceOf(class, IWorker) then
+        -- have base class MObjHost handle the service
+        corelog.WriteToLog()
+        return MObjHost.buildAndHostMObj_ASrv(self, ...)
+    end
 
     -- get blueprint
     local buildLocation, blueprint = class.GetBuildBlueprint(constructParameters)
-    if not buildLocation or not blueprint then corelog.Error("MObjHost:buildRegisterAndBootWorker_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
+    if not buildLocation or not blueprint then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local workerLocation = constructParameters.location:copy()

@@ -29,7 +29,7 @@ local role_forester = require "role_forester"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_chests = require "enterprise_chests"
-local enterprise_employment require "enterprise_employment"
+local enterprise_employment
 
 
 --    _       _ _   _       _ _           _   _
@@ -193,6 +193,7 @@ function BirchForest:construct(...)
     if level < -1 or level > 2 then corelog.Error("BirchForest:construct: Don't know how to construct a BirchForest of level "..level) return nil end
 
     -- local storage
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local localLogsLocator = nil
     local localSaplingsLocator = nil
     if level == -1 or level == 0 or level == 1 then
@@ -878,6 +879,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     { keyDef = "destinationItemsLocator"            , sourceStep = 8, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
+            enterprise_employment = enterprise_employment or require "enterprise_employment"
             local projectData = {
                 inputSaplings                   = inputSaplings,
                 anyTurtleLocator                = enterprise_employment.GetAnyTurtleLocator(),
