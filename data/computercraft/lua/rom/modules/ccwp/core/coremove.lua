@@ -130,7 +130,11 @@ function coremove.Right(c)
 	end
 end
 
-function coremove.Forward(c, force)
+function coremove.Forward(c, force, callback)
+	-- callback will be called when turtle cannot move (goes before using force)
+	-- coremove.Forward() expects the callback to return the turtle to the position it was when running the callback!
+
+
 	-- init parameter
 	c = c or 1
 	c = math.floor(c + 0.5)
@@ -141,6 +145,9 @@ function coremove.Forward(c, force)
 		-- keep trying
 		local tries		= 0
 		local success	= turtle.forward()
+
+		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
+		if not success and callback then callback() end
 
 		-- if it did not work, attack the space in front of us
 		if not success and force then
@@ -184,7 +191,10 @@ function coremove.Forward(c, force)
 	return true
 end
 
-function coremove.Backward(c, force)
+function coremove.Backward(c, force, callback)
+	-- callback will be called when turtle cannot move (goes before using force)
+	-- coremove.Backward() expects the callback to return the turtle to the position it was when running the callback!
+
 	-- init parameter
 	c = c or 1
 	c = math.floor(c + 0.5)
@@ -194,6 +204,9 @@ function coremove.Backward(c, force)
 
 		-- can we move backward?
 		if turtle.back() ~= true then
+
+			-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
+			if callback then callback() end
 
 			-- can we use force?
 			if force then
@@ -222,7 +235,10 @@ function coremove.Backward(c, force)
 	return true
 end
 
-function coremove.Up(c, force)
+function coremove.Up(c, force, callback)
+	-- callback will be called when turtle cannot move (goes before using force)
+	-- coremove.Up() expects the callback to return the turtle to the position it was when running the callback!
+
 	-- init parameter
 	c = c or 1
 	c = math.floor(c + 0.5)
@@ -231,6 +247,9 @@ function coremove.Up(c, force)
 	for i=1,c do
 		local tries = 0
 		local success = turtle.up()
+
+		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
+		if not success and callback then callback() end
 
 		-- did we move up?
 		while not success and force do
@@ -263,7 +282,10 @@ function coremove.Up(c, force)
 	return true
 end
 
-function coremove.Down(c, force)
+function coremove.Down(c, force, callback)
+	-- callback will be called when turtle cannot move (goes before using force)
+	-- coremove.Down() expects the callback to return the turtle to the position it was when running the callback!
+
 	-- init parameter
 	c = c or 1
 	c = math.floor(c + 0.5)
@@ -272,6 +294,9 @@ function coremove.Down(c, force)
 	for i=1,c do
 		local tries = 0
 		local success = turtle.down()
+
+		-- not moved but a callback has been given	-- ToDo: Check for location change, not allowed for the callback
+		if not success and callback then callback() end
 
 		-- did we go down?
 		while not success and force do
