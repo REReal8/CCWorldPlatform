@@ -229,6 +229,7 @@ function t_employment.T_GetAnyTurtleLocator()
     -- cleanup test
 end
 
+-- ToDo: consider if all callers want replacing getCurrentWorkerLocator, or if some want something else! (e.g. an anyTurtle, or even a computer...)
 function t_employment.GetCurrentTurtleLocator()
     --[[
         This method provides the locator of the current turtle (in enterprise_employment).
