@@ -10,6 +10,7 @@ local T_CoreLibrary = require "core.library"
 local T_BaseLibrary = require "base.library"
 local T_ObjLibrary = require "obj.library"
 local T_RoleLibrary = require "role.library"
+local T_LObjLibrary = require "lobj.library"
 local T_MObjLibrary = require "mobj.library"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -36,6 +37,7 @@ function t_ccwp.T_All()
     T_BaseLibrary.T_All()
     T_ObjLibrary.T_All()
     T_RoleLibrary.T_All()
+    T_LObjLibrary.T_All()
     T_MObjLibrary.T_All()
     T_EnterpriseLibrary.T_All()
 end

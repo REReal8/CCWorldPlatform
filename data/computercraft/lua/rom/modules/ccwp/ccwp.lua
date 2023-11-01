@@ -4,6 +4,7 @@ local coreLibrary = require "core.library"
 local baseLibrary = require "base.library"
 local objLibrary = require "obj.library"
 local roleLibrary = require "role.library"
+local lobjLibrary = require "lobj.library"
 local mobjLibrary = require "mobj.library"
 local enterpriseLibrary = require "enterprise.library"
 local testLibrary = require "test.library"
@@ -14,6 +15,7 @@ function ccwp.Init()
     baseLibrary.Init()
     objLibrary.Init()
     roleLibrary.Init()
+    lobjLibrary.Init()
     mobjLibrary.Init()
     enterpriseLibrary.Init()
     testLibrary.Init()
@@ -30,6 +32,7 @@ function ccwp.Startup()
     baseLibrary.Setup()
     objLibrary.Setup()
     roleLibrary.Setup()
+    lobjLibrary.Setup()
     mobjLibrary.Setup()
     enterpriseLibrary.Setup()
     testLibrary.Setup()

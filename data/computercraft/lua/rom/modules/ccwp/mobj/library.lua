@@ -19,7 +19,6 @@ function library.T_All()
     local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Factory = require "test.t_mobj_factory"
     local T_Silo = require "test.t_mobj_silo"
-    local T_Shop = require "test.t_mobj_shop"
     local T_Turtle = require "test.t_mobj_turtle"
     local T_UtilStation = require "test.t_mobj_user_station"
     local t_mobj_host = require "test.t_mobj_host"
@@ -32,7 +31,6 @@ function library.T_All()
     T_Factory.T_All()
     T_ProductionSpot.T_All()
     T_Silo.T_All()
-    T_Shop.T_All()
     T_Turtle.T_All()
     T_UtilStation.T_All()
 end
@@ -49,7 +47,6 @@ local function ExecuteLibraryTest(t)
         {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
         {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
         {key = "s", desc = "Silo",              func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
-        {key = "w", desc = "Shop",              func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
         {key = "t", desc = "Turtle",            func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
         {key = "u", desc = "Util Station",      func = ExecuteLibraryTest, param = {filename = "T_UtilStation"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
@@ -69,7 +66,6 @@ function library.Setup()
     objectFactory:registerClass("Factory",      require "mobj_factory")
     objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
     objectFactory:registerClass("Silo",         require "mobj_silo")
-    objectFactory:registerClass("Shop",         require "mobj_shop")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
     objectFactory:registerClass("UserStation",  require "mobj_user_station")
 
@@ -91,7 +87,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
-    moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_user_station")
 
