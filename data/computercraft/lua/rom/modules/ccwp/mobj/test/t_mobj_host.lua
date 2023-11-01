@@ -51,7 +51,7 @@ local testClassName = "MObjHost"
 local testObjName = "host"
 local logOk = false
 
-local test_mobjHostName1 = "MObjTestHost"
+local test_mobjHostName1 = "TestMObjHost"
 local test_mobjHost1 = MObjHost:newInstance(test_mobjHostName1)
 
 --    _       _ _   _       _ _           _   _
