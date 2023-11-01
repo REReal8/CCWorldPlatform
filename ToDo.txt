@@ -93,7 +93,7 @@ RG UserStation v1.0
    -  use in mobj_factory
    -  use in mobj_mine
    -  use in mobj_silo
-   -  use in mobj_shop
+   -  use in Shop
    -  use in mobj_turtle
 
 -  Generalised IItemDepot test functions for MObj's
@@ -115,8 +115,8 @@ G  Descriptions for blueprints and project steps
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
-      -  mobj_shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in mobj_shop as enterprise_shop) seems incorrect.
-      -  mobj_shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
+      -  Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
+      -  Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
       -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
       -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
    -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
@@ -144,8 +144,8 @@ G  Descriptions for blueprints and project steps
       -  get(Base)Location
    -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
--  ensure mobj_shop/ enterprise_shop implement IConstructable/ CObjHost
-   -  mobj_shop
+-  ensure Shop/ enterprise_shop implement IConstructable/ CObjHost
+   -  Shop
       -  implement IConstructable
    -  enterprise_shop
       -  upgrade into an CObjHost

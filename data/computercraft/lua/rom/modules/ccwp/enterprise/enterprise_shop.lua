@@ -15,7 +15,7 @@ local InputChecker = require "input_checker"
 local ObjArray = require "obj_array"
 local URL = require "obj_url"
 
-local Shop = require "mobj_shop"
+local Shop = require "shop"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

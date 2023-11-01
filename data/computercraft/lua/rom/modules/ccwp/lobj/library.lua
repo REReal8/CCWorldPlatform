@@ -13,7 +13,7 @@ function library.T_All()
     local corelog = require "corelog"
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
-    local T_Shop = require "test.t_mobj_shop"
+    local T_Shop = require "test.t_shop"
 
     -- library tests
     T_Shop.T_All()
@@ -34,7 +34,7 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
-    objectFactory:registerClass("Shop",         require "mobj_shop")
+    objectFactory:registerClass("Shop",         require "shop")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"
@@ -47,7 +47,7 @@ function library.Setup()
 
     moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
     moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
-    moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
+    moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_shop")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
