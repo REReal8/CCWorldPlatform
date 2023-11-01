@@ -38,7 +38,7 @@ function coredisplay.Init()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "1", desc = "Exec code",  		func = ExecuteCode,	    		param = {step = 1}},
+				{key = "1", desc = "Exec code",  		func = ExecuteCode,	    		param = {}},
 				{key = "2", desc = "Load event",		func = LoadEvent,				param = {}},
 				{key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
 			},
@@ -230,30 +230,40 @@ function ReadLine() return read() end
 -- for executing custom code
 function ExecuteCode(t, code)
 	-- first screen?
-	if t.step == 1 then
+	if t.boss == nil then
+--		coredisplay.NextScreen({
+--			clear       = true,
+--			func	    = ExecuteCode,
+--			intro       = "Please type your line of code below\n",
+--			param	    = {step = 2},
+--			question    = nil
+--		})
 		coredisplay.NextScreen({
-			clear       = true,
-			func	    = ExecuteCode,
-			intro       = "Please type your line of code below\n",
-			param	    = {step = 2},
-			question    = nil
+			clear   = true,
+			intro   = "Who is runnig the show?",
+			option  = {
+				{key = "r", desc = "Rutger",  			func = ExecuteCode,	param = {boss = 'rutger'}},
+				{key = "g", desc = "Guido",				func = ExecuteCode,	param = {boss = 'guido'}},
+				{key = "x", desc = "Back to main menu",	func = function () return true end},
+			},
+			question	= "Make your choice",
 		})
-	else
-		local f, err = loadstring(code) -- Function loadstring is deprecated. Use load instead; it now accepts string arguments and are exactly equivalent to loadstring.
 
-		-- valid function?
-		if f then
-			-- executing the code as wordt
-			coretask.AddWork(f)
-			coredisplay.UpdateToDisplay("Your code is queued for execution")
-		else
-			coredisplay.UpdateToDisplay(err)
-			return false
-		end
+		-- next screen
+		return true
+	else
+		-- mark as not loaded
+		package.loaded[t.boss] = nil
+
+		-- require the package
+			 if t.boss == 'rutger' then require 'rutger'
+		else if t.boss == 'guido'  then require 'guido'
+		end end
+
+		-- done, but stay on screen
+		return false
 	end
 
-	-- done
-	return true
 end
 
 function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)

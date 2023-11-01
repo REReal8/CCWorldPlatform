@@ -21,4 +21,4 @@ local enterprise_forestry   = require "enterprise_forestry"
 local role_forester     = require "role_forester"
 
 -- testing
-corelog.WriteToLog("Hallo")
+corelog.WriteToLog("wereld")
