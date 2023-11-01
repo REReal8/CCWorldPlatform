@@ -38,23 +38,23 @@ function library.T_All()
 end
 
 local function ExecuteLibraryTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_MObjLibrary"}},
+    -- forward call with options
+    local options	= {
+        {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_MObjLibrary"}},
 
-		{key = "h", desc = "MObjHost",			func = ExecuteLibraryTest, param = {filename = "T_MObjHost"}},
-		{key = "1", desc = "TestMObj",			func = ExecuteLibraryTest, param = {filename = "T_TestMObj"}},
-		{key = "b", desc = "BirchForest",		func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
-		{key = "c", desc = "Chest",				func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
-		{key = "f", desc = "Factory",			func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
-		{key = "p", desc = "ProductionSpot",	func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
-		{key = "s", desc = "Silo",				func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
-		{key = "w", desc = "Shop",				func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
-		{key = "t", desc = "Turtle",			func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
-		{key = "u", desc = "Util Station",		func = ExecuteLibraryTest, param = {filename = "T_UtilStation"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "mobj", options, ExecuteLibraryTest)
+        {key = "2", desc = "TestMObj",          func = ExecuteLibraryTest, param = {filename = "T_TestMObj"}},
+        {key = "h", desc = "MObjHost",          func = ExecuteLibraryTest, param = {filename = "T_MObjHost"}},
+        {key = "b", desc = "BirchForest",       func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
+        {key = "c", desc = "Chest",             func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
+        {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
+        {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
+        {key = "s", desc = "Silo",              func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
+        {key = "w", desc = "Shop",              func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
+        {key = "t", desc = "Turtle",            func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
+        {key = "u", desc = "Util Station",      func = ExecuteLibraryTest, param = {filename = "T_UtilStation"}},
+        {key = "x", desc = "Back to main menu", func = function () return true end }
+    }
+    return ExecuteXObjTest(t, "mobj", options, ExecuteLibraryTest)
 end
 
 function library.Setup()

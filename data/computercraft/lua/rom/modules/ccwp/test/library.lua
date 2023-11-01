@@ -7,13 +7,11 @@ function library.Init()
 end
 
 local function ExecuteLibraryTest(t)
-	-- forward call with options
-	local options	= {
-		{key = "a", desc = "All", 			func = ExecuteLibraryTest, param = {filename = "t_main"}},
-
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "test", options, ExecuteLibraryTest)
+    -- forward call with options
+    local options	= {
+        {key = "x", desc = "Back to main menu", func = function () return true end }
+    }
+    return ExecuteXObjTest(t, "test", options, ExecuteLibraryTest)
 end
 
 function library.Setup()
@@ -23,9 +21,8 @@ function library.Setup()
     -- objectFactory:registerClass("XxxYyy", require "xxx_yyy")
 
     -- register library modules
-    local ModuleRegistry = require "module_registry"
-    local moduleRegistry = ModuleRegistry:getInstance()
-    moduleRegistry:requireAndRegisterModule("t_main", "test.t_main")
+    -- local ModuleRegistry = require "module_registry"
+    -- local moduleRegistry = ModuleRegistry:getInstance()
 
     -- add library test menu
     local coredisplay = require "coredisplay"

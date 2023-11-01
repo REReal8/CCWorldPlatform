@@ -52,10 +52,10 @@ end
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
-        {key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
+        {key = "1", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
 
 		{key = "2", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
-		{key = "3", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
+		{key = "a", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
 		{key = "o", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteLibraryTest, param = {filename = "T_CallDef"}},
 		{key = "c", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},

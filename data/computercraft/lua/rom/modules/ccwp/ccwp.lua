@@ -20,6 +20,11 @@ function ccwp.Init()
 end
 
 function ccwp.Startup()
+    -- register library modules
+    local ModuleRegistry = require "module_registry"
+    local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterModule("t_ccwp", "t_ccwp")
+
     -- setup libraries
     coreLibrary.Setup()
     baseLibrary.Setup()

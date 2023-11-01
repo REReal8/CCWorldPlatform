@@ -11,7 +11,7 @@ local testClassName = "enterprise_colonization"
 function t_colonization.T_CreateNewWorld_ASrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..".CreateNewWorld_ASrv() test")
-    local callback = Callback:newInstance("t_main", "GoHomeCallBack")
+    local callback = Callback:newInstance("t_ccwp", "GoHomeCallBack")
     local serviceData = {}
 
     -- test
