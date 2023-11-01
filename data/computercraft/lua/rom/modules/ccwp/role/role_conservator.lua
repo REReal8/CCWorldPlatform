@@ -35,7 +35,7 @@ function role_conservator.FetchChestSlotsInventory_MetaData(...)
             taskData            - (table) data about the Chest
                 location        + (Location) location of the Chest
                 accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_MetaData: Invalid input") return {} end
 
     -- determine needed items
@@ -70,7 +70,7 @@ function role_conservator.FetchChestSlotsInventory_Task(...)
             taskData            - (table) data about the Chest
                 location        + (Location) location of the Chest
                 accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.FetchChestSlotsInventory_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
@@ -111,7 +111,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_MetaData(...)
                 accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 itemsQuery      - (table) which items to be fetched
                 priorityKey     + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_MetaData: Invalid input") return { } end
 
     -- determine needed items
@@ -231,7 +231,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
                 accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 itemsQuery              + (table) which items to be fetched
                 workerLocator           + (URL) locating the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
@@ -326,7 +326,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_MetaData(...)
                 location        + (Location) location of the Chest
                 accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 priorityKey     + (string, "") priorityKey for this assignment
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
@@ -364,7 +364,7 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
                 itemsQuery      + (table) which items to be put
                 location        + (Location) location of the Chest
                 accessDirection + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("role_conservator.PutItemsFromTurtleIntoChest_Task: Invalid input") return {success = false} end
 
     -- check correct turtle

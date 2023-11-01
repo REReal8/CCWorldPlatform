@@ -34,7 +34,7 @@ function role_settler.InitialiseCoordinates_MetaData(...)
             taskData                    - (table) data about the task
                 startLocation           - (Location) locaton where the task should start
                 workerLocator           + (URL) locating the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Invalid input") return {success = false} end
 
     -- get turtle we are doing task with
@@ -65,7 +65,7 @@ function role_settler.InitialiseCoordinates_Task(...)
         Parameters:
             taskData                    - (table) data about the task
                 startLocation           + (Location) locaton where first steps are to be taken
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_Task: Invalid input") return {success = false} end
 
     -- coordinaten stelsel goed zetten
@@ -86,7 +86,7 @@ function role_settler.CollectCobbleStone_MetaData(...)
         Parameters:
             taskData                    - (table) data about the task
                 startLocation           + (Location) locaton where the task should start
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_settler.CollectCobbleStone_MetaData: Invalid input") return {success = false} end
 
     return {
@@ -112,7 +112,7 @@ function role_settler.CollectCobbleStone_Task(...)
         Parameters:
             taskData                    - (table) data about the task
                 startLocation           + (Location) locaton where the task should start
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid input") return {success = false} end
 
     -- move to the workingLocation

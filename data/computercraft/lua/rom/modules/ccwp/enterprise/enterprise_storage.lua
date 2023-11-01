@@ -62,7 +62,7 @@ function enterprise_storage.RegisterStorage_SSrv(...)
             storageData             - (table) data to the storage
             type                    + (stromg) type of the storage (e.g. "storage:silo")
             location                + (Location) location of the storage
-            --]], table.unpack(arg))
+            --]], ...)
     if not checkSuccess then corelog.Error("enterprise_storage.RegisterStorage_SSrv: Invalid input") return {success = false} end
 
     -- ToDo:
@@ -91,7 +91,7 @@ function enterprise_storage.DelistStorage_ASrv(...)
             serviceData         - (table) data about the service
                 storageLocator  + (URL) locating the storage
             callback            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_storage.DelistStorage_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- ToDo

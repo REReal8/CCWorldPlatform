@@ -32,7 +32,7 @@ function role_energizer.Refuel_MetaData(...)
                 turtleId                + (number) id of the turtle to (re)fuel
                 fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
                 priorityKey             + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_energizer.Refuel_MetaData: Invalid input") return {success = false} end
 
     -- end
@@ -91,7 +91,7 @@ function role_energizer.Refuel_Task(...)
             taskData                    - (table) data about the task
                 turtleId                + (number) id of the turtle to (re)fuel
                 fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_energizer.Refuel_Task: Invalid input") return {success = false} end
 
     -- check correct turtle
@@ -123,7 +123,7 @@ function role_energizer.NeededFuelToFrom(...)
         Parameters:
             locationB               + (Location) with destination location
             locationA               + (Location) with start location
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("role_energizer.NeededFuelToFrom: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- end

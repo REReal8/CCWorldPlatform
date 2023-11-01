@@ -44,7 +44,7 @@ function UserStation:_init(...)
             baseLocation            + (Location) base location of the UserStation
             inputLocator            + (URL) input Chest of the UserStation (where items will be picked up from)
             outputLocator           + (URL) output Chest of the UserStation (where items will be delivered)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("UserStation:_init: Invalid input") return nil end
 
     -- initialisation
@@ -67,7 +67,7 @@ function UserStation:new(...)
                 _baseLocation           - (Location) location of the UserStation
                 _inputLocator           - (URL) input Chest of the UserStation
                 _outputLocator          - (URL) output Chest of the UserStation
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("UserStation:new: Invalid input") return nil end
 
     -- set class info
@@ -121,7 +121,7 @@ function UserStation:construct(...)
             constructParameters         - (table) parameters for constructing the UserStation
                 workerId                + (number) workerId of the UserStation
                 baseLocation            + (Location) base location of the UserStation
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("UserStation:construct: Invalid input") return nil end
 
     -- determine UserStation fields
@@ -276,7 +276,7 @@ function UserStation.GetBuildBlueprint(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the UserStation
                 baseLocation            + (Location) base location of the UserStation
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("UserStation.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- layer list
@@ -452,7 +452,7 @@ function UserStation:storeItemsFrom_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("UserStation:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get output Chest
@@ -460,7 +460,7 @@ function UserStation:storeItemsFrom_AOSrv(...)
     if not outputChest then corelog.Error("UserStation:storeItemsFrom_AOSrv: Failed getting outputChest object") return Callback.ErrorCall(callback) end
 
     -- pass to output Chest
-    return outputChest:storeItemsFrom_AOSrv(table.unpack(arg))
+    return outputChest:storeItemsFrom_AOSrv(...)
 end
 
 function UserStation:can_StoreItems_QOSrv(...)
@@ -477,7 +477,7 @@ function UserStation:can_StoreItems_QOSrv(...)
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("UserStation:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     -- get output Chest
@@ -485,7 +485,7 @@ function UserStation:can_StoreItems_QOSrv(...)
     if not outputChest then corelog.Error("UserStation:can_StoreItems_QOSrv: Failed getting outputChest object") return {success = false} end
 
     -- pass to output Chest
-    return outputChest:can_StoreItems_QOSrv(table.unpack(arg))
+    return outputChest:can_StoreItems_QOSrv(...)
 end
 
 function UserStation:needsTo_StoreItemsFrom_SOSrv(...)
@@ -503,7 +503,7 @@ function UserStation:needsTo_StoreItemsFrom_SOSrv(...)
                 itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     -- get output Chest
@@ -511,7 +511,7 @@ function UserStation:needsTo_StoreItemsFrom_SOSrv(...)
     if not outputChest then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Failed getting outputChest object") return {success = false} end
 
     -- pass to output Chest
-    return outputChest:needsTo_StoreItemsFrom_SOSrv(table.unpack(arg))
+    return outputChest:needsTo_StoreItemsFrom_SOSrv(...)
 end
 
 --                        _  __ _                       _   _               _

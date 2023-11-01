@@ -39,7 +39,7 @@ function role_alchemist.Craft_MetaData(...)
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
                 priorityKey             + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
@@ -73,7 +73,7 @@ function role_alchemist.Craft_ItemsNeeded(...)
             recipe                  + (table) crafting recipe
                 yield               - (number) of items produced by recipe
             productItemCount        + (number) of items to produce
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_ItemsNeeded: Invalid input") return nil end
 
     -- build item list
@@ -227,7 +227,7 @@ function role_alchemist.Craft_Task(...)
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
                 workerLocator           + (URL) locating the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
 
     -- equip crafting_table
@@ -303,7 +303,7 @@ function role_alchemist.Smelt_MetaData(...)
                 fuelItemName            + (string) name of fuel item to use
                 fuelItemCount           + (number) of fuel items to use
                 priorityKey             + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Smelt_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
@@ -367,7 +367,7 @@ function role_alchemist.Smelt_Task(...)
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 fuelItemName            + (string) name of fuel item to use
                 fuelItemCount           + (number) of fuel items to use
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Smelt_Task: Invalid input") return {success = false} end
 
     -- prepare
@@ -414,7 +414,7 @@ function role_alchemist.Pickup_MetaData(...)
                 productItemCount        - (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 priorityKey             + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_MetaData: Invalid input") return {success = false} end
 
     -- determine needed fuel
@@ -450,7 +450,7 @@ function role_alchemist.Pickup_Task(...)
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 workerLocator           + (URL) locating the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
 
     -- get turtle we are doing task with

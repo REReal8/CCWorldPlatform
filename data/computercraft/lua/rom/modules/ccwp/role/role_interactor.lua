@@ -35,7 +35,7 @@ function role_interactor.TurnOnWorker_MetaData(...)
                 workerLocation              + (Location) location of the Worker to turn on
                 accessDirection             + (string) whether to access Worker from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 priorityKey                 + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_interactor.TurnOnWorker_MetaData: Invalid input") return {} end
 
     -- determine metadata
@@ -78,7 +78,7 @@ function role_interactor.TurnOnWorker_Task(...)
                 workerLocation              + (Location) location of the Worker to turn on
                 accessDirection             + (string) whether to access Worker from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 workerLocator               + (URL) locating the Turtle that is doing the task
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_interactor.TurnOnWorker_Task: Invalid input") return {success = false} end
 
     corelog.WriteToLog("   starting TurnOnWorker_Task...")

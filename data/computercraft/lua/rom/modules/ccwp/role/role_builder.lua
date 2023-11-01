@@ -37,7 +37,7 @@ function role_builder.BuildBlueprint_MetaData(...)
                 blueprint               - (table) blueprint to build
                     layerList           + (table) layer to build
                     escapeSequence      + (table) escapeSequence of blueprint
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_builder.BuildBlueprint_MetaData: Invalid input") return {success = false} end
 
     local metaData = {
@@ -127,7 +127,7 @@ function role_builder.BuildBlueprint_Task(...)
                 blueprint               - (table) blueprint to build
                     layerList           + (table) layer to build
                     escapeSequence      + (table) escapeSequence of blueprint
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_builder.BuildBlueprint_Task: Invalid input") return {success = false} end
 
     -- go to blueprintStartpoint
@@ -179,7 +179,7 @@ function role_builder.BuildLayer_MetaData(...)
                 buildDirection          + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects   - (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_builder.BuildLayer_MetaData: Invalid input") return nil end
 
     -- determine needed items
@@ -228,7 +228,7 @@ function role_builder.BuildLayer_Task(...)
                 buildDirection          + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_builder.BuildLayer_Task: Invalid input") return {success = false} end
 
     -- check mandatory pickage!

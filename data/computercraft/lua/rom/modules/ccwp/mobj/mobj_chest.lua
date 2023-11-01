@@ -54,7 +54,7 @@ function Chest:_init(...)
             baseLocation            + (Location) base location of the Chest
             accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
             inventory               + (Inventory) inventory of Chest
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:_init: Invalid input") return nil end
 
     -- initialisation
@@ -77,7 +77,7 @@ function Chest:new(...)
                 _baseLocation           - (Location) base location of the Chest
                 _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 _inventory              - (Inventory) inventory of Chest
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:new: Invalid input") return nil end
 
     -- set class info
@@ -136,7 +136,7 @@ function Chest:construct(...)
             constructParameters         - (table) parameters for constructing the Chest
                 baseLocation            + (Location) base location of the Chest
                 accessDirection         + (string, "top") whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:construct: Invalid input") return nil end
 
     -- determine Chest fields
@@ -206,7 +206,7 @@ function Chest.GetBuildBlueprint(...)
             constructParameters         - (table) parameters for constructing the Chest
                 baseLocation            + (Location) base location of the Chest
                 accessDirection         - (string, "top") whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
@@ -295,7 +295,7 @@ function Chest:updateChestRecord_AOSrv(...)
         Parameters:
             serviceData         - (table) data about the service
             callback            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project definition
@@ -368,7 +368,7 @@ function Chest:provideItemsTo_AOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check if ItemDepot is a Turtle
@@ -445,7 +445,7 @@ function Chest:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- check items in inventory
@@ -473,7 +473,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get location
@@ -542,7 +542,7 @@ function Chest:storeItemsFrom_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Chest:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set (expected) destinationItemsLocator
@@ -634,7 +634,7 @@ function Chest:can_StoreItems_QOSrv(...)
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
@@ -657,7 +657,7 @@ function Chest:needsTo_StoreItemsFrom_SOSrv(...)
                 itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement

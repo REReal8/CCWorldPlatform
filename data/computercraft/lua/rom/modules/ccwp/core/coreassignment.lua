@@ -132,7 +132,7 @@ function DoAssignment(...)
                 assignmentId            + (string) with id of the assignment
                 taskCall                + (TaskCall) with the task to call
                 callback                + (Callback) with the callback to call
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("coreassignment.DoAssignment: Invalid input") return {success = false} end
 
     -- we have taken this assignment!

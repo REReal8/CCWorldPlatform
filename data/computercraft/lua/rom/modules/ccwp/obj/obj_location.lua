@@ -31,7 +31,7 @@ function Location:_init(...)
             z                       + (number, 0) z coordinate
             dx                      + (number, 0) x direction (either -1,0,1)
             dy                      + (number, 1) y direction (either -1,0,1)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Location:_init: Invalid input") return nil end
 
     -- initialisation
@@ -56,7 +56,7 @@ function Location:new(...)
                 _z                  - (number, 0) z coordinate
                 _dx                 - (number, 0) x direction (either -1,0,1)
                 _dy                 - (number, 1) y direction (either -1,0,1)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Location:new: Invalid input") return {} end
 
     -- set class info
@@ -310,7 +310,7 @@ function Location:getWorkingLocation(...)
 
         Parameters:
             accessDirection + (string) whether to access MObj from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Location:getWorkingLocation: Invalid input") return nil end
 
     -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
@@ -374,7 +374,7 @@ function Location.ConvertAccessDirectionToPeripheralName(...)
 
         Parameters:
             accessDirection         + (string) whether to access a MObj from "bottom", "top", "left", "right", "front" or "back"
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Location.ConvertAccessDirectionToPeripheralName: Invalid input") return nil end
 
     -- check input

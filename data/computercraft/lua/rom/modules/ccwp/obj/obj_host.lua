@@ -29,7 +29,7 @@ function ObjHost:_init(...)
 
         Parameters:
             hostName                + (string) with hostName of the ObjHost
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:_init: Invalid input") return nil end
 
     -- initialisation
@@ -45,7 +45,7 @@ function ObjHost:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _hostName               - (string) with hostName of the ObjHost
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:new: Invalid input") return {} end
 
     -- set class info
@@ -88,7 +88,7 @@ function ObjHost:getObject(...)
 
         Parameters:
             objectLocator           + (URL) locator of the object within the ObjHost
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getObject: Invalid input") return nil end
 
     -- get className
@@ -122,7 +122,7 @@ function ObjHost:getObjectLocator(...)
             object                  + (table) the object
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getObjectLocator: Invalid input") return nil end
 
     -- get resourcePath
@@ -152,7 +152,7 @@ function ObjHost:saveObject(...)
             object                  + (table) the object
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:saveObject: Invalid input") return nil end
 
     -- get objectPath
@@ -176,7 +176,7 @@ local function GetObjectsPath(...)
 
         Parameters:
             className               + (string) with the name of the class of the object
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost.GetObjectsPath: Invalid input") return nil end
 
     -- check className not empty
@@ -199,7 +199,7 @@ function ObjHost:getObjects(...)
 
         Parameters:
             className               + (string) with the name of the class of the objects
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getObjects: Invalid input") return nil end
 
     -- get objectsPath
@@ -234,7 +234,7 @@ function ObjHost:getNumberOfObjects(...)
 
         Parameters:
             className               + (string) with the name of the class of the objects
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getNumberOfObjects: Invalid input") return -1 end
 
     -- get objects
@@ -259,7 +259,7 @@ function ObjHost:deleteObjects(...)
 
         Parameters:
             className               + (string) with the name of the class of the objects
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost:deleteObjects: Invalid input") return nil end
 
     -- get objects
@@ -298,7 +298,7 @@ function ObjHost.GetClassName(...)
 
         Parameters:
             objectLocator       + (URL) locating the object
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getClassName: Invalid input") return nil end
 
     -- get className from path
@@ -325,7 +325,7 @@ function ObjHost.GetObjectPath(...)
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
             object                  + (table, nil) the object
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ObjHost.GetObjectPath: Invalid input") return nil end
 
     -- determince resourcePath
@@ -382,7 +382,7 @@ function ObjHost.GetObject(...)
 
         Parameters:
             objectLocator           + (URL) locator of the object within the ObjHost
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost.GetObject: Invalid input") return nil end
 
     -- get ObjHost
@@ -417,7 +417,7 @@ function ObjHost.SaveObject_SSrv(...)
                 hostName        + (string) with hostName of the ObjHost
                 className       + (string) with the name of the class of the object
                 objectTable     + (table) of the object
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjHost.SaveObject_SSrv: Invalid input") return {success = false} end
 
     -- get ObjHost

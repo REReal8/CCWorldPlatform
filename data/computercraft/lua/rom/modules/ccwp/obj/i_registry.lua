@@ -33,7 +33,7 @@ function IRegistry:getRegistered(...)
 
         Parameters:
             key                 + (???) key of the registered thing
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("IRegistry:getRegistered: Invalid input") return nil end
 
     IInterface.UnimplementedMethodError("IRegistry", "getRegistered")
@@ -52,7 +52,7 @@ function IRegistry:register(...)
         Parameters:
             key                     + (???) key of the registered thing
             thing                   + (???) the thing to register
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("IRegistry:register: Invalid input") return false end
 
     IInterface.UnimplementedMethodError("IRegistry", "register")
@@ -70,7 +70,7 @@ function IRegistry:isRegistered(...)
 
         Parameters:
             key                     + (???) key of the registered thing
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("IRegistry:isRegistered: Invalid input") return false end
 
     IInterface.UnimplementedMethodError("IRegistry", "isRegistered")
@@ -88,7 +88,7 @@ function IRegistry:delist(...)
 
         Parameters:
             key                     + (???) key of the registered thing
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("IRegistry:delist: Invalid input") return false end
 
     IInterface.UnimplementedMethodError("IRegistry", "delist")

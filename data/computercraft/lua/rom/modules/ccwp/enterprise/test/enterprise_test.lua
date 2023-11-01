@@ -27,7 +27,7 @@ function enterprise_test.Test_SSrv(...)
         Parameters:
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_test.Test_SSrv: Invalid input") return {success = false} end
 
 --    corelog.WriteToLog(">calling enterprise_test.Test_SSrv("..textutils.serialize(serviceData)..")")
@@ -61,7 +61,7 @@ function enterprise_test.Test_ASrv(...)
             serviceData         - (table) data about the service
                 testArg         + (number) as a test argument
             callback            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_test.Test_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create assignment arguments

@@ -32,7 +32,7 @@ function WIPAdministrator:_init(...)
 
         Parameters:
             wipQueues               + (ObjTable) with WIPQueue's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:_init: Invalid input") return nil end
 
     -- initialisation
@@ -49,7 +49,7 @@ function WIPAdministrator:new(...)
         Parameters:
             o                           + (table) table with object fields
                 _wipQueues              - (ObjTable) with WIPQueue's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:new: Invalid input") return {} end
 
     -- set class info
@@ -93,7 +93,7 @@ function WIPAdministrator:getWIPQueue(...)
         Parameters:
             queueId                             + (string) with the id of the WIPQueue
             createQueueIfNotExists              + (boolean, true) if queue should be created if it does not exist
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:getWIPQueue: Invalid input") return nil end
 
     -- get queue
@@ -128,7 +128,7 @@ function WIPAdministrator:removeWIPQueue(...)
 
         Parameters:
             queueId                             + (string) with the id of the WIPQueue
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:removeWIPQueue: Invalid input") return false end
 
     -- get queue
@@ -183,7 +183,7 @@ function WIPAdministrator:administerWorkStarted(...)
         Parameters:
             queueId                             + (string) with the id of the WIPQueue
             workId                              + (string) with the id of the work
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:administerWorkStarted: Invalid input") return false end
 
     -- get queue
@@ -216,7 +216,7 @@ function WIPAdministrator:administerWorkCompleted(...)
         Parameters:
             queueId                             + (string) with the id of the WIPQueue
             workId                              + (string) with the id of the work
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:administerWorkCompleted: Invalid input") return false end
 
     -- get queue
@@ -258,7 +258,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_SOSrv(...)
         Parameters:
             serviceData                         - (table) data about this service
                 queueId                         + (string) with the id of the WIP queue
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_SOSrv: Invalid input") return {success = false} end
 
     -- wait until WIPQueue had no WIP
@@ -291,7 +291,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
             serviceData                         - (table) data about this service
                 queueId                         + (string) with the id of the WIP queue
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get queue

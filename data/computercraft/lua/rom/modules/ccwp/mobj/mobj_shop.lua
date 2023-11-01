@@ -44,7 +44,7 @@ function Shop:_init(...)
         Parameters:
             id                      + (string) id of the Shop
             itemSuppliersLocators   + (ObjArray) with locators of registered ItemSupplier's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Shop:_init: Invalid input") return nil end
 
     -- initialisation
@@ -63,7 +63,7 @@ function Shop:new(...)
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the forest
                 _itemSuppliersLocators  - (ObjArray) with locators of registered ItemSupplier's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Shop:new: Invalid input") return {} end
 
     -- set class info
@@ -242,7 +242,7 @@ function Shop:registerItemSupplier_SOSrv(...)
             serviceData             - (table) data for the service
                 itemSupplierLocator + (URL) locating the ItemSupplier
                 suppressWarning     + (boolean, false) if Warning should be suppressed
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
 
     -- get ItemSupplier
@@ -279,7 +279,7 @@ function Shop:delistItemSupplier_SOSrv(...)
         Parameters:
             serviceData             - (table) data for the service
                 itemSupplierLocator + (URL) locating the ItemSupplier
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Shop:delistItemSupplier_SOSrv: Invalid input") return {success = false} end
 
     -- get ItemSuppliers
@@ -325,7 +325,7 @@ function Shop:getBestItemSupplierLocator_SOSrv(...)
                 item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
 
     -- check input
@@ -380,7 +380,7 @@ function Shop:provideItemsTo_AOSrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Shop:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine projectSteps and projectData
@@ -489,7 +489,7 @@ function Shop:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Shop:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- loop on items
@@ -528,7 +528,7 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- loop on items

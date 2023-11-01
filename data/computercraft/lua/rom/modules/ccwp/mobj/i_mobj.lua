@@ -44,7 +44,7 @@ function IMObj:construct(...)
                 param1                  + (Location) location of XXXMObj
                 param2                  + (number, 2) ...
                 ...
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("XXXMObj:construct: Invalid input") return nil end
 
     IInterface.UnimplementedMethodError("IMObj", "construct")

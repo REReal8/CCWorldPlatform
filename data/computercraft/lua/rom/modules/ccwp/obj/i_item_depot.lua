@@ -49,7 +49,7 @@ function IItemDepot:storeItemsFrom_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("IItemDepot:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     IInterface.UnimplementedMethodError("IItemDepot", "storeItemsFrom_AOSrv")
@@ -72,7 +72,7 @@ function IItemDepot:can_StoreItems_QOSrv(...)
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemDepot", "can_StoreItems_QOSrv")
@@ -96,7 +96,7 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
                 itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Chest:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemDepot", "needsTo_StoreItemsFrom_SOSrv")

@@ -48,7 +48,7 @@ function IItemSupplier:provideItemsTo_AOSrv(...)
                 wasteItemDepotLocator           - (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("IItemSupplier:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     IInterface.UnimplementedMethodError("IItemSupplier", "provideItemsTo_AOSrv")
@@ -69,7 +69,7 @@ function IItemSupplier:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("IItemSupplier:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemSupplier", "can_ProvideItems_QOSrv")
@@ -94,7 +94,7 @@ function IItemSupplier:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("IItemSupplier:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemSupplier", "needsTo_ProvideItemsTo_SOSrv")

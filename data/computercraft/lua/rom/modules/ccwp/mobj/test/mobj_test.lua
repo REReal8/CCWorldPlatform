@@ -31,7 +31,7 @@ function TestMObj:_init(...)
             id                      + (string) id of the TestMObj
             baseLocation            + (Location) base location of the TestMObj
             field1                  + (string) field 1
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj:_init: Invalid input") return nil end
 
     -- initialisation
@@ -52,7 +52,7 @@ function TestMObj:new(...)
                 _id                     - (string) id of the TestMObj
                 _baseLocation           - (Location) base location of the TestMObj
                 _field1                 - (string) field
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
 
     -- set class info
@@ -116,7 +116,7 @@ function TestMObj:construct(...)
             constructParameters         - (table) parameters for constructing the MObj
                 baseLocation            + (Location) base location of the TestMObj
                 field1Value             + (string) value to set field1 to
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
 
     -- determine TestMObj fields
@@ -142,7 +142,7 @@ function TestMObj:upgrade(...)
         Parameters:
             upgradeParameters           - (table) parameters for upgrading the TestMObj
                 field1                  + (string) with field1 value to upgrade to
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj:upgrade: Invalid input") return false end
 
     -- upgrade
@@ -199,7 +199,7 @@ function TestMObj.GetBuildBlueprint(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the TestMObj
                 baseLocation            + (Location) base location of the TestMObj
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
@@ -233,7 +233,7 @@ function TestMObj:getExtendBlueprint(...)
         Parameters:
             upgradeParameters           - (table) parameters for upgrading the TestMObj
                 field1                  + (string) with field1 value to upgrade to
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestMObj:getExtendBlueprint: Invalid input") return nil end
 
     -- determine layerList

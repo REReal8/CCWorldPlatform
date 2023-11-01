@@ -67,11 +67,11 @@ R  enterprise_employment/ IWorker, a generalisation of enterprise_turtle/ Turtle
       R  modify bootstrapping users of enterprise_workforce/ Turtle to use generalised enterprise_workforce methods     (done)
       R  enable booting a new IWorker: startup, getWorkedId, set in Obj, reboot, etc                                    (done)
 
+R  replace table.unpack(arg) with ... everywhere                                                                        (done)
+
 -  Robuste way to initialize and setup (like the core files do)
    -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
-
--  replace table.unpack(arg) with ... everywhere
 
 RG UserStation v1.0
    -  Modify it to be an IWorker

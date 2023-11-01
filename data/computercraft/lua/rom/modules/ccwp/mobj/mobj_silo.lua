@@ -51,7 +51,7 @@ function Silo:_init(...)
             pickupLocation          + (number) top Chest index
             topChests               + (ObjArray) with top Chest's
             storageChests           + (ObjArray) with storage Chest's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:_init: Invalid input") return nil end
 
     -- initialisation
@@ -80,7 +80,7 @@ function Silo:new(...)
                 _pickupLocation         - (number) top Chest index
                 _topChests              - (ObjArray) with top Chest's
                 _storageChests          - (ObjArray) with storage Chest's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
 
     -- set class info
@@ -162,7 +162,7 @@ function Silo:construct(...)
                 baseLocation            + (Location) base location of the Silo
                 nTopChests              + (number, 2) # of top chests
                 nLayers                 + (number, 2) # of layers
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
 
     -- determine Silo fields
@@ -320,7 +320,7 @@ function Silo.GetBuildBlueprint(...)
                 baseLocation            + (Location) base location of the Silo
                 nTopChests              + (number, 2) # of top chests
                 nLayers                 + (number, 2) # of layers
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- construct layer list
@@ -466,7 +466,7 @@ function Silo:provideItemsTo_AOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project definition
@@ -521,7 +521,7 @@ function Silo:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Silo:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- no trouble if we are not (or no longer) operational
@@ -586,7 +586,7 @@ function Silo:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Silo:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- determine fuelNeed
@@ -636,7 +636,7 @@ function Silo:storeItemsFrom_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set (expected) destinationItemsLocator
@@ -700,7 +700,7 @@ function Silo:can_StoreItems_QOSrv(...)
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Silo:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
@@ -723,7 +723,7 @@ function Silo:needsTo_StoreItemsFrom_SOSrv(...)
                 itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Silo:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
@@ -783,7 +783,7 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
                 pickupLocator           + (URL) locating the pickupLocator where the items need to be provided to
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:fromSiloIntoTopchest_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check if we can provide the requested items
@@ -874,7 +874,7 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Silo:fromTopchestIntoSilo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     corelog.WriteToLog("fromTopchestIntoSilo_AOSrv begin")

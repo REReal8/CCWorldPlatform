@@ -27,7 +27,7 @@ function CodeMap:_init(...)
 
         Parameters:
             codeRowArray                + (table, {}) with rows of Block codes
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:_init: Invalid input") return nil end
 
     -- initialisation
@@ -45,7 +45,7 @@ function CodeMap:new(...)
 
         Parameters:
             o                           + (table, {}) map of codes of Block's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:new: Invalid input") return nil end
 
     -- set class info
@@ -131,7 +131,7 @@ function CodeMap:transformToMap(...)
         Parameters:
             toMap                   + (CodeMap) table with
             anyBlockCode            + (string) block code to use for new any blocks
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:transformToMap: Invalid input") return nil end
 
     -- check size
@@ -179,7 +179,7 @@ function CodeMap:removeRow(...)
 
         Parameters:
             iRow                        + (number) index of row to remove
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:removeRow: Invalid input") return nil end
 
     -- check range
@@ -196,7 +196,7 @@ function CodeMap:removeColumn(...)
 
         Parameters:
             iCol                        + (number) index of column to remove
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:removeColumn: Invalid input") return nil end
 
     -- check range
@@ -221,7 +221,7 @@ function CodeMap:removeBoundariesWithOnly(...)
 
         Parameters:
             code                        + (string) off which rows and columns should be removed
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CodeMap:removeBoundariesWithOnly: Invalid input") return nil end
 
     --

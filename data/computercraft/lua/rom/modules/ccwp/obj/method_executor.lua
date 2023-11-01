@@ -37,7 +37,7 @@ function MethodExecutor.DoSyncService(...)
             moduleName                  + (string) name of module with the service
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return {success = false} end
 
     -- call method
@@ -61,7 +61,7 @@ function MethodExecutor.DoSyncObjService(...)
             objData                     + (table) with obj data
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoSyncObjService: Invalid input") return nil end
 
     -- call method
@@ -88,7 +88,7 @@ function MethodExecutor.DoASyncService_Sync(...)
             moduleName                  + (string) name of module with the service
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService_Sync: Invalid input") return nil end
 
     -- create callback
@@ -141,7 +141,7 @@ function MethodExecutor.DoASyncService(...)
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
     -- call method
@@ -168,7 +168,7 @@ function MethodExecutor.DoASyncObjService_Sync(...)
             object                      + (table) object to execute on
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncObjServiceSync: Invalid input") return nil end
 
     -- create callback
@@ -222,7 +222,7 @@ function MethodExecutor.DoASyncObjService(...)
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncObjService: Invalid input") return nil end
 
     -- call method
@@ -240,7 +240,7 @@ function MethodExecutor.GetModuleMethod(...)
         Parameters:
             moduleName                  + (string) name of module to get method from
             methodName                  + (string) name of method to execute
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.GetModuleMethod(...): Invalid input") return nil end
 
     -- get module
@@ -267,7 +267,7 @@ function MethodExecutor.CallModuleMethod(...)
             moduleName                  + (string) name of module to execute on
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.CallModuleMethod(...): Invalid input") return nil end
 
     -- get module
@@ -294,7 +294,7 @@ function MethodExecutor.CallObjMethod(...)
             objFieldsTable              + (table) with obj data
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.CallObjMethod(...): Invalid input") return nil end
 
     -- get obj
@@ -320,7 +320,7 @@ function MethodExecutor.CallInstanceMethod(...)
             object                      + (table) object to execute on
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.CallInstanceMethod(...): Invalid input") return nil end
 
     -- get method
@@ -346,7 +346,7 @@ function MethodExecutor.CallMethod(...)
             object                      + (table) object to execute on
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MethodExecutor.CallMethod(...): Invalid input") return nil end
 
     -- get method

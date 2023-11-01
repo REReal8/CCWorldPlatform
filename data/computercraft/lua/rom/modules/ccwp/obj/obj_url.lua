@@ -30,7 +30,7 @@ function URL:_init(...)
             path                    + (string, "") defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
             query                   + (table, {}) of key-value pairs with (item) query segments (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
             port                    + (number, nil) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("URL:_init: Invalid input") return nil end
 
     -- initialisation
@@ -53,7 +53,7 @@ function URL:new(...)
                 _port               - (number, nil) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
                 _path               - (string, "") defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
                 _query              - (table, {}) of key-value pairs with (item) query segments (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("URL:new: Invalid input") return {} end
 
     -- set class info

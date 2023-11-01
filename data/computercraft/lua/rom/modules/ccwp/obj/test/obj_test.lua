@@ -34,7 +34,7 @@ function TestObj:_init(...)
         Parameters:
             field1                  + (string) field
             field2                  + (number) field
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestObj:_init: Invalid input") return nil end
 
     -- initialisation
@@ -53,7 +53,7 @@ function TestObj:new(...)
             o               + (table, {}) table with object fields
                 _field1     - (string) field
                 _field2     - (number) field
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
 
     -- set class info
@@ -118,7 +118,7 @@ function TestObj:field2Plus(...)
 
         Parameters:
             addValue            + (number) value to add
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("TestObj:field2Plus: Invalid input") return 99999 end
 
     -- determine sum
@@ -139,7 +139,7 @@ function TestObj:getTestArg(...)
         Parameters:
             serviceData         - (table) data about the service
                 testArg         + (?) as a test argument
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("TestObj:getTestArg: Invalid input") return {success = false} end
 
     -- verify true object
@@ -168,7 +168,7 @@ function TestObj:test_SOSrv(...)
         Parameters:
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("TestObj:test_SOSrv: Invalid input") return {success = false} end
 
     -- verify true object
@@ -204,7 +204,7 @@ function TestObj:test_AOSrv(...)
             serviceData         - (table) data about the service
                 testArg         + (number) as a test argument
             callback            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("TestObj:test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- verify true object

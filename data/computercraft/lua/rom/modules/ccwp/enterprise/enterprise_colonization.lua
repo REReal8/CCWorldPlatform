@@ -58,7 +58,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             serviceData         - (table) data about the service
                 <currently none>
             callback            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- ToDo: Controle of aan de voorwaarden is voldaan, modem, axe, crafting table, birch sapling
@@ -352,7 +352,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 <currently none>
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Invalid input") return { success = false } end
 
     -- construct arguments

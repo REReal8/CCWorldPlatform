@@ -48,7 +48,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- construct assignment metadata
@@ -139,7 +139,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get assignment metadata

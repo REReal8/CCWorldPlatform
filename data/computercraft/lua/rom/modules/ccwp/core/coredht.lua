@@ -254,7 +254,7 @@ function coredht.SaveData(data, ...)
     })
 
     -- save the node in the data
-    return SaveDataToDB(data, table.unpack(arg))
+    return SaveDataToDB(data, ...)
 end
 
 return coredht

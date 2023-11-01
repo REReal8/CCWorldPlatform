@@ -32,7 +32,7 @@ function WIPQueue:_init(...)
         Parameters:
             workList                + (table) with workId's
             callbackList            + (ObjArray) with Callback's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPQueue:_init: Invalid input") return nil end
 
     -- initialisation
@@ -51,7 +51,7 @@ function WIPQueue:new(...)
             o                           + (table) table with object fields
                 _workList               - (table) with workId's
                 _callbackList           - (ObjArray) with Callback's
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPQueue:new: Invalid input") return nil end
 
     -- set class info
@@ -72,7 +72,7 @@ function WIPQueue:addWork(...)
 
         Parameters:
             workId                              + (string) with the id of the work
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPQueue:addWork: Invalid input") return false end
 
     -- add to _workList
@@ -92,7 +92,7 @@ function WIPQueue:removeWork(...)
 
         Parameters:
             workId                              + (string) with the id of the work
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPQueue:removeWork: Invalid input") return false end
 
     -- remove from _workList
@@ -134,7 +134,7 @@ function WIPQueue:addCallback(...)
 
         Parameters:
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("WIPQueue:addCallback: Invalid input") return false end
 
     -- add to _callbackList

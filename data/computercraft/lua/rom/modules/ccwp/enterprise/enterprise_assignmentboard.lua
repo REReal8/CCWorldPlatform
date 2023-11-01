@@ -62,7 +62,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
                 metaData            + (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
                 taskCall            + (TaskCall) to call to execute the assignment
             callback                + (Callback) to call once service (assignment) is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput
@@ -190,7 +190,7 @@ function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
             serviceData             - (table) data for this service
                 assignmentFilter    + (table) filter to apply in finding an Assignment
                 workerResume        + (table) Worker "resume" to consider in finding an Assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.FindBestAssignment_SSrv: Invalid input") return {success = false} end
 
     -- zoeken naar een assignment om op in te schrijven
@@ -263,7 +263,7 @@ function enterprise_assignmentboard.ApplyToAssignment(...)
         Parameters:
             computerId              + (number) id of computer
             assignmentId            + (string) id of the assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: Invalid input") return nil end
 
     -- only apply when the assignment is open
@@ -288,7 +288,7 @@ function enterprise_assignmentboard.AssignmentSelectionProcedure(...)
         Parameters:
             computerId              + (number) id of computer
             assignmentId            + (string) id of the assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: Invalid input") return nil end
 
     -- get assignment data

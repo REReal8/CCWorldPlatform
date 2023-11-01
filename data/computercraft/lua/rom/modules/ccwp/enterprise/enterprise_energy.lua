@@ -67,7 +67,7 @@ local function Refuel_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project service data
@@ -141,7 +141,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check there is actually fuel requested
@@ -283,7 +283,7 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
                 enterpriseLevel         + (number) with enterprise level
                 forestLocator           + (URL, nil) locating the BirchForest intended for raw fuel materials
                 factoryLocator          + (URL, nil) locating the Factory intended for producing fuel items
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
 
     -- check forestLocator

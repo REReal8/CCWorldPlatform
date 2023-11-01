@@ -31,7 +31,7 @@ function ObjTable:_init(...)
         Parameters:
             objClassName            + (string, "") with className of objects in ObjTable (e.g. "Chest")
             objsTable               + (table, {}) with key, value pairs of Obj in ObjTable
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjTable:_init: Invalid input") return nil end
 
     -- initialisation
@@ -63,7 +63,7 @@ function ObjTable:new(...)
         Parameters:
             o                   + (table, {}) table with
                 _objClassName   - (string, "") with className of objects in ObjTable (e.g. "Chest")
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjTable:new: Invalid input") return nil end
 
     -- set class info

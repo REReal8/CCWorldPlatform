@@ -30,7 +30,7 @@ function LayerRectangle:_init(...)
         Parameters:
             codeTable               + (ObjTable) with mapping CodeMap codes (characters) to Block's
             codeMap                 + (CodeMap) with map of codes of Block's within the layer
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Location:_init: Invalid input") return nil end
 
     -- initialisation
@@ -48,7 +48,7 @@ function LayerRectangle:new(...)
             o                           + (table, {}) table with object fields
                 _codeTable              - (ObjTable) with mapping CodeMap codes (characters) to Block's
                 _codeMap                - (CodeMap) with map of codes of Block's within the layer
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
 
     -- set class info
@@ -132,7 +132,7 @@ function LayerRectangle:transformToLayer(...)
 
         Parameters:
             toLayer                     + (LayerRectangle) table with
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("LayerRectangle:transformToLayer: Invalid input") return nil end
 
     -- construct transformCodeMap

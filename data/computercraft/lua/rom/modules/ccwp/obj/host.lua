@@ -39,7 +39,7 @@ function Host:_init(...)
 
         Parameters:
             hostName                + (string) with hostName of the Host
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host:_init: Invalid input") return nil end
 
     -- initialisation
@@ -56,7 +56,7 @@ function Host:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _hostName               - (string) with hostName of the Host
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host:new: Invalid input") return {} end
 
     -- set class info
@@ -120,7 +120,7 @@ function Host:isLocatorFromHost(...)
 
         Parameters:
             locator                 + (URL) that needs to be queried
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Host:isLocatorFromHost: Invalid input") return false end
 
     -- check if of this Host
@@ -143,7 +143,7 @@ function Host:getResourceLocator(...)
 
         Parameters:
             resourcePath            + (string) locating the Resource within the Host
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Host:getResourceLocator: Invalid input") return nil end
 
     -- construct resourceLocator
@@ -164,7 +164,7 @@ function Host:getResource(...)
 
         Parameters:
             resourceLocator         + (URL) locator of the Resource within the Host
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host:getResource: Invalid input") return nil end
 
     -- get URL components
@@ -204,7 +204,7 @@ function Host:saveResource(...)
         Parameters:
             resource                + (table) representing the Resource
             resourcePath            + (string) locating the Resource within the Host
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host:saveResource: Invalid input") return nil end
 
     -- get resourceLocator
@@ -237,7 +237,7 @@ function Host:deleteResource(...)
 
         Parameters:
             resourceLocator         + (URL) locator of the Resource within the Host
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host:deleteResource: Invalid input") return false end
 
     -- get URL components
@@ -277,7 +277,7 @@ function Host.GetHost(...)
         Parameters:
             hostName                + (string) with hostName of the Host
             suppressWarning         + (boolean, false) if Warning should be suppressed
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
 
     -- get Host

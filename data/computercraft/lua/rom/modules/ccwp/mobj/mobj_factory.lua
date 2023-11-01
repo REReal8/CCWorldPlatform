@@ -79,7 +79,7 @@ function Factory:_init(...)
             outputLocators          + (ObjArray) with output locators
             craftingSpots           + (ObjArray) with crafting spots
             smeltingSpots           + (ObjArray) with smelting spots
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:_init: Invalid input") return nil end
 
     -- initialisation
@@ -108,7 +108,7 @@ function Factory:new(...)
                 _outputLocators         - (ObjArray) with output locators
                 _craftingSpots          - (ObjArray) with crafting spots
                 _smeltingSpots          - (ObjArray) with smelting spots
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:new: Invalid input") return nil end
 
     -- set class info
@@ -181,7 +181,7 @@ function Factory:construct(...)
             constructParameters         - (table) parameters for constructing the Factory
                 level                   + (number) with Factory level
                 baseLocation            + (Location) base location of the Factory
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:construct: Invalid input") return nil end
 
     -- determine Factory fields
@@ -259,7 +259,7 @@ function Factory:upgrade(...)
         Parameters:
             upgradeParameters           - (table) parameters for upgrading the Factory
                 level                   + (number) with Factory level to upgrade to
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:upgrade: Invalid input") return false end
 
     -- upgrade if possible
@@ -466,7 +466,7 @@ function Factory.GetBuildBlueprint(...)
             constructParameters         - (table) parameters for constructing the Factory
                 level                   + (number) with Factory level
                 baseLocation            + (Location) base location of the Factory
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- determine layerList
@@ -519,7 +519,7 @@ function Factory:getExtendBlueprint(...)
         Parameters:
             upgradeParameters           - (table) parameters for upgrading the current Factory
                 level                   + (number) with Factory level to upgrade to
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:getExtendBlueprint: Invalid input") return nil end
 
     -- determine layerList
@@ -702,7 +702,7 @@ function Factory:getFuelNeed_Production_Att(...)
 
         Parameters:
             items           + (table) items to produce
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- cache Factory fields
@@ -793,7 +793,7 @@ function Factory:provideItemsTo_AOSrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- loop on items
@@ -902,7 +902,7 @@ function Factory:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Factory:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- loop on items
@@ -952,7 +952,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get ingredientsItemSupplier
@@ -1044,7 +1044,7 @@ function Factory.ProduceItem_ASrv(...)
                 productionRecipe        + (table) production recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
@@ -1169,7 +1169,7 @@ function Factory.CraftItem_ASrv(...)
                 productionRecipe        + (table) crafting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
@@ -1217,7 +1217,7 @@ function Factory.SmeltItem_ASrv(...)
                 productionRecipe        + (table) smelting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
@@ -1269,7 +1269,7 @@ function Factory.Pickup_ASrv(...)
                 productItemCount        + (number) amount of items to produce
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Factory.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data

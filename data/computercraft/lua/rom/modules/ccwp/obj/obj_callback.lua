@@ -46,7 +46,7 @@ function Callback:call(...)
 
         Parameters:
             resultData              + (table) with second argument to supply to callback function, typically the return data of the task function
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Callback:call: Invalid input") return nil end
 
     -- call method

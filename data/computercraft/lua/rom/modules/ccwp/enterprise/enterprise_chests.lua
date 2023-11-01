@@ -63,7 +63,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
                 itemsLocator        + (URL) locating the items for which to get the location
                                         (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get Chest
@@ -95,7 +95,7 @@ function enterprise_chests.GetItemDepotLocation_SSrv(...)
             serviceData             - (table) data about this service
                 itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
                                         (the "base" component of the URL should specify this ItemDepot enterprise)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- get Chest

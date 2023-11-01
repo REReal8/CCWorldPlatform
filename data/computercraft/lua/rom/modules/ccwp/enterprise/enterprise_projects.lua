@@ -54,7 +54,7 @@ function enterprise_projects.StartProject_ASrv(...)
                 projectData     + (table) input data to the project
                 projectMeta     + (table, {}) stuff like title and description, and other meta information
             callback            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput

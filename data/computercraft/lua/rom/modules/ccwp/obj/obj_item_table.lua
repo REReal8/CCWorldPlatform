@@ -26,7 +26,7 @@ function ItemTable:_init(...)
 
         Parameters:
             itemsTable              + (table, {}) with key, value pairs of items
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ItemTable:_init: Invalid input") return nil end
 
     -- initialisation
@@ -50,7 +50,7 @@ function ItemTable:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ItemTable:new: Invalid input") return {} end
 
     setmetatable(o, self)
@@ -112,7 +112,7 @@ function ItemTable.combine(...)
         Parameters:
             firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
             secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
-        --]], table.unpack(arg))
+        --]], ...)
     if not checkSuccess then corelog.Error("ItemTable.combine: Invalid input") return nil end
 
     -- for the new list
@@ -142,7 +142,7 @@ function ItemTable.compare(...)
         Parameters:
             firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
             secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
-        --]], table.unpack(arg))
+        --]], ...)
     if not checkSuccess then corelog.Error("ItemTable.compare: Invalid input") return nil, nil, nil end
 
     -- this is what we will return

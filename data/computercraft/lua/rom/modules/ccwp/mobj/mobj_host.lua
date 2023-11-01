@@ -79,7 +79,7 @@ function MObjHost:buildAndHostMObj_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host for building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get class
@@ -150,7 +150,7 @@ function MObjHost:hostMObj_SSrv(...)
             serviceData             - (table) data about this service
                 className           + (string, "") with the name of the class of the MObj
                 constructParameters + (table) parameters for constructing the MObj
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("MObjHost:hostMObj_SSrv: Invalid input") return {success = false} end
 
     -- get class
@@ -194,7 +194,7 @@ function MObjHost:upgradeMObj_SSrv(...)
             serviceData                         - (table) data about this service
                 mobjLocator                     + (URL) locating the MObj
                 upgradeParameters               + (table) parameters for upgrading the MObj
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MObjHost:upgradeMObj_SSrv: Invalid input") return {success = false} end
 
     -- log
@@ -241,7 +241,7 @@ function MObjHost:extendAndUpgradeMObj_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host for dismantling materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get MObj
@@ -317,7 +317,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host for dismantling materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get MObj
@@ -389,7 +389,7 @@ function MObjHost:releaseMObj_SSrv(...)
         Parameters:
             serviceData                         - (table) data about this service
                 mobjLocator                     + (URL) locating the MObj
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("MObjHost:releaseMObj_SSrv: Invalid input") return {success = false} end
 
     -- log

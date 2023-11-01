@@ -35,7 +35,7 @@ function ProductionSpot:_init(...)
         Parameters:
             baseLocation            + (Location) base location of the ProductionSpot
             isCraftingSpot          + (boolean) if it is a crafting spot
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:_init: Invalid input") return nil end
 
     -- initialisation
@@ -54,7 +54,7 @@ function ProductionSpot:new(...)
             o                       + (table, {}) with object fields
                 _baseLocation       - (Location) base location of the ProductionSpot
                 _isCraftingSpot     - (boolean) if it is a crafting spot
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
 
     -- set class info
@@ -108,7 +108,7 @@ function ProductionSpot:getFuelNeed_Production_Att(...)
 
         Parameters:
             items           + (table) items to produce
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- fuelNeed for production of items
@@ -138,7 +138,7 @@ function ProductionSpot:produceIngredientsNeeded(...)
         Parameters:
             productionRecipe            + (table) production recipe
             productItemCount            + (number) amount of items to produce
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:itemsNeeded: Invalid input") return nil end
 
     -- determine ingredientsNeeded

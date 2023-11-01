@@ -31,7 +31,7 @@ function ObjArray:_init(...)
         Parameters:
             objClassName            + (string, "") with className of objects in ObjArray (e.g. "Chest")
             objsArray               + (table, {}) with array of Obj in ObjArray
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjArray:_init: Invalid input") return nil end
 
     -- initialisation
@@ -59,7 +59,7 @@ function ObjArray:new(...)
         Parameters:
             o                   + (table, {}) table with
                 _objClassName   - (string, "") with className of objects in ObjArray (e.g. "Chest")
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("ObjArray:new: Invalid input") return nil end
 
     -- set class info

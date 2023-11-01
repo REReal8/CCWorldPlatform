@@ -51,7 +51,7 @@ function role_forester.HarvestForest_MetaData(...)
                 nTrees                      + (number) the number of trees in (the y direction of) the forest
                 waitForFirstTree            - (boolean) if harvesting should wait for the first tree
                 priorityKey                 + (string, "") priorityKey for this assignment
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_forester.HarvestForest_MetaData: Invalid input") return {success = false} end
 
     -- determine fuelNeed
@@ -98,7 +98,7 @@ function role_forester.HarvestForest_Task(...)
                 nTrees                      + (number) the number of trees in (the y direction of) the forest
                 waitForFirstTree            + (boolean) if harvesting should wait for the first tree
                 workerLocator               + (URL) locating the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("role_forester.HarvestForest_Task: Invalid input") return {success = false} end
 
 --    corelog.WriteToLog(" Harvesting Forest")

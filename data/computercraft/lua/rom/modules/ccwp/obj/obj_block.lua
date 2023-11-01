@@ -28,7 +28,7 @@ function Block:_init(...)
             blockName               + (string, "") block name (.e.g. "minecraft:oak_log")
             dx                      + (number, 0) x direction (either -1,0,1)
             dy                      + (number, 0) y direction (either -1,0,1)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Block:_init: Invalid input") return nil end
 
     -- initialisation
@@ -49,7 +49,7 @@ function Block:new(...)
                 _dx         - (number, 0) block orientation in x
                 _dy         - (number, 0) block orientation in y
                 _name       - (string, "") block name (.e.g. "minecraft:oak_log")
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Block:new: Invalid input") return {} end
 
     setmetatable(o, self)

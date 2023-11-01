@@ -29,7 +29,7 @@ function CallDef:_init(...)
             moduleName          + (string, "") name of module to call
             methodName          + (string, "") name of method to call
             data                + (table, {}) with arguments to pass to method call
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CallDef:_init: Invalid input") return nil end
 
     -- initialisation
@@ -50,7 +50,7 @@ function CallDef:new(...)
                 _moduleName         - (string, "") name of module to call
                 _methodName         - (string, "") name of method to call
                 _data               - (table, {}) with arguments to pass to method call
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("CallDef:new: Invalid input") return {} end
 
     -- set class info

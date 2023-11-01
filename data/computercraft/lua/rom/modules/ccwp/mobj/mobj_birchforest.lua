@@ -51,7 +51,7 @@ function BirchForest:_init(...)
             nTrees                  + (number) # trees in the BirchForest
             localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a Chest)
             localSaplingsLocator    + (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:_init: Invalid input") return nil end
 
     -- initialisation
@@ -78,7 +78,7 @@ function BirchForest:new(...)
                 _nTrees                 - (number) # trees in the BirchForest
                 _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a Chest)
                 _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return nil end
 
     -- set class info
@@ -183,7 +183,7 @@ function BirchForest:construct(...)
                 level                   + (number) with BirchForest level
                 baseLocation            + (Location) base location of the BirchForest
                 nTrees                  + (number) number of trees
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:construct: Invalid input") return nil end
 
     -- nTrees
@@ -240,7 +240,7 @@ function BirchForest:upgrade(...)
             upgradeParameters           - (table) parameters for upgrading the BirchForest
                 level                   + (number) with BirchForest level to upgrade to
                 nTrees                  + (number) number of trees
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:upgrade: Invalid input") return false end
 
     -- nTrees
@@ -440,7 +440,7 @@ function BirchForest.GetBuildBlueprint(...)
                 level                   + (number) with BirchForest level
                 baseLocation            + (Location) base location of the BirchForest
                 nTrees                  + (number) number of trees
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- nTrees
@@ -502,7 +502,7 @@ function BirchForest:getExtendBlueprint(...)
             upgradeParameters           - (table) parameters for upgrading the current BirchForest
                 level                   + (number) with BirchForest level to upgrade to
                 nTrees                  + (number) number of trees
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:getExtendBlueprint: Invalid input") return nil end
 
     -- nTrees
@@ -761,7 +761,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- loop on items
@@ -925,7 +925,7 @@ function BirchForest:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("BirchForest:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- loop on items
@@ -963,7 +963,7 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- loop on items

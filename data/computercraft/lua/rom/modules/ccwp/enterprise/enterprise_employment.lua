@@ -84,7 +84,7 @@ function enterprise_employment:getObject(...)
 
         Parameters:
             objectLocator           + (URL) locator of the object within the ObjHost
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:getObject: Invalid input") return nil end
 
     -- check for "any turtle"
@@ -172,7 +172,7 @@ function enterprise_employment:getRegistered(...)
 
         Parameters:
             workerId            + (number) workerId of the Worker
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:getRegistered: Invalid input") return nil end
 
     -- get workerLocators
@@ -204,7 +204,7 @@ function enterprise_employment:register(...)
         Parameters:
             workerId                + (number) workerId of the Worker
             workerLocator           + (URL) locating the Worker
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:register: Invalid input") return false end
 
     -- get workerLocators
@@ -233,7 +233,7 @@ function enterprise_employment:isRegistered(...)
 
         Parameters:
             workerId                + (number) workerId of the Worker
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:isRegistered: Invalid input") return false end
 
     -- get workerLocators
@@ -259,7 +259,7 @@ function enterprise_employment:delist(...)
 
         Parameters:
             workerId                + (number) workerId of the Worker
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:delist: Invalid input") return false end
 
     -- get workerLocators
@@ -422,7 +422,7 @@ function enterprise_employment:registerBirthCertificate_SOSrv(...)
             serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the Worker
                 constructParameters             + (table) parameters for constructing the Worker
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Invalid input") return {success = false} end
 
     -- get birthCertificates
@@ -665,7 +665,7 @@ function enterprise_employment.Fuel_Callback(...)
             callbackData            - (table) callbackData
                 turtleLocator       + (URL) locator of the turtle
             serviceResults          + (table) result of service that calls back
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.Fuel_Callback: Invalid input") return {success = false} end
 
     -- check refuel was a success
@@ -704,7 +704,7 @@ function enterprise_employment.GetItemsLocations_SSrv(...)
                 itemsLocator        + (URL) locating the items for which to get the location
                                         (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get location
@@ -733,7 +733,7 @@ function enterprise_employment.GetItemDepotLocation_SSrv(...)
             serviceData             - (table) data about this service
                 itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
                                         (the "base" component of the URL should specify this ItemDepot enterprise)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- check itemDepotLocator is for this enterprise

@@ -49,7 +49,7 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
                                                 (the "query" component of the URL specifies the items to be transferred)
                                                 (the "host" component of the URL specifies the ItemDepot where the items are located)
                 destinationItemDepotLocator + (URL) locating the ItemDepot that needs to be transferred to
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid input") return {success = false} end
 
     -- check there are actual items to transfer
@@ -100,7 +100,7 @@ local function GetItemDepotName_SSrv(...)
             serviceData             - (table) data about this service
                 itemDepotLocator    + (URL) locating the ItemDepot
                                         (the "base" component of the URL should specify an ItemDepot enterprise)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Invalid input") return {success = false} end
 
     -- determine ItemDepot name
@@ -133,7 +133,7 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
                 itemsLocator        + (URL) locating the items for which to get the location
                                         (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot
@@ -163,7 +163,7 @@ function enterprise_isp.GetItemDepotLocation_SSrv(...)
             serviceData             + (table) data about this service
                 itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
                                         (the "base" component of the URL should specify an ItemDepot enterprise)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot

@@ -28,7 +28,7 @@ function Inventory:_init(...)
         Parameters:
             slotTable               + (table, {}) slotTable
             itemTable               + (table, {}) itemTable
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Inventory:_init: Invalid input") return nil end
 
     -- initialisation
@@ -47,7 +47,7 @@ function Inventory:new(...)
             o                           + (table, {}) table with object fields
                 _slotTable              - (table, {}) slotTable
                 _itemTable              - (table, {}) itemTable
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Inventory:new: Invalid input") return {} end
 
     o = o or {}   -- create object if user does not provide one
@@ -148,7 +148,7 @@ function Inventory:hasItems(...)
 
         Parameters:
             items           + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Inventory:hasItems: Invalid input") return false end
 
     -- query chests inventory
@@ -179,7 +179,7 @@ function Inventory:substract(...)
 
         Parameters:
             inventory       + (Inventory) inventory to subtract from self
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Inventory:substract: Invalid input") return false end
 
     -- the variable we are going to calculate

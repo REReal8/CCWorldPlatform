@@ -50,7 +50,7 @@ function Turtle:_init(...)
             workerId                + (number) workerId of the Turtle
             location                + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle:_init: Invalid input") return nil end
 
     -- initialisation
@@ -73,7 +73,7 @@ function Turtle:new(...)
                 _workerId               - (number) workerId of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
 
     -- set class info
@@ -131,7 +131,7 @@ function Turtle:construct(...)
             constructParameters         - (table) parameters for constructing the Turtle
                 workerId                + (number) workerId of the Turtle
                 location                + (Location) location of the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
 
     -- construct new Turtle
@@ -194,7 +194,7 @@ function Turtle.GetBuildBlueprint(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
                 location                + (Location) location of the Turtle
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- buildLocation
@@ -374,7 +374,7 @@ function Turtle:provideItemsTo_AOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check items available in inventory
@@ -410,7 +410,7 @@ function Turtle:can_ProvideItems_QOSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Turtle:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- check items in inventory
@@ -438,7 +438,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get location
@@ -507,7 +507,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
                                             (the "query" component of the URL specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
+    ]], ...)
     if not checkSuccess then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get storeItems
@@ -573,7 +573,7 @@ function Turtle:can_StoreItems_QOSrv(...)
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Turtle:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
@@ -596,7 +596,7 @@ function Turtle:needsTo_StoreItemsFrom_SOSrv(...)
                 itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-    --]], table.unpack(arg))
+    --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
