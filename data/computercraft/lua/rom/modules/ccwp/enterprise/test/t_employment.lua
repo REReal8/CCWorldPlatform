@@ -17,18 +17,19 @@ local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
 
 function t_employment.T_All()
---    t_employment.T_GetFuelLevels_Att()
-
-    -- specific
-    t_employment.T_GetAnyTurtleLocator()
+    -- ObjHost
     t_employment.T_getObject()
 
     -- MObjHost
     t_employment.T_hostMObj_SSrv_Turtle()
     t_employment.T_releaseMObj_SSrv_Turtle()
 
-    -- workerLocator
+    -- Worker
     t_employment.T_IRegistry_All()
+
+    -- enterprise_employment
+    --    t_employment.T_GetFuelLevels_Att()
+    t_employment.T_GetAnyTurtleLocator()
 end
 
 function t_employment.T_AllPhysical()
@@ -53,81 +54,16 @@ local constructParameters0 = {
     location        = location1,
 }
 
--- print("GetFuelLevels_Att="..textutils.serialize(enterprise_employment.GetFuelLevels_Att()))
-function t_employment.T_GetFuelLevels_Att()
-    -- prepare test
-    corelog.WriteToLog("# Test GetFuelLevels_Att")
-    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
-    T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
-    local location = turtleObj:getLocation()
-    local factoryClassName = "Factory"
-    local factoryConstructParameters = {
-        level           = 0,
-
-        baseLocation    = location,
-    }
-
-    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
-    local factoryLocator = result.mobjLocator
-
-    local energyParameters = enterprise_energy.GetParameters()
-    local originalLevel = energyParameters.enterpriseLevel
-    local originalForestLocator = energyParameters.forestLocator
-    local originalFactoryLocator = energyParameters.factoryLocator
-
-    -- test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator, factoryLocator = factoryLocator })
-    local fuelLevels = enterprise_employment.GetFuelLevels_Att()
-    local expectedFuelLevel_Priority = 41
-    assert(fuelLevels.fuelLevel_Priority == expectedFuelLevel_Priority, "gotten fuelLevel_Priority(="..fuelLevels.fuelLevel_Priority..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Priority..")")
-    local expectedFuelLevel_Assignment = 41 -- ToDo: consider taking enterprise_assignmentboard maxFuelNeed_Assignment into account as well
-    assert(fuelLevels.fuelLevel_Assignment == expectedFuelLevel_Assignment, "gotten fuelLevel_Assignment(="..fuelLevels.fuelLevel_Assignment..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Assignment..")")
-
-    -- cleanup test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
-
-    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
-
-    enterprise_forestry:deleteResource(forestLocator)
-end
-
 local compact = { compact = true }
 
-function t_employment.T_GetAnyTurtleLocator()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_employment.GetAnyTurtleLocator() tests")
-
-    -- test
-    local turtleLocator = enterprise_employment.GetAnyTurtleLocator() assert(turtleLocator, "t_employment.T_GetAnyTurtleLocator: Failed obtaining turtleLocator")
-    local expectedLocator = enterprise_employment.GetAnyTurtleLocator()
-
-    assert(turtleLocator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(turtleLocator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
-
-    -- cleanup test
-end
-
--- ToDo: consider if all callers want replacing getCurrentWorkerLocator, or if some want something else! (e.g. an anyTurtle, or even a computer...)
-function t_employment.GetCurrentTurtleLocator()
-    --[[
-        This method provides the locator of the current turtle (in enterprise_employment).
-
-        Return value:
-            turtleLocator       - (URL) locating the current turtle
-
-        Parameters:
-    --]]
-
-    -- check turtle
-    assert(turtle, "Current computer(ID="..os.getComputerID()..") not a Turtle")
-
-    -- construct URL
-    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator()
-
-    -- end
-    return currentTurtleLocator
-end
+--     ____  _     _ _    _           _
+--    / __ \| |   (_) |  | |         | |
+--   | |  | | |__  _| |__| | ___  ___| |_
+--   | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |__| | |_) | | |  | | (_) \__ \ |_
+--    \____/|_.__/| |_|  |_|\___/|___/\__|
+--               _/ |
+--              |__/
 
 function t_employment.T_getObject()
     -- prepare test
@@ -214,12 +150,12 @@ function t_employment.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
     mobjLocator_Turtle = nil
 end
 
---                       _             _                     _
---                      | |           | |                   | |
---   __      _____  _ __| | _____ _ __| |     ___   ___ __ _| |_ ___  _ __
---   \ \ /\ / / _ \| '__| |/ / _ \ '__| |    / _ \ / __/ _` | __/ _ \| '__|
---    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
---     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
+--   __          __        _
+--   \ \        / /       | |
+--    \ \  /\  / /__  _ __| | _____ _ __
+--     \ \/  \/ / _ \| '__| |/ / _ \ '__|
+--      \  /\  / (_) | |  |   <  __/ |
+--       \/  \/ \___/|_|  |_|\_\___|_|
 
 function t_employment.T_IRegistry_All()
     -- prepare test
@@ -230,6 +166,87 @@ function t_employment.T_IRegistry_All()
 
     -- test
     T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
+end
+
+--    ______       _                       _          ______                 _                                  _
+--   |  ____|     | |                     (_)        |  ____|               | |                                | |
+--   | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___| |__   _ __ ___  _ __ | | ___  _   _ _ __ ___   ___ _ __ | |_
+--   |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \  __| | '_ ` _ \| '_ \| |/ _ \| | | | '_ ` _ \ / _ \ '_ \| __|
+--   | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/ |____| | | | | | |_) | | (_) | |_| | | | | | |  __/ | | | |_
+--   |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___|______|_| |_| |_| .__/|_|\___/ \__, |_| |_| |_|\___|_| |_|\__|
+--                             | |                                    | |             __/ |
+--                             |_|                                    |_|            |___/
+
+function t_employment.T_GetFuelLevels_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test GetFuelLevels_Att")
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
+    local forestLocator = enterprise_forestry:saveObject(forest)
+    T_Turtle = T_Turtle or require "test.t_mobj_turtle"
+    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    local location = turtleObj:getLocation()
+    local factoryClassName = "Factory"
+    local factoryConstructParameters = {
+        level           = 0,
+
+        baseLocation    = location,
+    }
+
+    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local factoryLocator = result.mobjLocator
+
+    local energyParameters = enterprise_energy.GetParameters()
+    local originalLevel = energyParameters.enterpriseLevel
+    local originalForestLocator = energyParameters.forestLocator
+    local originalFactoryLocator = energyParameters.factoryLocator
+
+    -- test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator, factoryLocator = factoryLocator })
+    local fuelLevels = enterprise_employment.GetFuelLevels_Att()
+    local expectedFuelLevel_Priority = 41
+    assert(fuelLevels.fuelLevel_Priority == expectedFuelLevel_Priority, "gotten fuelLevel_Priority(="..fuelLevels.fuelLevel_Priority..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Priority..")")
+    local expectedFuelLevel_Assignment = 41 -- ToDo: consider taking enterprise_assignmentboard maxFuelNeed_Assignment into account as well
+    assert(fuelLevels.fuelLevel_Assignment == expectedFuelLevel_Assignment, "gotten fuelLevel_Assignment(="..fuelLevels.fuelLevel_Assignment..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Assignment..")")
+
+    -- cleanup test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
+
+    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
+
+    enterprise_forestry:deleteResource(forestLocator)
+end
+
+function t_employment.T_GetAnyTurtleLocator()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_employment.GetAnyTurtleLocator() tests")
+
+    -- test
+    local turtleLocator = enterprise_employment.GetAnyTurtleLocator() assert(turtleLocator, "t_employment.T_GetAnyTurtleLocator: Failed obtaining turtleLocator")
+    local expectedLocator = enterprise_employment.GetAnyTurtleLocator()
+
+    assert(turtleLocator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(turtleLocator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+
+    -- cleanup test
+end
+
+function t_employment.GetCurrentTurtleLocator()
+    --[[
+        This method provides the locator of the current turtle (in enterprise_employment).
+
+        Return value:
+            turtleLocator       - (URL) locating the current turtle
+
+        Parameters:
+    --]]
+
+    -- check turtle
+    assert(turtle, "Current computer(ID="..os.getComputerID()..") not a Turtle")
+
+    -- construct URL
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator()
+
+    -- end
+    return currentTurtleLocator
 end
 
 return t_employment

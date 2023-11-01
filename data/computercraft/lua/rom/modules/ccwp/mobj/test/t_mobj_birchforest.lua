@@ -202,12 +202,12 @@ function T_BirchForest.T_Setters()
     return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator2 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator2 })
 end
 
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _____ ____  _     _
+--   |_   _/ __ \| |   (_)
+--     | || |  | | |__  _
+--     | || |  | | '_ \| |
+--    _| || |__| | |_) | |
+--   |_____\____/|_.__/| |
 --                    _/ |
 --                   |__/
 

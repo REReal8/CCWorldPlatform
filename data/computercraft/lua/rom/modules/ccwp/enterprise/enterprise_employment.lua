@@ -47,6 +47,28 @@ local enterprise_projects = require "enterprise_projects"
 --          - adopt other classes to these changes
 enterprise_employment._hostName   = "enterprise_employment"
 
+--    _____ ____  _     _
+--   |_   _/ __ \| |   (_)
+--     | || |  | | |__  _
+--     | || |  | | '_ \| |
+--    _| || |__| | |_) | |
+--   |_____\____/|_.__/| |
+--                    _/ |
+--                   |__/
+
+function enterprise_employment:getClassName()
+    return "enterprise_employment"
+end
+
+--     ____  _     _ _    _           _
+--    / __ \| |   (_) |  | |         | |
+--   | |  | | |__  _| |__| | ___  ___| |_
+--   | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |__| | |_) | | |  | | (_) \__ \ |_
+--    \____/|_.__/| |_|  |_|\___/|___/\__|
+--               _/ |
+--              |__/
+
 local function GetATurtle(employmentHost)
     -- get all Turtles
     local turtles = enterprise_employment:getObjects(Turtle:getClassName())
@@ -101,19 +123,6 @@ function enterprise_employment:getObject(...)
 
     -- have base class ObjHost provide the object
     return ObjHost.getObject(self, objectLocator)
-end
-
---    _____ ____  _     _
---   |_   _/ __ \| |   (_)
---     | || |  | | |__  _
---     | || |  | | '_ \| |
---    _| || |__| | |_) | |
---   |_____\____/|_.__/| |
---                    _/ |
---                   |__/
-
-function enterprise_employment:getClassName()
-    return "enterprise_employment"
 end
 
 --   __          __        _
@@ -554,14 +563,14 @@ function enterprise_employment:buildAndHostMObj_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
+--    ______       _                       _          ______                 _                                  _
+--   |  ____|     | |                     (_)        |  ____|               | |                                | |
+--   | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___| |__   _ __ ___  _ __ | | ___  _   _ _ __ ___   ___ _ __ | |_
+--   |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \  __| | '_ ` _ \| '_ \| |/ _ \| | | | '_ ` _ \ / _ \ '_ \| __|
+--   | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/ |____| | | | | | |_) | | (_) | |_| | | | | | |  __/ | | | |_
+--   |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___|______|_| |_| |_| .__/|_|\___/ \__, |_| |_| |_|\___|_| |_|\__|
+--                             | |                                    | |             __/ |
+--                             |_|                                    |_|            |___/
 
 function enterprise_employment:reset()
     -- get Turtle's
@@ -681,13 +690,6 @@ function enterprise_employment.Fuel_Callback(...)
     -- end
     return {success = true}
 end
-
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
 
 function enterprise_employment.GetItemsLocations_SSrv(...)
     -- get & check input from description

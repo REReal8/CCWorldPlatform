@@ -83,12 +83,12 @@ function UserStation:getLocation()  return self._baseLocation   end
 function UserStation:getInputLocator()  return self._inputLocator   end
 function UserStation:getOutputLocator() return self._outputLocator  end
 
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _____ ____  _     _
+--   |_   _/ __ \| |   (_)
+--     | || |  | | |__  _
+--     | || |  | | '_ \| |
+--    _| || |__| | |_) | |
+--   |_____\____/|_.__/| |
 --                    _/ |
 --                   |__/
 
