@@ -69,6 +69,10 @@ R  enterprise_employment/ IWorker, a generalisation of enterprise_turtle/ Turtle
 
 R  replace table.unpack(arg) with ... everywhere                                                                        (done)
 
+R  Revise modules/ libraries file directory structure                                                                   (done)
+   R  introduce base library for base modules (lower level than Obj's)                                                  (done)
+   R  introduce lobj library for lobj modules (logical/ intangible Obj's)                                               (done)
+
 -  Robuste way to initialize and setup (like the core files do)
    -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
@@ -310,8 +314,6 @@ RG mine v2
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
       -  Reimplement ObjectFactory based on these developments
-
--  Revise modules/ libraries file directory structure
 
 -  enterprise_project
    !  consider introducing a Project object (class)!, and using that in enterprise_project

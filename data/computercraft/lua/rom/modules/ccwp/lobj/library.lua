@@ -39,10 +39,14 @@ function library.Setup()
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterModule("IItemSupplier", "i_item_supplier")
+    moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_LObjLibrary", libraryName..".library")
 
+    moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
+    moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
 
     -- add library test menu
