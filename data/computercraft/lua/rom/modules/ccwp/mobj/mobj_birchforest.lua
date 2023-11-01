@@ -104,13 +104,6 @@ function BirchForest:getBaseLocation()
     return self._baseLocation
 end
 
-function BirchForest:setLocation(location)
-    -- check input
-    if not Class.IsInstanceOf(location, Location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
-
-    self._baseLocation = location
-end
-
 function BirchForest:getNTrees()
     return self._nTrees
 end

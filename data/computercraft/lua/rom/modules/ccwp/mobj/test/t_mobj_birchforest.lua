@@ -185,7 +185,6 @@ function T_BirchForest.T_Setters()
 
     -- test
     obj:setLevel(level2)
-    obj:setLocation(baseLocation2)
     obj:setNTrees(nTrees2)
     obj:setLocalLogsLocator(localLogsLocator2)
     obj:setLocalSaplingsLocator(localSaplingsLocator2)
