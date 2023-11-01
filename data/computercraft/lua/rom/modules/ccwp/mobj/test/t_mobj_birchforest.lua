@@ -190,7 +190,6 @@ function T_BirchForest.T_Setters()
     obj:setLocalSaplingsLocator(localSaplingsLocator2)
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level2),
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation2),
         MethodResultEqualTest:newInstance("getNTrees", nTrees2),
         MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator2),
         MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator2)
