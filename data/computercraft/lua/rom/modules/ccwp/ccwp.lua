@@ -4,6 +4,7 @@ local coreLibrary = require "core.library"
 local baseLibrary = require "base.library"
 local objLibrary = require "obj.library"
 local roleLibrary = require "role.library"
+local lobjLibrary = require "lobj.library"
 local mobjLibrary = require "mobj.library"
 local enterpriseLibrary = require "enterprise.library"
 local testLibrary = require "test.library"
@@ -14,17 +15,24 @@ function ccwp.Init()
     baseLibrary.Init()
     objLibrary.Init()
     roleLibrary.Init()
+    lobjLibrary.Init()
     mobjLibrary.Init()
     enterpriseLibrary.Init()
     testLibrary.Init()
 end
 
 function ccwp.Startup()
+    -- register library modules
+    local ModuleRegistry = require "module_registry"
+    local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterModule("t_ccwp", "t_ccwp")
+
     -- setup libraries
     coreLibrary.Setup()
     baseLibrary.Setup()
     objLibrary.Setup()
     roleLibrary.Setup()
+    lobjLibrary.Setup()
     mobjLibrary.Setup()
     enterpriseLibrary.Setup()
     testLibrary.Setup()

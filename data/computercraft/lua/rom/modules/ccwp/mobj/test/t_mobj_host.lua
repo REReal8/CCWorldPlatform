@@ -21,7 +21,7 @@ local FieldValueEqualTest = require "field_value_equal_test"
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
-local T_TestMObj = require "test.t_mobj_test"
+local T_MObjTest = require "test.t_mobj_test"
 
 local t_employment
 
@@ -119,12 +119,12 @@ function T_MObjHost.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
---    __  __  ____  _     _ _    _           _                    _   _               _
---   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
 --                      _/ |
 --                     |__/
 
@@ -357,9 +357,9 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     return serviceResults
 end
 
--- test MObjHost with TestMObj
-local testMObjClassName = "TestMObj"
-local testMObjName = "testMObj"
+-- test MObjHost with MObjTest
+local testMObjClassName = "MObjTest"
+local testMObjName = "mobjTest"
 local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
 local field1_1 = "field1 1"
 local field1_2 = "field1 2"
@@ -373,7 +373,7 @@ local upgradeParameters2 = {
 
 function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
-    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_1)
+    local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_1)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, constructFieldsTest, logOk)
@@ -403,7 +403,7 @@ end
 function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
-    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     -- test
     local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, upgradeParameters2, testMObjName, upgradeFieldsTest, logOk)
@@ -416,7 +416,7 @@ end
 function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
-    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator

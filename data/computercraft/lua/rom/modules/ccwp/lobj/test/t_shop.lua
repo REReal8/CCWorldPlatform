@@ -13,7 +13,7 @@ local ObjArray = require "obj_array"
 local URL = require "obj_url"
 local Location = require "obj_location"
 
-local Shop = require "mobj_shop"
+local Shop = require "shop"
 
 local role_forester = require "role_forester"
 

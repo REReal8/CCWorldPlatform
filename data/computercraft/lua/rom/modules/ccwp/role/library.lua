@@ -24,15 +24,15 @@ function library.T_All()
 end
 
 local function ExecuteLibraryTest(t)
-	-- forward call with options
-	local options	= {
-        {key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_RoleLibrary"}},
+    -- forward call with options
+    local options	= {
+        {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_RoleLibrary"}},
 
-		{key = "1", desc = "alchemist", 		func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
-		{key = "b", desc = "builder", 			func = ExecuteLibraryTest, param = {filename = "t_builder"}},
-		{key = "x", desc = "Back to main menu", func = function () return true end }
-	}
-	return ExecuteXObjTest(t, "role", options, ExecuteLibraryTest)
+        {key = "a", desc = "alchemist",         func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
+        {key = "b", desc = "builder",           func = ExecuteLibraryTest, param = {filename = "t_builder"}},
+        {key = "x", desc = "Back to main menu", func = function () return true end }
+    }
+    return ExecuteXObjTest(t, "role", options, ExecuteLibraryTest)
 end
 
 function library.Setup()

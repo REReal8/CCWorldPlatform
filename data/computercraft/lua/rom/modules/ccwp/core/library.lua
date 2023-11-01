@@ -22,7 +22,7 @@ end
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
-        {key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_CoreLibrary"}},
+        {key = "1", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_CoreLibrary"}},
 
 		{key = "m", desc = "coremove", 			func = ExecuteLibraryTest, param = {filename = "t_coremove"}},
 		{key = "d", desc = "coredht", 			func = ExecuteLibraryTest, param = {filename = "t_coredht"}},

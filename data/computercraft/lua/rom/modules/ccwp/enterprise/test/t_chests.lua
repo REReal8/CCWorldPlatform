@@ -51,7 +51,7 @@ local constructParameters1 = {
 
 function t_chests.T_hostAndUpdateChest()
     corelog.WriteToLog("* Test host and update Chest")
-    local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
+    local callback = Callback:newInstance("t_ccwp", "Func1_Callback", { } )
 
     -- create project
     local projectData = {

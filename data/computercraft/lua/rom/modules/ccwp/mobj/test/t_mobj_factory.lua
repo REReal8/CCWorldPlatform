@@ -29,6 +29,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 
 local T_Chest = require "test.t_mobj_chest"
@@ -42,6 +43,9 @@ function T_Factory.T_All()
 
     -- IObj
     T_Factory.T_IObj_All()
+
+    -- ILObj
+    T_Factory.T_ILObj_All()
 
     -- IMObj
     T_Factory.T_IMObj_All()
@@ -62,6 +66,10 @@ end
 
 local testClassName = "Factory"
 local testObjName = "factory"
+local testObjName0 = testObjName.."0"
+local testObjName1 = testObjName.."1"
+local testObjName2 = testObjName.."2"
+
 local logOk = false
 
 local level0 = 0
@@ -85,6 +93,25 @@ local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingS
 local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
 local smeltingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -3), false)
 local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
+
+local constructParameters0 = {
+    level           = level0,
+
+    baseLocation    = baseLocation1,
+}
+local constructParameters1 = {
+    level           = level1,
+
+    baseLocation    = baseLocation1,
+}
+local constructParameters2 = {
+    level           = level2,
+
+    baseLocation    = baseLocation1,
+}
+local upgradeParametersTo2 = {
+    level           = level2,
+}
 
 local compact = { compact = true }
 
@@ -215,23 +242,21 @@ function T_Factory.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
-function T_Factory.T_IMObj_All()
+function T_Factory.T_ILObj_All()
     -- prepare tests
     local id = coreutils.NewId()
     local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
-    local testObjName0 = testObjName.."0"
 
     local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
-    local testObjName1 = testObjName.."1"
 
     local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
@@ -244,7 +269,6 @@ function T_Factory.T_IMObj_All()
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
     local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
     local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
-    local testObjName2 = testObjName.."2"
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -279,41 +303,59 @@ function T_Factory.T_IMObj_All()
     ))
     local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
-    local constructParameters0 = {
-        level           = level0,
+    -- test type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
 
-        baseLocation    = baseLocation1,
-    }
-    local constructParameters1 = {
-        level           = level1,
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName0, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, fieldsTest0, logOk)
+    T_ILObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, fieldsTest1, logOk)
+    T_ILObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, fieldsTest2, logOk)
+    T_ILObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
 
-        baseLocation    = baseLocation1,
-    }
-    local constructParameters2 = {
-        level           = level2,
+    -- test getters
+    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk)
+    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
-        baseLocation    = baseLocation1,
-    }
-    local upgradeParametersTo2 = {
-        level           = level2,
-    }
+    -- cleanup test
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
+end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
+
+function T_Factory.T_IMObj_All()
+    -- prepare tests
+    local id = coreutils.NewId()
+    local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
+
+    local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
+
+    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
+    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
+    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
+    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
+    local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, fieldsTest0, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, fieldsTest1, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, fieldsTest2, logOk)
-    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
-
-    -- test getters
-    T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)

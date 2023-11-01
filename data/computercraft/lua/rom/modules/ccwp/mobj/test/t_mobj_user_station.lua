@@ -1,4 +1,4 @@
-local T_UtilStation = {}
+local T_UserStation = {}
 
 local corelog = require "corelog"
 
@@ -25,35 +25,41 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
 
-function T_UtilStation.T_All()
+function T_UserStation.T_All()
     -- initialisation
-    T_UtilStation.T__init()
-    T_UtilStation.T_new()
-    T_UtilStation.T_Getters()
+    T_UserStation.T__init()
+    T_UserStation.T_new()
+    T_UserStation.T_Getters()
 
     -- IObj
-    T_UtilStation.T_IObj_All()
+    T_UserStation.T_IObj_All()
+
+    -- ILObj
+    T_UserStation.T_ILObj_All()
 
     -- IMObj
-    T_UtilStation.T_IMObj_All()
+    T_UserStation.T_IMObj_All()
 
     -- IWorker
-    T_UtilStation.T_IWorker_All()
+    T_UserStation.T_IWorker_All()
 
     -- IItemDepot
-    T_UtilStation.T_IItemDepot_All()
+    T_UserStation.T_IItemDepot_All()
 end
 
-function T_UtilStation.T_AllPhysical()
+function T_UserStation.T_AllPhysical()
     -- IItemDepot
-    T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
+    T_UserStation.T_storeItemsFrom_AOSrv_Turtle()
 end
 
 local testClassName = "UserStation"
 local testObjName = "utilStation"
+local testObjName0 = testObjName.."0"
+
 local logOk = false
 
 local workerId1 = 111111
@@ -76,7 +82,7 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_UtilStation.CreateTestObj(workerId, baseLocation, inputLocator, outputLocator)
+function T_UserStation.CreateTestObj(workerId, baseLocation, inputLocator, outputLocator)
     -- check input
     workerId = workerId or workerId1
     baseLocation = baseLocation or baseLocation0
@@ -90,7 +96,7 @@ function T_UtilStation.CreateTestObj(workerId, baseLocation, inputLocator, outpu
     return testObj
 end
 
-function T_UtilStation.CreateInitialisedTest(workerId, baseLocation, inputLocatorTest, outputLocatorTest)
+function T_UserStation.CreateInitialisedTest(workerId, baseLocation, inputLocatorTest, outputLocatorTest)
     -- check input
 
     -- create test
@@ -105,21 +111,21 @@ function T_UtilStation.CreateInitialisedTest(workerId, baseLocation, inputLocato
     return test
 end
 
-function T_UtilStation.T__init()
+function T_UserStation.T__init()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":_init() tests")
 
     -- test
-    local obj = T_UtilStation.CreateTestObj(workerId1, baseLocation0, inputLocator0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj(workerId1, baseLocation0, inputLocator0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
     local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local test = T_UserStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
 
-function T_UtilStation.T_new()
+function T_UserStation.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
 
@@ -132,16 +138,16 @@ function T_UtilStation.T_new()
     })
     local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local test = T_UserStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
 
-function T_UtilStation.T_Getters()
+function T_UserStation.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")
-    local obj = T_UtilStation.CreateTestObj(workerId1, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj(workerId1, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
@@ -161,10 +167,10 @@ end
 --                    _/ |
 --                   |__/
 
-function T_UtilStation.T_IObj_All()
+function T_UserStation.T_IObj_All()
     -- prepare test
-    local obj = T_UtilStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_UtilStation.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_UserStation.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- testing type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -172,6 +178,45 @@ function T_UtilStation.T_IObj_All()
 
     -- test
     T_IObj.pt_all(testClassName, obj, otherObj)
+end
+
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function T_UserStation.T_ILObj_All()
+    -- prepare tests
+    local obj0 = T_UserStation.CreateTestObj(workerId1, baseLocation0) assert(obj0, "Failed obtaining "..testClassName)
+
+    local destructFieldsTest = TestArrayTest:newInstance(
+    )
+    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+    local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+    local fieldsTest0 = T_UserStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
+
+    -- testing type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
+
+    -- test getters
+    local expectedId = tostring(workerId1)
+    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk, expectedId)
+    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
+
+    -- cleanup test
 end
 
 --    _____ __  __  ____  _     _
@@ -183,35 +228,15 @@ end
 --                            _/ |
 --                           |__/
 
-function T_UtilStation.T_IMObj_All()
+function T_UserStation.T_IMObj_All()
     -- prepare tests
-    local obj0 = T_UtilStation.CreateTestObj(workerId1, baseLocation0) assert(obj0, "Failed obtaining "..testClassName)
-    local testObjName0 = testObjName.."0"
-
-    local destructFieldsTest = TestArrayTest:newInstance(
-    )
-    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
-    ))
-    local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
-    ))
-    local fieldsTest0 = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local obj0 = T_UserStation.CreateTestObj(workerId1, baseLocation0) assert(obj0, "Failed obtaining "..testClassName)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- testing type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
-
-    -- test getters
-    local expectedId = tostring(workerId1)
-    T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk, expectedId)
-    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)
@@ -227,9 +252,9 @@ end
 --    _| |_   \  /\  / (_) | |  |   <  __/ |
 --   |_____|   \/  \/ \___/|_|  |_|\_\___|_|
 
-function T_UtilStation.T_IWorker_All()
+function T_UserStation.T_IWorker_All()
     -- prepare test
-    local obj = T_UtilStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local workerResumeTest = TestArrayTest:newInstance(
         FieldValueTypeTest:newInstance("workerId", "number"),
         FieldValueTypeTest:newInstance("location", "Location")
@@ -256,9 +281,9 @@ end
 --                                             | |
 --                                             |_|
 
-function T_UtilStation.T_IItemDepot_All()
+function T_UserStation.T_IItemDepot_All()
     -- prepare test
-    local obj = T_UtilStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
@@ -296,7 +321,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, fromStr)
     obj:destruct()
 end
 
-function T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
+function T_UserStation.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
     local itemsLocator = enterprise_employment.GetAnyTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
 
@@ -308,7 +333,7 @@ function T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
     storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Turtle")
 end
 
-function T_UtilStation.T_shop_storeItemsFrom_AOSrv_Shop()
+function T_UserStation.T_shop_storeItemsFrom_AOSrv_Shop()
     -- prepare test
     local enterprise_shop = require "enterprise_shop"
     local itemsLocator = enterprise_shop.GetShopLocator() assert(itemsLocator, "Failed obtaining Shop locator")
@@ -322,4 +347,4 @@ function T_UtilStation.T_shop_storeItemsFrom_AOSrv_Shop()
     storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Shop")
 end
 
-return T_UtilStation
+return T_UserStation

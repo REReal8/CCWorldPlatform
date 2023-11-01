@@ -69,6 +69,10 @@ R  enterprise_employment/ IWorker, a generalisation of enterprise_turtle/ Turtle
 
 R  replace table.unpack(arg) with ... everywhere                                                                        (done)
 
+R  Revise modules/ libraries file directory structure                                                                   (done)
+   R  introduce base library for base modules (lower level than Obj's)                                                  (done)
+   R  introduce lobj library for lobj modules (logical/ intangible Obj's)                                               (done)
+
 -  Robuste way to initialize and setup (like the core files do)
    -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
@@ -89,7 +93,7 @@ RG UserStation v1.0
    -  use in mobj_factory
    -  use in mobj_mine
    -  use in mobj_silo
-   -  use in mobj_shop
+   -  use in Shop
    -  use in mobj_turtle
 
 -  Generalised IItemDepot test functions for MObj's
@@ -110,42 +114,50 @@ G  Descriptions for blueprints and project steps
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
 -  hosting/ releasing, building/ dismantling v2.0
-   -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
-      -  mobj_shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in mobj_shop as enterprise_shop) seems incorrect.
-      -  mobj_shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
-      -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
-      -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
-   -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
-      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+   RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
+      RG Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
+      RG Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
+      RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
+      RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
    R  introduce ObjHost class extending Host class                                                                      (....)
-      R  by splitting of all Object related code (from Host:getObject and further)                                      (....)
-      -  it can host any IObj which can than be located by an ObjLocator
-   -  Split off IConstructable (or <better name>) interface from IMObj
+      R  by splitting of all Object related code (from Host:getObject and further)                                      (done)
+      R  it can host any IObj                                                                                           (....)
+   R  Split off ILObj interface from IMObj                                                                              (done)
       -  with methods
          -  getId
          -  construct
          -  upgrade (optional?)
          -  destruct
-      -  (note: an Constructable is assumed to also be an IObj)
-   -  introduce CObjLocator class extending ObjLocator class representing a locator for an IConstructable, with method
-      -  getId
-   -  introduce CObjHost class extending ObjHost
-      -  it can host any IConstructable which can than be located by an CObjLocator
+      -  (note: an LObj is assumed to also be an IObj)
+   -  introduce LObjHost class extending ObjHost
+      -  it can host any ILObj
       -  by splitting of from MObjHost
          -  hostMObj_SSrv
          -  upgradeMObj_SSrv
          -  releaseMObj_SSrv
-   -  MObjHost extends CObjHost
-   -  Extend IMObj (and all MObj's) with
-      -  get(Base)Location
-   -  consider renaming (I)MObj to (I)PObj where P stands for Physical
+   -  MObjHost extends LObjHost
 
--  ensure mobj_shop/ enterprise_shop implement IConstructable/ CObjHost
-   -  mobj_shop
-      -  implement IConstructable
+-  Extend IMObj (and all MObj's) with
+   -  get(Base)Location
+
+-  consider renaming (I)MObj to (I)PObj where P stands for Physical
+
+-  introduce ObjLocator class extending URL class representing a locator of an IObj
+   -  with methods
+      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+      -  getId             (note: optional; only if class is an ILObj)
+   -  work with ObjLocator's instead of URL's
+      -  ObjHost
+      -  LObjHost
+      -  MObjHost
+      -  ...
+
+-  ensure Shop/ enterprise_shop implement ILObj/ LObjHost
+   -  Shop
+      -  implement ILObj
    -  enterprise_shop
-      -  upgrade into an CObjHost
-      -  use new CObjHost methods instead of current equivalent
+      -  upgrade into an LObjHost
+      -  use new LObjHost methods instead of current equivalent
       -  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
 
@@ -310,8 +322,6 @@ RG mine v2
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
       -  Reimplement ObjectFactory based on these developments
-
--  Revise modules/ libraries file directory structure
 
 -  enterprise_project
    !  consider introducing a Project object (class)!, and using that in enterprise_project

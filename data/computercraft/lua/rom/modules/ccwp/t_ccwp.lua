@@ -1,4 +1,4 @@
-local t_main = {}
+local t_ccwp = {}
 
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
@@ -10,6 +10,7 @@ local T_CoreLibrary = require "core.library"
 local T_BaseLibrary = require "base.library"
 local T_ObjLibrary = require "obj.library"
 local T_RoleLibrary = require "role.library"
+local T_LObjLibrary = require "lobj.library"
 local T_MObjLibrary = require "mobj.library"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -25,22 +26,23 @@ local enterprise_storage = require "enterprise_storage"
 
 local T_EnterpriseLibrary = require "enterprise.library"
 
-function t_main.T_dummy()
+function t_ccwp.T_dummy()
     corelog.WriteToLog("Running T_()")
     print("!")
 end
 
-function t_main.T_All()
+function t_ccwp.T_All()
     -- libraries
     T_CoreLibrary.T_All()
     T_BaseLibrary.T_All()
     T_ObjLibrary.T_All()
     T_RoleLibrary.T_All()
+    T_LObjLibrary.T_All()
     T_MObjLibrary.T_All()
     T_EnterpriseLibrary.T_All()
 end
 
-function t_main.T_ResetWorld()
+function t_ccwp.T_ResetWorld()
     -- core resets
     coreinventory.ResetAllItems()
     coreassignment.Reset()
@@ -65,21 +67,21 @@ function t_main.T_ResetWorld()
 --    os.reboot()
 end
 
-function t_main.T_ClearLogfile()
+function t_ccwp.T_ClearLogfile()
     corelog.ClearLog()
 end
 
-function t_main.Func1_Callback(callbackData, taskResult)
---    corelog.WriteToLog("  doing t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+function t_ccwp.Func1_Callback(callbackData, taskResult)
+--    corelog.WriteToLog("  doing t_ccwp.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
     return true
 end
 
-function t_main.GoHomeCallBack(callbackData, taskResult)
-    corelog.WriteToLog("  doing t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+function t_ccwp.GoHomeCallBack(callbackData, taskResult)
+    corelog.WriteToLog("  doing t_ccwp.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     t_coremove.T_GoHome()
 
     return true
 end
 
-return t_main
+return t_ccwp

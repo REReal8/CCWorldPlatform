@@ -52,10 +52,10 @@ end
 local function ExecuteLibraryTest(t)
 	-- forward call with options
 	local options	= {
-        {key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
+        {key = "1", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
 
 		{key = "2", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
-		{key = "3", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
+		{key = "a", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
 		{key = "o", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteLibraryTest, param = {filename = "T_CallDef"}},
 		{key = "c", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},
@@ -104,8 +104,6 @@ function library.Setup()
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("IObj", "i_obj")
-    moduleRegistry:requireAndRegisterModule("IItemSupplier", "i_item_supplier")
-    moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
     moduleRegistry:requireAndRegisterModule("CallDef", "obj_call_def")
     moduleRegistry:requireAndRegisterModule("Callback", "obj_callback")
 
@@ -119,8 +117,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_CallDef", "test.t_obj_call_def")
     moduleRegistry:requireAndRegisterModule("T_Callback", "test.t_obj_callback")
     moduleRegistry:requireAndRegisterModule("T_TaskCall", "test.t_obj_task_call")
-    moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
-    moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
     moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
     moduleRegistry:requireAndRegisterModule("T_Host", "test.t_host")
     moduleRegistry:requireAndRegisterModule("T_ObjHost", "test.t_obj_host")
