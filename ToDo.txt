@@ -119,11 +119,9 @@ G  Descriptions for blueprints and project steps
       RG Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
       RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
       RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
-   -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
-      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
    R  introduce ObjHost class extending Host class                                                                      (....)
       R  by splitting of all Object related code (from Host:getObject and further)                                      (done)
-      -  it can host any IObj which can than be located by an ObjLocator
+      R  it can host any IObj                                                                                           (....)
    R  Split off ILObj interface from IMObj                                                                              (done)
       -  with methods
          -  getId
@@ -131,25 +129,35 @@ G  Descriptions for blueprints and project steps
          -  upgrade (optional?)
          -  destruct
       -  (note: an LObj is assumed to also be an IObj)
-   -  introduce LObjLocator class extending ObjLocator class representing a locator for an LObj, with method
-      -  getId
    -  introduce LObjHost class extending ObjHost
-      -  it can host any ILObj which can than be located by an LObjLocator
+      -  it can host any ILObj
       -  by splitting of from MObjHost
          -  hostMObj_SSrv
          -  upgradeMObj_SSrv
          -  releaseMObj_SSrv
    -  MObjHost extends LObjHost
-   -  Extend IMObj (and all MObj's) with
-      -  get(Base)Location
-   -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
--  ensure Shop/ enterprise_shop implement IConstructable/ CObjHost
+-  Extend IMObj (and all MObj's) with
+   -  get(Base)Location
+
+-  consider renaming (I)MObj to (I)PObj where P stands for Physical
+
+-  introduce ObjLocator class extending URL class representing a locator of an IObj
+   -  with methods
+      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+      -  getId             (note: optional; only if class is an ILObj)
+   -  work with ObjLocator's instead of URL's
+      -  ObjHost
+      -  LObjHost
+      -  MObjHost
+      -  ...
+
+-  ensure Shop/ enterprise_shop implement ILObj/ LObjHost
    -  Shop
-      -  implement IConstructable
+      -  implement ILObj
    -  enterprise_shop
-      -  upgrade into an CObjHost
-      -  use new CObjHost methods instead of current equivalent
+      -  upgrade into an LObjHost
+      -  use new LObjHost methods instead of current equivalent
       -  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
 
