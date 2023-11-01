@@ -114,32 +114,32 @@ G  Descriptions for blueprints and project steps
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
 -  hosting/ releasing, building/ dismantling v2.0
-   -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
-      -  Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
-      -  Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
-      -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
-      -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
+   RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
+      RG Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
+      RG Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
+      RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
+      RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
    -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
       -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
    R  introduce ObjHost class extending Host class                                                                      (....)
-      R  by splitting of all Object related code (from Host:getObject and further)                                      (....)
+      R  by splitting of all Object related code (from Host:getObject and further)                                      (done)
       -  it can host any IObj which can than be located by an ObjLocator
-   -  Split off IConstructable (or <better name>) interface from IMObj
+   -  Split off ILObj interface from IMObj
       -  with methods
          -  getId
          -  construct
          -  upgrade (optional?)
          -  destruct
-      -  (note: an Constructable is assumed to also be an IObj)
-   -  introduce CObjLocator class extending ObjLocator class representing a locator for an IConstructable, with method
+      -  (note: an LObj is assumed to also be an IObj)
+   -  introduce LObjLocator class extending ObjLocator class representing a locator for an LObj, with method
       -  getId
-   -  introduce CObjHost class extending ObjHost
-      -  it can host any IConstructable which can than be located by an CObjLocator
+   -  introduce LObjHost class extending ObjHost
+      -  it can host any ILObj which can than be located by an LObjLocator
       -  by splitting of from MObjHost
          -  hostMObj_SSrv
          -  upgradeMObj_SSrv
          -  releaseMObj_SSrv
-   -  MObjHost extends CObjHost
+   -  MObjHost extends LObjHost
    -  Extend IMObj (and all MObj's) with
       -  get(Base)Location
    -  consider renaming (I)MObj to (I)PObj where P stands for Physical
