@@ -13,18 +13,18 @@ function library.T_All()
     local corelog = require "corelog"
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
-    local T_TestMObj = require "test.t_mobj_test"
+    local T_MObjTest = require "test.t_mobj_test"
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
     local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Factory = require "test.t_mobj_factory"
     local T_Silo = require "test.t_mobj_silo"
     local T_Turtle = require "test.t_mobj_turtle"
-    local T_UtilStation = require "test.t_mobj_user_station"
+    local T_UserStation = require "test.t_mobj_user_station"
     local t_mobj_host = require "test.t_mobj_host"
 
     -- library tests
-    T_TestMObj.T_All()
+    T_MObjTest.T_All()
     t_mobj_host.T_All()
     T_BirchForest.T_All()
     T_Chest.T_All()
@@ -32,7 +32,7 @@ function library.T_All()
     T_ProductionSpot.T_All()
     T_Silo.T_All()
     T_Turtle.T_All()
-    T_UtilStation.T_All()
+    T_UserStation.T_All()
 end
 
 local function ExecuteLibraryTest(t)
@@ -40,15 +40,17 @@ local function ExecuteLibraryTest(t)
     local options	= {
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_MObjLibrary"}},
 
-        {key = "2", desc = "TestMObj",          func = ExecuteLibraryTest, param = {filename = "T_TestMObj"}},
+        {key = "2", desc = "MObjTest",          func = ExecuteLibraryTest, param = {filename = "T_MObjTest"}},
         {key = "h", desc = "MObjHost",          func = ExecuteLibraryTest, param = {filename = "T_MObjHost"}},
+
         {key = "b", desc = "BirchForest",       func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
         {key = "c", desc = "Chest",             func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
         {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
         {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
         {key = "s", desc = "Silo",              func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
         {key = "t", desc = "Turtle",            func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
-        {key = "u", desc = "Util Station",      func = ExecuteLibraryTest, param = {filename = "T_UtilStation"}},
+        {key = "u", desc = "UserStation",       func = ExecuteLibraryTest, param = {filename = "T_UserStation"}},
+
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
     return ExecuteXObjTest(t, "mobj", options, ExecuteLibraryTest)
@@ -58,7 +60,7 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
-    objectFactory:registerClass("TestMObj",     require "test.mobj_test")
+    objectFactory:registerClass("MObjTest",     require "test.mobj_test")
 
     objectFactory:registerClass("MObjHost",     require "mobj_host")
     objectFactory:registerClass("Chest",        require "mobj_chest")
@@ -79,7 +81,7 @@ function library.Setup()
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_MObjLibrary", libraryName..".library")
 
-    moduleRegistry:requireAndRegisterModule("T_TestMObj", "test.t_mobj_test")
+    moduleRegistry:requireAndRegisterModule("T_MObjTest", "test.t_mobj_test")
 
     moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
@@ -88,7 +90,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
-    moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_user_station")
+    moduleRegistry:requireAndRegisterModule("T_UserStation", "test.t_mobj_user_station")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
