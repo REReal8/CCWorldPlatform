@@ -7,8 +7,9 @@ local coreassignment = require "coreassignment"
 local t_coremove = require "test.t_coremove"
 
 local T_CoreLibrary = require "core.library"
-local T_RoleLibrary = require "role.library"
+local T_BaseLibrary = require "base.library"
 local T_ObjLibrary = require "obj.library"
+local T_RoleLibrary = require "role.library"
 local T_MObjLibrary = require "mobj.library"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -32,8 +33,9 @@ end
 function t_main.T_All()
     -- libraries
     T_CoreLibrary.T_All()
-    T_RoleLibrary.T_All()
+    T_BaseLibrary.T_All()
     T_ObjLibrary.T_All()
+    T_RoleLibrary.T_All()
     T_MObjLibrary.T_All()
     T_EnterpriseLibrary.T_All()
 end

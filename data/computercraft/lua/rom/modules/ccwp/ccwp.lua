@@ -1,6 +1,7 @@
 local ccwp = {}
 
 local coreLibrary = require "core.library"
+local baseLibrary = require "base.library"
 local objLibrary = require "obj.library"
 local roleLibrary = require "role.library"
 local mobjLibrary = require "mobj.library"
@@ -10,6 +11,7 @@ local testLibrary = require "test.library"
 function ccwp.Init()
     -- add & init libraries
     coreLibrary.Init()
+    baseLibrary.Init()
     objLibrary.Init()
     roleLibrary.Init()
     mobjLibrary.Init()
@@ -20,6 +22,7 @@ end
 function ccwp.Startup()
     -- setup libraries
     coreLibrary.Setup()
+    baseLibrary.Setup()
     objLibrary.Setup()
     roleLibrary.Setup()
     mobjLibrary.Setup()

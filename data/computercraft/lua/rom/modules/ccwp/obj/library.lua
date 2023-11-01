@@ -13,13 +13,9 @@ function library.T_All()
     local corelog = require "corelog"
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
-    local T_ModuleRegistry = require "test.t_module_registry"
-    local T_Class = require "test.t_class"
-    local T_ObjectFactory = require "test.t_object_factory"
     local T_ObjBase = require "test.t_obj_base"
     local T_ObjArray = require "test.t_obj_array"
     local T_ObjTable = require "test.t_obj_table"
-    local T_MethodExecutor = require "test.t_method_executor"
     local T_CallDef = require "test.t_obj_call_def"
     local T_Callback = require "test.t_obj_callback"
     local T_TaskCall = require "test.t_obj_task_call"
@@ -35,16 +31,12 @@ function library.T_All()
     local T_WIPAdministrator = require "test.t_obj_wip_administrator"
 
     -- library tests
-    T_ModuleRegistry.T_All()
-    T_Class.T_All()
-    T_ObjectFactory.T_All()
     T_ObjBase.T_All()
     T_ObjArray.T_All()
     T_ObjTable.T_All()
     T_CallDef.T_All()
     T_Callback.T_All()
     T_TaskCall.T_All()
-    T_MethodExecutor.T_All()
     T_URL.T_All()
     T_Host.T_All()
     T_ObjHost.T_All()
@@ -62,16 +54,12 @@ local function ExecuteLibraryTest(t)
 	local options	= {
         {key = "a", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
 
-		{key = "m", desc = "ModuleRegistry", 	func = ExecuteLibraryTest, param = {filename = "T_ModuleRegistry"}},
-		{key = "1", desc = "Class", 			func = ExecuteLibraryTest, param = {filename = "T_Class"}},
-		{key = "f", desc = "ObjectFactory", 	func = ExecuteLibraryTest, param = {filename = "T_ObjectFactory"}},
 		{key = "2", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
 		{key = "3", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
 		{key = "o", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteLibraryTest, param = {filename = "T_CallDef"}},
 		{key = "c", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},
 		{key = "t", desc = "TaskCall", 			func = ExecuteLibraryTest, param = {filename = "T_TaskCall"}},
-		{key = "e", desc = "MethodExecutor", 	func = ExecuteLibraryTest, param = {filename = "T_MethodExecutor"}},
 		{key = "u", desc = "URL", 				func = ExecuteLibraryTest, param = {filename = "T_URL"}},
 		{key = "h", desc = "Host", 				func = ExecuteLibraryTest, param = {filename = "T_Host"}},
 		{key = "j", desc = "ObjHost", 			func = ExecuteLibraryTest, param = {filename = "T_ObjHost"}},
@@ -120,13 +108,10 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
     moduleRegistry:requireAndRegisterModule("CallDef", "obj_call_def")
     moduleRegistry:requireAndRegisterModule("Callback", "obj_callback")
-    moduleRegistry:requireAndRegisterModule("MethodExecutor", "method_executor")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_ObjLibrary", libraryName..".library")
 
-    moduleRegistry:requireAndRegisterModule("T_ModuleRegistry", "test.t_module_registry")
-    moduleRegistry:requireAndRegisterModule("T_Class", "test.t_class")
     moduleRegistry:requireAndRegisterModule("T_ObjectFactory", "test.t_object_factory")
     moduleRegistry:requireAndRegisterModule("T_ObjBase", "test.t_obj_base")
     moduleRegistry:requireAndRegisterModule("T_ObjArray", "test.t_obj_array")
@@ -134,7 +119,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_CallDef", "test.t_obj_call_def")
     moduleRegistry:requireAndRegisterModule("T_Callback", "test.t_obj_callback")
     moduleRegistry:requireAndRegisterModule("T_TaskCall", "test.t_obj_task_call")
-    moduleRegistry:requireAndRegisterModule("T_MethodExecutor", "test.t_method_executor")
     moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
     moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
     moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
