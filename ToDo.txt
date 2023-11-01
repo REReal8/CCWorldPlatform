@@ -73,7 +73,12 @@ R  enterprise_employment/ IWorker, a generalisation of enterprise_turtle/ Turtle
 
 -  replace table.unpack(arg) with ... everywhere
 
-RG UserStation v1.0 input & output chest UI                                                                             (....)
+RG UserStation v1.0
+   -  Modify it to be an IWorker
+   -  Enable input & output chests
+   -  Move some of the current code in enterprise_utilities to (mobj) UserStation
+   -  Host it in enterprise_employment (and make enterprise_utilities obsolete/ remove it)
+   -  Split off DisplayStation
 
 -  consider merging enterprise_chest into enterprise_storage
 
