@@ -25,6 +25,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
 local T_Chest = require "test.t_mobj_chest"
@@ -39,6 +40,9 @@ function T_Turtle.T_All()
 
     -- IObj
     T_Turtle.T_IObj_All()
+
+    -- ILObj
+    T_Turtle.T_ILObj_All()
 
     -- IMObj
     T_Turtle.T_IMObj_All()
@@ -57,12 +61,18 @@ end
 
 local testClassName = "Turtle"
 local testObjName = "turtle"
+
 local logOk = false
 
 local workerId1 = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
+
+local constructParameters = {
+    workerId    = workerId1,
+    location    = location1,
+}
 
 local compact = { compact = true }
 
@@ -172,6 +182,37 @@ function T_Turtle.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function T_Turtle.T_ILObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Turtle.CreateTestObj(id, workerId1, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
+
+    local destructFieldsTest = TestArrayTest:newInstance()
+
+    local constructFieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId1, location1, fuelPriorityKey1)
+
+    -- test type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, Turtle, constructParameters, testObjName, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, Turtle, constructParameters, testObjName, constructFieldsTest, logOk)
+
+    -- test getters
+    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+end
+
 --    _____ __  __  ____  _     _
 --   |_   _|  \/  |/ __ \| |   (_)
 --     | | | \  / | |  | | |__  _
@@ -186,28 +227,11 @@ function T_Turtle.T_IMObj_All()
     local id = coreutils.NewId()
     local obj = T_Turtle.CreateTestObj(id, workerId1, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
 
-    local constructParameters = {
-        workerId    = workerId1,
-        location    = location1,
-    }
-
-    local destructFieldsTest = TestArrayTest:newInstance()
-
-    local constructFieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId1, location1, fuelPriorityKey1)
-
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, Turtle, constructParameters, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Turtle, constructParameters, testObjName, constructFieldsTest, logOk)
-
-    -- test getters
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters, isBlueprintTest, logOk)

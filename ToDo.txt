@@ -124,7 +124,7 @@ G  Descriptions for blueprints and project steps
    R  introduce ObjHost class extending Host class                                                                      (....)
       R  by splitting of all Object related code (from Host:getObject and further)                                      (done)
       -  it can host any IObj which can than be located by an ObjLocator
-   -  Split off ILObj interface from IMObj
+   R  Split off ILObj interface from IMObj                                                                              (done)
       -  with methods
          -  getId
          -  construct

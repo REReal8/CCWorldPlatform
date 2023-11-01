@@ -1,9 +1,10 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IItemSupplier = require "i_item_supplier"
-local Factory = Class.NewClass(ObjBase, IMObj, IItemSupplier)
+local Factory = Class.NewClass(ObjBase, ILObj, IMObj, IItemSupplier)
 
 --[[
     The Factory mobj represents a factory in the minecraft world and provides (production) services to operate on that Factory.
@@ -156,14 +157,14 @@ function Factory:getClassName()
     return "Factory"
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
 function Factory:construct(...)
     -- get & check input from description
@@ -348,6 +349,15 @@ function Factory:getWIPId()
 
     return self:getClassName().." "..self:getId()
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
 
 local function Shaft_layer()
     return LayerRectangle:newInstance(

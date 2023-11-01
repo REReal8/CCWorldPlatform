@@ -1,8 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
-local TestMObj = Class.NewClass(ObjBase, IMObj)
+local TestMObj = Class.NewClass(ObjBase, ILObj, IMObj)
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -91,14 +92,14 @@ function TestMObj:getClassName()
     return "TestMObj"
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
 function TestMObj:construct(...)
     -- get & check input from description
@@ -186,6 +187,15 @@ function TestMObj:getWIPId()
 
     return self:getClassName().." "..self:getId()
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
 
 function TestMObj.GetBuildBlueprint(...)
     -- get & check input from description

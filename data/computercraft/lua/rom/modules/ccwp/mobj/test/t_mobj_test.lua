@@ -6,8 +6,6 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
 
-local IMObj = require "i_mobj"
-
 local TestMObj = require "test.mobj_test"
 
 local TestArrayTest = require "test_array_test"
@@ -18,6 +16,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 
 function T_TestMObj.T_All()
@@ -29,16 +28,29 @@ function T_TestMObj.T_All()
     -- IObj
     T_TestMObj.T_IObj_All()
 
+    -- ILObj
+    T_TestMObj.T_ILObj_All()
+
     -- IMObj
     T_TestMObj.T_IMObj_All()
 end
 
 local testClassName = "TestMObj"
 local testObjName = "testMObj"
+
 local logOk = false
+
 local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local field1_1 = "field1 1"
 local field1_2 = "field1 2"
+
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    field1Value     = field1_1,
+}
+local upgradeParameters = {
+    field1 = field1_2
+}
 
 local compact = { compact = true }
 
@@ -146,6 +158,40 @@ function T_TestMObj.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function T_TestMObj.T_ILObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_TestMObj.CreateTestObj(id, baseLocation1, field1_1) assert(obj, "Failed obtaining "..testClassName)
+
+    local destructFieldsTest = TestArrayTest:newInstance()
+
+    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_1)
+
+    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+
+    -- test type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, TestMObj, constructParameters1, testObjName, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, TestMObj, constructParameters1, testObjName, constructFieldsTest, logOk)
+    T_ILObj.pt_upgrade(testClassName, TestMObj, constructParameters1, testObjName, upgradeParameters, upgradeFieldsTest, logOk)
+
+    -- test getters
+    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+end
+
 --    _____ __  __  ____  _     _
 --   |_   _|  \/  |/ __ \| |   (_)
 --     | | | \  / | |  | | |__  _
@@ -155,39 +201,16 @@ end
 --                            _/ |
 --                           |__/
 
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    field1Value     = field1_1,
-}
-
 function T_TestMObj.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_TestMObj.CreateTestObj(id, baseLocation1, field1_1) assert(obj, "Failed obtaining "..testClassName)
-
-    local destructFieldsTest = TestArrayTest:newInstance()
-
-    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_1)
-
-    local upgradeParameters = {
-        field1 = field1_2
-    }
-    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, TestMObj, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, TestMObj, constructParameters1, testObjName, constructFieldsTest, logOk)
-    T_IMObj.pt_upgrade(testClassName, TestMObj, constructParameters1, testObjName, upgradeParameters, upgradeFieldsTest, logOk)
-
-    -- test getters
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)

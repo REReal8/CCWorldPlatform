@@ -16,6 +16,7 @@ local Callback = require "obj_callback"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
+local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 
 local enterprise_projects = require "enterprise_projects"
@@ -156,7 +157,7 @@ function MObjHost:hostMObj_SSrv(...)
     -- get class
     local class = objectFactory:getClass(className)
     if not class then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
-    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." is not an IMObj") return {success = false} end
+    if not Class.IsInstanceOf(class, ILObj) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." is not an ILObj") return {success = false} end
 
     -- construct new MObj
     local mobj = class:construct(constructParameters)
@@ -202,9 +203,9 @@ function MObjHost:upgradeMObj_SSrv(...)
 
     -- get MObj
     local mobj = ObjHost.GetObject(mobjLocator)
-    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
-    if not mobj.upgrade then corelog.Error("MObjHost:upgradeMObj_SSrv: MObj "..mobjLocator:getURI().." does not have upgrade method (yet)") return {success = false} end
-    -- ToDo: consider if we want to make upgrade a mandatory method of IMObj
+    if not mobj or not Class.IsInstanceOf(mobj, ILObj) then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed obtaining an ILObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj.upgrade then corelog.Error("MObjHost:upgradeMObj_SSrv: LObj "..mobjLocator:getURI().." does not have upgrade method (yet)") return {success = false} end
+    -- ToDo: consider if we want to make upgrade a mandatory method of ILObj
 
     -- upgrade MObj
     local success = mobj:upgrade(upgradeParameters)
@@ -397,7 +398,7 @@ function MObjHost:releaseMObj_SSrv(...)
 
     -- get MObj
     local mobj = ObjHost.GetObject(mobjLocator)
-    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj or not Class.IsInstanceOf(mobj, ILObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaining an ILObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj
     local success = mobj:destruct()

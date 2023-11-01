@@ -25,6 +25,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
 
@@ -36,6 +37,9 @@ function T_UtilStation.T_All()
 
     -- IObj
     T_UtilStation.T_IObj_All()
+
+    -- ILObj
+    T_UtilStation.T_ILObj_All()
 
     -- IMObj
     T_UtilStation.T_IMObj_All()
@@ -54,6 +58,8 @@ end
 
 local testClassName = "UserStation"
 local testObjName = "utilStation"
+local testObjName0 = testObjName.."0"
+
 local logOk = false
 
 local workerId1 = 111111
@@ -174,6 +180,45 @@ function T_UtilStation.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function T_UtilStation.T_ILObj_All()
+    -- prepare tests
+    local obj0 = T_UtilStation.CreateTestObj(workerId1, baseLocation0) assert(obj0, "Failed obtaining "..testClassName)
+
+    local destructFieldsTest = TestArrayTest:newInstance(
+    )
+    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+    local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+    local fieldsTest0 = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
+
+    -- testing type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
+
+    -- test getters
+    local expectedId = tostring(workerId1)
+    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk, expectedId)
+    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
+
+    -- cleanup test
+end
+
 --    _____ __  __  ____  _     _
 --   |_   _|  \/  |/ __ \| |   (_)
 --     | | | \  / | |  | | |__  _
@@ -186,32 +231,12 @@ end
 function T_UtilStation.T_IMObj_All()
     -- prepare tests
     local obj0 = T_UtilStation.CreateTestObj(workerId1, baseLocation0) assert(obj0, "Failed obtaining "..testClassName)
-    local testObjName0 = testObjName.."0"
-
-    local destructFieldsTest = TestArrayTest:newInstance(
-    )
-    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
-    ))
-    local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
-    ))
-    local fieldsTest0 = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation0, inputLocatorTest, outputLocatorTest)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- testing type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
-
-    -- test getters
-    local expectedId = tostring(workerId1)
-    T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk, expectedId)
-    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)

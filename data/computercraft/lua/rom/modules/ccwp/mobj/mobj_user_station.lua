@@ -1,10 +1,11 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local IItemDepot = require "i_item_depot"
-local UserStation = Class.NewClass(ObjBase, IMObj, IWorker, IItemDepot)
+local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker, IItemDepot)
 
 --[[
     The UserStation mobj represents a util station in the minecraft world and provides (production) services to operate on that UserStation.
@@ -96,14 +97,14 @@ function UserStation:getClassName()
     return "UserStation"
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
 function UserStation:construct(...)
     -- get & check input from description
@@ -187,6 +188,15 @@ function UserStation:getWIPId()
 
     return self:getClassName().." "..self:getId()
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
 
 local function Chest_layer()
     return LayerRectangle:newInstance(

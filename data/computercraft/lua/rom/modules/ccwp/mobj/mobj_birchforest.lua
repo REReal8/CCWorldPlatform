@@ -1,9 +1,10 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IItemSupplier = require "i_item_supplier"
-local BirchForest = Class.NewClass(ObjBase, IMObj, IItemSupplier)
+local BirchForest = Class.NewClass(ObjBase, ILObj, IMObj, IItemSupplier)
 
 --[[
     This module implements BirchForest.
@@ -150,14 +151,14 @@ function BirchForest:getClassName()
     return "BirchForest"
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
 function BirchForest:construct(...)
     -- get & check input from description
@@ -319,6 +320,15 @@ function BirchForest:getWIPId()
 
     return self:getClassName().." "..self:getId()
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
 
 local function Inline_Tree_layerLm1()
     return LayerRectangle:newInstance(

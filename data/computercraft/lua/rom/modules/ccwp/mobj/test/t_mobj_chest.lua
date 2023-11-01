@@ -14,7 +14,6 @@ local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
-local IMObj = require "i_mobj"
 local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
@@ -28,6 +27,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
@@ -42,6 +42,9 @@ function T_Chest.T_All()
 
     -- IObj
     T_Chest.T_IObj_All()
+
+    -- ILObj
+    T_Chest.T_ILObj_All()
 
     -- IMObj
     T_Chest.T_IMObj_All()
@@ -58,13 +61,15 @@ end
 
 local testClassName = "Chest"
 local testObjName = "chest"
-local logOk = false
 local mobjHostName = "enterprise_chests"
+
+local logOk = false
 
 local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local accessDirection1 = "top"
 local emptyInventory = Inventory:newInstance()
 local inventory1 = Inventory:newInstance() -- ToDo: add elements
+
 local constructParameters1 = {
     baseLocation    = baseLocation1,
     accessDirection = accessDirection1,
@@ -179,6 +184,37 @@ function T_Chest.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function T_Chest.T_ILObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
+
+    local destructFieldsTest = TestArrayTest:newInstance()
+
+    local fieldsTest1 = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
+
+    -- test type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, fieldsTest1, logOk)
+
+    -- test getters
+    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+end
+
 --    _____ __  __  ____  _     _
 --   |_   _|  \/  |/ __ \| |   (_)
 --     | | | \  / | |  | | |__  _
@@ -193,19 +229,13 @@ function T_Chest.T_IMObj_All()
     local id = coreutils.NewId()
     local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
 
-    local destructFieldsTest = TestArrayTest:newInstance()
-
-    local fieldsTest1 = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
-
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test
+    -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, fieldsTest1, logOk)
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+
+    -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end

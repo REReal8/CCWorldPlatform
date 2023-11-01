@@ -13,7 +13,6 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
-local IMObj = require "i_mobj"
 local Silo = require "mobj_silo"
 
 local enterprise_chests = require "enterprise_chests"
@@ -30,6 +29,7 @@ local IsBlueprintTest = require "test.is_blueprint_test"
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
@@ -44,6 +44,9 @@ function T_Silo.T_All()
     -- IObj
     T_Silo.T_IObj_All()
 
+    -- ILObj
+    T_Silo.T_ILObj_All()
+
     -- IMObj
     T_Silo.T_IMObj_All()
 
@@ -56,7 +59,9 @@ end
 
 local testClassName = "Silo"
 local testObjName = "silo"
+
 local logOk = false
+
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 local dropLocation1 = 0
@@ -65,6 +70,7 @@ local topChests1 = ObjArray:newInstance(URL:getClassName()) assert(topChests1, "
 local storageChests1 = ObjArray:newInstance(URL:getClassName()) assert(storageChests1, "Failed obtaining ObjArray")
 local nTopChests1 = 4
 local nLayers1 = 3
+
 local constructParameters1 = {
     baseLocation    = baseLocation1,
     nTopChests      = nTopChests1,
@@ -183,16 +189,16 @@ function T_Silo.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
-function T_Silo.T_IMObj_All()
+function T_Silo.T_ILObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
@@ -226,15 +232,40 @@ function T_Silo.T_IMObj_All()
     ))
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
 
+    -- test type
+    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
+    T_ILObj.pt_Implements_ILObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
+    T_ILObj.pt_destruct(testClassName, Silo, constructParameters1, testObjName, destructFieldsTest, logOk)
+    T_ILObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructFieldsTest, logOk)
+
+    -- test getters
+    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
+
+function T_Silo.T_IMObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
+
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test
+    -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    T_IMObj.pt_destruct(testClassName, Silo, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructFieldsTest, logOk)
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+
+    -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
