@@ -55,7 +55,6 @@ local function ExecuteLibraryTest(t)
 		{key = "f", desc = "forestry",          func = ExecuteLibraryTest, param = {filename = "t_forestry"}},
 		{key = "o", desc = "shop",              func = ExecuteLibraryTest, param = {filename = "t_shop"}},
 		{key = "n", desc = "colonization",      func = ExecuteLibraryTest, param = {filename = "t_colonization"}},
-		{key = "u", desc = "utilities",         func = ExecuteLibraryTest, param = {filename = "t_utilities"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "enterprise", options, ExecuteLibraryTest)
@@ -101,7 +100,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("enterprise_test")
     moduleRegistry:requireAndRegisterModuleTests("t_test")
     moduleRegistry:requireAndRegisterModuleTests("t_employment")
-    moduleRegistry:requireAndRegisterModuleTests("t_utilities")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
