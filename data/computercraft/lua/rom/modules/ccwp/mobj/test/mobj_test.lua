@@ -75,10 +75,6 @@ function MObjTest:setField1(strValue)
     self._field1 = strValue
 end
 
-function MObjTest:getBaseLocation()
-    return self._baseLocation
-end
-
 --    _____ ____  _     _
 --   |_   _/ __ \| |   (_)
 --     | || |  | | |__  _
@@ -196,6 +192,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function MObjTest:getBaseLocation()
+    return self._baseLocation
+end
 
 function MObjTest.GetBuildBlueprint(...)
     -- get & check input from description

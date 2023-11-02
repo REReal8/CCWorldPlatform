@@ -102,10 +102,6 @@ function Silo:Deactivate()
     self:update()
 end
 
-function Silo:getBaseLocation()
-    return self._baseLocation
-end
-
 function Silo:getNTopChests()
     --[[
         Returns the # top Chest's in the Silo.
@@ -269,6 +265,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function Silo:getBaseLocation()
+    return self._baseLocation
+end
 
 local function TopL0_layer()
     return LayerRectangle:newInstance(

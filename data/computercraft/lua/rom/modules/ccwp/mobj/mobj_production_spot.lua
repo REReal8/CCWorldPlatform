@@ -65,10 +65,6 @@ function ProductionSpot:new(...)
     return o
 end
 
-function ProductionSpot:getBaseLocation()
-    return self._baseLocation
-end
-
 function ProductionSpot:isCraftingSpot()
     return self._isCraftingSpot
 end
@@ -85,6 +81,21 @@ end
 function ProductionSpot:getClassName()
     return "ProductionSpot"
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
+
+function ProductionSpot:getBaseLocation()
+    return self._baseLocation
+end
+
+-- ToDo: make ProductionSpot a full IMObj (i.e. inherit + add other methods)
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |

@@ -202,7 +202,6 @@ function T_BirchForest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
-    local className = "BirchForest"
     local localLogsLocator = enterprise_employment.GetAnyTurtleLocator() assert(localLogsLocator, "Failed obtaining localLogsLocator")
     local localSaplingsLocator = enterprise_employment.GetAnyTurtleLocator() assert(localSaplingsLocator, "Failed obtaining localLogsLocator")
     local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
@@ -210,7 +209,6 @@ function T_BirchForest.T_Getters()
     -- test
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level0),
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation0),
         MethodResultEqualTest:newInstance("getNTrees", nTrees1),
         MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator0),
         MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator0)
@@ -341,6 +339,9 @@ function T_BirchForest.T_IMObj_All()
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
+
+    -- test getters
+    T_IMObj.pt_getBaseLocation(testClassName, obj0, testObjName0, baseLocation0, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, objm1, testObjNamem1, constructParameters_Lm1T1, isBlueprintTest_Lm1, logOk)

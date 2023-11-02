@@ -154,7 +154,6 @@ function T_Chest.T_Getters()
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
         MethodResultEqualTest:newInstance("getAccessDirection", accessDirection1),
         MethodResultEqualTest:newInstance("getInventory", inventory1)
     )
@@ -234,6 +233,9 @@ function T_Chest.T_IMObj_All()
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
+
+    -- test getters
+    T_IMObj.pt_getBaseLocation(testClassName, obj, testObjName, baseLocation1, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)

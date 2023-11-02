@@ -210,7 +210,6 @@ function T_Factory.T_Getters()
     -- test
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level1),
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
         MethodResultEqualTest:newInstance("getInputLocators", inputLocators0),
         MethodResultEqualTest:newInstance("getOutputLocators", outputLocators0),
         MethodResultEqualTest:newInstance("getCraftingSpots", craftingSpots1),
@@ -356,6 +355,9 @@ function T_Factory.T_IMObj_All()
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
+
+    -- test getters
+    T_IMObj.pt_getBaseLocation(testClassName, obj0, testObjName, baseLocation1, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)

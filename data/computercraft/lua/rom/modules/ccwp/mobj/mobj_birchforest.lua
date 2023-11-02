@@ -101,10 +101,6 @@ function BirchForest:setLevel(level)
     self._level = level
 end
 
-function BirchForest:getBaseLocation()
-    return self._baseLocation
-end
-
 function BirchForest:getNTrees()
     return self._nTrees
 end
@@ -329,6 +325,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function BirchForest:getBaseLocation()
+    return self._baseLocation
+end
 
 local function Inline_Tree_layerLm1()
     return LayerRectangle:newInstance(

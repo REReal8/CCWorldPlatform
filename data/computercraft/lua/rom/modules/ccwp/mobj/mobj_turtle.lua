@@ -181,6 +181,10 @@ end
 --                            _/ |
 --                           |__/
 
+function Turtle:getBaseLocation()
+    return self:getWorkerLocation()
+end
+
 local function Turtle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {

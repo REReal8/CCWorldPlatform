@@ -232,6 +232,9 @@ function T_Turtle.T_IMObj_All()
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
 
+    -- test getters
+    T_IMObj.pt_getBaseLocation(testClassName, obj, testObjName, location1, logOk)
+
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)

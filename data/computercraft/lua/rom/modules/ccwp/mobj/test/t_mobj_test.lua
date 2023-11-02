@@ -129,7 +129,6 @@ function T_MObjTest.T_Getters()
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
         MethodResultEqualTest:newInstance("getField1", field1_1)
     )
     test:test(obj, testObjName, "", logOk)
@@ -211,6 +210,9 @@ function T_MObjTest.T_IMObj_All()
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
+
+    -- test getters
+    T_IMObj.pt_getBaseLocation(testClassName, obj, testObjName, baseLocation1, logOk)
 
     -- test blueprints
     T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)

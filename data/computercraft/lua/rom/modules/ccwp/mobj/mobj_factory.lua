@@ -124,10 +124,6 @@ function Factory:getLevel()
     return self._level
 end
 
-function Factory:getBaseLocation()
-    return self._baseLocation
-end
-
 function Factory:getInputLocators()
     return self._inputLocators
 end
@@ -358,6 +354,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function Factory:getBaseLocation()
+    return self._baseLocation
+end
 
 local function Shaft_layer()
     return LayerRectangle:newInstance(

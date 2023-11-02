@@ -136,6 +136,20 @@ function T_IMObj.pt_getWIPId(className, obj, objName, logOk)
     test:test(obj, objName, "", logOk)
 end
 
+function T_IMObj.pt_getBaseLocation(className, obj, objName, expectedBaseLocation, logOk)
+    -- prepare test
+    assert(className, "no className provided")
+    assert(obj, "no obj provided")
+    assert(objName, "no objName provided")
+    assert(expectedBaseLocation, "no expectedBaseLocation provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..className..":getBaseLocation() tests")
+
+    -- test
+    local test = MethodResultEqualTest:newInstance("getBaseLocation", expectedBaseLocation)
+    test:test(obj, objName, "", logOk)
+end
+
 function T_IMObj.pt_getBlueprint(className, methodName, isStaticMethod, obj, objName, isBlueprintTest, logOk, ...)
     -- prepare test
     assert(className, "no className provided")

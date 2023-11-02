@@ -89,10 +89,6 @@ function Chest:new(...)
     return o
 end
 
-function Chest:getBaseLocation()
-    return self._baseLocation
-end
-
 function Chest:getAccessDirection()
     return self._accessDirection
 end
@@ -191,6 +187,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function Chest:getBaseLocation()
+    return self._baseLocation
+end
 
 local function Chest_layer()
     return LayerRectangle:newInstance(

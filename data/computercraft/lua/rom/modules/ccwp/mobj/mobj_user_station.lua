@@ -79,7 +79,6 @@ function UserStation:new(...)
     return o
 end
 
-function UserStation:getBaseLocation()  return self._baseLocation   end
 function UserStation:getInputLocator()  return self._inputLocator   end
 function UserStation:getOutputLocator() return self._outputLocator  end
 
@@ -196,6 +195,8 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function UserStation:getBaseLocation()  return self._baseLocation   end
 
 local function Chest_layer()
     return LayerRectangle:newInstance(

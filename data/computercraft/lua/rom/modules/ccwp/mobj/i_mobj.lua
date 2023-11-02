@@ -21,6 +21,19 @@ local IInterface = require "i_interface"
 --                            _/ |
 --                           |__/
 
+function IMObj:getBaseLocation()
+    --[[
+        Get the base location of the XXXMObj.
+
+        Return value:
+            baseLocation                + (Location) base location of the XXXMObj
+    ]]
+
+    IInterface.UnimplementedMethodError("IMObj", "getBaseLocation")
+
+    return nil
+end
+
 function IMObj.GetBuildBlueprint(...)
     --[[
         This method returns a blueprint for building a XXXMObj in the physical minecraft world.
