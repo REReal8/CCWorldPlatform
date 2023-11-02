@@ -377,16 +377,22 @@ function Location.ConvertAccessDirectionToPeripheralName(...)
     ]], ...)
     if not checkSuccess then corelog.Error("Location.ConvertAccessDirectionToPeripheralName: Invalid input") return nil end
 
-    -- check input
-    if type(accessDirection) ~= "string" then corelog.Error("Location.ConvertAccessDirectionToPeripheralName: invalid accessDirection") return nil end
-
     -- determine peripheralName from accessDirection
     local peripheralName = accessDirection
-    -- ToDo: do we need to convert the others as well?
     if accessDirection == "bottom" then
         peripheralName = "top"
     elseif accessDirection == "top" then
         peripheralName = "bottom"
+    elseif accessDirection == "front" then
+        peripheralName = "front"
+    elseif accessDirection == "back" then
+        peripheralName = "front"
+    elseif accessDirection == "left" then
+        peripheralName = "front"
+    elseif accessDirection == "right" then
+        peripheralName = "front"
+    else
+        corelog.Error("Location.ConvertAccessDirectionToPeripheralName: Don't know how to handle accessDirection "..accessDirection..".") return nil
     end
 
     -- end
