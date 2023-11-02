@@ -437,8 +437,8 @@ local function UserStationMenuOrder(t, amount)
         if stack == "s" then stack = " stack" else stack = "" end
 
         -- get Shop
-        local shop = enterprise_shop:getShop()
-        -- ToDo: get this somehow into UserStation
+        local shopLocator = enterprise_shop.GetShopLocator() -- ToDo: get this somehow into UserStation
+        local shop = enterprise_shop:getObject(shopLocator)
         if not shop then coredisplay.UpdateToDisplay("No Shop!", 2) return false end
 
         -- make master happy
@@ -446,8 +446,8 @@ local function UserStationMenuOrder(t, amount)
             [itemName]  = count,
         }
         local itemDepotLocator = userStation:getInputLocator()
-        local ingredientsItemSupplierLocator = enterprise_employment.GetAnyTurtleLocator()
-        local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator()
+        local ingredientsItemSupplierLocator = shopLocator
+        local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator() -- ToDo: introduce and use proper WasteDump + somehow get this passed into UserStation
         local scheduleResult = shop:provideItemsTo_AOSrv({
             provideItems                    = provideItems,
             itemDepotLocator                = itemDepotLocator,
