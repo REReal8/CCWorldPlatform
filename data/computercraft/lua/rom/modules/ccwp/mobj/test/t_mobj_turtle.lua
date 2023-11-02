@@ -268,7 +268,8 @@ function T_Turtle.T_IWorker_All()
     )
 
     -- test
-    T_IWorker.pt_all(testClassName, obj, testObjName, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
+    local expectedWorkerLocation = location1:copy()
+    T_IWorker.pt_all(testClassName, obj, testObjName, expectedWorkerLocation, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
 end
 
 --                        _

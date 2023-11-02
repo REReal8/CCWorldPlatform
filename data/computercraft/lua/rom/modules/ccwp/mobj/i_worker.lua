@@ -32,6 +32,19 @@ function IWorker:getWorkerId()
     return -1
 end
 
+function IWorker:getWorkerLocation()
+    --[[
+        Get the (current) location of the Worker
+
+        Return value:
+            baseLocation        + (Location) current location of the Worker
+    ]]
+
+    IInterface.UnimplementedMethodError("IWorker", "getWorkerLocation")
+
+    return nil
+end
+
 function IWorker:getWorkerResume()
     --[[
         Get Worker resume for selecting Assignment's.

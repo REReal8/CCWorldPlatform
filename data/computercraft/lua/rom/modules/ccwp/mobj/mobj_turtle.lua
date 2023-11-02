@@ -290,6 +290,29 @@ function Turtle:getWorkerId()
     return self._workerId
 end
 
+function Turtle:getWorkerLocation()
+    -- check current Turtle
+    if self:getWorkerId() == os.getComputerID() then
+        -- get coremove location
+        local coremove_location = Location:new(coremove.GetLocation())
+
+        -- check coremove location has changed
+        if not coremove_location:isEqual(self._location) then
+            -- update location in turtle object
+--            corelog.WriteToLog("Turtle:getWorkerLocation(): Turtle "..self:getWorkerId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
+            -- ToDo: consider changes to prevent TurtleObj location and coremove_location going out of date (to the extreme: incorporate coremove into Turtle class)
+            self._location = coremove_location
+
+            -- save change in host
+            enterprise_employment = enterprise_employment or require "enterprise_employment"
+            enterprise_employment:saveObject(self)
+        end
+    end
+
+    -- end
+    return self._location
+end
+
 function Turtle:getWorkerResume()
     --[[
         Get Turtle resume for selecting Assignment's.
@@ -622,29 +645,6 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
-
-function Turtle:getWorkerLocation()
-    -- check current Turtle
-    if self:getWorkerId() == os.getComputerID() then
-        -- get coremove location
-        local coremove_location = Location:new(coremove.GetLocation())
-
-        -- check coremove location has changed
-        if not coremove_location:isEqual(self._location) then
-            -- update location in turtle object
---            corelog.WriteToLog("Turtle:getWorkerLocation(): Turtle "..self:getWorkerId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
-            -- ToDo: consider changes to prevent TurtleObj location and coremove_location going out of date (to the extreme: incorporate coremove into Turtle class)
-            self._location = coremove_location
-
-            -- save change in host
-            enterprise_employment = enterprise_employment or require "enterprise_employment"
-            enterprise_employment:saveObject(self)
-        end
-    end
-
-    -- end
-    return self._location
-end
 
 function Turtle:getInventory()
     -- check current Turtle

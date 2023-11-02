@@ -80,7 +80,6 @@ function UserStation:new(...)
 end
 
 function UserStation:getBaseLocation()  return self._baseLocation   end
-function UserStation:getWorkerLocation()  return self._baseLocation   end
 function UserStation:getInputLocator()  return self._inputLocator   end
 function UserStation:getOutputLocator() return self._outputLocator  end
 
@@ -369,6 +368,8 @@ function UserStation:getWorkerId()
     -- end
     return self._workerId
 end
+
+function UserStation:getWorkerLocation()  return self._baseLocation   end
 
 function UserStation:getWorkerResume()
     --[[

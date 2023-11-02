@@ -269,7 +269,8 @@ function T_UserStation.T_IWorker_All()
     )
 
     -- test
-    T_IWorker.pt_all(testClassName, obj, testObjName, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
+    local expectedWorkerLocation = baseLocation0:copy()
+    T_IWorker.pt_all(testClassName, obj, testObjName, expectedWorkerLocation, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
 end
 
 --    _____ _____ _                 _____                   _
