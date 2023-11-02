@@ -269,7 +269,7 @@ function T_UserStation.T_IWorker_All()
     )
 
     -- test
-    local expectedWorkerLocation = baseLocation0:copy()
+    local expectedWorkerLocation = obj:getBaseLocation():getRelativeLocation(3, 3, 0)
     T_IWorker.pt_all(testClassName, obj, testObjName, expectedWorkerLocation, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
 end
 

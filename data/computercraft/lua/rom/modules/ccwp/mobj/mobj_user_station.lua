@@ -369,7 +369,9 @@ function UserStation:getWorkerId()
     return self._workerId
 end
 
-function UserStation:getWorkerLocation()  return self._baseLocation   end
+function UserStation:getWorkerLocation()
+    return self:getBaseLocation():getRelativeLocation(3, 3, 0) -- note: location of UserStation computer
+end
 
 function UserStation:getWorkerResume()
     --[[
