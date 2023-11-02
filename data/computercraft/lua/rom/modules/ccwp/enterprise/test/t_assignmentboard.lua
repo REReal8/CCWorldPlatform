@@ -61,8 +61,9 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.startTime = now
 
-    -- test fuelTurtlePriorityKey
-    corelog.WriteToLog("  # Test fuelTurtlePriorityKey (not set)")
+    -- test priorityKeyNeeded
+    corelog.WriteToLog("  # Test priorityKeyNeeded (nil)")
+    assignmentFilter.priorityKeyNeeded = nil
     local priorityKey = coreutils.NewId()
     metaData.priorityKey = priorityKey
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
@@ -70,21 +71,29 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
 
-    corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, no key)")
-    assignmentFilter.priorityKeyNeeded = priorityKey
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
-    expectedconditionsMet = false
-    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.priorityKey = ""
-
-    corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, same key)")
+    corelog.WriteToLog("  # Test priorityKeyNeeded (not set)")
+    priorityKey = coreutils.NewId()
     metaData.priorityKey = priorityKey
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
 
-    corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, other key)")
+    corelog.WriteToLog("  # Test priorityKeyNeeded (set, no key)")
+    assignmentFilter.priorityKeyNeeded = priorityKey
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = false
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
+    metaData.priorityKey = ""
+
+    corelog.WriteToLog("  # Test priorityKeyNeeded (set, same key)")
+    metaData.priorityKey = priorityKey
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
+    expectedconditionsMet = true
+    assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
+    metaData.priorityKey = ""
+
+    corelog.WriteToLog("  # Test priorityKeyNeeded (set, other key)")
     local otherPriorityKey = coreutils.NewId()
     metaData.priorityKey = otherPriorityKey
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)

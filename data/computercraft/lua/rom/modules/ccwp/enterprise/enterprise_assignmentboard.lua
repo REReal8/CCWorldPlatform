@@ -419,7 +419,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
 
     -- check priorityKeyNeeded
     local priorityKeyNeeded = assignmentFilter.priorityKeyNeeded
-    if priorityKeyNeeded ~= "" then
+    if priorityKeyNeeded and priorityKeyNeeded ~= "" then
         if metaData.priorityKey ~= priorityKeyNeeded then
             return false, "assignment does not `have`(="..(metaData.priorityKey or "nil")..") mandatory priorityKeyNeeded (="..priorityKeyNeeded..")"
         end
