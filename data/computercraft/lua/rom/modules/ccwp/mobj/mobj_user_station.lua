@@ -15,8 +15,9 @@ local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker, IItemDepot)
         item input and output chests
 --]]
 
+local coredht = require "coredht"
+local coredisplay = require "coredisplay"
 local corelog = require "corelog"
-local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -416,6 +417,84 @@ function UserStation:getWorkerResume()
         workerId        = self:getWorkerId(),
         location        = self:getWorkerLocation(),
     }
+end
+
+local function UserStationMenuOrder(t, amount)
+    --    local count, stack
+
+        -- check the amount
+        local _, _, count, stack = string.find(amount, "(%d+)(s?)")
+        count = tonumber(count)
+
+        if type(count) == "number" and count > 0 then
+            -- Yahoo, we can do something for master
+            if stack == "s" then stack = " stack" else stack = "" end
+            coredisplay.UpdateToDisplay("Delivering "..count..stack.." of "..t.item .." in a moment...", 2)
+            return true
+        else
+            -- not good!
+            coredisplay.UpdateToDisplay("Not a number ('"..amount.."')", 2)
+            return false
+        end
+    end
+
+local function UserStationMenuAmount(t)
+    coredisplay.NextScreen({
+        clear       = true,
+        func	    = UserStationMenuOrder,
+        intro       = "How many items of "..t.item.."?",
+        param       = t,
+        question    = nil
+    })
+    return true
+end
+
+local function UserStationMenuSearch(t, searchString)
+    -- get all items
+    local allItems      = coredht.GetData("allItems")
+    local options       = {}
+    local lastNumber    = 0
+
+    -- security check
+    if type(allItems) ~= "table" then return false end
+
+    -- loop all items
+    for k, v in pairs(allItems) do
+
+        -- if the search string for matches, add found items to the options!
+        local findStart, findEnd = string.find(k, searchString)
+        if type(findStart) =="number" and type(findEnd) == "number" then
+            lastNumber = lastNumber + 1
+            table.insert(options, {key = tostring(lastNumber), desc = k, func = UserStationMenuAmount, param = {item = k}})
+        end
+    end
+
+    -- do we have found anything?
+    if lastNumber == 0 then
+
+            -- not good!
+            coredisplay.UpdateToDisplay("No items found :-(", 2)
+
+    elseif lastNumber > 10 then
+
+            -- Too much
+            coredisplay.UpdateToDisplay(lastNumber.." items found, specify your search", 2)
+
+    else
+        -- add exit option
+        table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end })
+
+        -- do the screen
+        coredisplay.NextScreen({
+			clear       = true,
+			intro       = "Choose an item",
+			option      = options,
+			question    = "Make your choice",
+		})
+
+        -- screeen complete (fake)
+        return true
+    end
 end
 
 function UserStation:getMainUIMenu()

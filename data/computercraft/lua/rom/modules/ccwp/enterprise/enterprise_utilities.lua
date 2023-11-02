@@ -68,11 +68,6 @@ function enterprise_utilities.SetAsLogger()
     coredht.DHTReadyFunction(enterprise_utilities.SetAsLoggerFunction)
 end
 
-function enterprise_utilities.SetAsUserStation()
-    corelog.WriteToLog("I am assigned as user station!!")
-    coredht.DHTReadyFunction(enterprise_utilities.SetAsUserStationFunction)
-end
-
 function enterprise_utilities.RemoveRoles()
     corelog.WriteToLog("I am useless ;-(")
     coredht.DHTReadyFunction(enterprise_utilities.RemoveRolesFunction)
@@ -81,51 +76,20 @@ end
 function enterprise_utilities.SetAsLoggerFunction()
     corelog.WriteToLog("I am assigned as logger (also in the DHT now, me so happy)!!")
     coredht.SaveData(true, enterprise_utilities.DHTroot, "loggers",         os.getComputerID())
-    coredht.SaveData(nil,  enterprise_utilities.DHTroot, "user stations",   os.getComputerID())
     ActAsLogger()
-end
-
-function enterprise_utilities.SetAsUserStationFunction()
-    corelog.WriteToLog("I am assigned as user station (also in the DHT now, me so happy)!!")
-    coredht.SaveData(nil,   enterprise_utilities.DHTroot, "loggers",        os.getComputerID())
-    coredht.SaveData(true,  enterprise_utilities.DHTroot, "user stations",  os.getComputerID())
-    ActAsUserStation()
 end
 
 function enterprise_utilities.RemoveRolesFunction()
     coredht.SaveData(nil, enterprise_utilities.DHTroot, "loggers",          os.getComputerID())
-    coredht.SaveData(nil, enterprise_utilities.DHTroot, "user stations",    os.getComputerID())
 end
 
 function CheckUtilitiesRole()
     -- are we the logger?
     if coredht.GetData(enterprise_utilities.DHTroot, "loggers", os.getComputerID()) then ActAsLogger() end
-
-    -- are we the user station?
-    if coredht.GetData(enterprise_utilities.DHTroot, "user stations", os.getComputerID()) then ActAsUserStation() end
 end
 
 function ActAsLogger()
     corelog.WriteToLog("I will be the logger!!")
-end
-
-function ActAsUserStation()
-    corelog.WriteToLog("I will be the user station!!")
-
-    -- setup timer for input Chest checking
-    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_user_station", "input Chest timer")
-
-    -- check input box for the first time!
-    DoEventInputChestTimer()
-
-	-- our main menu
-    coredisplay.MainMenu({
-        clear       = true,
-        func	    = UserStationMenuSearch,
-        intro       = "Please type a part of an itemname to order\n",
-        param	    = {},
-        question    = nil
-    })
 end
 
 function DoEventInputChestTimer()
@@ -214,7 +178,6 @@ function UtilitiesMenu( t )
 			intro = "Available actions",
 			option = {
 				{key = "l", desc = "Set as logger",             func = UtilitiesMenu, param = {role = "logger"}},
-				{key = "u", desc = "Set as user station",       func = UtilitiesMenu, param = {role = "user station"}},
 				{key = "r", desc = "Remove known functions",    func = UtilitiesMenu, param = {role = "remove"}},
 				{key = "x", desc = "Back to main menu",     func = function () return true end }
 			},
@@ -223,91 +186,12 @@ function UtilitiesMenu( t )
 		return true
 	else
 			    if t.role == "logger"	    then enterprise_utilities.SetAsLogger()
-            elseif t.role == "user station" then enterprise_utilities.SetAsUserStation()
             elseif t.role == "remove"       then enterprise_utilities.RemoveRoles()
             end
 
         -- we are done here, go back
 		return true
 	end
-end
-
-function UserStationMenuSearch(t, searchString)
-    -- get all items
-    local allItems      = coredht.GetData("allItems")
-    local options       = {}
-    local lastNumber    = 0
-
-    -- security check
-    if type(allItems) ~= "table" then return false end
-
-    -- loop all items
-    for k, v in pairs(allItems) do
-
-        -- if the search string for matches, add found items to the options!
-        local findStart, findEnd = string.find(k, searchString)
-        if type(findStart) =="number" and type(findEnd) == "number" then
-            lastNumber = lastNumber + 1
-            table.insert(options, {key = tostring(lastNumber), desc = k, func = UserStationMenuAmount, param = {item = k}})
-        end
-    end
-
-    -- do we have found anything?
-    if lastNumber == 0 then
-
-            -- not good!
-            coredisplay.UpdateToDisplay("No items found :-(", 2)
-
-    elseif lastNumber > 10 then
-
-            -- Too much
-            coredisplay.UpdateToDisplay(lastNumber.." items found, specify your search", 2)
-
-    else
-        -- add exit option
-        table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end })
-
-        -- do the screen
-        coredisplay.NextScreen({
-			clear       = true,
-			intro       = "Choose an item",
-			option      = options,
-			question    = "Make your choice",
-		})
-
-        -- screeen complete (fake)
-        return true
-    end
-end
-
-function UserStationMenuAmount(t)
-    coredisplay.NextScreen({
-        clear       = true,
-        func	    = UserStationMenuOrder,
-        intro       = "How many items of "..t.item.."?",
-        param       = t,
-        question    = nil
-    })
-    return true
-end
-
-function UserStationMenuOrder(t, amount)
---    local count, stack
-
-    -- check the amount
-    local _, _, count, stack = string.find(amount, "(%d+)(s?)")
-    count = tonumber(count)
-
-    if type(count) == "number" and count > 0 then
-        -- Yahoo, we can do something for master
-        if stack == "s" then stack = " stack" else stack = "" end
-        coredisplay.UpdateToDisplay("Delivering "..count..stack.." of "..t.item, 2)
-        return true
-    else
-        -- not good!
-        coredisplay.UpdateToDisplay("Not a number ('"..amount.."')", 2)
-        return false
-    end
 end
 
 -- return who we really are!
