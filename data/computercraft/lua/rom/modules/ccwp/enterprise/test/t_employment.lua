@@ -292,6 +292,16 @@ end
 --                             | |                                    | |             __/ |
 --                             |_|                                    |_|            |___/
 
+function t_employment.T_reset()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_employment:reset() tests")
+
+    -- test
+    enterprise_employment:reset()
+
+    -- cleanup test
+end
+
 function t_employment.T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
