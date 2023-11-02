@@ -184,7 +184,7 @@ function t_employment.T_GetFuelLevels_Att()
     local forestLocator = enterprise_forestry:saveObject(forest)
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
-    local location = turtleObj:getLocation()
+    local location = turtleObj:getWorkerLocation()
     local factoryClassName = "Factory"
     local factoryConstructParameters = {
         level           = 0,

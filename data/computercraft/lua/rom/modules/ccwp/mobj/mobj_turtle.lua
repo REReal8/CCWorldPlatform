@@ -43,13 +43,13 @@ local enterprise_employment
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, workerId, location, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, workerId, workerLocation, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
             id                      + (string) id of the Turtle
             workerId                + (number) workerId of the Turtle
-            location                + (Location) location of the Turtle
+            workerLocation          + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("Turtle:_init: Invalid input") return nil end
@@ -58,7 +58,7 @@ function Turtle:_init(...)
     ObjBase._init(self)
     self._id                = id
     self._workerId          = workerId
-    self._location          = location
+    self._location          = workerLocation
     self._fuelPriorityKey   = fuelPriorityKey
 end
 
@@ -265,7 +265,7 @@ function Turtle:getDismantleBlueprint()
     }
 
     -- buildLocation
-    local buildLocation = self:getLocation():copy()
+    local buildLocation = self:getWorkerLocation():copy()
 
     -- end
     return buildLocation, blueprint
@@ -304,7 +304,7 @@ function Turtle:getWorkerResume()
     -- end
     return {
         workerId        = self:getWorkerId(),
-        location        = self:getLocation(),
+        location        = self:getWorkerLocation(),
         isTurtle        = true,
         fuelLevel       = turtle.getFuelLevel(),
         axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
@@ -452,7 +452,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get location
-    local turtleLocation = self:getLocation()
+    local turtleLocation = self:getWorkerLocation()
 
     -- loop on items
     local fuelNeed = 0
@@ -623,7 +623,7 @@ end
 --       | |
 --       |_|
 
-function Turtle:getLocation()
+function Turtle:getWorkerLocation()
     -- check current Turtle
     if self:getWorkerId() == os.getComputerID() then
         -- get coremove location
@@ -632,7 +632,7 @@ function Turtle:getLocation()
         -- check coremove location has changed
         if not coremove_location:isEqual(self._location) then
             -- update location in turtle object
---            corelog.WriteToLog("Turtle:getLocation(): Turtle "..self:getWorkerId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
+--            corelog.WriteToLog("Turtle:getWorkerLocation(): Turtle "..self:getWorkerId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
             -- ToDo: consider changes to prevent TurtleObj location and coremove_location going out of date (to the extreme: incorporate coremove into Turtle class)
             self._location = coremove_location
 

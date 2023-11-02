@@ -747,7 +747,7 @@ function enterprise_employment.GetItemDepotLocation_SSrv(...)
     if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
-    local location = turtleObj:getLocation()
+    local location = turtleObj:getWorkerLocation()
 
     -- end
     return {

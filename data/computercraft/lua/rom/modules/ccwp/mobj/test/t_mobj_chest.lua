@@ -342,7 +342,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
-    local itemDepotLocation = turtleObj:getLocation()
+    local itemDepotLocation = turtleObj:getWorkerLocation()
 
     -- test
     local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({

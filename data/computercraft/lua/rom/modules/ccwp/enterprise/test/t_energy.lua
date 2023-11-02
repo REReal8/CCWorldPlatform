@@ -118,7 +118,7 @@ function t_energy.T_GetRefuelAmount_Att()
 
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
-    local turtleLocation = turtleObj:getLocation()
+    local turtleLocation = turtleObj:getWorkerLocation()
     local factoryConstructParameters = {
         level           = 0,
 
