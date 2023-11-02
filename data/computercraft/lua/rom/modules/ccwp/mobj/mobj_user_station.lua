@@ -28,6 +28,8 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_chests = require "enterprise_chests"
+local enterprise_shop = require "enterprise_shop"
+local enterprise_employment = require "enterprise_employment"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -420,23 +422,49 @@ function UserStation:getWorkerResume()
 end
 
 local function UserStationMenuOrder(t, amount)
-    --    local count, stack
+    -- check the amount
+    local _, _, count, stack = string.find(amount, "(%d+)(s?)")
+    count = tonumber(count)
+    if type(count) == "number" and count > 0 then
+        -- Yahoo, we can do something for master
 
-        -- check the amount
-        local _, _, count, stack = string.find(amount, "(%d+)(s?)")
-        count = tonumber(count)
+        -- determine some variables
+        local itemName = t.item
 
-        if type(count) == "number" and count > 0 then
-            -- Yahoo, we can do something for master
-            if stack == "s" then stack = " stack" else stack = "" end
-            coredisplay.UpdateToDisplay("Delivering "..count..stack.." of "..t.item .." in a moment...", 2)
-            return true
-        else
-            -- not good!
-            coredisplay.UpdateToDisplay("Not a number ('"..amount.."')", 2)
-            return false
-        end
+        local userStation = t.userStation
+        if not userStation then coredisplay.UpdateToDisplay("No UserStation self!", 2) return false end
+
+        if stack == "s" then stack = " stack" else stack = "" end
+
+        -- get Shop
+        local shop = enterprise_shop:getShop()
+        -- ToDo: get this somehow into UserStation
+        if not shop then coredisplay.UpdateToDisplay("No Shop!", 2) return false end
+
+        -- make master happy
+        local provideItems = {
+            [itemName]  = count,
+        }
+        local itemDepotLocator = userStation:getInputLocator()
+        local ingredientsItemSupplierLocator = enterprise_employment.GetAnyTurtleLocator()
+        local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator()
+        local scheduleResult = shop:provideItemsTo_AOSrv({
+            provideItems                    = provideItems,
+            itemDepotLocator                = itemDepotLocator,
+            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+            wasteItemDepotLocator           = wasteItemDepotLocator,
+        }, Callback.GetNewDummyCallBack())
+        if not scheduleResult then coredisplay.UpdateToDisplay("Failed scheduling delivering of "..count..stack.." "..itemName.."'s", 2) return false end
+
+        -- end
+        coredisplay.UpdateToDisplay("Scheduled delivering of "..count..stack.." "..itemName .."'s", 2)
+        return true
+    else
+        -- not good!
+        coredisplay.UpdateToDisplay("Not a number ('"..amount.."')", 2)
+        return false
     end
+end
 
 local function UserStationMenuAmount(t)
     coredisplay.NextScreen({
@@ -460,26 +488,21 @@ local function UserStationMenuSearch(t, searchString)
 
     -- loop all items
     for k, v in pairs(allItems) do
-
         -- if the search string for matches, add found items to the options!
         local findStart, findEnd = string.find(k, searchString)
         if type(findStart) =="number" and type(findEnd) == "number" then
             lastNumber = lastNumber + 1
-            table.insert(options, {key = tostring(lastNumber), desc = k, func = UserStationMenuAmount, param = {item = k}})
+            table.insert(options, {key = tostring(lastNumber), desc = k, func = UserStationMenuAmount, param = { userStation = t.userStation, item = k}})
         end
     end
 
     -- do we have found anything?
     if lastNumber == 0 then
-
-            -- not good!
-            coredisplay.UpdateToDisplay("No items found :-(", 2)
-
+        -- not good!
+        coredisplay.UpdateToDisplay("No items found :-(", 2)
     elseif lastNumber > 10 then
-
-            -- Too much
-            coredisplay.UpdateToDisplay(lastNumber.." items found, specify your search", 2)
-
+        -- Too much
+        coredisplay.UpdateToDisplay(lastNumber.." items found, specify your search", 2)
     else
         -- add exit option
         table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end })
@@ -517,7 +540,7 @@ function UserStation:getMainUIMenu()
         clear       = true,
         func	    = UserStationMenuSearch,
         intro       = "Please type a part of an itemname to order\n",
-        param	    = {},
+        param	    = { userStation = self },
         question    = nil
     }
 end
