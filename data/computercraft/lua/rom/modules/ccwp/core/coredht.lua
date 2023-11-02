@@ -173,13 +173,6 @@ local function DoEventSaveData(subject, envelope)
     -- versie bijwerken
     if db._version < envelope.message.version then db._version = envelope.message.version end
 
-    -- TEMP DEBUG STATEMENT, REMOVE THIS ONCE PROBLEM UNDERSTOOD
-    if type(envelope.message.arg) == "nil" then
-        corelog.Error("DHT ERROR: envelope.message.arg is nil")
-        corelog.WriteToLog("envelope:")
-        corelog.WriteToLog(envelope)
-    end
-
 	-- just save the data like a normal request from this computer
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
 end
@@ -261,7 +254,7 @@ function coredht.SaveData(data, ...)
     })
 
     -- save the node in the data
-    return SaveDataToDB(data, ...)
+    return SaveDataToDB(data, table.unpack(arg))
 end
 
 return coredht
