@@ -4,7 +4,7 @@ local Location = require "obj_location"
 
 local enterprise_utilities = require "enterprise_utilities"
 
-local T_UtilStation = require "test.t_mobj_user_station"
+local T_UserStation = require "test.t_mobj_user_station"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_utilities.T_All()
@@ -44,7 +44,7 @@ local constructParameters = {
 
 function t_utilities.T_hostMObj_SSrv_UtilStation()
     -- prepare test
-    local constructFieldsTest = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation)
+    local constructFieldsTest = T_UserStation.CreateInitialisedTest(workerId1, baseLocation)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_utilities, testMObjClassName, constructParameters, testMObjName, constructFieldsTest, logOk)
