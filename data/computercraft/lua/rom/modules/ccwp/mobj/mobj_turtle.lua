@@ -123,7 +123,7 @@ end
 
 function Turtle:construct(...)
     -- get & check input from description
-    local checkSuccess, workerId, location = InputChecker.Check([[
+    local checkSuccess, workerId, baseLocation, workerLocation = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         The constructed Turtle is not yet saved in the MObjHost.
@@ -134,14 +134,13 @@ function Turtle:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
                 workerId                + (number) workerId of the Turtle
-                location                + (Location) location of the Turtle
+                baseLocation            + (Location) base location of the Turtle
+                workerLocation          + (Location) location of the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
 
     -- construct new Turtle
     local id = coreutils.NewId()
-    local baseLocation = location:copy()
-    local workerLocation = location:copy()
     local obj = Turtle:newInstance(id, workerId, baseLocation, workerLocation)
 
     -- end
@@ -203,7 +202,7 @@ end
 
 function Turtle.GetBuildBlueprint(...)
     -- get & check input from description
-    local checkSuccess, location = InputChecker.Check([[
+    local checkSuccess, baseLocation = InputChecker.Check([[
         This method returns a blueprint for building a Turtle in the physical minecraft world.
 
         Return value:
@@ -212,12 +211,12 @@ function Turtle.GetBuildBlueprint(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
-                location                + (Location) location of the Turtle
+                baseLocation            + (Location) base location of the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("Turtle.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- buildLocation
-    local buildLocation = location:copy()
+    local buildLocation = baseLocation:copy()
 
     -- layerList
     local layerList = {

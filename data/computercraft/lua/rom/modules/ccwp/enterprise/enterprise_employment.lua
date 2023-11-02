@@ -316,7 +316,6 @@ function enterprise_employment:getCurrentWorkerLocator()
         -- determine birth information
         local className = nil
         local constructParameters = nil
-        local birthLocation = nil
         local workerName = "<unknown>"
         local father = peripheral.wrap(direction) -- note: we access low level computer functionality directly
         -- ToDo: consider if this low level functionality should be either moved into core OR into a role, as an enterprise is not supposed to access this
@@ -332,7 +331,6 @@ function enterprise_employment:getCurrentWorkerLocator()
             className = birthCertificate.className
             constructParameters = birthCertificate.constructParameters
             constructParameters.workerId = workerId
-            birthLocation = constructParameters.location
 
             -- determine workerName
             workerName = className..""..tostring(workerId).." van der Turtle"..tostring(fatherId)
@@ -342,11 +340,13 @@ function enterprise_employment:getCurrentWorkerLocator()
             --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
 
             -- determine hosting information
-            birthLocation = Location:newInstance(3, 2, 1, 0, 1)
             className = Turtle:getClassName()
+            local baseLocation = Location:newInstance(0, -1, 3, 0, 1)
+            local workerLocation = Location:newInstance(3, 2, 1, 0, 1)
             constructParameters = {
-                workerId    = workerId,
-                location    = birthLocation,
+                workerId        = workerId,
+                baseLocation    = baseLocation,
+                workerLocation  = workerLocation,
             }
 
             -- determine workerName
@@ -362,7 +362,7 @@ function enterprise_employment:getCurrentWorkerLocator()
 
         -- set location
         -- ToDo: consider removing/ doing differently?
-        coremove.SetLocation(birthLocation)
+        coremove.SetLocation(constructParameters.workerLocation)
 
         -- register Worker
         local registered = self:register(workerId, workerLocator)
@@ -507,7 +507,7 @@ function enterprise_employment:buildAndHostMObj_ASrv(...)
     if not buildLocation or not blueprint then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
-    local workerLocation = constructParameters.location:copy()
+    local workerLocation = constructParameters.baseLocation:copy()
     local accessDirection = "top"
     local taskData = {
         turtleId        = -1,

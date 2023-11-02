@@ -340,11 +340,10 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local T_Turtle = require "test.t_mobj_turtle"
-    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
-    t_employment = t_employment or require "test.t_employment"
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
-    local itemDepotLocation = turtleObj:getWorkerLocation()
+
+    local obj2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
+    local itemDepotLocator = enterprise_chests:saveObject(obj2)
+    local itemDepotLocation = obj2:getBaseLocation()
 
     -- test
     local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
@@ -357,6 +356,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
 
     -- cleanup test
+    enterprise_chests:deleteResource(itemDepotLocator)
 end
 
 function T_Chest.T_can_ProvideItems_QOSrv()

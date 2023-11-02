@@ -65,14 +65,15 @@ local testObjName = "turtle"
 local logOk = false
 
 local workerId1 = 111111
-local baseLocation1  = Location:newInstance(-6, 6, 1, 0, 1)
+local baseLocation1  = Location:newInstance(1, -1, 3, 0, 1)
 local workerLocation1  = baseLocation1:copy()
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
 
 local constructParameters = {
-    workerId    = workerId1,
-    location    = baseLocation1,
+    workerId        = workerId1,
+    baseLocation    = baseLocation1,
+    workerLocation  = workerLocation1,
 }
 
 local compact = { compact = true }

@@ -2,7 +2,6 @@ local t_employment = {}
 
 local corelog = require "corelog"
 
-local MethodExecutor = require "method_executor"
 local Location = require "obj_location"
 
 local enterprise_employment = require "enterprise_employment"
@@ -46,13 +45,14 @@ local testMObjClassName = "Turtle"
 local testMObjName = "turtle"
 local level0 = 0
 local workerId1 = 111111
-local baseLocation1  = Location:newInstance(-6, 6, 1, 0, 1)
+local baseLocation1 = Location:newInstance(1, -1, 3, 0, 1)
 local workerLocation1  = baseLocation1:copy()
 local fuelPriorityKey = ""
 
 local constructParameters0 = {
     workerId        = workerId1,
-    location        = workerLocation1,
+    baseLocation    = baseLocation1,
+    workerLocation  = workerLocation1,
 }
 
 local compact = { compact = true }
