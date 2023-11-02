@@ -97,6 +97,32 @@ end
 --                      _/ |
 --                     |__/
 
+local function GetNextTurtleBaseLocation()
+    -- get # hosted Turtle's
+    local nHostedTurtles = enterprise_employment:getNumberOfObjects("Turtle")
+
+    -- determine next baseLocation
+    local nextBaseLocation = Location:newInstance(nHostedTurtles, -1, 3, 0, 1) -- note: we base/ park the Turtle's along a line in x on the highway
+
+    -- end
+    return nextBaseLocation
+end
+
+local function GetNextTurtleConstructParameters()
+    -- get nextBaseLocation
+    local nextBaseLocation = GetNextTurtleBaseLocation()
+
+    --
+    local constructParameters = {
+        workerId        = workerId1,
+        baseLocation    = nextBaseLocation,
+        workerLocation  = nextBaseLocation:copy(),
+    }
+
+    -- end
+    return constructParameters
+end
+
 function t_employment.T_hostMObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
@@ -113,9 +139,10 @@ local mobjLocator_Turtle = nil
 
 function t_employment.T_buildAndHostMObj_ASrv_Turtle()
     -- prepare test
+    local constructParameters = GetNextTurtleConstructParameters()
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
