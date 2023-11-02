@@ -43,12 +43,13 @@ local enterprise_employment
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, workerId, workerLocation, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, workerId, baseLocation, workerLocation, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
             id                      + (string) id of the Turtle
             workerId                + (number) workerId of the Turtle
+            baseLocation            + (Location) base location of the Turtle
             workerLocation          + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
     ]], ...)
@@ -58,6 +59,7 @@ function Turtle:_init(...)
     ObjBase._init(self)
     self._id                = id
     self._workerId          = workerId
+    self._baseLocation      = baseLocation
     self._location          = workerLocation
     self._fuelPriorityKey   = fuelPriorityKey
 end
@@ -72,6 +74,7 @@ function Turtle:new(...)
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the Turtle
                 _workerId               - (number) workerId of the Turtle
+                _baseLocation           + (Location, {}) base location of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], ...)
@@ -137,7 +140,9 @@ function Turtle:construct(...)
 
     -- construct new Turtle
     local id = coreutils.NewId()
-    local obj = Turtle:newInstance(id, workerId, location)
+    local baseLocation = location:copy()
+    local workerLocation = location:copy()
+    local obj = Turtle:newInstance(id, workerId, baseLocation, workerLocation)
 
     -- end
     return obj
@@ -182,7 +187,7 @@ end
 --                           |__/
 
 function Turtle:getBaseLocation()
-    return self:getWorkerLocation()
+    return self._baseLocation
 end
 
 local function Turtle_layer()

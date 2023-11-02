@@ -3,6 +3,10 @@ local t_coremove = {}
 local corelog = require "corelog"
 local coremove = require "coremove"
 
+local enterprise_employment = require "enterprise_employment"
+
+local t_employment = require "test.t_employment"
+
 function t_coremove.T_GoHome()
     coremove.GoTo({
         _x	= 0,
@@ -11,6 +15,16 @@ function t_coremove.T_GoHome()
         _dx	= 0,
         _dy	= 1,
     })
+end
+
+function t_coremove.T_GoBase()
+    -- get current Turtle
+    local currentTurtleLocator = t_employment.GetCurrentTurtleLocator()
+    local currentTurtle = enterprise_employment:getObject(currentTurtleLocator) assert(currentTurtle, "Failed obtaining currentTurtle")
+
+    -- move to baseLocation
+    local baseLocation = currentTurtle:getBaseLocation()
+    coremove.GoTo(baseLocation)
 end
 
 function t_coremove.T_GoToLeftHome()
