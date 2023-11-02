@@ -210,6 +210,18 @@ local function Chest_layer()
     )
 end
 
+local function ChestDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ? ",
+        })
+    )
+end
+
 local function Computer_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
@@ -217,6 +229,17 @@ local function Computer_layer()
         }),
         CodeMap:newInstance({
             [1] = "C",
+        })
+    )
+end
+
+local function ComputerDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ",
         })
     )
 end
@@ -274,6 +297,7 @@ local function Dismantle_layer()
     )
 end
 
+-- ToDo: split off DisplayStation
 function UserStation.GetBuildBlueprint(...)
     -- get & check input from description
     local checkSuccess, baseLocation = InputChecker.Check([[
@@ -293,13 +317,13 @@ function UserStation.GetBuildBlueprint(...)
     local layerList = {
         { startpoint = Location:newInstance(2, 3, 0), buildDirection = "Down", layer = Chest_layer()},
         { startpoint = Location:newInstance(3, 3, 0), buildDirection = "Down", layer = Computer_layer()},
-        { startpoint = Location:newInstance(3, 3, 2), buildDirection = "Down", layer = Computer_layer()},
+        -- { startpoint = Location:newInstance(3, 3, 2), buildDirection = "Down", layer = Computer_layer()},
     }
-    for i=7,2,-1 do
-        table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Front", layer = Monitor_Only_layer()})
-    end
+    -- for i=7,2,-1 do
+    --     table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Front", layer = Monitor_Only_layer()})
+    -- end
     table.insert(layerList, { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Front", layer = Modem_layer()})
-    table.insert(layerList, { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Front", layer = Modem_layer()})
+    -- table.insert(layerList, { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Front", layer = Modem_layer()})
 
     -- escapeSequence
     local escapeSequence = {}
@@ -331,8 +355,10 @@ function UserStation:getDismantleBlueprint()
     -- layerList
     local layerList = {
         { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Down", layer = ModemDismantle_layer()},
-        { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Down", layer = ModemDismantle_layer()},
-        { startpoint = Location:newInstance(-5, 3, 0), buildDirection = "Front", layer = Dismantle_layer()}
+--        { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Down", layer = ModemDismantle_layer()},
+--        { startpoint = Location:newInstance(-5, 3, 0), buildDirection = "Front", layer = Dismantle_layer()}
+        { startpoint = Location:newInstance(3, 3, 0), buildDirection = "Down", layer = ComputerDismantle_layer()},
+        { startpoint = Location:newInstance(2, 3, 0), buildDirection = "Down", layer = ChestDismantle_layer()},
     }
 
     -- escapeSequence

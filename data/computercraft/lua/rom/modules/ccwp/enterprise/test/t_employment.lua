@@ -9,11 +9,16 @@ local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
+local TestArrayTest = require "test_array_test"
+local FieldTest = require "field_test"
+local ValueTypeTest = require "value_type_test"
+
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
 local T_MObjHost = require "test.t_mobj_host"
 local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
+local T_UserStation = require "test.t_mobj_user_station"
 
 function t_employment.T_All()
     -- ObjHost
@@ -22,6 +27,9 @@ function t_employment.T_All()
     -- MObjHost
     t_employment.T_hostMObj_SSrv_Turtle()
     t_employment.T_releaseMObj_SSrv_Turtle()
+
+    t_employment.T_hostMObj_SSrv_UtilStation()
+    t_employment.T_releaseMObj_SSrv_UtilStation()
 
     -- Worker
     t_employment.T_IRegistry_All()
@@ -37,22 +45,35 @@ function t_employment.T_AllPhysical()
     -- MObjHost
     local mobjLocator = t_employment.T_buildAndHostMObj_ASrv_Turtle()
     t_employment.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
+
+    mobjLocator = t_employment.T_buildAndHostMObj_ASrv_UtilStation()
+    t_employment.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
 end
 
 local logOk = false
 local testClassName = "enterprise_employment"
-local testMObjClassName = "Turtle"
-local testMObjName = "turtle"
+local testTurtleClassName = "Turtle"
+local testTurtleName = "turtle"
+local testUserStationClassName = "UserStation"
+local testUserStationName = "userStation"
+
 local level0 = 0
 local workerId1 = 111111
 local baseLocation1 = Location:newInstance(1, -1, 3, 0, 1)
-local workerLocation1  = baseLocation1:copy()
+local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1)
+local workerLocation1 = baseLocation1:copy()
+local workerLocation_UserStation = baseLocation_UserStation:getRelativeLocation(3, 3, 0)
 local fuelPriorityKey = ""
 
-local constructParameters0 = {
+local constructParameters0_Turtle = {
     workerId        = workerId1,
     baseLocation    = baseLocation1,
     workerLocation  = workerLocation1,
+}
+local constructParameters_UserStation = {
+    workerId        = workerId1,
+    baseLocation    = baseLocation_UserStation,
+    workerLocation  = workerLocation_UserStation,
 }
 
 local compact = { compact = true }
@@ -97,6 +118,8 @@ end
 --                      _/ |
 --                     |__/
 
+-- ** Turtle **
+
 local function GetNextTurtleBaseLocation()
     -- get # hosted Turtle's
     local nHostedTurtles = enterprise_employment:getNumberOfObjects("Turtle")
@@ -126,10 +149,10 @@ end
 function t_employment.T_hostMObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest0 = T_Turtle.CreateInitialisedTest(nil, workerId1, baseLocation1, workerLocation1, fuelPriorityKey)
+    local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId1, baseLocation1, workerLocation1, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, fieldsTest0, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters0_Turtle, testTurtleName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -142,7 +165,7 @@ function t_employment.T_buildAndHostMObj_ASrv_Turtle()
     local constructParameters = GetNextTurtleConstructParameters()
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testTurtleClassName, constructParameters, testTurtleName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -156,7 +179,7 @@ function t_employment.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters0_Turtle, testTurtleName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -176,6 +199,70 @@ function t_employment.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
 
     -- cleanup test
     mobjLocator_Turtle = nil
+end
+
+-- ** UserStation **
+
+function t_employment.T_hostMObj_SSrv_UtilStation()
+    -- prepare test
+    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+    local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
+
+    local fieldsTest = T_UserStation.CreateInitialisedTest(workerId1, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+local mobjLocator_UtilStation = nil
+
+function t_employment.T_buildAndHostMObj_ASrv_UtilStation()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+
+    -- remember what we just build
+    mobjLocator_UtilStation = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_employment.T_releaseMObj_SSrv_UtilStation()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_employment.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_UtilStation, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_UtilStation
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_employment, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_UtilStation = nil
 end
 
 --   __          __        _

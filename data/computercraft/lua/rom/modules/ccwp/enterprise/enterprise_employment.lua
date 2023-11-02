@@ -373,8 +373,6 @@ function enterprise_employment:getCurrentWorkerLocator()
 
         -- define this as new workerLocator
         currentWorkerLocator = workerLocator
-
-        -- reboot?
     end
     if not currentWorkerLocator then corelog.Warning("enterprise_employment:getCurrentWorkerLocator: workerLocator for (current) Worker "..workerId.." not found") return nil end
 
@@ -507,7 +505,7 @@ function enterprise_employment:buildAndHostMObj_ASrv(...)
     if not buildLocation or not blueprint then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
-    local workerLocation = constructParameters.baseLocation:copy()
+    local workerLocation = constructParameters.workerLocation:copy()
     local accessDirection = "top"
     local taskData = {
         turtleId        = -1,
