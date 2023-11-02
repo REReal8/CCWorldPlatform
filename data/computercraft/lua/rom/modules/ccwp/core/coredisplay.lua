@@ -44,7 +44,7 @@ function coredisplay.Init()
             intro   = "Choose your action",
             option  = {
                 {key = "1", desc = "All tests", 		func = ExecuteAllTests,	 		param = {filename = "t_ccwp"}},
-                {key = "2", desc = "Exec code",  		func = ExecuteCode,	    		param = {step = 1}},
+                {key = "2", desc = "Exec code",  		func = ExecuteCode,	    		param = {}},
                 {key = "3", desc = "Load event",		func = LoadEvent,				param = {}},
                 {key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
             },
