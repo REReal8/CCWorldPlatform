@@ -21,14 +21,14 @@ local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_storage = require "enterprise_storage"
 
---                _     _ _         __                  _   _
---               | |   | (_)       / _|                | | (_)
---    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---   | |
---   |_|
+--    ______       _                       _           _____      _             _          _   _
+--   |  ____|     | |                     (_)         / ____|    | |           (_)        | | (_)
+--   | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___| |     ___ | | ___  _ __  _ ______ _| |_ _  ___  _ __
+--   |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \ |    / _ \| |/ _ \| '_ \| |_  / _` | __| |/ _ \| '_ \
+--   | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/ |___| (_) | | (_) | | | | |/ / (_| | |_| | (_) | | | |
+--   |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___|\_____\___/|_|\___/|_| |_|_/___\__,_|\__|_|\___/|_| |_|
+--                             | |
+--                             |_|
 
 function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- get & check input from description
@@ -437,12 +437,5 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     -- start project
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 return enterprise_colonization
