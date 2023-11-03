@@ -25,6 +25,7 @@ local Location  = require "obj_location"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local Turtle = require "mobj_turtle"
+local UserStation = require "mobj_user_station"
 
 local role_interactor = require "role_interactor"
 
@@ -196,7 +197,7 @@ function enterprise_employment:getRegistered(...)
     end
 
     -- end
-    corelog.Warning("enterprise_employment:getRegistered: Worker "..workerId.." not yet registered")
+    corelog.Warning("enterprise_employment:getRegistered: Worker "..workerId.." not (yet) registered")
     return nil
 end
 
@@ -572,19 +573,54 @@ end
 
 function enterprise_employment:reset()
     -- get Turtle's
-    local turtles = self:getObjects(Turtle:getClassName())
+    local turtleClassName = Turtle:getClassName()
+    local turtles = self:getObjects(turtleClassName)
     if not turtles then corelog.Error("enterprise_employment:reset: Failed obtaining Turtle's") return nil end
 
-    -- reset all Turtle's
-    for id, turtleObjTable in pairs(turtles) do
+    -- check/ reset all Turtle's
+    for id, objTable in pairs(turtles) do
         -- convert to Turtle
-        local turtleObj = objectFactory:create(Turtle:getClassName(), turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
+        local obj = objectFactory:create(turtleClassName, objTable) if not obj then corelog.Error("enterprise_employment:reset: Failed converting Turtle "..id.." objTable to Turtle") return nil end
 
-        -- reset Turtle
-        turtleObj:setFuelPriorityKey("")
+        -- check registered
+        local workerId = obj:getWorkerId()
+        local isRegistered = self:isRegistered(workerId)
+        if isRegistered then
+            -- reset Turtle
+            obj:setFuelPriorityKey("")
 
-        -- save Turtle
-        local turtleLocator = enterprise_employment:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:reset: failed saving turtle") return nil end
+            -- save Turtle
+            local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:reset: Failed saving Turtle") return nil end
+        else
+            corelog.Warning("enterprise_employment:reset: Turtle "..workerId.." not registered => removing it")
+            local objLocator = self:getObjectLocator(obj)
+            self:deleteResource(objLocator)
+        end
+    end
+
+    -- get UserStation's
+    local userStationClassName = UserStation:getClassName()
+    local userStations = self:getObjects(userStationClassName)
+    if not userStations then corelog.Error("enterprise_employment:reset: Failed obtaining UserStation's") return nil end
+
+    -- check/ reset all UserStation's
+    for id, objTable in pairs(userStations) do
+        -- convert to UserStation
+        local obj = objectFactory:create(userStationClassName, objTable) if not obj then corelog.Error("enterprise_employment:reset: Failed converting UserStation "..id.." objTable to UserStation") return nil end
+
+        -- check registered
+        local workerId = obj:getWorkerId()
+        local isRegistered = self:isRegistered(workerId)
+        if isRegistered then
+            -- -- reset UserStation
+
+            -- -- save UserStation
+            -- local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:reset: Failed saving UserStation") return nil end
+        else
+            corelog.Warning("enterprise_employment:reset: UserStation "..workerId.." not registered => removing it")
+            local objLocator = self:getObjectLocator(obj)
+            self:deleteResource(objLocator)
+        end
     end
 end
 

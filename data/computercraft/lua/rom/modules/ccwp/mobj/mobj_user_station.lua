@@ -29,7 +29,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
-local enterprise_employment = require "enterprise_employment"
+local enterprise_employment
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -464,6 +464,7 @@ local function UserStationMenuOrder(t, amount)
         }
         local itemDepotLocator = userStation:getInputLocator()
         local ingredientsItemSupplierLocator = shopLocator
+        enterprise_employment = enterprise_employment or require "enterprise_employment"
         local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator() -- ToDo: introduce and use proper WasteDump + somehow get this passed into UserStation
         local scheduleResult = shop:provideItemsTo_AOSrv({
             provideItems                    = provideItems,
