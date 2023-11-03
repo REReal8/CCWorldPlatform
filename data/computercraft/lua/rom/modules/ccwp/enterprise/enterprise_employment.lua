@@ -571,16 +571,16 @@ end
 --                             | |                                    | |             __/ |
 --                             |_|                                    |_|            |___/
 
-function enterprise_employment:reset()
+function enterprise_employment:resetAndRecover()
     -- get Turtle's
     local turtleClassName = Turtle:getClassName()
     local turtles = self:getObjects(turtleClassName)
-    if not turtles then corelog.Error("enterprise_employment:reset: Failed obtaining Turtle's") return nil end
+    if not turtles then corelog.Error("enterprise_employment:resetAndRecover: Failed obtaining Turtle's") return nil end
 
     -- check/ reset all Turtle's
     for id, objTable in pairs(turtles) do
         -- convert to Turtle
-        local obj = objectFactory:create(turtleClassName, objTable) if not obj then corelog.Error("enterprise_employment:reset: Failed converting Turtle "..id.." objTable to Turtle") return nil end
+        local obj = objectFactory:create(turtleClassName, objTable) if not obj then corelog.Error("enterprise_employment:resetAndRecover: Failed converting Turtle "..id.." objTable to Turtle") return nil end
 
         -- check registered
         local workerId = obj:getWorkerId()
@@ -590,9 +590,9 @@ function enterprise_employment:reset()
             obj:setFuelPriorityKey("")
 
             -- save Turtle
-            local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:reset: Failed saving Turtle") return nil end
+            local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:resetAndRecover: Failed saving Turtle") return nil end
         else
-            corelog.Warning("enterprise_employment:reset: Turtle "..workerId.." not registered => removing it")
+            corelog.Warning("enterprise_employment:resetAndRecover: Turtle "..workerId.." not registered => removing it")
             local objLocator = self:getObjectLocator(obj)
             self:deleteResource(objLocator)
         end
@@ -601,23 +601,52 @@ function enterprise_employment:reset()
     -- get UserStation's
     local userStationClassName = UserStation:getClassName()
     local userStations = self:getObjects(userStationClassName)
-    if not userStations then corelog.Error("enterprise_employment:reset: Failed obtaining UserStation's") return nil end
+    if not userStations then corelog.Error("enterprise_employment:resetAndRecover: Failed obtaining UserStation's") return nil end
 
-    -- check/ reset all UserStation's
+    -- check/ reset/ recover all UserStation's
     for id, objTable in pairs(userStations) do
         -- convert to UserStation
-        local obj = objectFactory:create(userStationClassName, objTable) if not obj then corelog.Error("enterprise_employment:reset: Failed converting UserStation "..id.." objTable to UserStation") return nil end
+        local obj = objectFactory:create(userStationClassName, objTable) if not obj then corelog.Error("enterprise_employment:resetAndRecover: Failed converting UserStation "..id.." objTable to UserStation") return nil end
 
         -- check registered
         local workerId = obj:getWorkerId()
         local isRegistered = self:isRegistered(workerId)
         if isRegistered then
-            -- -- reset UserStation
+            -- reset UserStation
+            -- nothing to do for now
 
-            -- -- save UserStation
-            -- local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:reset: Failed saving UserStation") return nil end
+            -- save UserStation
+            -- local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:resetAndRecover: Failed saving UserStation") return nil end
+
+            -- check input Chest (still) exist
+            local inputLocator = obj:getInputLocator()
+            local inputChest = ObjHost.GetObject(inputLocator)
+            if type(inputChest) ~= "table" then
+                corelog.Warning("enterprise_employment:resetAndRecover: inputChest "..inputLocator:getURI().." not found.")
+            end
+
+            -- check input Chest (still) exist
+            local outputLocator = obj:getOutputLocator()
+            local outputChest = ObjHost.GetObject(outputLocator)
+            if type(outputChest) ~= "table" then
+                corelog.Warning("enterprise_employment:resetAndRecover: outputChest "..outputLocator:getURI().." not found.")
+            end
+
+            -- recover if needed
+            if type(inputChest) ~= "table" or type(outputChest) ~= "table" then
+                -- re host UserStation
+                local constructParameters = {
+                    workerId        = workerId,
+                    baseLocation    = obj:getBaseLocation()
+                }
+                corelog.Warning("enterprise_employment:resetAndRecover: => recovering UserStation "..id.." by rehosting it")
+                self:hostMObj_SSrv({
+                    className           = userStationClassName,
+                    constructParameters = constructParameters,
+                })
+            end
         else
-            corelog.Warning("enterprise_employment:reset: UserStation "..workerId.." not registered => removing it")
+            corelog.Warning("enterprise_employment:resetAndRecover: UserStation "..workerId.." not registered => removing it")
             local objLocator = self:getObjectLocator(obj)
             self:deleteResource(objLocator)
         end

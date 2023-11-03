@@ -293,12 +293,12 @@ end
 --                             | |                                    | |             __/ |
 --                             |_|                                    |_|            |___/
 
-function t_employment.T_reset()
+function t_employment.T_resetAndRecover()
     -- prepare test
-    corelog.WriteToLog("* enterprise_employment:reset() tests")
+    corelog.WriteToLog("* enterprise_employment:resetAndRecover() tests")
 
     -- test
-    enterprise_employment:reset()
+    enterprise_employment:resetAndRecover()
 
     -- cleanup test
 end
