@@ -351,6 +351,7 @@ function UserStation.GetBuildBlueprint(...)
     return buildLocation, blueprint
 end
 
+-- ToDo: split off DisplayStation
 function UserStation:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the UserStation in the physical minecraft world.
@@ -409,6 +410,8 @@ end
 local subject = "input Chest timer"
 
 function UserStation:activate()
+    -- ToDo: figure out if this is how we want to do this... or do we want to use an assignment here?
+
     -- setup timer for input Chest checking
     coreevent.AddEventListener(UserStation.DoEventInputChestTimer, "mobj_user_station", subject)
 
