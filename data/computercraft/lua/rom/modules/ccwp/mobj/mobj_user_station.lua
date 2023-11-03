@@ -15,6 +15,8 @@ local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker, IItemDepot)
         item input and output chests
 --]]
 
+local coreevent = require "coreevent"
+local coretask = require "coretask"
 local coredht = require "coredht"
 local coredisplay = require "coredisplay"
 local corelog = require "corelog"
@@ -26,6 +28,8 @@ local Block = require "obj_block"
 local Location = require "obj_location"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+
+local role_conservator = require "role_conservator"
 
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
@@ -402,13 +406,38 @@ function UserStation:getWorkerId()
     return self._workerId
 end
 
+local subject = "input Chest timer"
+
 function UserStation:activate()
+    -- setup timer for input Chest checking
+    coreevent.AddEventListener(UserStation.DoEventInputChestTimer, "mobj_user_station", subject)
+
+    -- check input box for the first time!
+    UserStation.DoEventInputChestTimer(subject, self:getOutputLocator())
+
+    -- set active
     self._isActive = true
+
+    -- end
     return self:isActive()
 end
 
+function UserStation.DoEventInputChestTimer(_, outputLocator)
+    -- add the work, the real stuff
+    coretask.AddWork(role_conservator.CheckOutputChest, outputLocator)
+
+    -- create new event
+    coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", subject, outputLocator)
+end
+
 function UserStation:deactivate()
+    -- remove timer
+    coreevent.RemoveEventListener("mobj_user_station", subject)
+
+    -- set deactive
     self._isActive = false
+
+    -- end
     return not self:isActive()
 end
 

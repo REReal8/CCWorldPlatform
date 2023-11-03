@@ -9,17 +9,7 @@ local enterprise_utilities = Class.NewClass(MObjHost)
 
 local coredht   		= require "coredht"
 local coredisplay		= require "coredisplay"
-local coreevent 		= require "coreevent"
 local corelog   		= require "corelog"
-local coretask   		= require "coretask"
-
-local Callback          = require "obj_callback"
-local ObjHost           = require "obj_host"
-local ItemTable         = require "obj_item_table"
-local Location          = require "obj_location"
-
-local enterprise_chests = require "enterprise_chests"
-local enterprise_dump   = require "enterprise_dump"
 
 enterprise_utilities.DHTroot    = "enterprise_utilities"
 
@@ -90,74 +80,6 @@ end
 
 function ActAsLogger()
     corelog.WriteToLog("I will be the logger!!")
-end
-
-function DoEventInputChestTimer()
-    -- add the work, the real stuff
-    coretask.AddWork(CheckInputChest, {})
-
-    -- create new event
-    coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", "input Chest timer")
-end
-
-function CheckInputChest()
-    -- set timer for input box (15 sec)
-    local inputChest    = peripheral.wrap("left")
-    local itemTable     = ItemTable:new({})
-
-    -- find first empty slot from the end
-    local firstEmpty    = 27
-    while firstEmpty > 0 do
-        -- we are done if this slot is empty
-        if inputChest.getItemDetail(firstEmpty) == nil then break end
-
-        -- check another
-        firstEmpty = firstEmpty - 1
-    end
-
-    -- any new items?
-    local numberOfNewItems  = 0
-    while numberOfNewItems < 27 do
-        -- get the details of this slot
-        local itemDetail = inputChest.getItemDetail(numberOfNewItems + 1)
-
-        -- is the slot filled?
-        if type(itemDetail) == "nil" then break end
-
-        -- add items to the order
-        itemTable:add(itemDetail.name, itemDetail.count)
-
-        -- move the item to the end
-        inputChest.pushItems("left", numberOfNewItems + 1, itemDetail.count, firstEmpty)
-
-        -- update
-        firstEmpty          = firstEmpty - 1
-        numberOfNewItems    = numberOfNewItems + 1
-    end
-
-    -- did we find anything
-    if itemTable and not itemTable:isEmpty() then
-
-        -- create items locator (temp solution) ToDo !!
-        local inputChestLocator = enterprise_chests:hostMObj_SSrv({
-            className           = "Chest",
-            constructParameters = {
-                baseLocation        = Location:newInstance(-2, -9, 1, 0, 1),
-                accessDirection     = "top"
-            }
-        }).mobjLocator
-
-        -- add the items to the locator
-        inputChestLocator:setQuery(itemTable)
-
-        -- store the items in the default dump site
-        local dumpLocator = enterprise_dump.GetDumpLocator()
-        local dumpObject  = ObjHost.GetObject(dumpLocator)
-
-        -- ask the dump to store our items
-        if dumpObject == nil then return end
-        dumpObject:storeItemsFrom_AOSrv({itemsLocator = inputChestLocator}, Callback.GetNewDummyCallBack())
-    end
 end
 
 --        _ _           _

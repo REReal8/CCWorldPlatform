@@ -11,10 +11,15 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 local Inventory = require "obj_inventory"
 local Location = require "obj_location"
+local ItemTable = require "obj_item_table"
 
-local enterprise_employment
+local ObjHost = require "obj_host"
+
+local enterprise_chests = require "enterprise_chests"
+local enterprise_dump
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -298,7 +303,6 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
     local inventory = Inventory:newInstance(slots)
 
     -- determine output locator
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local turtleOutputItemsLocator = turtleLocator:copy()
     turtleOutputItemsLocator:setQuery(itemResultQuery)
 
@@ -428,6 +432,70 @@ function role_conservator.PutItemsFromTurtleIntoChest_Task(...)
         inventory       = inventory,
     }
     return result
+end
+
+function role_conservator.CheckOutputChest(...)
+    -- get & check input from description
+    local checkSuccess, outputLocator = InputChecker.Check([[
+        This function does the magic Guido made to check an output Chest.
+
+        Return value:
+
+        Parameters:
+            outputLocator               + (URL) locating output Chest
+    ]], ...)
+    if not checkSuccess then corelog.Error("role_conservator.CheckOutputChest: Invalid input") return {success = false} end
+
+    -- set timer for input box (15 sec)
+    local chestName = "right"
+    local outputChest    = peripheral.wrap(chestName)
+    local itemTable     = ItemTable:new({})
+
+    -- find first empty slot from the end
+    local firstEmpty    = 27
+    while firstEmpty > 0 do
+        -- we are done if this slot is empty
+        if outputChest.getItemDetail(firstEmpty) == nil then break end
+
+        -- check another
+        firstEmpty = firstEmpty - 1
+    end
+
+    -- any new items?
+    local numberOfNewItems  = 0
+    while numberOfNewItems < 27 do
+        -- get the details of this slot
+        local itemDetail = outputChest.getItemDetail(numberOfNewItems + 1)
+
+        -- is the slot filled?
+        if type(itemDetail) == "nil" then break end
+
+        -- add items to the order
+        itemTable:add(itemDetail.name, itemDetail.count)
+
+        -- move the item to the end
+        outputChest.pushItems(chestName, numberOfNewItems + 1, itemDetail.count, firstEmpty)
+
+        -- update
+        firstEmpty          = firstEmpty - 1
+        numberOfNewItems    = numberOfNewItems + 1
+    end
+
+    -- did we find anything
+    if itemTable and not itemTable:isEmpty() then
+        -- add the items to the locator
+        local outputItemsLocator = outputLocator:copy()
+        outputItemsLocator:setQuery(itemTable)
+
+        -- store the items in the default dump site
+        enterprise_dump = enterprise_dump or require "enterprise_dump"
+        local dumpLocator = enterprise_dump.GetDumpLocator()
+        local dumpObject  = ObjHost.GetObject(dumpLocator)
+
+        -- ask the dump to store our items
+        if dumpObject == nil then return end
+        dumpObject:storeItemsFrom_AOSrv({itemsLocator = outputItemsLocator}, Callback.GetNewDummyCallBack())
+    end
 end
 
 return role_conservator
