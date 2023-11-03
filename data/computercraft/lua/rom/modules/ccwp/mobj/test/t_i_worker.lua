@@ -17,6 +17,7 @@ function T_IWorker.pt_all(className, obj, objName, expectedWorkerLocation, worke
 
     -- IWorker methods
     T_IWorker.pt_getWorkerId(className, obj, objName, nil, logOk)
+    T_IWorker.pt_active(className, obj, objName, logOk)
     T_IWorker.pt_getWorkerLocation(className, obj, objName, expectedWorkerLocation, logOk)
     T_IWorker.pt_getWorkerResume(className, obj, objName, workerResumeTest, logOk)
     T_IWorker.pt_getMainUIMenu(className, obj, objName, isMainUIMenuTest, logOk)
@@ -64,11 +65,35 @@ function T_IWorker.pt_getWorkerId(className, obj, objName, expectedWorkerId, log
     assert(objName, "no objName provided")
     expectedWorkerId = expectedWorkerId or obj._workerId
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":getWorkerId() tests")
+    corelog.WriteToLog("* "..className..":getWorkerId() test")
 
     -- test
     local test = MethodResultEqualTest:newInstance("getWorkerId", expectedWorkerId)
     test:test(obj, objName, "", logOk)
+end
+
+function T_IWorker.pt_active(className, obj, objName, logOk)
+    -- prepare test
+    assert(className, "no className provided")
+    assert(obj, "no obj provided")
+    assert(objName, "no objName provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+
+    -- test activate
+    corelog.WriteToLog("* "..className.." activate tests")
+    local test = MethodResultEqualTest:newInstance("activate", true)
+    test:test(obj, objName, "", logOk)
+    test = MethodResultEqualTest:newInstance("isActive", true)
+    test:test(obj, objName, "", logOk)
+
+    -- test deactivate
+    corelog.WriteToLog("* "..className.." deactivate tests")
+    test = MethodResultEqualTest:newInstance("deactivate", true)
+    test:test(obj, objName, "", logOk)
+    test = MethodResultEqualTest:newInstance("isActive", false)
+    test:test(obj, objName, "", logOk)
+
+    -- test
 end
 
 function T_IWorker.pt_getWorkerLocation(className, obj, objName, expectedWorkerLocation, logOk)
@@ -78,7 +103,7 @@ function T_IWorker.pt_getWorkerLocation(className, obj, objName, expectedWorkerL
     assert(objName, "no objName provided")
     assert(expectedWorkerLocation, "no expectedWorkerLocation provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":getWorkerLocation() tests")
+    corelog.WriteToLog("* "..className..":getWorkerLocation() test")
 
     -- test
     local test = MethodResultEqualTest:newInstance("getWorkerLocation", expectedWorkerLocation)

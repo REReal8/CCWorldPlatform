@@ -40,11 +40,12 @@ local enterprise_employment = require "enterprise_employment"
 
 function UserStation:_init(...)
     -- get & check input from description
-    local checkSuccess, workerId, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
+    local checkSuccess, workerId, isActive, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
         Initialise a UserStation.
 
         Parameters:
             workerId                + (number) workerId of the UserStation
+            isActive                + (boolean) whether the UserStation is active
             baseLocation            + (Location) base location of the UserStation
             inputLocator            + (URL) input Chest of the UserStation (where items will be picked up from)
             outputLocator           + (URL) output Chest of the UserStation (where items will be delivered)
@@ -54,6 +55,7 @@ function UserStation:_init(...)
     -- initialisation
     ObjBase._init(self)
     self._workerId          = workerId
+    self._isActive          = isActive
     self._baseLocation      = baseLocation
     self._inputLocator      = inputLocator
     self._outputLocator     = outputLocator
@@ -67,7 +69,8 @@ function UserStation:new(...)
 
         Parameters:
             o                           + (table, {}) with object fields
-                _workerId               + (number) workerId of the UserStation
+                _workerId               - (number) workerId of the UserStation
+                _isActive               - (boolean, false) whether the UserStation is active
                 _baseLocation           - (Location) location of the UserStation
                 _inputLocator           - (URL) input Chest of the UserStation
                 _outputLocator          - (URL) output Chest of the UserStation
@@ -137,7 +140,7 @@ function UserStation:construct(...)
     }}).mobjLocator
 
     -- construct new UserStation
-    local obj = UserStation:newInstance(workerId, baseLocation:copy(), inputLocator, outputLocator)
+    local obj = UserStation:newInstance(workerId, false, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return obj
@@ -397,6 +400,20 @@ function UserStation:getWorkerId()
 
     -- end
     return self._workerId
+end
+
+function UserStation:activate()
+    self._isActive = true
+    return self:isActive()
+end
+
+function UserStation:deactivate()
+    self._isActive = false
+    return not self:isActive()
+end
+
+function UserStation:isActive()
+    return self._isActive == true
 end
 
 function UserStation:getWorkerLocation()

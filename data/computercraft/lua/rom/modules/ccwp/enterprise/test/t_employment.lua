@@ -58,20 +58,21 @@ local testUserStationClassName = "UserStation"
 local testUserStationName = "userStation"
 
 local level0 = 0
-local workerId1 = 111111
-local baseLocation1 = Location:newInstance(1, -1, 3, 0, 1)
+local workerId0 = 111111
+local isActive_false = false
+local baseLocation0 = Location:newInstance(1, -1, 3, 0, 1)
 local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1)
-local workerLocation1 = baseLocation1:copy()
+local workerLocation0 = baseLocation0:copy()
 local workerLocation_UserStation = baseLocation_UserStation:getRelativeLocation(3, 3, 0)
 local fuelPriorityKey = ""
 
-local constructParameters0_Turtle = {
-    workerId        = workerId1,
-    baseLocation    = baseLocation1,
-    workerLocation  = workerLocation1,
+local constructParameters_Turtle = {
+    workerId        = workerId0,
+    baseLocation    = baseLocation0,
+    workerLocation  = workerLocation0,
 }
 local constructParameters_UserStation = {
-    workerId        = workerId1,
+    workerId        = workerId0,
     baseLocation    = baseLocation_UserStation,
     workerLocation  = workerLocation_UserStation,
 }
@@ -137,7 +138,7 @@ local function GetNextTurtleConstructParameters()
 
     --
     local constructParameters = {
-        workerId        = workerId1,
+        workerId        = workerId0,
         baseLocation    = nextBaseLocation,
         workerLocation  = nextBaseLocation:copy(),
     }
@@ -149,10 +150,10 @@ end
 function t_employment.T_hostMObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId1, baseLocation1, workerLocation1, fuelPriorityKey)
+    local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, baseLocation0, workerLocation0, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters0_Turtle, testTurtleName, fieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -179,7 +180,7 @@ function t_employment.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters0_Turtle, testTurtleName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -212,7 +213,7 @@ function t_employment.T_hostMObj_SSrv_UtilStation()
         ValueTypeTest:newInstance("URL")
     ))
 
-    local fieldsTest = T_UserStation.CreateInitialisedTest(workerId1, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
+    local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
@@ -280,7 +281,7 @@ function t_employment.T_IRegistry_All()
     local workerLocator2 = enterprise_employment:getResourceLocator(enterprise_employment.GetObjectPath("AWorkerClass", "worker2")) assert(workerLocator2, "Failed obtaining workerLocator2")
 
     -- test
-    T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
+    T_IRegistry.pt_all(testClassName, enterprise_employment, workerId0, workerLocator1, workerId2, workerLocator2, thingName)
 end
 
 --    ______       _                       _          ______                 _                                  _

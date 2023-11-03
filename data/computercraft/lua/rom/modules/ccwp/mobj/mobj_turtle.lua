@@ -43,12 +43,13 @@ local enterprise_employment
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, workerId, baseLocation, workerLocation, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, workerId, isActive, baseLocation, workerLocation, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
             id                      + (string) id of the Turtle
             workerId                + (number) workerId of the Turtle
+            isActive                + (boolean) whether the Turtle is active
             baseLocation            + (Location) base location of the Turtle
             workerLocation          + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
@@ -59,6 +60,7 @@ function Turtle:_init(...)
     ObjBase._init(self)
     self._id                = id
     self._workerId          = workerId
+    self._isActive          = isActive
     self._baseLocation      = baseLocation
     self._location          = workerLocation
     self._fuelPriorityKey   = fuelPriorityKey
@@ -74,7 +76,8 @@ function Turtle:new(...)
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the Turtle
                 _workerId               - (number) workerId of the Turtle
-                _baseLocation           + (Location, {}) base location of the Turtle
+                _isActive               - (boolean, false) whether the Turtle is active
+                _baseLocation           - (Location, {}) base location of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], ...)
@@ -141,7 +144,7 @@ function Turtle:construct(...)
 
     -- construct new Turtle
     local id = coreutils.NewId()
-    local obj = Turtle:newInstance(id, workerId, baseLocation, workerLocation)
+    local obj = Turtle:newInstance(id, workerId, false, baseLocation, workerLocation)
 
     -- end
     return obj
@@ -296,6 +299,20 @@ function Turtle:getWorkerId()
 
     -- end
     return self._workerId
+end
+
+function Turtle:activate()
+    self._isActive = true
+    return self:isActive()
+end
+
+function Turtle:deactivate()
+    self._isActive = false
+    return not self:isActive()
+end
+
+function Turtle:isActive()
+    return self._isActive == true
 end
 
 function Turtle:getWorkerLocation()

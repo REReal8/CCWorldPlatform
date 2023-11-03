@@ -32,6 +32,48 @@ function IWorker:getWorkerId()
     return -1
 end
 
+function IWorker:activate()
+    --[[
+        Activate the Worker. This implies the Worker is available for work.
+
+        Return value:
+                                + (boolean) if the Worker is active
+    ]]
+
+    IInterface.UnimplementedMethodError("IWorker", "activate")
+
+    -- end
+    return false
+end
+
+function IWorker:deactivate()
+    --[[
+        Deactivate the Worker. This implies the Worker is not available for work.
+
+        Return value:
+                                + (boolean) if the Worker is inactive
+    ]]
+
+    IInterface.UnimplementedMethodError("IWorker", "deactivate")
+
+    -- end
+    return false
+end
+
+function IWorker:isActive()
+    --[[
+        Get if the Worker is active.
+
+        Return value:
+                                + (boolean) if the Worker is active
+    ]]
+
+    IInterface.UnimplementedMethodError("IWorker", "isActive")
+
+    -- end
+    return false
+end
+
 function IWorker:getWorkerLocation()
     --[[
         Get the (current) location of the Worker
