@@ -36,7 +36,10 @@ function t_colonization.T_CreateNewWorld_ASrv()
     -- test
     local serviceResults = MethodExecutor.DoASyncService_Sync("enterprise_colonization", "CreateNewWorld_ASrv", {
     })
-    assert(serviceResults == true, "Failed schedulding CreateNewWorld_ASrv")
+
+    -- check: service success
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
 
     -- cleanup test
 end
