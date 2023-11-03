@@ -60,45 +60,55 @@ function coreassignment.Run()
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
 
+    -- activate Worker
+    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+    workerObj:activate()
+    enterprise_employment:saveObject(workerObj)
+
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
         -- get Worker
-        local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+        workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
         -- note: we getObject every loop as it might have changed
 
-        -- find best next Worker assignment
-        local assignmentFilter = workerObj:getAssignmentFilter()
-        local workerId = workerObj:getWorkerId()
-        local workerResume = workerObj:getWorkerResume()
-        -- ToDo: consider if an assignment board should determine what is best...
-        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, workerResume = workerResume })
-        if not serviceResults.success then corelog.Error("coreassignment.Run: FindBestAssignment_SSrv failed.") return false end
-        local bestAssignmentId = serviceResults.assignmentId
+        -- only take work when active
+        if workerObj:isActive() then
+            -- find best next Worker assignment
+            local assignmentFilter = workerObj:getAssignmentFilter()
+            local workerId = workerObj:getWorkerId()
+            local workerResume = workerObj:getWorkerResume()
+            -- ToDo: consider if an assignment board should determine what is best...
+            local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, workerResume = workerResume })
+            if not serviceResults.success then corelog.Error("coreassignment.Run: FindBestAssignment_SSrv failed.") return false end
+            local bestAssignmentId = serviceResults.assignmentId
 
-        -- apply if we found a suitable assignment
-        local nextAssignment = nil
-        if bestAssignmentId then
-            -- apply
-            enterprise_assignmentboard.ApplyToAssignment(workerId, bestAssignmentId)
+            -- apply if we found a suitable assignment
+            local nextAssignment = nil
+            if bestAssignmentId then
+                -- apply
+                enterprise_assignmentboard.ApplyToAssignment(workerId, bestAssignmentId)
 
-            -- wait, maybe more turtles have applied
-            os.sleep(1.25)
+                -- wait, maybe more turtles have applied
+                os.sleep(1.25)
 
-            -- check who gets the assignment
-            nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(workerId, bestAssignmentId)
+                -- check who gets the assignment
+                nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(workerId, bestAssignmentId)
+            end
+
+            -- did we get an assignment?
+            if nextAssignment then
+                -- do the assignment
+                DoAssignment(workerLocator, nextAssignment)
+            else
+                -- apparently no assignment for me now
+
+                -- update status
+                corelog.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
+            end
         end
 
-        -- did we get an assignment?
-        if nextAssignment then
-            -- do the assignment
-            DoAssignment(workerLocator, nextAssignment)
-        else
-            -- update status
-            corelog.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
-
-            -- just wait a (quarter of a) second
-            os.sleep(0.25)     -- apparently no assignment for me now
-        end
+        -- just wait a (quarter of a) second to try again
+        os.sleep(0.25)
     end
 end
 
