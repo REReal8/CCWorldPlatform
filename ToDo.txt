@@ -73,6 +73,8 @@ R  Revise modules/ libraries file directory structure                           
    R  introduce base library for base modules (lower level than Obj's)                                                  (done)
    R  introduce lobj library for lobj modules (logical/ intangible Obj's)                                               (done)
 
+R  Extend IMObj (and all MObj's) with getBaseLocation                                                                   (done)
+
 -  Robuste way to initialize and setup (like the core files do)
    -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
@@ -137,9 +139,6 @@ G  Descriptions for blueprints and project steps
          -  releaseMObj_SSrv
    -  MObjHost extends LObjHost
 
--  Extend IMObj (and all MObj's) with
-   -  get(Base)Location
-
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
 -  introduce ObjLocator class extending URL class representing a locator of an IObj
@@ -162,11 +161,18 @@ G  Descriptions for blueprints and project steps
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
 
 -  enterprise_employment improvements
-   -  getObject(): consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
-   -  example places to investigate:
-      -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
-      -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
-      -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
+   -  resolving anyTurtleLocator
+      -  currently resolved by an override of getObject() in enterprise_employment
+      -  problems with current design:
+         -  we now fix a Turtle to specific work to early
+         -  which Turtle should be selected? (we now either take the current Turtle, or (in case of a none Turtle Worker) take the first Turtle in the list)
+         -  we do not take into account if the Turtle is actually available/ accepting (that type of) Work at this stage
+      -  Solution directions:
+         -  consider adjusting calling code/ project logic to select a specific Turtle as late as possible. Example places to investigate:
+            -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
+            -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
+            -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
+         -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
 
 -  Turtle improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer

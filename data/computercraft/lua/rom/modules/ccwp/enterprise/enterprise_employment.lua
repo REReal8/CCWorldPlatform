@@ -70,6 +70,8 @@ end
 --               _/ |
 --              |__/
 
+-- ToDo: investigate if we can do this differently. Now we force to a specific Turtle here. But we do not take into account if the Turtle is actually available to take on Work.
+--       Could we somehow have anyTurtle resolved in assignments?
 local function GetATurtle(employmentHost)
     -- get all Turtles
     local turtles = enterprise_employment:getObjects(Turtle:getClassName())
