@@ -11,7 +11,6 @@ local coredht		= require "coredht"
 local corelog		= require "corelog"
 local coreutils		= require "coreutils"
 local coretask		= require "coretask"
-local coremove		= require "coremove"
 
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
@@ -50,9 +49,6 @@ function coredisplay.Init()
             },
             question	= "Make your choice",
         }
-
-        -- alleen een turtle kan bewogen worden
-        if turtle then coredisplay.MainMenuAddItem("4", "Move turtle", MoveTurtle) end
     end
 end
 
@@ -381,42 +377,6 @@ function LoadEvent(t)
 
     -- always good!
     return true
-end
-
--- screen to move the turtle around
-function MoveTurtle( t )
-    -- chech if this is a turtle
-    if not turtle then coredisplay.UpdateToDisplay("Only available for turtles") return false end
-
-    -- first screen?
-    if t == nil or t.direction == nil then
-        coredisplay.NextScreen({
-            clear = true,
-            intro = "Available actions",
-            option = {
-                {key = "w", desc = "Forward",		    func = MoveTurtle, param = {direction = "Forward"   }},
-                {key = "s", desc = "Backward",		    func = MoveTurtle, param = {direction = "Backward"  }},
-                {key = "a", desc = "Turn left",	        func = MoveTurtle, param = {direction = "Left"      }},
-                {key = "d", desc = "Turn right",	    func = MoveTurtle, param = {direction = "Right"     }},
-                {key = "e", desc = "Up",			    func = MoveTurtle, param = {direction = "Up"        }},
-                {key = "q", desc = "Down",				func = MoveTurtle, param = {direction = "Down"      }},
-                {key = "x", desc = "Back to main menu", func = function () return true end }
-            },
-            question = "Which direction?"
-        })
-        return true
-    else
-            if t.direction == "Forward"		then coretask.AddWork(function () coremove.Forward()	end)
-        elseif t.direction == "Backward"	then coretask.AddWork(function () coremove.Backward()	end)
-        elseif t.direction == "Left"		then coretask.AddWork(function () coremove.Left()		end)
-        elseif t.direction == "Right"		then coretask.AddWork(function () coremove.Right()		end)
-        elseif t.direction == "Up"			then coretask.AddWork(function () coremove.Up()			end)
-        elseif t.direction == "Down"		then coretask.AddWork(function () coremove.Down()		end)
-        end
-
-        -- makes the previous screen stays loaded, so the human kan move the turtle again
-        return false
-    end
 end
 
 -- local function to update the display with messages for the user.
