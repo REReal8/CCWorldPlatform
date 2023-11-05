@@ -322,7 +322,7 @@ function coreevent.AddEventListener(func, protocol, subject)
 end
 
 -- to remove the custom functions to the event listener. Without subject all functions for this protocol are cleared.
-function RemoveEventListener(protocol, subject)
+function coreevent.RemoveEventListener(protocol, subject)
     -- check if we need to remove all from this protocol
 	if subject  then listener[protocol][subject]    = nil
 			    else listener[protocol]             = nil
