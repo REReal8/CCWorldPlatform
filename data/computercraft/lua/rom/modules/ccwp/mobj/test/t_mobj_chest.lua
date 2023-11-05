@@ -194,24 +194,19 @@ end
 
 function T_Chest.T_ILObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
-
     local destructFieldsTest = TestArrayTest:newInstance()
 
     local fieldsTest1 = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, fieldsTest1, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, Chest, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters1,
+            constructFieldsTest = fieldsTest1,
+            destructFieldsTest  = destructFieldsTest,
+        },
+    }, logOk)
 end
 
 --    _____ __  __  ____  _     _

@@ -201,23 +201,19 @@ end
 
 function T_Turtle.T_ILObj_All()
     -- prepare test
-    local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
     local destructFieldsTest = TestArrayTest:newInstance()
 
     local constructFieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, baseLocation0, workerLocation0, fuelPriorityKey0)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, Turtle, constructParameters, testObjName, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, Turtle, constructParameters, testObjName, constructFieldsTest, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, Turtle, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters,
+            constructFieldsTest = constructFieldsTest,
+            destructFieldsTest  = destructFieldsTest,
+        },
+    }, logOk)
 end
 
 --    _____ __  __  ____  _     _

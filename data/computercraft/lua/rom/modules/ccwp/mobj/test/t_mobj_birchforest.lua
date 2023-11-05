@@ -274,10 +274,6 @@ end
 
 function T_BirchForest.T_ILObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local objm1 = T_BirchForest.CreateTestObj(id, levelm1, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(objm1, "Failed obtaining "..testClassName)
-    local obj0 = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
-
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
@@ -294,22 +290,34 @@ function T_BirchForest.T_ILObj_All()
     local fieldsTest1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, BirchForest, constructParameters_L0T1, testObjName0, destructFieldsTest0, logOk)
-    T_ILObj.pt_construct(testClassName, BirchForest, constructParameters_Lm1T1, testObjNamem1, fieldsTestm1, logOk)
-    T_ILObj.pt_construct(testClassName, BirchForest, constructParameters_L0T1, testObjName0, fieldsTest0, logOk)
-    T_ILObj.pt_construct(testClassName, BirchForest, constructParameters_L1T2, testObjName1, fieldsTest1, logOk)
-    T_ILObj.pt_construct(testClassName, BirchForest, constructParameters_L2T4, testObjName2, fieldsTest2, logOk)
-    T_ILObj.pt_upgrade(testClassName, BirchForest, constructParameters_L0T1, testObjName0, upgradeParametersTo_L1T2, fieldsTest1, logOk)
-    T_ILObj.pt_upgrade(testClassName, BirchForest, constructParameters_L1T2, testObjName1, upgradeParametersTo_L2T4, fieldsTest2, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, BirchForest, {
+        {
+            objName             = testObjNamem1,
+            constructParameters = constructParameters_Lm1T1,
+            constructFieldsTest = fieldsTestm1,
+            destructFieldsTest  = destructFieldsTest0,
+        },
+        {
+            objName             = testObjName0,
+            constructParameters = constructParameters_L0T1,
+            constructFieldsTest = fieldsTest0,
+            upgradeParameters   = upgradeParametersTo_L1T2,
+            upgradeFieldsTest   = fieldsTest1,
+        },
+        {
+            objName             = testObjName1,
+            constructParameters = constructParameters_L1T2,
+            constructFieldsTest = fieldsTest1,
+            upgradeParameters   = upgradeParametersTo_L2T4,
+            upgradeFieldsTest   = fieldsTest2,
+        },
+        {
+            objName             = testObjName2,
+            constructParameters = constructParameters_L2T4,
+            constructFieldsTest = fieldsTest2,
+        },
+    }, logOk)
 
     -- cleanup test
 end

@@ -168,27 +168,23 @@ end
 
 function T_MObjTest.T_ILObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_MObjTest.CreateTestObj(id, baseLocation1, field1_1) assert(obj, "Failed obtaining "..testClassName)
-
     local destructFieldsTest = TestArrayTest:newInstance()
 
     local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_1)
 
     local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, MObjTest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, MObjTest, constructParameters1, testObjName, constructFieldsTest, logOk)
-    T_ILObj.pt_upgrade(testClassName, MObjTest, constructParameters1, testObjName, upgradeParameters, upgradeFieldsTest, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, MObjTest, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters1,
+            constructFieldsTest = constructFieldsTest,
+            destructFieldsTest  = destructFieldsTest,
+            upgradeParameters   = upgradeParameters,
+            upgradeFieldsTest   = upgradeFieldsTest,
+        },
+    }, logOk)
 end
 
 --    _____ __  __  ____  _     _

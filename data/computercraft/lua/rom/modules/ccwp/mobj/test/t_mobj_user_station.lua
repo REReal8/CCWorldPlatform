@@ -181,8 +181,6 @@ end
 
 function T_UserStation.T_ILObj_All()
     -- prepare tests
-    local obj0 = T_UserStation.CreateTestObj() assert(obj0, "Failed obtaining "..testClassName)
-
     local destructFieldsTest = TestArrayTest:newInstance(
     )
     local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
@@ -193,18 +191,16 @@ function T_UserStation.T_ILObj_All()
     ))
     local fieldsTest0 = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation0, inputLocatorTest, outputLocatorTest)
 
-    -- testing type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
-
-    -- test getters
-    local expectedId = tostring(workerId0)
-    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk, expectedId)
-    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, UserStation, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters0,
+            constructFieldsTest = fieldsTest0,
+            destructFieldsTest  = destructFieldsTest,
+            expectedId          = tostring(workerId0),
+        },
+    }, logOk)
 
     -- cleanup test
 end

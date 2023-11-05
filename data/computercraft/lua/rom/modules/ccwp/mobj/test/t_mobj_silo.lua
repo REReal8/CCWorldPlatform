@@ -200,9 +200,6 @@ end
 
 function T_Silo.T_ILObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
-
     local topChestsDestructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
@@ -232,17 +229,15 @@ function T_Silo.T_ILObj_All()
     ))
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, Silo, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructFieldsTest, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, Silo, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters1,
+            constructFieldsTest = constructFieldsTest,
+            destructFieldsTest  = destructFieldsTest
+        },
+    }, logOk)
 end
 
 --    _____ __  __  ____  _     _

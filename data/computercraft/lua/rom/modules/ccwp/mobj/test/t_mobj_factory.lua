@@ -252,23 +252,6 @@ end
 
 function T_Factory.T_ILObj_All()
     -- prepare tests
-    local id = coreutils.NewId()
-    local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
-
-    local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
-
-    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
-    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
-    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
-    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
-    local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
-
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
@@ -302,24 +285,29 @@ function T_Factory.T_ILObj_All()
     ))
     local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
-    -- test type
-    T_ILObj.pt_IsInstanceOf_ILObj(testClassName, obj0)
-    T_ILObj.pt_Implements_ILObj(testClassName, obj0)
-
-    -- test construct/ upgrade/ destruct
-    T_ILObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_ILObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, fieldsTest0, logOk)
-    T_ILObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, fieldsTest1, logOk)
-    T_ILObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, fieldsTest2, logOk)
-    T_ILObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
-
-    -- test getters
-    T_ILObj.pt_getId(testClassName, obj0, testObjName0, logOk)
-    T_ILObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, Factory, {
+        {
+            objName             = testObjName0,
+            constructParameters = constructParameters0,
+            constructFieldsTest = fieldsTest0,
+            destructFieldsTest  = destructFieldsTest
+        },
+        {
+            objName             = testObjName1,
+            constructParameters = constructParameters1,
+            constructFieldsTest = fieldsTest1,
+            upgradeParameters   = upgradeParametersTo2,
+            upgradeFieldsTest   = fieldsTest2,
+        },
+        {
+            objName             = testObjName2,
+            constructParameters = constructParameters2,
+            constructFieldsTest = fieldsTest2,
+        },
+    }, logOk)
 
     -- cleanup test
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
 end
 
 --    _____ __  __  ____  _     _
