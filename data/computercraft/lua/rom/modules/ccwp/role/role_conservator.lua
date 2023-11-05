@@ -448,8 +448,9 @@ function role_conservator.CheckOutputChest(...)
 
     -- set timer for input box (15 sec)
     local chestName = "right"
-    local outputChest    = peripheral.wrap(chestName)
-    local itemTable     = ItemTable:new({})
+    local outputChest = peripheral.wrap(chestName)
+    if type(outputChest) ~= "table" then corelog.Error("role_conservator.CheckOutputChest: Failed obtaining outputChest") return {success = false} end
+    local itemTable = ItemTable:new({})
 
     -- find first empty slot from the end
     local firstEmpty    = 27

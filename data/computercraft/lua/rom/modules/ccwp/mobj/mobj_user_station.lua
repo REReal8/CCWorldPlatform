@@ -410,13 +410,18 @@ end
 local subject = "input Chest timer"
 
 function UserStation:activate()
-    -- ToDo: figure out if this is how we want to do this... or do we want to use an assignment here?
+    -- check current Worker
+    if self:getWorkerId() ~= os.getComputerID() then
+        corelog.Warning("UserStation:activate() not supported on UserStation(="..self:getWorkerId()..") from other computer(="..os.getComputerID()..") => not adding event")
+    else
+        -- ToDo: figure out if this is how we want to do this... or do we want to use an assignment here?
 
-    -- setup timer for input Chest checking
-    coreevent.AddEventListener(UserStation.DoEventInputChestTimer, "mobj_user_station", subject)
+        -- setup timer for input Chest checking
+        coreevent.AddEventListener(UserStation.DoEventInputChestTimer, "mobj_user_station", subject)
 
-    -- check input box for the first time!
-    UserStation.DoEventInputChestTimer(subject, self:getOutputLocator())
+        -- check input box for the first time!
+        UserStation.DoEventInputChestTimer(subject, self:getOutputLocator())
+    end
 
     -- set active
     self._isActive = true
@@ -434,8 +439,13 @@ function UserStation.DoEventInputChestTimer(_, outputLocator)
 end
 
 function UserStation:deactivate()
-    -- remove timer
-    coreevent.RemoveEventListener("mobj_user_station", subject)
+    -- check current Worker
+    if self:getWorkerId() ~= os.getComputerID() then
+        corelog.Warning("UserStation:deactivate() not supported on UserStation(="..self:getWorkerId()..") from other computer(="..os.getComputerID()..") => not removing event")
+    else
+        -- remove timer
+        coreevent.RemoveEventListener("mobj_user_station", subject)
+    end
 
     -- set deactive
     self._isActive = false
