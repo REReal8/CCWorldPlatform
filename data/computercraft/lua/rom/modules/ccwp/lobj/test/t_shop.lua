@@ -32,7 +32,7 @@ local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
-local T_IMObj = require "test.t_i_mobj"
+local T_ILObj = require "test.t_i_lobj"
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_ObjHost = require "test.t_obj_host"
@@ -47,8 +47,8 @@ function T_Shop.T_All()
     -- IObj
     T_Shop.T_IObj_All()
 
-    -- IMObj
-    T_Shop.T_IMObj_All()
+    -- ILObj
+    T_Shop.T_ILObj_All()
 
     -- service
     T_Shop.T_registerItemSupplier_SOSrv()
@@ -170,16 +170,16 @@ function T_Shop.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
 
-function T_Shop.T_IMObj_All()
+function T_Shop.T_ILObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
@@ -189,14 +189,14 @@ function T_Shop.T_IMObj_All()
     -- local constructFieldsTest = T_Shop.CreateInitialisedTest(nil, itemSuppliersLocators1)
 
     -- test
-    -- T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    -- T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    -- T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    -- T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
-    -- T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)
-    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    -- T_ILObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    -- T_ILObj.pt_Implements_IMObj(testClassName, obj)
+
+    -- T_ILObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
+    -- T_ILObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
+
+    T_ILObj.pt_getId(testClassName, obj, testObjName, "", logOk)
+    -- T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 end
 
 --                        _
