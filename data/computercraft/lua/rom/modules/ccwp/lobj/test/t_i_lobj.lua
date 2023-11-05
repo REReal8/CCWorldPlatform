@@ -6,10 +6,7 @@ local ILObj = require "i_lobj"
 local T_IInterface = require "test.t_i_interface"
 local T_Class = require "test.t_class"
 
-local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
-
-local compact = { compact = true }
 
 function T_ILObj.pt_all(className, class, cases, logOk)
     -- prepare test all
@@ -70,6 +67,8 @@ function T_ILObj.pt_all(className, class, cases, logOk)
         end
     end
 end
+
+local compact = { compact = true }
 
 --    _
 --   | |
