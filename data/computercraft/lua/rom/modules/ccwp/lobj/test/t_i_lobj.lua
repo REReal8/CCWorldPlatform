@@ -40,8 +40,6 @@ function T_ILObj.pt_all(className, class, cases, logOk)
             -- test type
             T_ILObj.pt_IsInstanceOf_ILObj(className, obj)
             T_ILObj.pt_Implements_ILObj(className, obj)
-
-
         end
         corelog.WriteToLog("* "..className.." "..caseName.." tests:")
         if obj ~= nil then
