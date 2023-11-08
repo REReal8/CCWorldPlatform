@@ -40,16 +40,16 @@ local testObjName = "mobjTest"
 
 local logOk = false
 
-local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
+local baseLocation0  = Location:newInstance(-6, 0, 1, 0, 1)
+local field1_0 = "field1 0"
 local field1_1 = "field1 1"
-local field1_2 = "field1 2"
 
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    field1Value     = field1_1,
+local constructParameters0 = {
+    baseLocation    = baseLocation0,
+    field1Value     = field1_0,
 }
-local upgradeParameters = {
-    field1 = field1_2
+local upgradeParameters0 = {
+    field1 = field1_1
 }
 
 local compact = { compact = true }
@@ -64,8 +64,8 @@ local compact = { compact = true }
 function T_MObjTest.CreateTestObj(id, baseLocation, field1)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or baseLocation1
-    field1 = field1 or field1_1
+    baseLocation = baseLocation or baseLocation0
+    field1 = field1 or field1_0
 
     -- create testObj
     local testObj = MObjTest:newInstance(id, baseLocation:copy(), field1)
@@ -96,8 +96,8 @@ function T_MObjTest.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_MObjTest.CreateTestObj(id, baseLocation1, field1_1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation1, field1_1)
+    local obj = T_MObjTest.CreateTestObj(id, baseLocation0, field1_0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation0, field1_0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -112,10 +112,10 @@ function T_MObjTest.T_new()
     local obj = MObjTest:new({
         _id             = id,
 
-        _baseLocation   = baseLocation1:copy(),
-        _field1         = field1_1,
+        _baseLocation   = baseLocation0:copy(),
+        _field1         = field1_0,
     })
-    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation1, field1_1)
+    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation0, field1_0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -125,11 +125,11 @@ function T_MObjTest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")
     local id = coreutils.NewId()
-    local obj = T_MObjTest.CreateTestObj(id, baseLocation1, field1_1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_MObjTest.CreateTestObj(id, baseLocation0, field1_0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getField1", field1_1)
+        MethodResultEqualTest:newInstance("getField1", field1_0)
     )
     test:test(obj, testObjName, "", logOk)
 
@@ -170,18 +170,18 @@ function T_MObjTest.T_ILObj_All()
     -- prepare test
     local destructFieldsTest = TestArrayTest:newInstance()
 
-    local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_1)
+    local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_0)
 
-    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
+    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_1)
 
     -- test cases
     T_ILObj.pt_all(testClassName, MObjTest, {
         {
             objName             = testObjName,
-            constructParameters = constructParameters1,
+            constructParameters = constructParameters0,
             constructFieldsTest = constructFieldsTest,
             destructFieldsTest  = destructFieldsTest,
-            upgradeParameters   = upgradeParameters,
+            upgradeParameters   = upgradeParameters0,
             upgradeFieldsTest   = upgradeFieldsTest,
         },
     }, logOk)
@@ -198,16 +198,16 @@ end
 
 function T_MObjTest.T_IMObj_All()
     -- prepare test
-    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- test cases
     T_IMObj.pt_all(testClassName, MObjTest, {
         {
             objName                 = testObjName,
-            constructParameters     = constructParameters1,
+            constructParameters     = constructParameters0,
             constructBlueprintTest  = isBlueprintTest,
-            expectedBaseLocation    = baseLocation1:copy(),
-            upgradeParameters       = upgradeParameters,
+            expectedBaseLocation    = baseLocation0:copy(),
+            upgradeParameters       = upgradeParameters0,
             upgradeBlueprintTest    = isBlueprintTest,
             dismantleBlueprintTest  = isBlueprintTest,
         },

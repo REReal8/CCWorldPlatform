@@ -19,7 +19,6 @@ local FieldTest = require "field_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
-local MethodResultEqualTest = require "method_result_equal_test"
 local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"

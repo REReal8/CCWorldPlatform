@@ -71,7 +71,7 @@ local workerLocation0  = baseLocation0:copy()
 local fuelPriorityKey0 = ""
 local fuelPriorityKey1 = "99:111"
 
-local constructParameters = {
+local constructParameters0 = {
     workerId        = workerId0,
     baseLocation    = baseLocation0,
     workerLocation  = workerLocation0,
@@ -209,7 +209,7 @@ function T_Turtle.T_ILObj_All()
     T_ILObj.pt_all(testClassName, Turtle, {
         {
             objName             = testObjName,
-            constructParameters = constructParameters,
+            constructParameters = constructParameters0,
             constructFieldsTest = constructFieldsTest,
             destructFieldsTest  = destructFieldsTest,
         },
@@ -233,7 +233,7 @@ function T_Turtle.T_IMObj_All()
     T_IMObj.pt_all(testClassName, Turtle, {
         {
             objName                 = testObjName,
-            constructParameters     = constructParameters,
+            constructParameters     = constructParameters0,
             constructBlueprintTest  = isBlueprintTest,
             expectedBaseLocation    = baseLocation0:copy(),
             dismantleBlueprintTest  = isBlueprintTest,

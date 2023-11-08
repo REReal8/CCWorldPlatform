@@ -74,7 +74,7 @@ local level0 = 0
 local level1 = 1
 local level2 = 2
 local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
-local baseLocation2 = Location:newInstance(6, 12, 1, 0, 1)
+local baseLocation1 = Location:newInstance(6, 12, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees4 = 4
@@ -222,24 +222,24 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator1 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator1 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator1 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator1 then corelog.Error("failed registering Chest") return end
 
     -- test
     obj:setLevel(level2)
     obj:setNTrees(nTrees2)
-    obj:setLocalLogsLocator(localLogsLocator2)
-    obj:setLocalSaplingsLocator(localSaplingsLocator2)
+    obj:setLocalLogsLocator(localLogsLocator1)
+    obj:setLocalSaplingsLocator(localSaplingsLocator1)
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level2),
         MethodResultEqualTest:newInstance("getNTrees", nTrees2),
-        MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator2),
-        MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator2)
+        MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator1),
+        MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator1)
     )
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
-    return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator2 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator2 })
+    return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator1 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator1 })
 end
 
 --    _____ ____  _     _

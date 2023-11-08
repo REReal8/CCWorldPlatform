@@ -62,19 +62,19 @@ local testObjName = "silo"
 
 local logOk = false
 
-local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
-local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
-local dropLocation1 = 0
-local pickupLocation1 = 0
-local topChests1 = ObjArray:newInstance(URL:getClassName()) assert(topChests1, "Failed obtaining ObjArray")
-local storageChests1 = ObjArray:newInstance(URL:getClassName()) assert(storageChests1, "Failed obtaining ObjArray")
-local nTopChests1 = 4
-local nLayers1 = 3
+local baseLocation0  = Location:newInstance(12, -12, 1, 0, 1)
+local entryLocation0 = baseLocation0:getRelativeLocation(3, 3, 0)
+local dropLocation0 = 0
+local pickupLocation0 = 0
+local topChests0 = ObjArray:newInstance(URL:getClassName()) assert(topChests0, "Failed obtaining ObjArray")
+local storageChests0 = ObjArray:newInstance(URL:getClassName()) assert(storageChests0, "Failed obtaining ObjArray")
+local nTopChests0 = 4
+local nLayers0 = 3
 
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    nTopChests      = nTopChests1,
-    nLayers         = nLayers1,
+local constructParameters0 = {
+    baseLocation    = baseLocation0,
+    nTopChests      = nTopChests0,
+    nLayers         = nLayers0,
 }
 
 local compact = { compact = true }
@@ -89,12 +89,12 @@ local compact = { compact = true }
 function T_Silo.CreateTestObj(id, baseLocation, entryLocation, dropLocation, pickupLocation, topChests, storageChests)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or baseLocation1
-    entryLocation = entryLocation or entryLocation1
-    dropLocation = dropLocation or dropLocation1
-    pickupLocation = pickupLocation or pickupLocation1
-    topChests = topChests or topChests1
-    storageChests = storageChests or storageChests1
+    baseLocation = baseLocation or baseLocation0
+    entryLocation = entryLocation or entryLocation0
+    dropLocation = dropLocation or dropLocation0
+    pickupLocation = pickupLocation or pickupLocation0
+    topChests = topChests or topChests0
+    storageChests = storageChests or storageChests0
 
     -- create testObj
     local testObj = Silo:newInstance(id, baseLocation:copy(), entryLocation:copy(), dropLocation, pickupLocation, topChests:copy(), storageChests:copy())
@@ -132,10 +132,10 @@ function T_Silo.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
-    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
-    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests1)
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChestsTest, storageChestsTest)
+    local obj = T_Silo.CreateTestObj(id, baseLocation0, entryLocation0, dropLocation0, pickupLocation0, topChests0, storageChests0) assert(obj, "Failed obtaining "..testClassName)
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests0)
+    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests0)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation0, entryLocation0, dropLocation0, pickupLocation0, topChestsTest, storageChestsTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -151,20 +151,20 @@ function T_Silo.T_new()
         _id             = id,
 
         -- locations
-        _baseLocation   = baseLocation1:copy(),
-        _entryLocation  = entryLocation1:copy(),
+        _baseLocation   = baseLocation0:copy(),
+        _entryLocation  = entryLocation0:copy(),
 
         -- pickup and drop
-        _dropLocation   = dropLocation1,
-        _pickupLocation = pickupLocation1,
+        _dropLocation   = dropLocation0,
+        _pickupLocation = pickupLocation0,
 
         -- chests
-        _topChests      = topChests1:copy(),
-        _storageChests  = storageChests1:copy(),
+        _topChests      = topChests0:copy(),
+        _storageChests  = storageChests0:copy(),
     })
-    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
-    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests1)
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChestsTest, storageChestsTest)
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests0)
+    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests0)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation0, entryLocation0, dropLocation0, pickupLocation0, topChestsTest, storageChestsTest)
     test:test(obj, testObjName, "", logOk)
 end
 
@@ -220,20 +220,20 @@ function T_Silo.T_ILObj_All()
     local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
-        MethodResultEqualTest:newInstance("nObjs", nTopChests1)
+        MethodResultEqualTest:newInstance("nObjs", nTopChests0)
     ))
     local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
-        MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
+        MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
     ))
-    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
+    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation0, entryLocation0, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
 
     -- test cases
     T_ILObj.pt_all(testClassName, Silo, {
         {
             objName             = testObjName,
-            constructParameters = constructParameters1,
+            constructParameters = constructParameters0,
             constructFieldsTest = constructFieldsTest,
             destructFieldsTest  = destructFieldsTest
         },
@@ -251,15 +251,15 @@ end
 
 function T_Silo.T_IMObj_All()
     -- prepare test
-    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- test cases
     T_IMObj.pt_all(testClassName, Silo, {
         {
             objName                 = testObjName,
-            constructParameters     = constructParameters1,
+            constructParameters     = constructParameters0,
             constructBlueprintTest  = isBlueprintTest,
-            expectedBaseLocation    = baseLocation1:copy(),
+            expectedBaseLocation    = baseLocation0:copy(),
             dismantleBlueprintTest  = isBlueprintTest,
         },
     }, logOk)
@@ -275,7 +275,7 @@ end
 function T_Silo.T_integrity()
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -302,7 +302,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
 
     -- activate the silo
     obj:Activate()
@@ -375,7 +375,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_employment.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {

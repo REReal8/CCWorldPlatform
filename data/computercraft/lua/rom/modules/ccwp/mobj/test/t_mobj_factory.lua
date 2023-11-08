@@ -76,7 +76,7 @@ local level0 = 0
 local level1 = 1
 local level2 = 2
 
-local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
+local baseLocation0 = Location:newInstance(12, 0, 1, 0, 1)
 
 local inputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
@@ -84,30 +84,30 @@ local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0,
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
 
-local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
+local craftingSpot0 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(0, 0, 0), true)
 local productionSpotClassName = "ProductionSpot"
 local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
-local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
+local craftingSpot1 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(3, 3, -4), true)
 local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
 
 local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
-local smeltingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -3), false)
+local smeltingSpot1 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(3, 3, -3), false)
 local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
 
 local constructParameters0 = {
     level           = level0,
 
-    baseLocation    = baseLocation1,
+    baseLocation    = baseLocation0,
 }
 local constructParameters1 = {
     level           = level1,
 
-    baseLocation    = baseLocation1,
+    baseLocation    = baseLocation0,
 }
 local constructParameters2 = {
     level           = level2,
 
-    baseLocation    = baseLocation1,
+    baseLocation    = baseLocation0,
 }
 local upgradeParametersTo2 = {
     level           = level2,
@@ -126,7 +126,7 @@ function T_Factory.CreateTestObj(id, level, baseLocation, inputLocators, outputL
     -- check input
     id = id or coreutils.NewId()
     level = level or level1
-    baseLocation = baseLocation or baseLocation1
+    baseLocation = baseLocation or baseLocation0
     inputLocators = inputLocators or inputLocators0
     outputLocators = outputLocators or outputLocators0
     craftingSpots = craftingSpots or craftingSpots1
@@ -165,10 +165,10 @@ function T_Factory.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Factory.CreateTestObj(id, level1, baseLocation0, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
     local inputLocatorsTest = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local test = T_Factory.CreateInitialisedTest(id, level1, baseLocation1, inputLocatorsTest, outputLocatorsTest, craftingSpots1, smeltingSpots1)
+    local test = T_Factory.CreateInitialisedTest(id, level1, baseLocation0, inputLocatorsTest, outputLocatorsTest, craftingSpots1, smeltingSpots1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -185,7 +185,7 @@ function T_Factory.T_new()
 
         _level          = level1,
 
-        _baseLocation   = baseLocation1:copy(),
+        _baseLocation   = baseLocation0:copy(),
 
         _inputLocators  = inputLocators0:copy(),
         _outputLocators = outputLocators0:copy(),
@@ -195,7 +195,7 @@ function T_Factory.T_new()
     })
     local inputLocatorsTest = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local test = T_Factory.CreateInitialisedTest(id, level1, baseLocation1, inputLocatorsTest, outputLocatorsTest, craftingSpots1, smeltingSpots1)
+    local test = T_Factory.CreateInitialisedTest(id, level1, baseLocation0, inputLocatorsTest, outputLocatorsTest, craftingSpots1, smeltingSpots1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -205,7 +205,7 @@ function T_Factory.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")
     local id = coreutils.NewId()
-    local obj = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Factory.CreateTestObj(id, level1, baseLocation0, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
@@ -269,9 +269,9 @@ function T_Factory.T_ILObj_All()
 
     local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local fieldsTest0 = T_Factory.CreateInitialisedTest(nil, level0, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
+    local fieldsTest0 = T_Factory.CreateInitialisedTest(nil, level0, baseLocation0, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
 
-    local fieldsTest1 = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
+    local fieldsTest1 = T_Factory.CreateInitialisedTest(nil, level1, baseLocation0, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
 
     local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -283,7 +283,7 @@ function T_Factory.T_ILObj_All()
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
-    local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+    local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation0, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
     -- test cases
     T_ILObj.pt_all(testClassName, Factory, {
@@ -321,7 +321,7 @@ end
 
 function T_Factory.T_IMObj_All()
     -- prepare tests
-    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- test cases
     T_IMObj.pt_all(testClassName, Factory, {
@@ -329,7 +329,7 @@ function T_Factory.T_IMObj_All()
             objName                 = testObjName0,
             constructParameters     = constructParameters0,
             constructBlueprintTest  = isBlueprintTest,
-            expectedBaseLocation    = baseLocation1:copy(),
+            expectedBaseLocation    = baseLocation0:copy(),
             dismantleBlueprintTest  = isBlueprintTest,
         },
         {
@@ -426,16 +426,16 @@ function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test L2
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
     local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
+        baseLocation    = baseLocation0:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
     local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
     local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
+        baseLocation    = baseLocation0:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
     local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
-    local objL2 = T_Factory.CreateTestObj(nil, level2, baseLocation1, inputLocators2, outputLocators2) assert(objL2, "Failed obtaining "..testClassName)
+    local objL2 = T_Factory.CreateTestObj(nil, level2, baseLocation0, inputLocators2, outputLocators2) assert(objL2, "Failed obtaining "..testClassName)
 
     -- test L2
     fuelNeed = objL2:getFuelNeed_Production_Att(craftItems)
@@ -531,7 +531,7 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
+    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
 
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 

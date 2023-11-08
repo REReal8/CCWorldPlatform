@@ -27,9 +27,11 @@ end
 
 local testClassName = "ProductionSpot"
 local testObjName = "productionSpot"
+
 local logOk = false
-local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
-local isCraftingSpot1 = true
+
+local baseLocation0  = Location:newInstance(-6, 0, 1, 0, 1)
+local isCraftingSpot0 = true
 
 local compact = { compact = true }
 
@@ -42,9 +44,9 @@ local compact = { compact = true }
 
 function T_ProductionSpot.CreateTestObj(baseLocation, isCraftingSpot)
     -- check input
-    baseLocation = baseLocation or baseLocation1
+    baseLocation = baseLocation or baseLocation0
     if type(isCraftingSpot) == "nil" then
-        isCraftingSpot = isCraftingSpot1
+        isCraftingSpot = isCraftingSpot0
     end
 
     -- create testObj
@@ -72,8 +74,8 @@ function T_ProductionSpot.T__init()
     corelog.WriteToLog("* "..testClassName..":_init() tests")
 
     -- test
-    local obj = T_ProductionSpot.CreateTestObj(baseLocation1, isCraftingSpot1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation1, isCraftingSpot1)
+    local obj = T_ProductionSpot.CreateTestObj(baseLocation0, isCraftingSpot0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation0, isCraftingSpot0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -85,10 +87,10 @@ function T_ProductionSpot.T_new()
 
     -- test
     local obj = ProductionSpot:new({
-        _baseLocation   = baseLocation1:copy(),
-        _isCraftingSpot = isCraftingSpot1,
+        _baseLocation   = baseLocation0:copy(),
+        _isCraftingSpot = isCraftingSpot0,
     })
-    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation1, isCraftingSpot1)
+    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation0, isCraftingSpot0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -126,7 +128,7 @@ end
 function T_ProductionSpot.T_getFuelNeed_Production_Att()
     -- prepare test crafting
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (crafting)")
-    local objCraft = T_ProductionSpot.CreateTestObj(baseLocation1, true) assert(objCraft, "Failed obtaining "..testClassName)
+    local objCraft = T_ProductionSpot.CreateTestObj(baseLocation0, true) assert(objCraft, "Failed obtaining "..testClassName)
     local craftItems = { ["minecraft:birch_planks"] = 4 }
 
     -- test crafting
@@ -136,7 +138,7 @@ function T_ProductionSpot.T_getFuelNeed_Production_Att()
 
     -- prepare test smelting
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (smelting)")
-    local objSmelt = T_ProductionSpot.CreateTestObj(baseLocation1, false) assert(objCraft, "Failed obtaining "..testClassName)
+    local objSmelt = T_ProductionSpot.CreateTestObj(baseLocation0, false) assert(objCraft, "Failed obtaining "..testClassName)
     local smeltItems = { ["minecraft:charcoal"] = 8 }
 
     -- test smelting

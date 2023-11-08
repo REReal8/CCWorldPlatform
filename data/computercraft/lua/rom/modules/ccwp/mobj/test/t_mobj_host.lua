@@ -360,11 +360,11 @@ end
 -- test MObjHost with MObjTest
 local testMObjClassName = "MObjTest"
 local testMObjName = "mobjTest"
-local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
+local baseLocation0 = Location:newInstance(-12, 0, 1, 0, 1)
 local field1_1 = "field1 1"
 local field1_2 = "field1 2"
 local constructParameters1 = {
-    baseLocation    = baseLocation1,
+    baseLocation    = baseLocation0,
     field1Value     = field1_1,
 }
 local upgradeParameters2 = {
@@ -373,7 +373,7 @@ local upgradeParameters2 = {
 
 function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
-    local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_1)
+    local constructFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_1)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, constructFieldsTest, logOk)
@@ -403,7 +403,7 @@ end
 function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
-    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
+    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_2)
 
     -- test
     local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, upgradeParameters2, testMObjName, upgradeFieldsTest, logOk)
@@ -416,7 +416,7 @@ end
 function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
-    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation1, field1_2)
+    local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_2)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator
