@@ -321,42 +321,30 @@ end
 
 function T_Factory.T_IMObj_All()
     -- prepare tests
-    local id = coreutils.NewId()
-    local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
-
-    local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
-
-    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
-    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
-    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
-    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
-    local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
-
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test type
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
-    T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test getters
-    T_IMObj.pt_getBaseLocation(testClassName, obj0, testObjName, baseLocation1, logOk)
-
-    -- test blueprints
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj1, testObjName1, constructParameters1, isBlueprintTest, logOk)
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj2, testObjName2, constructParameters2, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
-    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
-
-    -- cleanup test
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
+    -- test cases
+    T_IMObj.pt_all(testClassName, Factory, {
+        {
+            objName                 = testObjName0,
+            constructParameters     = constructParameters0,
+            constructBlueprintTest  = isBlueprintTest,
+            expectedBaseLocation    = baseLocation1:copy(),
+            dismantleBlueprintTest  = isBlueprintTest,
+        },
+        {
+            objName                 = testObjName1,
+            constructParameters     = constructParameters1,
+            constructBlueprintTest  = isBlueprintTest,
+            upgradeParameters       = upgradeParametersTo2,
+            upgradeBlueprintTest    = isBlueprintTest,
+        },
+        {
+            objName                 = testObjName2,
+            constructParameters     = constructParameters2,
+            constructBlueprintTest  = isBlueprintTest,
+        },
+    }, logOk)
 end
 
 --                        _  __ _                       _   _               _

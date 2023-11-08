@@ -216,20 +216,18 @@ end
 
 function T_UserStation.T_IMObj_All()
     -- prepare tests
-    local obj0 = T_UserStation.CreateTestObj() assert(obj0, "Failed obtaining "..testClassName)
-
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
-    -- testing type
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
-    T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test getters
-    T_IMObj.pt_getBaseLocation(testClassName, obj0, testObjName, baseLocation0, logOk)
-
-    -- test blueprints
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters0, isBlueprintTest, logOk)
-    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    -- test cases
+    T_IMObj.pt_all(testClassName, UserStation, {
+        {
+            objName                 = testObjName0,
+            constructParameters     = constructParameters0,
+            constructBlueprintTest  = isBlueprintTest,
+            expectedBaseLocation    = baseLocation0:copy(),
+            dismantleBlueprintTest  = isBlueprintTest,
+        },
+    }, logOk)
 
     -- cleanup test
 end

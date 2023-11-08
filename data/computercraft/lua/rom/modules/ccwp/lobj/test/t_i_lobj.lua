@@ -31,6 +31,8 @@ function T_ILObj.pt_all(className, class, cases, logOk)
         local upgradeFieldsTest     = case.upgradeFieldsTest
         local indent                = "  "
 
+        corelog.WriteToLog("* "..className.." "..caseName.." ILObj tests:")
+
         -- first case?
         local obj = nil
         if i==1 then
@@ -41,7 +43,6 @@ function T_ILObj.pt_all(className, class, cases, logOk)
             T_ILObj.pt_IsInstanceOf_ILObj(className, obj)
             T_ILObj.pt_Implements_ILObj(className, obj)
         end
-        corelog.WriteToLog("* "..className.." "..caseName.." tests:")
         if obj ~= nil then
             -- test getters
             T_ILObj.pt_getId(className, obj, objName, indent, logOk, expectedId)

@@ -251,21 +251,18 @@ end
 
 function T_Silo.T_IMObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
-
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test type
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    T_IMObj.pt_Implements_IMObj(testClassName, obj)
-
-    -- test getters
-    T_IMObj.pt_getBaseLocation(testClassName, obj, testObjName, baseLocation1, logOk)
-
-    -- test blueprints
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj, testObjName, constructParameters1, isBlueprintTest, logOk)
-    T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    -- test cases
+    T_IMObj.pt_all(testClassName, Silo, {
+        {
+            objName                 = testObjName,
+            constructParameters     = constructParameters1,
+            constructBlueprintTest  = isBlueprintTest,
+            expectedBaseLocation    = baseLocation1:copy(),
+            dismantleBlueprintTest  = isBlueprintTest,
+        },
+    }, logOk)
 end
 
 --                        _

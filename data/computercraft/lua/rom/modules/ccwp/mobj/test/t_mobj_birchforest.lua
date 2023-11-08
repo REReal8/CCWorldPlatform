@@ -333,32 +333,37 @@ end
 
 function T_BirchForest.T_IMObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local objm1 = T_BirchForest.CreateTestObj(id, levelm1, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(objm1, "Failed obtaining "..testClassName)
-    local obj0 = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
-    local obj1 = T_BirchForest.CreateTestObj(id, level1, baseLocation0, nTrees2, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
-
     local buildLocation_Lm1 = baseLocation0:getRelativeLocation(3, 2, 0)
     local isBlueprintTest_Lm1 = IsBlueprintTest:newInstance(buildLocation_Lm1)
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
     local buildLocation_FromL1T2_ToL2T4 = baseLocation0:getRelativeLocation(0, 1, 0) -- note: offset because row 1 is already build
     local isBlueprintTest_FromL1T2_ToL2T4 = IsBlueprintTest:newInstance(buildLocation_FromL1T2_ToL2T4)
 
-    -- test type
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
-    T_IMObj.pt_Implements_IMObj(testClassName, obj0)
-
-    -- test getters
-    T_IMObj.pt_getBaseLocation(testClassName, obj0, testObjName0, baseLocation0, logOk)
-
-    -- test blueprints
-    T_IMObj.pt_GetBuildBlueprint(testClassName, objm1, testObjNamem1, constructParameters_Lm1T1, isBlueprintTest_Lm1, logOk)
-    T_IMObj.pt_GetBuildBlueprint(testClassName, obj0, testObjName0, constructParameters_L0T1, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo_L1T2, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo_L2T4, isBlueprintTest_FromL1T2_ToL2T4, logOk)
-    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
-
-    -- cleanup test
+    -- test cases
+    T_IMObj.pt_all(testClassName, BirchForest, {
+        {
+            objName                 = testObjNamem1,
+            constructParameters     = constructParameters_Lm1T1,
+            constructBlueprintTest  = isBlueprintTest_Lm1,
+            expectedBaseLocation    = baseLocation0:copy(),
+        },
+        {
+            objName                 = testObjName0,
+            constructParameters     = constructParameters_L0T1,
+            constructBlueprintTest  = isBlueprintTest,
+            upgradeParameters       = upgradeParametersTo_L1T2,
+            upgradeBlueprintTest    = isBlueprintTest,
+            dismantleBlueprintTest  = isBlueprintTest,
+        },
+        {
+            objName                 = testObjName1,
+            constructParameters     = constructParameters_L1T2,
+            constructBlueprintTest  = isBlueprintTest,
+            upgradeParameters       = upgradeParametersTo_L2T4,
+            upgradeBlueprintTest    = isBlueprintTest_FromL1T2_ToL2T4,
+            dismantleBlueprintTest  = isBlueprintTest,
+        },
+    }, logOk)
 end
 
 --                        _
