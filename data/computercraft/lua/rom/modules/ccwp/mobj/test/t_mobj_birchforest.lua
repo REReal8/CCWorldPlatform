@@ -57,8 +57,12 @@ function T_BirchForest.T_All()
 
     -- IItemSupplier
     T_BirchForest.T_IItemSupplier_All()
-    T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
-    T_BirchForest.T_can_ProvideItems_QOSrv()
+end
+
+function T_BirchForest.T_AllPhysical()
+    -- IItemSupplier
+    T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
+    T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
 end
 
 local testClassName = "BirchForest"
@@ -423,9 +427,43 @@ function T_BirchForest.T_IItemSupplier_All()
     -- prepare test
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
+
+    -- test
+    T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
+    T_BirchForest.T_can_ProvideItems_QOSrv()
+end
+
+function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_log"] = 10 }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+end
+
+function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_sapling"] = 1 }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
@@ -472,36 +510,6 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
     itemCount = 10
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
-
-    -- cleanup test
-end
-
-function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
-    -- prepare test
-    local provideItems = { ["minecraft:birch_log"] = 10 }
-
-    t_employment = t_employment or require "test.t_employment"
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
-    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
-
-    -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
-
-    -- cleanup test
-end
-
-function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
-    -- prepare test
-    local provideItems = { ["minecraft:birch_sapling"] = 1 }
-
-    t_employment = t_employment or require "test.t_employment"
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
-    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
-
-    -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 end

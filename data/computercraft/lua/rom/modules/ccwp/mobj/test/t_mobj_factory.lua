@@ -17,6 +17,7 @@ local Factory = require "mobj_factory"
 
 local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 
 local TestArrayTest = require "test_array_test"
 local FieldTest = require "field_test"
@@ -31,6 +32,7 @@ local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
+local T_IItemSupplier = require "test.t_i_item_supplier"
 
 local T_Chest = require "test.t_mobj_chest"
 local t_employment
@@ -61,7 +63,12 @@ function T_Factory.T_All()
 
     -- IItemSupplier
     T_Factory.T_IItemSupplier_All()
-    T_Factory.T_can_ProvideItems_QOSrv()
+end
+
+function T_Factory.T_AllPhysical()
+    -- IItemSupplier
+    T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
+    T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
 end
 
 local testClassName = "Factory"
@@ -460,9 +467,42 @@ function T_Factory.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
+
+    -- test
+    T_Factory.T_can_ProvideItems_QOSrv()
+end
+
+function T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_planks"] = 11 }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_manufacturing, testClassName, constructParameters2, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+end
+
+function T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
+    -- prepare test
+    local provideItems = { ["minecraft:charcoal"] = 1 }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_manufacturing, testClassName, constructParameters2, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- -- test
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()
@@ -521,63 +561,6 @@ function T_Factory.T_can_ProvideItems_QOSrv()
     obj._outputLocators = outputLocators0
 
     -- cleanup test
-end
-
-local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..productionMethod..")")
-    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    t_employment = t_employment or require "test.t_employment"
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
-
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
-
-    local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:newInstance("T_Factory", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-    })
-
-    -- test
-    return obj:provideItemsTo_AOSrv({
-        provideItems                    = provideItems,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        wasteItemDepotLocator           = wasteItemDepotLocator,
-    }, callback2)
-end
-
-function T_Factory.T_provideItemsTo_AOSrv_Craft()
-    -- prepare test
-    local provideItems = { ["minecraft:birch_planks"] = 11 }
-
-    -- test
-    t_provideItemsTo_AOSrv(provideItems, "Craft")
-end
-
-function T_Factory.T_provideItemsTo_AOSrv_Smelt()
-    -- prepare test
-    local provideItems = { ["minecraft:charcoal"] = 1 }
-
-    -- test
-    t_provideItemsTo_AOSrv(provideItems, "Smelt")
-end
-
-function T_Factory.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-
-    -- end
-    return true
 end
 
 return T_Factory

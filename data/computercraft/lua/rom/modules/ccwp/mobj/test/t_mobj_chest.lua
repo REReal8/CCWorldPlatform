@@ -52,11 +52,14 @@ function T_Chest.T_All()
     -- IItemSupplier
     T_Chest.T_IItemSupplier_All()
 
-    T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
-    T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
-
     -- IItemDepot
     T_Chest.T_IItemDepot_All()
+end
+
+function T_Chest.T_AllPhysical()
+    -- IItemSupplier
+    T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
+    T_Chest.T_provideItemsTo_AOSrv_ToChest()
 end
 
 local testClassName = "Chest"
@@ -283,12 +286,16 @@ function T_Chest.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
+
+    -- test
+    T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
+    T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
 end
 
-function T_Chest.T_provideItemsTo_AOSrv_Turtle()
+function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     -- prepare test
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -306,7 +313,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     -- cleanup test
 end
 
-function T_Chest.T_provideItemsTo_AOSrv_Chest()
+function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     -- prepare test
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -420,7 +427,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
-function T_Chest.T_storeItemsFrom_AOSrv_ToTurtle()
+function T_Chest.T_storeItemsFrom_AOSrv_FromTurtle()
     -- prepare test
     t_employment = t_employment or require "test.t_employment"
     local itemsLocator = t_employment.GetCurrentTurtleLocator()
@@ -429,7 +436,7 @@ function T_Chest.T_storeItemsFrom_AOSrv_ToTurtle()
     storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")
 end
 
-function T_Chest.T_storeItemsFrom_AOSrv_ToChest()
+function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     -- prepare test
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj2, "Failed obtaining "..testClassName.." 2")
     local itemsLocator = enterprise_chests:saveObject(obj2)
