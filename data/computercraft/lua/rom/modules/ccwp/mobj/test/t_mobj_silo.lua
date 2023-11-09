@@ -57,6 +57,10 @@ function T_Silo.T_All()
     T_Silo.T_IItemDepot_All()
 end
 
+function T_Silo.T_AllPhysical()
+    -- IItemSupplier
+end
+
 local testClassName = "Silo"
 local testObjName = "silo"
 

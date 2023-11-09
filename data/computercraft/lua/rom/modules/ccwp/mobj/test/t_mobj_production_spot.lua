@@ -25,6 +25,9 @@ function T_ProductionSpot.T_All()
     T_ProductionSpot.T_getFuelNeed_Production_Att()
 end
 
+function T_ProductionSpot.T_AllPhysical()
+end
+
 local testClassName = "ProductionSpot"
 local testObjName = "productionSpot"
 

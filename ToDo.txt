@@ -88,15 +88,17 @@ RG UserStation v1.0
 
 -  consider merging enterprise_chest into enterprise_storage
 
--  Generalised IItemSupplier test functions for MObj's
-   -  generalise IItemSupplier test functions
-   -  use in mobj_birchforest
-   -  use in mobj_chest
-   -  use in mobj_factory
-   -  use in mobj_mine
+R  Generalised IItemSupplier test functions for MObj's                                                                  (....)
+   R  generalise IItemSupplier test functions                                                                           (....)
+      R  provideItemsTo                                                                                                 (done)
+      -  needsTo_ProvideItemsTo
+      -  can_ProvideItems
+   R  use in mobj_birchforest                                                                                           (....)
+   R  use in mobj_chest                                                                                                 (....)
+   R  use in mobj_factory                                                                                               (....)
    -  use in mobj_silo
    -  use in Shop
-   -  use in mobj_turtle
+   R  use in mobj_turtle                                                                                                (....)
 
 -  Generalised IItemDepot test functions for MObj's
    -  generalise IItemDepot test functions

@@ -14,25 +14,52 @@ function library.T_All()
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
     local T_MObjTest = require "test.t_mobj_test"
-    local T_BirchForest = require "test.t_mobj_birchforest"
+    local t_mobj_host = require "test.t_mobj_host"
     local T_Chest = require "test.t_mobj_chest"
+    local T_Turtle = require "test.t_mobj_turtle"
+    local T_BirchForest = require "test.t_mobj_birchforest"
     local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Factory = require "test.t_mobj_factory"
     local T_Silo = require "test.t_mobj_silo"
-    local T_Turtle = require "test.t_mobj_turtle"
     local T_UserStation = require "test.t_mobj_user_station"
-    local t_mobj_host = require "test.t_mobj_host"
 
     -- library tests
     T_MObjTest.T_All()
     t_mobj_host.T_All()
-    T_BirchForest.T_All()
     T_Chest.T_All()
-    T_Factory.T_All()
-    T_ProductionSpot.T_All()
-    T_Silo.T_All()
     T_Turtle.T_All()
+    T_BirchForest.T_All()
+    T_ProductionSpot.T_All()
+    T_Factory.T_All()
+    T_Silo.T_All()
     T_UserStation.T_All()
+end
+
+function library.T_AllPhysical()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
+
+    local T_MObjTest = require "test.t_mobj_test"
+    local t_mobj_host = require "test.t_mobj_host"
+    local T_Chest = require "test.t_mobj_chest"
+    local T_Turtle = require "test.t_mobj_turtle"
+    local T_BirchForest = require "test.t_mobj_birchforest"
+    local T_ProductionSpot = require "test.t_mobj_production_spot"
+    local T_Factory = require "test.t_mobj_factory"
+    local T_Silo = require "test.t_mobj_silo"
+    local T_UserStation = require "test.t_mobj_user_station"
+
+    -- library tests
+    T_MObjTest.T_AllPhysical()
+    t_mobj_host.T_AllPhysical()
+    T_Chest.T_AllPhysical()
+    T_Turtle.T_AllPhysical()
+    T_BirchForest.T_AllPhysical()
+    T_ProductionSpot.T_AllPhysical()
+    T_Factory.T_AllPhysical()
+    T_Silo.T_AllPhysical()
+    T_UserStation.T_AllPhysical()
 end
 
 local function ExecuteLibraryTest(t)

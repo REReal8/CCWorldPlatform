@@ -35,6 +35,9 @@ function T_MObjTest.T_All()
     T_MObjTest.T_IMObj_All()
 end
 
+function T_MObjTest.T_AllPhysical()
+end
+
 local testClassName = "MObjTest"
 local testObjName = "mobjTest"
 
