@@ -31,6 +31,7 @@ local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
+local T_IItemSupplier = require "test.t_i_item_supplier"
 
 local t_employment
 
@@ -475,55 +476,34 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
     -- cleanup test
 end
 
-local function t_provideItemsTo_AOSrv(provideItems)
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..next(provideItems)..")")
-    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local objLocator = enterprise_forestry:saveObject(obj)
-    t_employment = t_employment or require "test.t_employment"
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
-
-    local T_Chest = require "test.t_mobj_chest"
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
-    local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-
-    -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, "provideItemsTo_AOSrv", {
-        provideItems                    = provideItems,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        wasteItemDepotLocator           = wasteItemDepotLocator,
-    })
-    assert(serviceResults, "no serviceResults returned")
-    assert(serviceResults.success, "failed executing service")
-
-    -- check: destinationItemsLocator
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    enterprise_forestry:deleteResource(objLocator)
-    enterprise_chests:deleteResource(wasteItemDepotLocator)
-end
-
-function T_BirchForest.T_provideItemsTo_AOSrv_Log()
+function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
     -- prepare test
     local provideItems = { ["minecraft:birch_log"] = 10 }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    t_provideItemsTo_AOSrv(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
 end
 
-function T_BirchForest.T_provideItemsTo_AOSrv_Sapling()
+function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
     -- prepare test
     local provideItems = { ["minecraft:birch_sapling"] = 1 }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    t_provideItemsTo_AOSrv(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
 end
 
 return T_BirchForest

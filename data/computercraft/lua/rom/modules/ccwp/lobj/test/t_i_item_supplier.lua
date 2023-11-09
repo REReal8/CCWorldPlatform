@@ -20,10 +20,15 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, constructParameters, provideItems, itemDepotLocator, logOk)
+function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
     -- prepare test (cont)
     assert(mobjHost, "no mobjHost provided")
     assert(className, "no className provided")
+    assert(constructParameters, "no constructParameters provided")
+    assert(provideItems, "no provideItems provided")
+    assert(itemDepotLocator, "no itemDepotLocator provided")
+    assert(ingredientsItemSupplierLocator, "no ingredientsItemSupplierLocator provided")
+    assert(wasteItemDepotLocator, "no wasteItemDepotLocator provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
@@ -32,15 +37,17 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, const
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "provideItemsTo_AOSrv", {
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
     })
 
     -- check: service success
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    -- check: destinationItemsLocator
+    -- check: items provided to destinationItemsLocator
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
