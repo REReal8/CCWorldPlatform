@@ -61,7 +61,6 @@ end
 
 local testClassName = "Chest"
 local testObjName = "chest"
-local mobjHostName = "enterprise_chests"
 
 local logOk = false
 
@@ -301,7 +300,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters0, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_chests, testClassName, constructParameters0, provideItems, itemDepotLocator, logOk)
 
     -- cleanup test
 end
@@ -316,7 +315,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
     }
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters0, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_chests, testClassName, constructParameters0, provideItems, itemDepotLocator, logOk)
 
     -- cleanup test
     enterprise_chests:deleteResource(itemDepotLocator)

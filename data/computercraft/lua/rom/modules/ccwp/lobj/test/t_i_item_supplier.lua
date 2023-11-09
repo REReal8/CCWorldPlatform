@@ -20,18 +20,18 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
+function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, constructParameters, provideItems, itemDepotLocator, logOk)
     -- prepare test (cont)
-    assert(mobjHostName, "no mobjHostName provided")
+    assert(mobjHost, "no mobjHost provided")
     assert(className, "no className provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
-    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "Failed obtaining MObjHost "..mobjHostName)
-    local mobjLocator = mobjHost:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator assert(mobjLocator, "failed hosting "..className.." on "..mobjHostName)
-    local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "Failed obtaining "..className.." from mobjLocator "..mobjLocator:getURI())
+    local objLocator = mobjHost:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator assert(objLocator, "failed hosting "..className.." on "..mobjHost:getHostName())
+    local lobj = mobjHost:getObject(objLocator) assert(lobj, "Failed obtaining "..className.." from mobjLocator "..objLocator:getURI())
 
     -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobj, "provideItemsTo_AOSrv", {
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "provideItemsTo_AOSrv", {
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
@@ -47,7 +47,9 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, className, c
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
-    mobjHost:releaseMObj_SSrv({ mobjLocator = mobjLocator})
+    mobjHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+
+    if logOk then corelog.WriteToLog(" ok") end
 end
 
 return T_IItemSupplier
