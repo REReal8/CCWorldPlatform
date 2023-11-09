@@ -28,6 +28,8 @@ local T_IObj = require "test.t_i_obj"
 local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
+local T_IItemSupplier = require "test.t_i_item_supplier"
+
 local T_Chest = require "test.t_mobj_chest"
 
 local t_employment = require "test.t_employment"
@@ -52,11 +54,15 @@ function T_Turtle.T_All()
 
     -- IItemSupplier
     T_Turtle.T_IItemSupplier_All()
---    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
---    T_Turtle.T_can_ProvideItems_QOSrv()
 
     -- IItemDepot
     T_Turtle.T_IItemDepot_All()
+end
+
+function T_Turtle.T_AllPhysical()
+    -- IItemSupplier
+    T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
+    T_Turtle.T_provideItemsTo_AOSrv_ToChest()
 end
 
 local testClassName = "Turtle"
@@ -67,6 +73,7 @@ local logOk = false
 local workerId0 = 111111
 local isActive_false = false
 local baseLocation0  = Location:newInstance(1, -1, 3, 0, 1)
+local baseLocationChest  = Location:newInstance(-6, 0, 1, 0, 1):getRelativeLocation(2, 5, 0)
 local workerLocation0  = baseLocation0:copy()
 local fuelPriorityKey0 = ""
 local fuelPriorityKey1 = "99:111"
@@ -295,67 +302,62 @@ function T_Turtle.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
+
+    -- test
+    -- T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
+    -- T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
-local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
-    -- prepare test (cont)
-    corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
+local function currentTurtleConstructParameters()
+    t_employment = t_employment or require "test.t_employment"
+    local currentTurtleLocator = t_employment.GetCurrentTurtleLocator() assert(currentTurtleLocator, "Failed obtaining currentTurtleLocator")
+    local turtleObj = enterprise_employment:getObject(currentTurtleLocator) assert(turtleObj, "Failed obtaining turtleObj")
+    local constructParameters = {
+        workerId        = turtleObj:getWorkerId(),
+        baseLocation    = turtleObj:getBaseLocation(),
+        workerLocation  = turtleObj:getWorkerLocation(),
+    }
 
+    return constructParameters
+end
+
+function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
+    -- prepare test
+    local constructParameters = currentTurtleConstructParameters()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Turtle", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["itemDepotLocator"]                = itemDepotLocator,
-    })
+
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    local scheduleResult = objTurtle:provideItemsTo_AOSrv({
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
-
-function T_Turtle.T_provideItemsTo_AOSrv_Turtle()
-    -- prepare test
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
-
-    -- test
-    provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
-end
-
-function T_Turtle.T_provideItemsTo_AOSrv_Chest()
-    -- prepare test
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(2, 5, 0)) assert(chest2, "Failed obtaining Chest 2")
-    local itemDepotLocator = enterprise_chests:saveObject(chest2)
-
-    -- test
-    provideItemsTo_AOSrv_Test(itemDepotLocator, "Chest")
-end
-
-function T_Turtle.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_employment, testClassName, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    local itemDepotLocator = callbackData["itemDepotLocator"]
-    if enterprise_chests:isLocatorFromHost(itemDepotLocator) then
-        enterprise_chests:deleteResource(itemDepotLocator)
-    end
+end
 
-    -- end
-    return true
+function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
+    -- prepare test
+    local constructParameters = currentTurtleConstructParameters()
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
+
+    local obj2 = T_Chest.CreateTestObj(nil, baseLocationChest) assert(obj2, "Failed obtaining "..testClassName.." 2")
+    local itemDepotLocator = enterprise_chests:saveObject(obj2)
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_employment, testClassName, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+    enterprise_chests:deleteResource(itemDepotLocator)
 end
 
 --    _____ _____ _                 _____                   _

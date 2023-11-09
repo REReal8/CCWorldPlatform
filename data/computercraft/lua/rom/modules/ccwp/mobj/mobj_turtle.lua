@@ -586,7 +586,8 @@ function Turtle:storeItemsFrom_AOSrv(...)
         if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all="..textutils.serialise(storeItems, {compact = true})..") items available in Turtle inventory(="..textutils.serialise(turtleInventory, {compact = true})..")") return Callback.ErrorCall(callback) end
 
         -- determine destinationItemsLocator
-        local destinationItemsLocator = itemsLocator:copy()
+        local destinationItemsLocator = enterprise_employment:getObjectLocator(self)
+        destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
 
         -- end
         local result = {
