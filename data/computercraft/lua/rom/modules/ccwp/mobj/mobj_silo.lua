@@ -804,7 +804,7 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
         corelog.Error("Silo:fromSiloIntoTopchest_AOSrv(...): don't know where to get the requested items")
         corelog.WriteToLog("answer:")
         corelog.WriteToLog(answer)
-        return nil
+        return Callback.ErrorCall(callback)
     end
 
     -- create the project data
@@ -932,18 +932,68 @@ end
  |_|
 --]]
 
-function Silo:IntegretyCheck(...)
+function Silo:integrityCheck_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, callback = InputChecker.Check([[
+        Restore the integrity of the Silo.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+            callback                    + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("Silo:integrityCheck_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- create the project data
+    local projectData   = {
+    }
+
+    -- for the steps
+    local projectSteps  = {}
+
     -- check all top Chest's
     for i, chestLocator in ipairs(self._topChests) do
-        local chest = ObjHost.GetObject(chestLocator)
-        if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
+        -- add to project data
+        projectData[ "topChestLocator"..i ] = chestLocator
+
+        -- add new project step
+        table.insert(projectSteps,
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "updateChestRecord_AOSrv", locatorStep = 0, locatorKeyDef = "topChestLocator"..i }, stepDataDef = {
+            }}
+        )
     end
 
     -- check all storage Chest's
     for i, chestLocator in ipairs(self._storageChests) do
-        local chest = ObjHost.GetObject(chestLocator)
-        if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
+        -- add to project data
+        projectData[ "storageChestLocator"..i ] = chestLocator
+
+        -- add new project step
+        table.insert(projectSteps,
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "updateChestRecord_AOSrv", locatorStep = 0, locatorKeyDef = "storageChestLocator"..i }, stepDataDef = {
+            }}
+        )
     end
+
+    -- the project definition
+    local projectServiceData = {
+        projectData = projectData,
+        projectDef  = {
+            steps   = projectSteps,
+            returnData  = {
+            }
+        },
+        projectMeta = { title = "Silo Integrity Check", description = "None of your business" },
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Silo:GetChestInventory(chestLocator)

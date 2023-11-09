@@ -4,6 +4,7 @@ local coreutils = require "coreutils"
 local coredht = require "coredht"
 
 local Callback = require "obj_callback"
+local MethodExecutor = require "method_executor"
 
 local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
@@ -63,6 +64,7 @@ end
 
 local testClassName = "Silo"
 local testObjName = "silo"
+local testHost = enterprise_storage
 
 local logOk = false
 
@@ -72,8 +74,8 @@ local dropLocation0 = 0
 local pickupLocation0 = 0
 local topChests0 = ObjArray:newInstance(URL:getClassName()) assert(topChests0, "Failed obtaining ObjArray")
 local storageChests0 = ObjArray:newInstance(URL:getClassName()) assert(storageChests0, "Failed obtaining ObjArray")
-local nTopChests0 = 4
-local nLayers0 = 3
+local nTopChests0 = 2
+local nLayers0 = 2
 
 local constructParameters0 = {
     baseLocation    = baseLocation0,
@@ -276,13 +278,17 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
-function T_Silo.T_integrity()
-    -- do the new test
-    corelog.WriteToLog("* Silo:construct() tests")
+function T_Silo.T_integrityCheck_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Silo:integrityCheck_AOSrv() tests")
     local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
-    local siloLocator = enterprise_storage:saveObject(obj)
+    local siloLocator = testHost:saveObject(obj)
 
-    obj:IntegretyCheck()
+    -- test
+    obj:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
+
+    -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = siloLocator})
 end
 
 --    _____ _____ _                  _____                   _ _
@@ -435,7 +441,7 @@ function T_Silo.T_GetRandomSilo()
     if not silo then return nil end
 
     -- see what's inside
-    silo:IntegretyCheck()
+    silo:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
 
     -- usefull if this silo is active
 --    silo:Activate()
