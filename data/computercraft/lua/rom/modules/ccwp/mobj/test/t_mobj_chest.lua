@@ -302,6 +302,8 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
 
     -- test
     T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters0, provideItems, itemDepotLocator)
+
+    -- cleanup test
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
@@ -315,6 +317,9 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
 
     -- test
     T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters0, provideItems, itemDepotLocator)
+
+    -- cleanup test
+    enterprise_chests:deleteResource(itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()

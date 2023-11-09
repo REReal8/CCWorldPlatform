@@ -2,6 +2,7 @@ local T_IItemSupplier = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local MethodExecutor = require "method_executor"
 
 local URL = require "obj_url"
 local Host = require "host"
@@ -29,44 +30,24 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, className, c
     local mobjLocator = mobjHost:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator assert(mobjLocator, "failed hosting "..className.." on "..mobjHostName)
     local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "Failed obtaining "..className.." from mobjLocator "..mobjLocator:getURI())
 
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_IItemSupplier", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["mobjHostName"]                    = mobjHostName,
-        ["mobjLocator"]                     = mobjLocator,
-        ["itemDepotLocator"]                = itemDepotLocator,
-    })
-
     -- test
-    local scheduleResult = mobj:provideItemsTo_AOSrv({
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobj, "provideItemsTo_AOSrv", {
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
+    })
 
-function T_IItemSupplier.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
+    -- check: service success
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
 
+    -- check: destinationItemsLocator
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
-    local mobjHostName = callbackData["mobjHostName"]
-    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "Failed obtaining MObjHost "..mobjHostName)
-    local mobjLocator = callbackData["mobjLocator"]
     mobjHost:releaseMObj_SSrv({ mobjLocator = mobjLocator})
-
-    local itemDepotLocator = callbackData["itemDepotLocator"]
-    if enterprise_chests:isLocatorFromHost(itemDepotLocator) then
-        enterprise_chests:deleteResource(itemDepotLocator)
-    end
-
-    -- end
-    return true
 end
 
 return T_IItemSupplier
