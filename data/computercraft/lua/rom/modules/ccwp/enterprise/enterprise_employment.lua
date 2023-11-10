@@ -11,6 +11,7 @@ local enterprise_employment = Class.NewClass(MObjHost, IRegistry)
 local coresystem = require "coresystem"
 local coreutils = require "coreutils"
 local corelog = require "corelog"
+local coredisplay = require "coredisplay"
 local coremove = require "coremove"
 
 local Callback = require "obj_callback"
@@ -625,7 +626,14 @@ local function DummyWorkerMenu(t)
             os.sleep(1.0)
             corelog.WriteToLog("rebooting...")
             os.reboot()
-        else corelog.Error("enterprise_employment.DummyWorkerMenu: Don't know how to set forgotten or abandoned "..className) return false end
+        else
+            local message1 = "Don't know (how to set as) "..className.." (yet)"
+            local message2 = " => ask developer to add it!"
+            corelog.Error("enterprise_employment.DummyWorkerMenu: "..message1..message2)
+            coredisplay.UpdateToDisplay(message2, 5)
+            coredisplay.UpdateToDisplay(message1, 5)
+            return false
+        end
 
         -- we are done here, go back
         return true
@@ -635,6 +643,7 @@ local function DummyWorkerMenu(t)
             intro   = "I am not a properly registered Worker!\nHence I do not know what to display.\nChoose your action",
             option  = {
                 {key = "u", desc = "Set as UserStation",    func = DummyWorkerMenu,     param = {workerClassName = "UserStation"}},
+                {key = "d", desc = "Set as DisplayStation", func = DummyWorkerMenu,     param = {workerClassName = "DisplayStation"}},
                 {key = "q", desc = "Quit",          	    func = coresystem.DoQuit,	param = {}},
             },
             question = "Can you tell me who I am?",
