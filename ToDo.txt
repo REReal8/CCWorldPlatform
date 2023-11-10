@@ -96,8 +96,8 @@ R  Generalised IItemSupplier test functions for MObj's                          
    R  use in mobj_birchforest                                                                                           (....)
    R  use in mobj_chest                                                                                                 (....)
    R  use in mobj_factory                                                                                               (....)
-   -  use in mobj_silo
-   -  use in Shop
+   R  use in mobj_silo                                                                                                  (....)
+   R  use in Shop                                                                                                       (....)
    R  use in mobj_turtle                                                                                                (....)
 
 -  Generalised IItemDepot test functions for MObj's
