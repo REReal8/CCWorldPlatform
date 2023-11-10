@@ -515,57 +515,43 @@ end
 
 function T_Factory.T_can_ProvideItems_QOSrv()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test can not produce item without recipe
-    local itemName = "anItemWithNoRecipe"
-    local itemCount = 2
-    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["anItemWithNoRecipe"] = 2}, false, logOk)
 
     -- test can craft
-    itemName = "minecraft:birch_planks"
-    itemCount = 10
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:birch_planks"] = 10}, true, logOk)
 
     -- test can not craft without available craftingSpot
     -- ToDo: improve when a spot can be marked unavailable
     local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
     obj._craftingSpots = craftingSpots2
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:birch_planks"] = 10}, false, logOk)
     obj._craftingSpots = craftingSpots1
 
     -- test can smelt
-    itemName = "minecraft:charcoal"
-    itemCount = 5
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, true, logOk)
 
     -- test can not smelt without available smeltingSpot
     -- ToDo: improve when a spot can be marked unavailable
     local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
     obj._smeltingSpots = smeltingSpots2
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._smeltingSpots = smeltingSpots1
 
     -- test can not produce without available inputLocator
     -- ToDo: improve by changing the availability of the inputLocator
     local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
     obj._inputLocators = inputLocators2
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._inputLocators = inputLocators0
 
     -- test can not produce without available outputLocator
     -- ToDo: improve by changing the availability of the _outputLocators
     local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
     obj._outputLocators = outputLocators2
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._outputLocators = outputLocators0
 
     -- cleanup test

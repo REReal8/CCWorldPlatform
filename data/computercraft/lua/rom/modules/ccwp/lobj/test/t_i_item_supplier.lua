@@ -6,6 +6,8 @@ local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
 local ObjHost = require "obj_host"
 
+local MethodResultEqualTest = require "method_result_equal_test"
+
 local compact = { compact = true }
 
 --    _____ _____ _                  _____                   _ _
@@ -18,7 +20,7 @@ local compact = { compact = true }
 --                                              |_|   |_|
 
 function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
-    -- prepare test (cont)
+    -- prepare test
     assert(className, "no className provided")
     assert(objLocator, "no objLocator provided")
     assert(provideItems, "no provideItems provided")
@@ -49,8 +51,22 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideI
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
-
     if logOk then corelog.WriteToLog(" ok") end
+end
+
+function T_IItemSupplier.pt_can_ProvideItems_QOSrv(className, obj, objName, provideItems, expectedAnswer, logOk)
+    -- prepare test
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(provideItems) == "table", "no valid provideItems provided")
+    assert(type(expectedAnswer) == "boolean", "no valid expectedAnswer provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
+    corelog.WriteToLog("* "..className..":can_ProvideItems_QOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", answer="..tostring(expectedAnswer)..")")
+
+    -- test
+    local test = MethodResultEqualTest:newInstance("can_ProvideItems_QOSrv", { success = expectedAnswer, }, { provideItems = provideItems, } )
+    test:test(obj, objName, "", logOk)
 end
 
 return T_IItemSupplier

@@ -368,23 +368,14 @@ end
 
 function T_Chest.T_can_ProvideItems_QOSrv()
     -- prepare test
-    corelog.WriteToLog("* Chest:can_ProvideItems_QOSrv() tests")
     local inventory = Inventory:newInstance({
             { name = "minecraft:dirt", count = 20 },
         })
     local obj = T_Chest.CreateTestObj(nil, baseLocation0, accessDirection0, inventory) assert(obj, "Failed obtaining "..testClassName)
 
-    -- test can
-    local itemName = "minecraft:dirt"
-    local itemCount = 10
-    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
-
-    -- test can not
-    itemName = "minecraft:furnace"
-    itemCount = 1
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+    -- tests
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:furnace"] = 1}, false, logOk)
 
     -- cleanup test
 end
