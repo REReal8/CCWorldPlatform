@@ -67,6 +67,7 @@ end
 
 local testClassName = "Turtle"
 local testObjName = "turtle"
+local testHost = enterprise_employment
 
 local logOk = false
 
@@ -311,22 +312,11 @@ function T_Turtle.T_IItemSupplier_All()
     -- T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
-local function currentTurtleConstructParameters()
-    t_employment = t_employment or require "test.t_employment"
-    local currentTurtleLocator = t_employment.GetCurrentTurtleLocator() assert(currentTurtleLocator, "Failed obtaining currentTurtleLocator")
-    local turtleObj = enterprise_employment:getObject(currentTurtleLocator) assert(turtleObj, "Failed obtaining turtleObj")
-    local constructParameters = {
-        workerId        = turtleObj:getWorkerId(),
-        baseLocation    = turtleObj:getBaseLocation(),
-        workerLocation  = turtleObj:getWorkerLocation(),
-    }
-
-    return constructParameters
-end
-
 function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
     -- prepare test
-    local constructParameters = currentTurtleConstructParameters()
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -336,14 +326,16 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_employment, testClassName, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 end
 
 function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     -- prepare test
-    local constructParameters = currentTurtleConstructParameters()
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -354,7 +346,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_employment, testClassName, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
     enterprise_chests:deleteResource(itemDepotLocator)

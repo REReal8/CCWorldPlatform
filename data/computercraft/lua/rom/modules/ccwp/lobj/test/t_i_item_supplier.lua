@@ -1,13 +1,10 @@
 local T_IItemSupplier = {}
 local corelog = require "corelog"
 
-local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 
 local URL = require "obj_url"
-local Host = require "host"
-
-local enterprise_chests = require "enterprise_chests"
+local ObjHost = require "obj_host"
 
 local compact = { compact = true }
 
@@ -20,11 +17,10 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, constructParameters, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(className, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
     -- prepare test (cont)
-    assert(mobjHost, "no mobjHost provided")
     assert(className, "no className provided")
-    assert(constructParameters, "no constructParameters provided")
+    assert(objLocator, "no objLocator provided")
     assert(provideItems, "no provideItems provided")
     assert(itemDepotLocator, "no itemDepotLocator provided")
     assert(ingredientsItemSupplierLocator, "no ingredientsItemSupplierLocator provided")
@@ -32,8 +28,7 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, const
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
-    local objLocator = mobjHost:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator assert(objLocator, "failed hosting "..className.." on "..mobjHost:getHostName())
-    local lobj = mobjHost:getObject(objLocator) assert(lobj, "Failed obtaining "..className.." from mobjLocator "..objLocator:getURI())
+    local lobj = ObjHost.GetObject(objLocator) assert(lobj, "Failed obtaining "..className.." from mobjLocator "..objLocator:getURI())
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "provideItemsTo_AOSrv", {
@@ -54,7 +49,6 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHost, className, const
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
-    mobjHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 
     if logOk then corelog.WriteToLog(" ok") end
 end

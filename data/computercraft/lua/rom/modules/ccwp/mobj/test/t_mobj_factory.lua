@@ -76,6 +76,7 @@ local testObjName = "factory"
 local testObjName0 = testObjName.."0"
 local testObjName1 = testObjName.."1"
 local testObjName2 = testObjName.."2"
+local testHost = enterprise_manufacturing
 
 local logOk = false
 
@@ -477,6 +478,8 @@ end
 
 function T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
     local provideItems = { ["minecraft:birch_planks"] = 11 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -485,13 +488,16 @@ function T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_manufacturing, testClassName, constructParameters2, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
     local provideItems = { ["minecraft:charcoal"] = 1 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -500,9 +506,10 @@ function T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_manufacturing, testClassName, constructParameters2, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
-    -- -- test
+    -- test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()

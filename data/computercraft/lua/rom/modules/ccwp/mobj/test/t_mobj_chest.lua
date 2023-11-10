@@ -64,6 +64,7 @@ end
 
 local testClassName = "Chest"
 local testObjName = "chest"
+local testHost = enterprise_chests
 
 local logOk = false
 
@@ -248,7 +249,7 @@ function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
     local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
-    local chestLocator = enterprise_chests:saveObject(obj)
+    local chestLocator = testHost:saveObject(obj)
 
     local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
         ["chestLocator"] = chestLocator,
@@ -263,11 +264,11 @@ function T_Chest.updateChestRecord_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
     local chestLocator = callbackData["chestLocator"]
-    local updatedChest = enterprise_chests:getObject(chestLocator)
+    local updatedChest = testHost:getObject(chestLocator)
     assert (updatedChest, "Chest not saved")
 
     -- cleanup test
-    enterprise_chests:deleteResource(chestLocator)
+    testHost:deleteResource(chestLocator)
 
     -- end
     return true
@@ -297,10 +298,12 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
@@ -308,29 +311,33 @@ function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_chests, testClassName, constructParameters0, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = enterprise_chests:saveObject(obj2)
+    local itemDepotLocator = testHost:saveObject(obj2)
     t_employment = t_employment or require "test.t_employment"
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_chests, testClassName, constructParameters0, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    enterprise_chests:deleteResource(itemDepotLocator)
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:deleteResource(itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
@@ -342,7 +349,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     }
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = enterprise_chests:saveObject(obj2)
+    local itemDepotLocator = testHost:saveObject(obj2)
     local itemDepotLocation = obj2:getBaseLocation()
 
     -- test
@@ -356,7 +363,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
 
     -- cleanup test
-    enterprise_chests:deleteResource(itemDepotLocator)
+    testHost:deleteResource(itemDepotLocator)
 end
 
 function T_Chest.T_can_ProvideItems_QOSrv()
@@ -405,7 +412,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
     local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests:getObjectLocator(obj)
+    local chestLocator = testHost:getObjectLocator(obj)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -439,7 +446,7 @@ end
 function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     -- prepare test
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemsLocator = enterprise_chests:saveObject(obj2)
+    local itemsLocator = testHost:saveObject(obj2)
 
     -- test
     storeItemsFrom_AOSrv_Test(itemsLocator, "Chest")
@@ -455,10 +462,10 @@ function T_Chest.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     local chestLocator = callbackData["chestLocator"]
-    enterprise_chests:deleteResource(chestLocator)
+    testHost:deleteResource(chestLocator)
     local itemsLocator = callbackData["itemsLocator"]
-    if enterprise_chests:isLocatorFromHost(itemsLocator) then
-        enterprise_chests:deleteResource(itemsLocator)
+    if testHost:isLocatorFromHost(itemsLocator) then
+        testHost:deleteResource(itemsLocator)
     end
 
     -- end

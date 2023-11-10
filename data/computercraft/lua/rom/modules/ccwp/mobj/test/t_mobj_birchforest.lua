@@ -71,6 +71,7 @@ local testObjNamem1 = testObjName.."-1"
 local testObjName0 = testObjName.."0"
 local testObjName1 = testObjName.."1"
 local testObjName2 = testObjName.."2"
+local testHost = enterprise_forestry
 
 local logOk = false
 
@@ -438,6 +439,7 @@ end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = { ["minecraft:birch_log"] = 10 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -446,13 +448,16 @@ function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
     local provideItems = { ["minecraft:birch_sapling"] = 1 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -461,9 +466,10 @@ function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(enterprise_forestry, testClassName, constructParameters_L2T4, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()

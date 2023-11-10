@@ -326,7 +326,7 @@ function Chest:updateChestRecord_AOSrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
-            }, description = "Fetching Chest inventory"},
+            }, description = "Fetching Chest "..self:getId().." inventory"},
             -- save Chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
