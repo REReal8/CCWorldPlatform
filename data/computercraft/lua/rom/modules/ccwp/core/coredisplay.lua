@@ -26,11 +26,6 @@ local db    = {
 }
 local screen    = {}
 
-local function ExecuteAllTests(t)
-    local options = nil
-    return ExecuteXObjTest(t, "All", options, ExecuteAllTests)
-end
-
 -- init function for the display
 function coredisplay.Init()
     -- get current position
@@ -42,9 +37,6 @@ function coredisplay.Init()
             clear   = true,
             intro   = "Choose your action",
             option  = {
-                {key = "1", desc = "All tests", 		func = ExecuteAllTests,	 		param = {filename = "t_ccwp"}},
-                {key = "2", desc = "Exec code",  		func = ExecuteCode,	    		param = {}},
-                {key = "3", desc = "Load event",		func = LoadEvent,				param = {}},
                 {key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
             },
             question	= "Make your choice",

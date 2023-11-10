@@ -21,11 +21,22 @@ function ccwp.Init()
     testLibrary.Init()
 end
 
+local function ExecuteAll(t)
+    local options = nil
+    return ExecuteXObjTest(t, "All", options, ExecuteAll)
+end
+
 function ccwp.Startup()
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("t_ccwp", "t_ccwp")
+
+    -- set main ccwp menu
+    local coredisplay = require "coredisplay"
+    coredisplay.MainMenuAddItem("1", "All", ExecuteAll, {filename = "t_ccwp"})
+    coredisplay.MainMenuAddItem("2", "Exec code", ExecuteCode, {})
+    coredisplay.MainMenuAddItem("3", "Load event", ExecuteAll, {})
 
     -- setup libraries
     coreLibrary.Setup()
