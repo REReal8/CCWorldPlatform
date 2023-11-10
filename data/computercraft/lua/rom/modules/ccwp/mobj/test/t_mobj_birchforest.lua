@@ -501,7 +501,7 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
     corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test can
     local itemName = "minecraft:birch_log"
     local itemCount = 20
     local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
@@ -512,6 +512,7 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
+    -- test can not
     itemName = "minecraft:dirt"
     itemCount = 10
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
