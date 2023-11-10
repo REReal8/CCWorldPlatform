@@ -214,41 +214,33 @@ function ReadLine() return read() end
 
 -- for executing custom code
 function ExecuteCode(t, code)
-	-- first screen?
-	if t.boss == nil then
---		coredisplay.NextScreen({
---			clear       = true,
---			func	    = ExecuteCode,
---			intro       = "Please type your line of code below\n",
---			param	    = {step = 2},
---			question    = nil
---		})
-		coredisplay.NextScreen({
-			clear   = true,
-			intro   = "Who is runnig the show?",
-			option  = {
-				{key = "r", desc = "Rutger",  			func = ExecuteCode,	param = {boss = 'rutger'}},
-				{key = "g", desc = "Guido",				func = ExecuteCode,	param = {boss = 'guido'}},
-				{key = "x", desc = "Back to main menu",	func = function () return true end},
-			},
-			question	= "Make your choice",
-		})
+    -- first screen?
+    if t.boss == nil then
+        coredisplay.NextScreen({
+            clear   = true,
+            intro   = "Who is runnig the show?",
+            option  = {
+                {key = "r", desc = "Rutger",  			func = ExecuteCode,	param = {boss = 'rutger'}},
+                {key = "g", desc = "Guido",				func = ExecuteCode,	param = {boss = 'guido'}},
+                {key = "x", desc = "Back to main menu",	func = function () return true end},
+            },
+            question	= "Make your choice",
+        })
 
-		-- next screen
-		return true
-	else
-		-- mark as not loaded
-		package.loaded[t.boss] = nil
+        -- next screen
+        return true
+    else
+        -- mark as not loaded
+        package.loaded[t.boss] = nil
 
-		-- require the package
-			 if t.boss == 'rutger' then require 'rutger'
-		else if t.boss == 'guido'  then require 'guido'
-		end end
+        -- require the package
+             if t.boss == 'rutger' then require 'rutger'
+        else if t.boss == 'guido'  then require 'guido'
+        end end
 
-		-- done, but stay on screen
-		return false
-	end
-
+        -- done, but stay on screen
+        return false
+    end
 end
 
 function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
