@@ -398,7 +398,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters" },
-            }, description = "Hosting Factory"},
+            }, description = "Hosting BirchForest"},
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 1, sourceKeyDef = "mobjLocator" },
             }},

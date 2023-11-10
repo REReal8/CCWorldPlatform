@@ -23,15 +23,11 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_storage = require "enterprise_storage"
+local enterprise_colonization = require "enterprise_colonization"
 
 local T_EnterpriseLibrary = require "enterprise.library"
 
-function t_ccwp.T_dummy()
-    corelog.WriteToLog("Running T_()")
-    print("!")
-end
-
-function t_ccwp.T_All()
+function t_ccwp.T_AllTests()
     -- libraries
     T_CoreLibrary.T_All()
     T_BaseLibrary.T_All()
@@ -42,29 +38,49 @@ function t_ccwp.T_All()
     T_EnterpriseLibrary.T_All()
 end
 
+function t_ccwp.T_DeleteAll()
+    -- World
+    t_ccwp.T_DeleteWorld()
+
+    -- Worker's
+    t_ccwp.T_DeleteWorkers()
+
+    -- anything remaining?
+    enterprise_chests:releaseLObjs_SSrv({ className = "Chest" })
+end
+
+function t_ccwp.T_DeleteWorld()
+    -- core
+    coreinventory.ResetAllItems() -- r => d
+    coreassignment.Reset() -- r
+
+    -- enterprise
+    enterprise_assignmentboard.Reset() -- r + d
+    enterprise_administration:reset() -- d
+    enterprise_projects.DeleteProjects() -- d
+    enterprise_energy.ResetParameters() -- ~r
+    enterprise_shop:reset() -- r + ~d
+
+    -- LObj's
+    enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" }) -- d
+    enterprise_forestry:releaseLObjs_SSrv({ className = "BirchForest" }) -- d
+    enterprise_storage:releaseLObjs_SSrv({ className = "Silo"}) -- d
+end
+
 function t_ccwp.T_ResetWorld()
-    -- core resets
-    coreinventory.ResetAllItems()
-    coreassignment.Reset()
+    -- World
+    t_ccwp.T_DeleteWorld()
+    enterprise_colonization.RecoverNewWorld_SSrv({})
+end
 
-    -- enterprise resets
-    enterprise_assignmentboard.Reset()
-    enterprise_administration:reset()
-    enterprise_projects.DeleteProjects()
-    enterprise_energy.ResetParameters()
-    enterprise_manufacturing:deleteObjects("Factory")
-    enterprise_chests:deleteObjects("Chest")
-    enterprise_employment:resetAndRecover()
-    enterprise_shop:reset()
-    enterprise_forestry:deleteObjects("BirchForest")
-    enterprise_storage:deleteObjects("Silo")
+function t_ccwp.T_DeleteWorkers()
+    -- Worker's
+    enterprise_employment:deleteWorkers()
+end
 
-    -- give the system some time to save changes to disk
-    os.sleep(0.25)
-
-    -- time to reboot
-    -- ToDo: figure out why changes are often still not saved to disk
---    os.reboot()
+function t_ccwp.T_ResetWorkers()
+    -- Worker's
+    enterprise_employment:resetWorkers()
 end
 
 function t_ccwp.T_ClearLogfile()

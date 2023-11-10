@@ -412,4 +412,43 @@ function MObjHost:releaseMObj_SSrv(...)
     return {success = success}
 end
 
+function MObjHost:releaseLObjs_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, className = InputChecker.Check([[
+        This async public service releases all LObj's from the MObjHost.
+
+        Note that the LObj's are not physically removed from the world.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                         - (table) data about this service
+                className                       + (string) with the name of the class of the LObj's
+    ]], ...)
+    if not checkSuccess then corelog.Error("MObjHost:releaseLObjs_SSrv: Invalid input") return {success = false} end
+
+    -- get LObj's
+    local objects = self:getObjects(className)
+    if type(objects) ~= "table" then corelog.Error("MObjHost:releaseLObjs_SSrv: Failed obtaining objects of class "..className) return nil end
+
+    -- release all
+    local releaseSuccess = true
+    for _, lobj in pairs(objects) do
+        -- convert to object
+        lobj = objectFactory:create(className, lobj)
+
+        -- get locator
+        local objectLocator = self:getObjectLocator(lobj)
+
+        -- release
+        local releaseResult = self:releaseMObj_SSrv({ mobjLocator = objectLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("MObjHost:releaseLObjs_SSrv: failed releasing objectLocator "..objectLocator:getURI()) releaseSuccess = false end
+    end
+
+    -- end
+    return {success = releaseSuccess}
+end
+
 return MObjHost
