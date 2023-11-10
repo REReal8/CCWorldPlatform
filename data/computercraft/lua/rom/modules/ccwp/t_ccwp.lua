@@ -51,20 +51,20 @@ end
 
 function t_ccwp.T_DeleteWorld()
     -- core
-    coreinventory.ResetAllItems() -- r => d
-    coreassignment.Reset() -- r
+    coreinventory.ResetAllItems()
+    coreassignment.Reset()
 
     -- enterprise
-    enterprise_assignmentboard.Reset() -- r + d
-    enterprise_administration:reset() -- d
-    enterprise_projects.DeleteProjects() -- d
-    enterprise_energy.ResetParameters() -- ~r
-    enterprise_shop:reset() -- r + ~d
+    enterprise_assignmentboard.Reset()
+    enterprise_administration:reset()
+    enterprise_projects.DeleteProjects()
+    enterprise_energy.ResetParameters()
+    enterprise_shop:deleteShop()
 
     -- LObj's
-    enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" }) -- d
-    enterprise_forestry:releaseLObjs_SSrv({ className = "BirchForest" }) -- d
-    enterprise_storage:releaseLObjs_SSrv({ className = "Silo"}) -- d
+    enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" })
+    enterprise_forestry:releaseLObjs_SSrv({ className = "BirchForest" })
+    enterprise_storage:releaseLObjs_SSrv({ className = "Silo"})
 end
 
 function t_ccwp.T_ResetWorld()
