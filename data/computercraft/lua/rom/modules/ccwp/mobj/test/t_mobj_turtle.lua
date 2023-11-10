@@ -308,8 +308,8 @@ function T_Turtle.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
-    -- T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
-    -- T_Turtle.T_can_ProvideItems_QOSrv()
+    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
+    T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
 function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
@@ -362,10 +362,17 @@ function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 end
 
 function T_Turtle.T_can_ProvideItems_QOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+    local obj = testHost:getObject(objLocator) assert(obj, "Failed obtaining obj")
+    local itemTable = obj:getInventoryAsItemTable()
 
-    -- test
+    -- tests
+    for itemName, itemCount in pairs(itemTable) do
+        T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { [itemName] = itemCount}, true, logOk)
+    end
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["anUnknownItem"] = 1}, false, logOk)
 
     -- cleanup test
 end
