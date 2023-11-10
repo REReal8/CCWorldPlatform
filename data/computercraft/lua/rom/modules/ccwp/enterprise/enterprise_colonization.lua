@@ -418,6 +418,10 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerItemSupplier_SOSrv", locatorStep = 0, locatorKeyDef = "shopLocator" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 5, sourceKeyDef = "mobjLocator" },
             }},
+            --
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_dump", serviceName = "ListItemDepot_SSrv" }, stepDataDef = {
+                { keyDef = "itemDepotLocator"               , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+            }},
             -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
