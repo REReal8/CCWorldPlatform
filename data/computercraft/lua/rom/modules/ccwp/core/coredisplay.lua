@@ -44,31 +44,22 @@ function coredisplay.Init()
     end
 end
 
-local function DummyMainMenu()
-    return {
-        clear   = true,
-        intro   = "I am not a properly registered Worker!\nHence I do not know what to display.\nChoose your action",
-        option  = {
-            {key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
-        },
-        question	= "Make your choice",
-    }
-end
-
 local function DHTReadySetup()
-    -- determine mainMenu
-    local mainMenu = DummyMainMenu()
-
-    -- get main menu of current worker
+    -- determine main menu of current worker
+    local mainMenu = nil
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerLocator = enterprise_employment:getCurrentWorkerLocator()
-    if not workerLocator then corelog.Error("coredisplay.Setup: Failed obtaining current workerLocator")
+    if not workerLocator then corelog.Error("coredisplay.DHTReadySetup: Failed obtaining current workerLocator")
     else
         local workerObj = enterprise_employment:getObject(workerLocator)
-        if not workerObj then corelog.Warning("coredisplay.Run: Failed obtaining Worker "..workerLocator:getURI())
+        if not workerObj then corelog.Error("coredisplay.DHTReadySetup: Failed obtaining Worker "..workerLocator:getURI())
         else
             mainMenu = workerObj:getMainUIMenu()
         end
+    end
+    if not mainMenu then
+        corelog.WriteToLog("coredisplay.DHTReadySetup: Using DummyWorkerMenu")
+        mainMenu = enterprise_employment:getDummyWorkerMenu()
     end
 
     -- set start screen

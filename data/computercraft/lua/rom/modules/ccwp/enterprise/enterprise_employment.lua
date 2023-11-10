@@ -8,6 +8,7 @@ local enterprise_employment = Class.NewClass(MObjHost, IRegistry)
     The enterprise_employment is a MObjHost. It hosts Worker's that can perform work (i.e. assignments).
 --]]
 
+local coresystem = require "coresystem"
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
@@ -336,7 +337,7 @@ function enterprise_employment:getCurrentWorkerLocator()
             constructParameters.workerId = workerId
 
             -- determine workerName
-            workerName = className..""..tostring(workerId).." van der Turtle"..tostring(fatherId)
+            workerName = className..""..tostring(workerId).." from Turtle"..tostring(fatherId)
         elseif self:getNumberOfObjects(Turtle:getClassName()) == 0 and turtle then -- are we the first Turtle?
             corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
             -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
@@ -353,10 +354,23 @@ function enterprise_employment:getCurrentWorkerLocator()
             }
 
             -- determine workerName
-            workerName = className.." "..tostring(workerId).." van der Creator"
-        else -- forgotten (not in dht) or abandonded (by father)
-            corelog.Error("enterprise_employment:getCurrentWorkerLocator: Worker "..workerId.." seems to have been forgotten or abandoned. => bailing out")
-            return nil
+            workerName = className.." "..tostring(workerId).." from the Creator"
+        else
+            -- did we register our own birthCertificate? (e.g. via a Menu)
+            local birthCertificate = self:getAndRemoveBirthCertificate(workerId)
+            if birthCertificate then
+                -- determine hosting information
+                className = birthCertificate.className
+                constructParameters = birthCertificate.constructParameters
+                constructParameters.workerId = workerId
+
+                -- determine workerName
+                workerName = className..""..tostring(workerId).." SelfMade"
+            else
+                -- forgotten (not in dht) or abandonded (by father)
+                corelog.Error("enterprise_employment:getCurrentWorkerLocator: Worker "..workerId.." seems to have been forgotten or abandoned. => bailing out")
+                return nil
+            end
         end
 
         -- host Worker
@@ -458,120 +472,6 @@ function enterprise_employment:registerBirthCertificate_SOSrv(...)
         fatherId    = fatherId,
     }
 end
-
---    __  __  ____  _     _ _    _           _
---   |  \/  |/ __ \| |   (_) |  | |         | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
---                      _/ |
---                     |__/
-
-function enterprise_employment:buildAndHostMObj_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service builds, hosts, registers and boots a new Worker.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the build and hosted Worker
-
-        Parameters:
-            serviceData                         - (table) data about this service
-                className                       + (string, "") with the name of the class of the Worker
-                constructParameters             + (table) parameters for constructing the Worker
-                materialsItemSupplierLocator    + (URL) locating the host for building materials
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
-            callback                            + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get class
-    local class = objectFactory:getClass(className)
-    if not class then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
-    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
-
-    -- check (not) IWorker
-    if not Class.IsInstanceOf(class, IWorker) then
-        -- have base class MObjHost handle the service
-        corelog.WriteToLog()
-        return MObjHost.buildAndHostMObj_ASrv(self, ...)
-    end
-
-    -- get blueprint
-    local buildLocation, blueprint = class.GetBuildBlueprint(constructParameters)
-    if not buildLocation or not blueprint then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
-
-    -- create project definition
-    local workerLocation = constructParameters.workerLocation:copy()
-    local accessDirection = "top"
-    local taskData = {
-        turtleId        = -1,
-        workerLocation  = workerLocation,
-        accessDirection = accessDirection,
-    }
-    local projectData = {
-        buildLocation               = buildLocation,
-        blueprint                   = blueprint,
-        materialsItemSupplierLocator= materialsItemSupplierLocator,
-        wasteItemDepotLocator       = wasteItemDepotLocator,
-
-        className                   = className,
-        constructParameters         = constructParameters,
-
-        hostLocator                 = self:getHostLocator(),
-
-        metaData                    = role_interactor.TurnOnWorker_MetaData(taskData),
-        taskCall                    = TaskCall:newInstance("role_interactor", "TurnOnWorker_Task", taskData),
-    }
-    local projectDef = {
-        steps   = {
-            -- build MObj in the world
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildBlueprint_ASrv" }, stepDataDef = {
-                { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
-                { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
-                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Building "..className},
-            -- register new born Worker
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerBirthCertificate_SOSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-            }, description = "Register new "..className},
-            -- boot new Worker
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needWorkerId"          , sourceStep = 2, sourceKeyDef = "fatherId" },
-                { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
-            }, description = "Turn on new "..className},
-        },
-        returnData  = {
-            { keyDef = "mobjLocator"                        , sourceStep = 3, sourceKeyDef = "workerLocator" },
-        }
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-        projectMeta = { title = "Adding a new Worker", description = "Just wondering which one, aren't you?" },
-    }
-
-    -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-end
-
---    ______       _                       _          ______                 _                                  _
---   |  ____|     | |                     (_)        |  ____|               | |                                | |
---   | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___| |__   _ __ ___  _ __ | | ___  _   _ _ __ ___   ___ _ __ | |_
---   |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \  __| | '_ ` _ \| '_ \| |/ _ \| | | | '_ ` _ \ / _ \ '_ \| __|
---   | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/ |____| | | | | | |_) | | (_) | |_| | | | | | |  __/ | | | |_
---   |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___|______|_| |_| |_| .__/|_|\___/ \__, |_| |_| |_|\___|_| |_|\__|
---                             | |                                    | |             __/ |
---                             |_|                                    |_|            |___/
 
 function enterprise_employment:deleteWorkers()
     -- get registered workerLocators
@@ -700,6 +600,165 @@ function enterprise_employment:resetWorkers()
         end
     end
 end
+
+local function DummyWorkerMenu(t)
+    if type(t) =="table" and type(t.workerClassName) =="string" then
+        local className = t.workerClassName
+        if className == "UserStation" then
+            -- register birthCertificate
+            local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1) -- note: we don't know this
+            -- ToDo: see if there is a smarter way to retrieve baseLocation (e.g. from coremove.GetLocation())
+            local workerId = os.getComputerID()
+            local reconstructParameters = {
+                workerId        = workerId,
+                baseLocation    = baseLocation_UserStation,
+                workerLocation  = baseLocation_UserStation:getRelativeLocation(3, 3, 0),
+            }
+            local serviceResults = enterprise_employment:registerBirthCertificate_SOSrv({
+                className           = className,
+                constructParameters = reconstructParameters,
+            })
+            if not serviceResults.success then corelog.Error("enterprise_employment.DummyWorkerMenu: Registering birthCertificate failed") return false end
+
+            -- reboot
+            corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate")
+            os.sleep(1.0)
+            corelog.WriteToLog("rebooting...")
+            os.reboot()
+        else corelog.Error("enterprise_employment.DummyWorkerMenu: Don't know how to set forgotten or abandoned "..className) return false end
+
+        -- we are done here, go back
+        return true
+    else
+        return {
+            clear   = true,
+            intro   = "I am not a properly registered Worker!\nHence I do not know what to display.\nChoose your action",
+            option  = {
+                {key = "u", desc = "Set as UserStation",    func = DummyWorkerMenu,     param = {workerClassName = "UserStation"}},
+                {key = "q", desc = "Quit",          	    func = coresystem.DoQuit,	param = {}},
+            },
+            question = "Can you tell me who I am?",
+        }
+    end
+end
+
+function enterprise_employment:getDummyWorkerMenu()
+    return DummyWorkerMenu()
+end
+
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
+--                      _/ |
+--                     |__/
+
+function enterprise_employment:buildAndHostMObj_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+        This async public service builds, hosts, registers and boots a new Worker.
+
+        Return value:
+                                                - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+                mobjLocator                     - (URL) locating the build and hosted Worker
+
+        Parameters:
+            serviceData                         - (table) data about this service
+                className                       + (string, "") with the name of the class of the Worker
+                constructParameters             + (table) parameters for constructing the Worker
+                materialsItemSupplierLocator    + (URL) locating the host for building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+            callback                            + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- get class
+    local class = objectFactory:getClass(className)
+    if not class then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." not found in objectFactory") return Callback.ErrorCall(callback) end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Class "..className.." is not an IMObj") return Callback.ErrorCall(callback) end
+
+    -- check (not) IWorker
+    if not Class.IsInstanceOf(class, IWorker) then
+        -- have base class MObjHost handle the service
+        corelog.WriteToLog()
+        return MObjHost.buildAndHostMObj_ASrv(self, ...)
+    end
+
+    -- get blueprint
+    local buildLocation, blueprint = class.GetBuildBlueprint(constructParameters)
+    if not buildLocation or not blueprint then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Failed obtaining build blueprint for a new "..className..".") return Callback.ErrorCall(callback) end
+
+    -- create project definition
+    local workerLocation = constructParameters.workerLocation:copy()
+    local accessDirection = "top"
+    local taskData = {
+        turtleId        = -1,
+        workerLocation  = workerLocation,
+        accessDirection = accessDirection,
+    }
+    local projectData = {
+        buildLocation               = buildLocation,
+        blueprint                   = blueprint,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
+
+        className                   = className,
+        constructParameters         = constructParameters,
+
+        hostLocator                 = self:getHostLocator(),
+
+        metaData                    = role_interactor.TurnOnWorker_MetaData(taskData),
+        taskCall                    = TaskCall:newInstance("role_interactor", "TurnOnWorker_Task", taskData),
+    }
+    local projectDef = {
+        steps   = {
+            -- build MObj in the world
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildBlueprint_ASrv" }, stepDataDef = {
+                { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
+                { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+            }, description = "Building "..className},
+            -- register new born Worker
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "registerBirthCertificate_SOSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
+            }, description = "Register new "..className},
+            -- boot new Worker
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
+                { keyDef = "metaData.needWorkerId"          , sourceStep = 2, sourceKeyDef = "fatherId" },
+                { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
+            }, description = "Turn on new "..className},
+        },
+        returnData  = {
+            { keyDef = "mobjLocator"                        , sourceStep = 3, sourceKeyDef = "workerLocator" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+        projectMeta = { title = "Adding a new Worker", description = "Just wondering which one, aren't you?" },
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+--    ______       _                       _          ______                 _                                  _
+--   |  ____|     | |                     (_)        |  ____|               | |                                | |
+--   | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___| |__   _ __ ___  _ __ | | ___  _   _ _ __ ___   ___ _ __ | |_
+--   |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \  __| | '_ ` _ \| '_ \| |/ _ \| | | | '_ ` _ \ / _ \ '_ \| __|
+--   | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/ |____| | | | | | |_) | | (_) | |_| | | | | | |  __/ | | | |_
+--   |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___|______|_| |_| |_| .__/|_|\___/ \__, |_| |_| |_|\___|_| |_|\__|
+--                             | |                                    | |             __/ |
+--                             |_|                                    |_|            |___/
 
 local function GetTurtleLocator(turtleIdStr)
     --[[
