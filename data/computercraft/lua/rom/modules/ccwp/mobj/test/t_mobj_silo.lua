@@ -60,6 +60,7 @@ end
 
 function T_Silo.T_AllPhysical()
     -- IItemSupplier
+    T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
 end
 
 local testClassName = "Silo"
@@ -304,63 +305,40 @@ function T_Silo.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
-end
-
-local function provideItemsTo_AOSrv_Test(provideItems)
-    -- prepare test (cont)
-    corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
-
-    -- activate the silo
-    obj:Activate()
-
-    local siloLocator = enterprise_storage:getObjectLocator(obj)
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Silo", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["siloLocator"]                     = siloLocator,
-    })
 
     -- test
-    local scheduleResult = obj:provideItemsTo_AOSrv({
-        provideItems                    = provideItems,
-        itemDepotLocator                = itemDepotLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
+    -- T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
+    -- T_Silo.T_can_ProvideItems_QOSrv()
 end
 
-function T_Silo.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    local siloLocator = callbackData["siloLocator"]
-    enterprise_storage:deleteResource(siloLocator)
-
-    -- end
-    return true
-end
-
-function T_Silo.T_ProvideMultipleItems()
+function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local lobj = testHost:getObject(objLocator) assert(lobj, "Failed obtaining "..testClassName.." from objLocator "..objLocator:getURI())
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "integrityCheck_AOSrv", {
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
     local provideItems = {
         ["minecraft:birch_planks"]  = 5,
         ["minecraft:birch_log"]     = 3,
         ["minecraft:coal"]          = 7,
     }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    provideItemsTo_AOSrv_Test(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 --    _____ _____ _                 _____                   _
