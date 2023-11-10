@@ -81,14 +81,8 @@ RG UserStation v1.0                                                             
    R  Move some of the current code in enterprise_utilities to (mobj) UserStation                                       (done)
    R  Host it in enterprise_employment (and make enterprise_utilities obsolete/ remove it)                              (done)
 
--  Robuste way to initialize and setup (like the core files do)
-   -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
-      (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
-
--  DisplayStation
-   -  Split it off from current UserStation code
-
--  consider merging enterprise_chest into enterprise_storage
+R  Revise deleting and resetting the World and Workers.                                                                 (done)
+   R  These can now easily be done in a Turtle from the "All" menu (option 1)                                           (done)
 
 R  Generalised IItemSupplier test functions for MObj's                                                                  (....)
    R  generalise IItemSupplier test functions                                                                           (....)
@@ -107,6 +101,15 @@ R  Generalised IItemSupplier test functions for MObj's                          
    -  use in mobj_chest
    -  use in mobj_silo
    -  use in mobj_turtle
+
+-  Robuste way to initialize and setup (like the core files do)
+   -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
+      (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
+
+-  DisplayStation
+   -  Split it off from current UserStation code
+
+-  consider merging enterprise_chest into enterprise_storage
 
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
