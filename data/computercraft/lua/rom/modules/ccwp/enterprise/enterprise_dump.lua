@@ -28,19 +28,6 @@ local enterprise_employment = require "enterprise_employment"
 --       | |
 --       |_|
 
--- get your locator for the best dump (just 1 at the moment)
-function enterprise_dump.GetDumpLocator()
-
-    -- get the data
-    local dumpData = LoadData()
-
-    -- the requested URL, create from table
-    local depotLocator = URL:new(dumpData[#dumpData])
-
-    -- we return
-    return depotLocator
-end
-
 local dhtRoot = "enterprise_dump" -- just a list of available depot locators
 
 local function LoadData()
@@ -52,6 +39,19 @@ local function LoadData()
 
     -- check if we are present...
     return dumpData
+end
+
+-- get your locator for the best dump (just 1 at the moment)
+function enterprise_dump.GetDumpLocator()
+
+    -- get the data
+    local dumpData = LoadData()
+
+    -- the requested URL, create from table
+    local depotLocator = URL:new(dumpData[#dumpData])
+
+    -- we return
+    return depotLocator
 end
 
 local function SaveData(dumpData)
