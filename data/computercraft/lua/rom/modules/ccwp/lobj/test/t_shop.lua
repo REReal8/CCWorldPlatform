@@ -33,6 +33,8 @@ local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_ILObj = require "test.t_i_lobj"
+local T_IItemSupplier = require "test.t_i_item_supplier"
+
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_ObjHost = require "test.t_obj_host"
@@ -58,12 +60,19 @@ function T_Shop.T_All()
 
     -- IItemSupplier
     T_Shop.T_IItemSupplier_All()
-    T_Shop.T_can_ProvideItems_QOSrv()
-    T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
+end
+
+function T_Shop.T_AllPhysical()
+    -- IItemSupplier
+    T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
+    T_Shop.T_provideItemsTo_AOSrv_Charcoal_ToTurtle()
+    T_Shop.T_provideItemsTo_AOSrv_Torch_ToTurtle()
 end
 
 local testClassName = "Shop"
 local testObjName = "shop"
+local testHost = enterprise_shop
+
 local logOk = false
 
 local itemSuppliersLocators1 = ObjArray:newInstance(URL:getClassName())
@@ -331,83 +340,70 @@ function T_Shop.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    -- test type
     T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
-end
-
-local function provideItemsTo_AOSrv_Test(provideItems)
-    -- prepare test (cont)
-    corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
-    local ingredientsItemSupplierLocator = objectLocator
-    local wasteItemDepotLocator = t_employment.GetCurrentTurtleLocator()
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Shop", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["objectLocator"]                   = objectLocator,
-    })
 
     -- test
-    local scheduleResult = obj:provideItemsTo_AOSrv({
-        provideItems                    = provideItems,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        wasteItemDepotLocator           = wasteItemDepotLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
+    T_Shop.T_can_ProvideItems_QOSrv()
+    T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
 end
 
-function T_Shop.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    local objectLocator = callbackData["objectLocator"]
-    enterprise_shop:deleteResource(objectLocator)
-
-    -- end
-    return true
-end
-
-function T_Shop.T_ProvideMultipleItems()
+function T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
+    local objLocator = enterprise_shop.GetShopLocator()
+--    testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = {
         ["minecraft:furnace"]   = 1,
         ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
     }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    provideItemsTo_AOSrv_Test(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+--    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
-function T_Shop.T_ProvideCharcoal()
+function T_Shop.T_provideItemsTo_AOSrv_Charcoal_ToTurtle()
     -- prepare test
+    local objLocator = enterprise_shop.GetShopLocator()
     local provideItems = {
         ["minecraft:charcoal"]  = 3,
     }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    provideItemsTo_AOSrv_Test(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
 end
 
-function T_Shop.T_ProvideTorch()
+function T_Shop.T_provideItemsTo_AOSrv_Torch_ToTurtle()
     -- prepare test
+    local objLocator = enterprise_shop.GetShopLocator()
     local provideItems = {
         ["minecraft:torch"]  = 4,
     }
 
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
     -- test
-    provideItemsTo_AOSrv_Test(provideItems)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
 end
 
 function T_Shop.T_can_ProvideItems_QOSrv()
