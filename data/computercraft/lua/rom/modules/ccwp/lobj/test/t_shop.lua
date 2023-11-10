@@ -406,36 +406,6 @@ function T_Shop.T_provideItemsTo_AOSrv_Torch_ToTurtle()
     -- cleanup test
 end
 
-function T_Shop.T_can_ProvideItems_QOSrv()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
-    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
-    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
-
-    -- test
-    local itemName = "minecraft:birch_log"
-    local itemCount = 20
-    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
-
-    itemName = "minecraft:birch_sapling"
-    itemCount = 2
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
-
-    itemName = "minecraft:dirt"
-    itemCount = 10
-    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
-
-    -- cleanup test
-    enterprise_shop:deleteResource(objectLocator)
-    enterprise_forestry:deleteResource(forestLocator)
-end
-
 function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":needsTo_ProvideItemsTo_SOSrv() tests")
@@ -463,6 +433,36 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
+
+    -- cleanup test
+    enterprise_shop:deleteResource(objectLocator)
+    enterprise_forestry:deleteResource(forestLocator)
+end
+
+function T_Shop.T_can_ProvideItems_QOSrv()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
+    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
+    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
+    local forestLocator = enterprise_forestry:saveObject(forest)
+    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
+
+    -- test
+    local itemName = "minecraft:birch_log"
+    local itemCount = 20
+    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:birch_sapling"
+    itemCount = 2
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:dirt"
+    itemCount = 10
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator)

@@ -473,6 +473,7 @@ function T_Factory.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
+    -- T_Factory.T_needsTo_ProvideItemsTo_SOSrv()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 

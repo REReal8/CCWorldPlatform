@@ -352,6 +352,24 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     enterprise_chests:deleteResource(itemDepotLocator)
 end
 
+function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
+    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
+    -- prepare test
+
+    -- test
+
+    -- cleanup test
+end
+
+function T_Turtle.T_can_ProvideItems_QOSrv()
+    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
+    -- prepare test
+
+    -- test
+
+    -- cleanup test
+end
+
 --    _____ _____ _                 _____                   _
 --   |_   _|_   _| |               |  __ \                 | |
 --     | |   | | | |_ ___ _ __ ___ | |  | | ___ _ __   ___ | |_
@@ -428,24 +446,6 @@ function T_Turtle.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 
     -- end
     return true
-end
-
-function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
-    -- prepare test
-
-    -- test
-
-    -- cleanup test
-end
-
-function T_Turtle.T_can_ProvideItems_QOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
-    -- prepare test
-
-    -- test
-
-    -- cleanup test
 end
 
 return T_Turtle
