@@ -75,16 +75,18 @@ R  Revise modules/ libraries file directory structure                           
 
 R  Extend IMObj (and all MObj's) with getBaseLocation                                                                   (done)
 
+RG UserStation v1.0                                                                                                     (done)
+   R  Modify it to be an IWorker                                                                                        (done)
+   R  Enable input & output chests                                                                                      (done)
+   R  Move some of the current code in enterprise_utilities to (mobj) UserStation                                       (done)
+   R  Host it in enterprise_employment (and make enterprise_utilities obsolete/ remove it)                              (done)
+
 -  Robuste way to initialize and setup (like the core files do)
    -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
 
-RG UserStation v1.0
-   -  Modify it to be an IWorker
-   -  Enable input & output chests
-   -  Move some of the current code in enterprise_utilities to (mobj) UserStation
-   -  Host it in enterprise_employment (and make enterprise_utilities obsolete/ remove it)
-   -  Split off DisplayStation
+-  DisplayStation
+   -  Split it off from current UserStation code
 
 -  consider merging enterprise_chest into enterprise_storage
 

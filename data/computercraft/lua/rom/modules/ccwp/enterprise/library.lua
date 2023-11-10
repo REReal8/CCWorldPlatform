@@ -75,7 +75,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_dump")
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
     moduleRegistry:requireAndRegisterModule("enterprise_manufacturing")
-    moduleRegistry:requireAndRegisterModule("enterprise_utilities")
     moduleRegistry:requireAndRegisterModule("enterprise_forestry")
     moduleRegistry:requireAndRegisterModule("enterprise_isp")
     moduleRegistry:requireAndRegisterModule("enterprise_projects")
@@ -107,7 +106,6 @@ function library.Setup()
     coredisplay.MainMenuAddItem("e", "enterprise lib tests", ExecuteLibraryTest, {})
 
     -- do other stuff
-    local enterprise_utilities  = require "enterprise_utilities"    enterprise_utilities.Setup()
 end
 
 return library
