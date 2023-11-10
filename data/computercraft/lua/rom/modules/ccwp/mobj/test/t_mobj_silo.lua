@@ -13,6 +13,7 @@ local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
+local Inventory = require "obj_inventory"
 
 local Silo = require "mobj_silo"
 
@@ -34,6 +35,8 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
+
+local T_Chest = require "test.t_mobj_chest"
 
 local t_employment = require "test.t_employment"
 
@@ -310,8 +313,8 @@ function T_Silo.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
-    -- T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
-    -- T_Silo.T_can_ProvideItems_QOSrv()
+    T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
+    T_Silo.T_can_ProvideItems_QOSrv()
 end
 
 function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
@@ -339,6 +342,35 @@ function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
 
     -- cleanup test
     testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+end
+
+-- ToDo: implement
+function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
+    -- prepare test
+
+    -- test
+
+    -- cleanup test
+end
+
+function T_Silo.T_can_ProvideItems_QOSrv()
+    -- prepare test
+    local inventory = Inventory:newInstance({
+        { name = "minecraft:dirt", count = 20 },
+    })
+    local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
+    local chestLocator = enterprise_chests:saveObject(chest)
+    local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
+    table.insert(topChests, chestLocator) -- note: fake Chest with specific items
+
+    local obj = T_Silo.CreateTestObj(nil, nil, nil, nil, nil, nil, topChests) assert(obj, "Failed obtaining "..testClassName)
+
+    -- tests
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:furnace"] = 1}, false, logOk)
+
+    -- cleanup test
+    enterprise_chests:deleteResource(chestLocator)
 end
 
 --    _____ _____ _                 _____                   _

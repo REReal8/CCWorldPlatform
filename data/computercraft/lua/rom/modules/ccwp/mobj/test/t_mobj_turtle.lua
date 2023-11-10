@@ -352,8 +352,8 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     enterprise_chests:deleteResource(itemDepotLocator)
 end
 
+-- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
 function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
 
     -- test
