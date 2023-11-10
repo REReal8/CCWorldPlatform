@@ -326,7 +326,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 end
@@ -346,7 +346,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
     enterprise_chests:deleteResource(itemDepotLocator)

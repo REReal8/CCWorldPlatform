@@ -364,7 +364,7 @@ function T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 --    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
@@ -383,7 +383,7 @@ function T_Shop.T_provideItemsTo_AOSrv_Charcoal_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 end
@@ -401,7 +401,7 @@ function T_Shop.T_provideItemsTo_AOSrv_Torch_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
 end
@@ -448,7 +448,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
-    -- test
+    -- test can
     local itemName = "minecraft:birch_log"
     local itemCount = 20
     local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
@@ -459,6 +459,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
+    -- test can not
     itemName = "minecraft:dirt"
     itemCount = 10
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })

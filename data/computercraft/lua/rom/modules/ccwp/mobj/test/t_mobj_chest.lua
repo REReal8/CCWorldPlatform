@@ -311,7 +311,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
     testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
@@ -333,7 +333,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
     -- test
-    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
     testHost:releaseMObj_SSrv({ mobjLocator = objLocator})

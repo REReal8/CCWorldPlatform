@@ -17,7 +17,7 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(className, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
     -- prepare test (cont)
     assert(className, "no className provided")
     assert(objLocator, "no objLocator provided")
