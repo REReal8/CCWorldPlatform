@@ -88,7 +88,7 @@ R  Generalised IItemSupplier test functions for MObj's                          
    R  generalise IItemSupplier test functions                                                                           (....)
       R  provideItemsTo                                                                                                 (done)
       -  needsTo_ProvideItemsTo
-      -  can_ProvideItems
+      R  can_ProvideItems                                                                                               (done)
    R  use in mobj_birchforest                                                                                           (....)
    R  use in mobj_chest                                                                                                 (....)
    R  use in mobj_factory                                                                                               (....)
