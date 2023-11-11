@@ -474,24 +474,23 @@ end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":needsTo_ProvideItemsTo_SOSrv() tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
+
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     -- test
-    local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
-    })
     local storeFuelPerRound = 1 + 1
     local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees1) + storeFuelPerRound
-    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
-    assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
-    assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, nil, {
+        success         = true,
+        fuelNeed        = expectedFuelNeed,
+        ingredientsNeed = {},
+    }, logOk)
 
     -- cleanup test
 end

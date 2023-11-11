@@ -87,13 +87,13 @@ R  Revise deleting and resetting the World and Workers.                         
 R  Generalised IItemSupplier test functions for MObj's                                                                  (....)
    R  generalise IItemSupplier test functions                                                                           (....)
       R  provideItemsTo                                                                                                 (done)
-      -  needsTo_ProvideItemsTo
+      R  needsTo_ProvideItemsTo                                                                                         (....)
       R  can_ProvideItems                                                                                               (done)
-   R  use in mobj_birchforest                                                                                           (....)
-   R  use in mobj_chest                                                                                                 (....)
+   R  use in Shop                                                                                                       (done)
+   R  use in mobj_birchforest                                                                                           (done)
+   R  use in mobj_chest                                                                                                 (done)
    R  use in mobj_factory                                                                                               (....)
    R  use in mobj_silo                                                                                                  (....)
-   R  use in Shop                                                                                                       (....)
    R  use in mobj_turtle                                                                                                (....)
 
 -  Generalised IItemDepot test functions for MObj's

@@ -292,8 +292,8 @@ function T_Chest.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
-    T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
-    T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
+    T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
+    T_Chest.T_can_ProvideItems_QOSrv()
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
@@ -342,8 +342,8 @@ end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -353,14 +353,12 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local itemDepotLocation = obj2:getBaseLocation()
 
     -- test
-    local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
-    })
     local expectedFuelNeed = 1 * role_energizer.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation())
-    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
-    assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
-    assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, nil, {
+        success         = true,
+        fuelNeed        = expectedFuelNeed,
+        ingredientsNeed = {},
+    }, logOk)
 
     -- cleanup test
     testHost:deleteResource(itemDepotLocator)

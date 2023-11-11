@@ -65,7 +65,30 @@ function T_IItemSupplier.pt_can_ProvideItems_QOSrv(className, obj, objName, prov
     corelog.WriteToLog("* "..className..":can_ProvideItems_QOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", answer="..tostring(expectedAnswer)..")")
 
     -- test
-    local test = MethodResultEqualTest:newInstance("can_ProvideItems_QOSrv", { success = expectedAnswer, }, { provideItems = provideItems, } )
+    local test = MethodResultEqualTest:newInstance("can_ProvideItems_QOSrv", { success = expectedAnswer, }, {
+        provideItems = provideItems,
+    })
+    test:test(obj, objName, "", logOk)
+end
+
+function T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(className, obj, objName, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, expectedResult, logOk)
+    -- prepare test
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(provideItems) == "table", "no valid provideItems provided")
+    assert(type(itemDepotLocator) == "table", "no valid itemDepotLocator provided")
+    assert(type(ingredientsItemSupplierLocator) == "table" or type(ingredientsItemSupplierLocator) == "nil", "no valid ingredientsItemSupplierLocator provided")
+    assert(type(expectedResult) == "table", "no valid expectedResult provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
+    corelog.WriteToLog("* "..className..":needsTo_ProvideItemsTo_SOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", result="..textutils.serialize(expectedResult, compact)..")")
+
+    -- test
+    local test = MethodResultEqualTest:newInstance("needsTo_ProvideItemsTo_SOSrv", expectedResult, {
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
     test:test(obj, objName, "", logOk)
 end
 
