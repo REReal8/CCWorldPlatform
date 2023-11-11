@@ -22,7 +22,6 @@ local FieldValueTypeTest = require "field_value_type_test"
 local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"
-local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
@@ -44,14 +43,9 @@ function T_UserStation.T_All()
 
     -- IWorker
     T_UserStation.T_IWorker_All()
-
-    -- IItemDepot
-    T_UserStation.T_IItemDepot_All()
 end
 
 function T_UserStation.T_AllPhysical()
-    -- IItemDepot
-    T_UserStation.T_storeItemsFrom_AOSrv_Turtle()
 end
 
 local testClassName = "UserStation"
@@ -257,81 +251,6 @@ function T_UserStation.T_IWorker_All()
     -- test
     local expectedWorkerLocation = obj:getBaseLocation():getRelativeLocation(3, 3, 0)
     T_IWorker.pt_all(testClassName, obj, testObjName, expectedWorkerLocation, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
-end
-
---    _____ _____ _                 _____                   _
---   |_   _|_   _| |               |  __ \                 | |
---     | |   | | | |_ ___ _ __ ___ | |  | | ___ _ __   ___ | |_
---     | |   | | | __/ _ \ '_ ` _ \| |  | |/ _ \ '_ \ / _ \| __|
---    _| |_ _| |_| ||  __/ | | | | | |__| |  __/ |_) | (_) | |_
---   |_____|_____|\__\___|_| |_| |_|_____/ \___| .__/ \___/ \__|
---                                             | |
---                                             |_|
-
-function T_UserStation.T_IItemDepot_All()
-    -- prepare test
-    local obj = T_UserStation.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test type
-    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
-    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
-end
-
-local function storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, fromStr)
-    -- prepare test (cont)
-    assert(type(itemsLocator) == "table", "no valid itemsLocator provided")
-    assert(type(provideItems) == "table", "no valid provideItems provided")
-    assert(type(fromStr) == "string", "no valid fromStr provided")
-    corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (from "..fromStr..")")
-    local obj = UserStation:construct(constructParameters0) assert(obj, "Failed obtaining "..testClassName)
-    local itemDepotLocator = obj:getOutputLocator() assert(itemDepotLocator, "Failed obtaining outputLocator")
-
-    itemsLocator:setQuery(provideItems)
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-
-    -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, "storeItemsFrom_AOSrv", {
-        itemsLocator    = itemsLocator,
-    })
-
-    -- check: service success
-    assert(serviceResults, "no serviceResults returned")
-    assert(serviceResults.success, "failed executing service")
-
-    -- check: destinationItemsLocator
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    obj:destruct()
-end
-
-function T_UserStation.T_storeItemsFrom_AOSrv_Turtle()
-    -- prepare test
-    local itemsLocator = enterprise_employment.GetAnyTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
-
-    local provideItems = {
-        ["minecraft:birch_log"]  = 3,
-    }
-
-    -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Turtle")
-end
-
-function T_UserStation.T_shop_storeItemsFrom_AOSrv_Shop()
-    -- prepare test
-    local enterprise_shop = require "enterprise_shop"
-    local itemsLocator = enterprise_shop.GetShopLocator() assert(itemsLocator, "Failed obtaining Shop locator")
-    local provideItems = {
-        ["minecraft:birch_log"]  = 3,
-        ["minecraft:birch_planks"]  = 20,
-        ["minecraft:coal_block"]  = 2,
-    }
-
-    -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Shop")
 end
 
 return T_UserStation

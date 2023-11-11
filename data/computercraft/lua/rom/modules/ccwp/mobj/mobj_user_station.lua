@@ -4,8 +4,7 @@ local ObjBase = require "obj_base"
 local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
-local IItemDepot = require "i_item_depot"
-local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker, IItemDepot)
+local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 --[[
     The UserStation mobj represents a util station in the minecraft world and provides (production) services to operate on that UserStation.
@@ -620,109 +619,5 @@ function UserStation:getAssignmentFilter()
     return {
     }
 end
-
---    _____ _____ _                 _____                   _
---   |_   _|_   _| |               |  __ \                 | |
---     | |   | | | |_ ___ _ __ ___ | |  | | ___ _ __   ___ | |_
---     | |   | | | __/ _ \ '_ ` _ \| |  | |/ _ \ '_ \ / _ \| __|
---    _| |_ _| |_| ||  __/ | | | | | |__| |  __/ |_) | (_) | |_
---   |_____|_____|\__\___|_| |_| |_|_____/ \___| .__/ \___/ \__|
---                                             | |
---                                             |_|
-
-function UserStation:storeItemsFrom_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public ItemDepot service stores items from an ItemSupplier.
-
-        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
-                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
-                                            and the "query" should be equal to the "query" component of the itemsLocator)
-
-        Parameters:
-            serviceData                 - (table) data about the service
-                itemsLocator            + (URL) locating the items to store
-                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                            (the "query" component of the URL specifies the items)
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("UserStation:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get output Chest
-    local outputChest = enterprise_chests:getObject(self._outputLocator)
-    if not outputChest then corelog.Error("UserStation:storeItemsFrom_AOSrv: Failed getting outputChest object") return Callback.ErrorCall(callback) end
-
-    -- pass to output Chest
-    return outputChest:storeItemsFrom_AOSrv(...)
-end
-
-function UserStation:can_StoreItems_QOSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public query service answers the question whether the ItemDepot can store specific items.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the answer to the question is true
-
-        Parameters:
-            serviceData             - (table) data to the query
-                itemsLocator        + (URL) locating the items that need to be stored
-                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
-                                        (the "query" component of the URL specifies the items to query for)
-    --]], ...)
-    if not checkSuccess then corelog.Error("UserStation:can_StoreItems_QOSrv: Invalid input") return {success = false} end
-
-    -- get output Chest
-    local outputChest = enterprise_chests:getObject(self._outputLocator)
-    if not outputChest then corelog.Error("UserStation:can_StoreItems_QOSrv: Failed getting outputChest object") return {success = false} end
-
-    -- pass to output Chest
-    return outputChest:can_StoreItems_QOSrv(...)
-end
-
-function UserStation:needsTo_StoreItemsFrom_SOSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public service returns the needs to store specific items from an ItemSupplier.
-
-        Return value:
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                fuelNeed                        - (number) amount of fuel needed to store items
-
-        Parameters:
-            serviceData                         - (table) data to the query
-                itemsLocator                    + (URL) locating the items to store
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
-    --]], ...)
-    if not checkSuccess then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
-
-    -- get output Chest
-    local outputChest = enterprise_chests:getObject(self._outputLocator)
-    if not outputChest then corelog.Error("UserStation:needsTo_StoreItemsFrom_SOSrv: Failed getting outputChest object") return {success = false} end
-
-    -- pass to output Chest
-    return outputChest:needsTo_StoreItemsFrom_SOSrv(...)
-end
-
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
 
 return UserStation

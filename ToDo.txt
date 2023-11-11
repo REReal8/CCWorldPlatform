@@ -76,10 +76,12 @@ R  Revise modules/ libraries file directory structure                           
 R  Extend IMObj (and all MObj's) with getBaseLocation                                                                   (done)
 
 RG UserStation v1.0                                                                                                     (done)
+   GR Initial prototype implementation                                                                                  (done)
    R  Modify it to be an IWorker                                                                                        (done)
    R  Enable input & output chests                                                                                      (done)
    R  Move some of the current code in enterprise_utilities to (mobj) UserStation                                       (done)
    R  Host it in enterprise_employment (and make enterprise_utilities obsolete/ remove it)                              (done)
+   R  UserStation no longer an ItemDepot                                                                                (done)
 
 R  Revise deleting and resetting the World and Workers.                                                                 (done)
    R  These can now easily be done in a Turtle from the "All" menu (option 1)                                           (done)
