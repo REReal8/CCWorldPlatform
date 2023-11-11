@@ -344,7 +344,6 @@ function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
--- ToDo: implement
 function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     local inventory = Inventory:newInstance({
