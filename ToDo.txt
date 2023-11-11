@@ -104,9 +104,10 @@ R  Generalised IItemSupplier test functions for MObj's                          
    -  use in mobj_silo
    -  use in mobj_turtle
 
--  Robuste way to initialize and setup (like the core files do)
-   -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
+G  Robuste way to initialize and setup (like the core files do)
+   R  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..."
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
+   G  provide explantion or remove
 
 -  DisplayStation
    -  Split it off from current UserStation code
