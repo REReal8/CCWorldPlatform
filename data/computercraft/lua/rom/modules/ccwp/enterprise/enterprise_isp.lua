@@ -6,9 +6,6 @@ local enterprise_isp = {}
     items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
     those items.
 
-    The ISP offers generic IItemSupplier and IItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's.
-    Besides that the interface of the corresponding ISP services is the same.
-
     The ISP provides the following additional public services
         NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.
         AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
