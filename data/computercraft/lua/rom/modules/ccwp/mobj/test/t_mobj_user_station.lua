@@ -3,12 +3,9 @@ local T_UserStation = {}
 local corelog = require "corelog"
 
 local IObj = require "i_obj"
-local MethodExecutor = require "method_executor"
 local ObjBase = require "obj_base"
-local IItemDepot = require "i_item_depot"
 
 local Location = require "obj_location"
-local URL = require "obj_url"
 
 local UserStation = require "mobj_user_station"
 
