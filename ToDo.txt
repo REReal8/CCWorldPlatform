@@ -92,7 +92,7 @@ R  Generalised IItemSupplier test functions for MObj's                          
    R  use in Shop                                                                                                       (done)
    R  use in mobj_birchforest                                                                                           (done)
    R  use in mobj_chest                                                                                                 (done)
-   R  use in mobj_factory                                                                                               (....)
+   R  use in mobj_factory                                                                                               (done)
    R  use in mobj_silo                                                                                                  (....)
    R  use in mobj_turtle                                                                                                (....)
 

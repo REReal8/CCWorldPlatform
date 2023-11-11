@@ -18,6 +18,7 @@ local Factory = require "mobj_factory"
 local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_manufacturing = require "enterprise_manufacturing"
+local enterprise_shop = require "enterprise_shop"
 
 local TestArrayTest = require "test_array_test"
 local FieldTest = require "field_test"
@@ -34,7 +35,7 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 
-local T_Chest = require "test.t_mobj_chest"
+local T_Shop = require "test.t_shop"
 local t_employment
 
 function T_Factory.T_All()
@@ -515,8 +516,33 @@ end
 
 function T_Factory.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
+
+    -- test item without recipe
+    local provideItems = { ["anItemWithNoRecipe"] = 2, }
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, {
+        success         = false,
+    }, logOk)
+
+    -- test craft
+    provideItems = { ["minecraft:birch_planks"] = 10, }
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, {
+        success         = true,
+        fuelNeed        = 0 + obj:getFuelNeed_Production_Att(provideItems) + 0,
+        ingredientsNeed = { ["minecraft:birch_log"] = 3, },
+    }, logOk)
+
+    -- test smelt
+    provideItems = { ["minecraft:charcoal"] = 5, }
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, {
+        success         = true,
+        fuelNeed        = 0 + obj:getFuelNeed_Production_Att(provideItems) + 0,
+        ingredientsNeed = { ["minecraft:birch_log"] = 5, },
+    }, logOk)
 
     -- cleanup test
 end
