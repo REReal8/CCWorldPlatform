@@ -508,6 +508,11 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
         -- check
         if type(itemName) ~= "string" then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+        local items = { [itemName] = itemCount }
+
+        -- check items in inventory
+        local hasItems = self:getInventory():hasItems(items)
+        if not hasItems then corelog.Warning("Turtle:needsTo_ProvideItemsTo_SOSrv: Turtle does not have "..textutils.serialise(items, { compact = true })) return {success = false} end
 
         -- fuelNeed from turtle to itemDepotLocator
         local serviceData = {

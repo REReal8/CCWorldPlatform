@@ -62,7 +62,7 @@ function T_IItemSupplier.pt_can_ProvideItems_QOSrv(className, obj, objName, prov
     assert(type(provideItems) == "table", "no valid provideItems provided")
     assert(type(expectedAnswer) == "boolean", "no valid expectedAnswer provided")
     assert(type(logOk) == "boolean", "no valid logOk provided")
-    corelog.WriteToLog("* "..className..":can_ProvideItems_QOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", answer="..tostring(expectedAnswer)..")")
+    corelog.WriteToLog("* "..className..":can_ProvideItems_QOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", expectedAnswer="..tostring(expectedAnswer)..")")
 
     -- test
     local test = MethodResultEqualTest:newInstance("can_ProvideItems_QOSrv", { success = expectedAnswer, }, {
@@ -81,7 +81,7 @@ function T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(className, obj, objName
     assert(type(ingredientsItemSupplierLocator) == "table" or type(ingredientsItemSupplierLocator) == "nil", "no valid ingredientsItemSupplierLocator provided")
     assert(type(expectedResult) == "table", "no valid expectedResult provided")
     assert(type(logOk) == "boolean", "no valid logOk provided")
-    corelog.WriteToLog("* "..className..":needsTo_ProvideItemsTo_SOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", result="..textutils.serialize(expectedResult, compact)..")")
+    corelog.WriteToLog("* "..className..":needsTo_ProvideItemsTo_SOSrv() test (provideItems="..textutils.serialize(provideItems, compact)..", expectedResult="..textutils.serialize(expectedResult, compact)..")")
 
     -- test
     local test = MethodResultEqualTest:newInstance("needsTo_ProvideItemsTo_SOSrv", expectedResult, {

@@ -980,7 +980,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         -- check for recipe to provide itemName
         enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Provider does not provide "..itemName.."'s") return {success = false} end
+        if type(recipe) ~= "table" then corelog.Warning("Factory:needsTo_ProvideItemsTo_SOSrv: Factory can not provide "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
         local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)

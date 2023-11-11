@@ -352,11 +352,27 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     enterprise_chests:deleteResource(itemDepotLocator)
 end
 
--- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
 function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+    local obj = testHost:getObject(objLocator) assert(obj, "Failed obtaining obj")
+    local itemTable = obj:getInventoryAsItemTable()
 
-    -- test
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
+
+    -- tests
+    for itemName, itemCount in pairs(itemTable) do
+        T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { [itemName] = itemCount, }, itemDepotLocator, ingredientsItemSupplierLocator, {
+            success         = true,
+            fuelNeed        = 0,
+            ingredientsNeed = { },
+        }, logOk)
+    end
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { ["anUnknownItem"] = 1, }, itemDepotLocator, ingredientsItemSupplierLocator, {
+        success         = false,
+    }, logOk)
 
     -- cleanup test
 end
@@ -370,9 +386,9 @@ function T_Turtle.T_can_ProvideItems_QOSrv()
 
     -- tests
     for itemName, itemCount in pairs(itemTable) do
-        T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { [itemName] = itemCount}, true, logOk)
+        T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { [itemName] = itemCount, }, true, logOk)
     end
-    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["anUnknownItem"] = 1}, false, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["anUnknownItem"] = 1, }, false, logOk)
 
     -- cleanup test
 end
