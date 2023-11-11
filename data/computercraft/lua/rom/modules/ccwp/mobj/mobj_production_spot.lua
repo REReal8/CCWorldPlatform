@@ -136,7 +136,6 @@ function ProductionSpot:getFuelNeed_Production_Att(...)
     return fuelNeed_Production
 end
 
-
 function ProductionSpot:produceIngredientsNeeded(...)
     -- get & check input from description
     local checkSuccess, productionRecipe, productItemCount = InputChecker.Check([[
