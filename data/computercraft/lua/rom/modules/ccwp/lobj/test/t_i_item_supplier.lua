@@ -21,13 +21,13 @@ local compact = { compact = true }
 
 function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(objLocator, "no objLocator provided")
-    assert(provideItems, "no provideItems provided")
-    assert(itemDepotLocator, "no itemDepotLocator provided")
-    assert(ingredientsItemSupplierLocator, "no ingredientsItemSupplierLocator provided")
-    assert(wasteItemDepotLocator, "no wasteItemDepotLocator provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(objLocator) == "table", "no  valid objLocator provided")
+    assert(type(provideItems) == "table", "no valid provideItems provided")
+    assert(type(itemDepotLocator) == "table", "no valid itemDepotLocator provided")
+    assert(type(ingredientsItemSupplierLocator) == "table", "no valid ingredientsItemSupplierLocator provided")
+    assert(type(wasteItemDepotLocator) == "table", "no valid wasteItemDepotLocator provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
     local lobj = ObjHost.GetObject(objLocator) assert(lobj, "Failed obtaining "..className.." from mobjLocator "..objLocator:getURI())

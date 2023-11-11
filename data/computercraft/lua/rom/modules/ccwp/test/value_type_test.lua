@@ -51,9 +51,9 @@ end
 
 function ValueTypeTest:test(value, valueName, indent, logOk)
     -- check input
-    assert(type(valueName) == "string", "valueName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(valueName) == "string", "no valid valueName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- prepare test
     local valueType = type(value)

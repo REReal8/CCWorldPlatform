@@ -14,10 +14,10 @@ function T_IInterface.pt_ImplementsInterface(interfaceName, interface, className
     ]]
 
     -- prepare test
-    assert(interfaceName, "no interfaceName provided")
-    assert(interface, "no interface provided")
-    assert(className, "no className provided")
-    assert(classOrInstance, "no class or instance provided")
+    assert(type(interfaceName) == "string", "no  valid interfaceName provided")
+    assert(type(interface) == "table", "no valid interface provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(classOrInstance) == "table", "no valid class or instance provided")
     corelog.WriteToLog("* "..className.." implements "..interfaceName.." interface test")
 
     -- test all functions in the interface

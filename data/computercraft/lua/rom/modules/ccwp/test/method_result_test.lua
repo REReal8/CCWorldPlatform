@@ -23,10 +23,8 @@ local compact = { compact = true }
 
 function MethodResultTest:_init(methodName, isStaticMethod, resultTest, ...)
     -- check input
-    local methodNameType = type(methodName)
-    assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
-    local isStaticMethodType = type(isStaticMethod)
-    assert(isStaticMethodType == "boolean", "type isStaticMethod(="..isStaticMethodType..") not a boolean")
+    assert(type(methodName) == "string", "no valid methodName provided")
+    assert(type(isStaticMethod) == "boolean", "no valid isStaticMethod provided")
     assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
     local methodArguments = {...}
 
@@ -59,9 +57,9 @@ end
 
 function MethodResultTest:test(testObj, testObjName, indent, logOk)
     -- check input
-    assert(type(testObjName) == "string", "testObjName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(testObjName) == "string", "no valid testObjName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- prepare test
     local testFieldStr = testObjName..":"..self._methodName.."() result"

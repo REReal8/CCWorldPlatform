@@ -54,9 +54,9 @@ end
 
 function FieldTest:test(testObj, testObjName, indent, logOk)
     -- check input
-    assert(type(testObjName) == "string", "testObjName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(testObjName) == "string", "no valid testObjName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- prepare test
     local testFieldStr = testObjName.."."..self._fieldName.." field"

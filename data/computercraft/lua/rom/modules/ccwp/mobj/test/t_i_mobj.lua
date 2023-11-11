@@ -11,10 +11,10 @@ local MethodResultEqualTest = require "method_result_equal_test"
 
 function T_IMObj.pt_all(className, class, cases, logOk)
     -- prepare test all
-    assert(className, "no className provided")
-    assert(class, "no class provided")
-    assert(cases, "no cases provided")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
+    assert(type(cases) == "table", "no valid cases provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- loop on test cases
     for i, case in ipairs(cases) do
@@ -78,8 +78,8 @@ local compact = { compact = true }
 
 function T_IMObj.pt_IsInstanceOf_IMObj(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_Class.pt_IsInstanceOf(className, obj, "IMObj", IMObj)
@@ -87,8 +87,8 @@ end
 
 function T_IMObj.pt_Implements_IMObj(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_IInterface.pt_ImplementsInterface("IMObj", IMObj, className, obj)
@@ -105,12 +105,12 @@ end
 
 function T_IMObj.pt_getBaseLocation(className, obj, objName, expectedBaseLocation, indent, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(expectedBaseLocation, "no expectedBaseLocation provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(expectedBaseLocation) == "table", "no expectedBaseLocation provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog(indent.."* "..className..":getBaseLocation() tests")
 
     -- test
@@ -120,16 +120,14 @@ end
 
 function T_IMObj.pt_getBlueprint(className, methodName, isStaticMethod, obj, objName, blueprintTest, indent, logOk, ...)
     -- prepare test
-    assert(className, "no className provided")
-    local methodNameType = type(methodName)
-    assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
-    local isStaticMethodType = type(isStaticMethod)
-    assert(isStaticMethodType == "boolean", "type methodName(="..isStaticMethodType..") not a boolean")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(blueprintTest, "no blueprintTest provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(methodName) == "string", "no valid methodName provided")
+    assert(type(isStaticMethod) == "boolean", "no valid isStaticMethod provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(blueprintTest) == "table", "no valid blueprintTest provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     local methodOperator = ":" if isStaticMethod then methodOperator = "." end
     corelog.WriteToLog(indent.."* "..className..methodOperator..methodName.."() tests (with "..objName..")")
 

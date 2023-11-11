@@ -131,12 +131,12 @@ end
 -- parameterised service tests
 function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, objName, fieldsTest, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(className) == "string", "no className provided")
-    assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(objName) == "string", "no objName provided")
-    assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(fieldsTest) == "table", "no valid fieldsTest provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests (of "..objName..")")
 
     -- test
@@ -173,11 +173,11 @@ end
 
 function T_MObjHost.pt_buildAndHostMObj_ASrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(className) == "string", "no className provided")
-    assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(objName) == "string", "no objName provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":buildAndHostMObj_ASrv() tests (of "..objName..")")
     t_employment = t_employment or require "test.t_employment"
 
@@ -210,13 +210,13 @@ end
 
 function T_MObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters, upgradeParameters, objName, fieldsTest, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(className) == "string", "no className provided")
-    assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(upgradeParameters) == "table", "no upgradeParameters provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
-    assert(type(objName) == "string", "no objName provided")
-    assert(type(fieldsTest) == "table", "no fieldsTest provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(upgradeParameters) == "table", "no valid upgradeParameters provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(fieldsTest) == "table", "no valid fieldsTest provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeMObj_SSrv() tests (of "..objName..")")
 
     local serviceResults = mobjHost:hostMObj_SSrv({
@@ -252,12 +252,12 @@ end
 
 function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeParameters, objName, fieldsTest, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(mobjLocator) == "table", "no mobjLocator provided")
-    assert(type(upgradeParameters) == "table", "no upgradeParameters provided")
-    assert(type(objName) == "string", "no objName provided")
-    assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(mobjLocator) == "table", "no valid mobjLocator provided")
+    assert(type(upgradeParameters) == "table", "no valid upgradeParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(fieldsTest) == "table", "no valid fieldsTest provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (of "..objName..")")
     t_employment = t_employment or require "test.t_employment"
 
@@ -289,11 +289,11 @@ end
 
 function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(className) == "string", "no className provided")
-    assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(objName) == "string", "no objName provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests (of "..objName..")")
 
     local serviceResults = mobjHost:hostMObj_SSrv({
@@ -326,9 +326,9 @@ end
 
 function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk)
     -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(mobjLocator) == "table", "no mobjLocator provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(mobjHost) =="table", "no valid mobjHost provided")
+    assert(type(mobjLocator) == "table", "no valid mobjLocator provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (of "..mobjLocator:getURI()..")")
     t_employment = t_employment or require "test.t_employment"
 

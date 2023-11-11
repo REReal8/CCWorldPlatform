@@ -24,10 +24,10 @@ end
 
 function T_Class.pt_IsInstanceOf(objectName, object, className, class)
     -- prepare test
-    assert(objectName, "no objectName provided")
-    assert(object, "no object provided")
-    assert(className, "no className provided")
-    assert(class, "no class provided")
+    assert(type(objectName) == "string", "no valid objectName provided")
+    assert(type(object) == "table", "no valid object provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
     corelog.WriteToLog("* "..objectName.." IsInstanceOf "..className.." type test")
 
     -- test

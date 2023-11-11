@@ -21,8 +21,8 @@ local MultipleValuesTest = require "multiple_values_test"
 
 function MethodResultEqualTest:_init(methodName, expectedResult, ...)
     -- check input
-    local methodNameType = type(methodName)
-    assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
+    assert(type(methodName) == "string", "no valid methodName provided")
+
     local isStaticMethod = false -- ToDo: consider making an argument to allow testing static methods for equality
 
     -- initialisation

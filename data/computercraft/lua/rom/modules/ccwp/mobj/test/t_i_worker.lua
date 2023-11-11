@@ -35,8 +35,8 @@ end
 
 function T_IWorker.pt_IsInstanceOf_IWorker(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_Class.pt_IsInstanceOf(className, obj, "IWorker", IWorker)
@@ -44,8 +44,8 @@ end
 
 function T_IWorker.pt_Implements_IWorker(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_IInterface.pt_ImplementsInterface("IWorker", IWorker, className, obj)
@@ -60,11 +60,11 @@ end
 
 function T_IWorker.pt_getWorkerId(className, obj, objName, expectedWorkerId, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
     expectedWorkerId = expectedWorkerId or obj._workerId
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":getWorkerId() test")
 
     -- test
@@ -74,10 +74,10 @@ end
 
 function T_IWorker.pt_active(className, obj, objName, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- test activate
     corelog.WriteToLog("* "..className.." activate tests")
@@ -98,11 +98,11 @@ end
 
 function T_IWorker.pt_getWorkerLocation(className, obj, objName, expectedWorkerLocation, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(expectedWorkerLocation, "no expectedWorkerLocation provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(expectedWorkerLocation) == "table", "no valid expectedWorkerLocation provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":getWorkerLocation() test")
 
     -- test
@@ -112,11 +112,11 @@ end
 
 function T_IWorker.pt_getWorkerResume(className, obj, objName, workerResumeTest, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(workerResumeTest, "no workerResumeTest provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(workerResumeTest) == "table", "no valid workerResumeTest provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":getWorkerResume() tests")
 
     -- test
@@ -126,11 +126,11 @@ end
 
 function T_IWorker.pt_getMainUIMenu(className, obj, objName, isMainUIMenuTest, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(isMainUIMenuTest, "no isMainUIMenuTest provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(isMainUIMenuTest) == "table", "no valid isMainUIMenuTest provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":getMainUIMenu() tests")
 
     -- test
@@ -140,11 +140,11 @@ end
 
 function T_IWorker.pt_getAssignmentFilter(className, obj, objName, assignmentFilterTest, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(assignmentFilterTest, "no assignmentFilterTest provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(assignmentFilterTest) == "table", "no assignmentFilterTest provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":getAssignmentFilter() tests")
 
     -- test

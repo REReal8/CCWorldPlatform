@@ -10,10 +10,10 @@ local MethodResultEqualTest = require "method_result_equal_test"
 
 function T_ILObj.pt_all(className, class, cases, logOk)
     -- prepare test all
-    assert(className, "no className provided")
-    assert(class, "no class provided")
-    assert(cases, "no cases provided")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
+    assert(type(cases) == "table", "no valid cases provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- loop on test cases
     for i, case in ipairs(cases) do
@@ -80,8 +80,8 @@ local compact = { compact = true }
 
 function T_ILObj.pt_IsInstanceOf_ILObj(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_Class.pt_IsInstanceOf(className, obj, "ILObj", ILObj)
@@ -89,8 +89,8 @@ end
 
 function T_ILObj.pt_Implements_ILObj(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
 
     -- test
     T_IInterface.pt_ImplementsInterface("ILObj", ILObj, className, obj)
@@ -107,13 +107,13 @@ end
 
 function T_ILObj.pt_destruct(className, class, constructParameters, objName, destructFieldsTest, indent, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(class, "no class provided")
-    assert(constructParameters, "no constructParameters provided")
-    assert(objName, "no objName provided")
-    assert(destructFieldsTest, "no destructFieldsTest provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(destructFieldsTest) == "table", "no valid destructFieldsTest provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog(indent.."* "..className..":destruct() test (with "..objName..")")
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
 
@@ -128,13 +128,13 @@ end
 
 function T_ILObj.pt_construct(className, class, constructParameters, objName, constructFieldsTest, indent, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(class, "no class provided")
-    assert(constructParameters, "no constructParameters provided")
-    assert(objName, "no objName provided")
-    assert(constructFieldsTest, "no constructFieldsTest provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(constructFieldsTest) == "table", "no valid constructFieldsTest provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog(indent.."* "..className..":construct() test (with "..objName..")")
 
     -- test
@@ -148,14 +148,14 @@ end
 
 function T_ILObj.pt_upgrade(className, class, constructParameters, objName, upgradeParameters, upgradeFieldsTest, indent, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(class, "no class provided")
-    assert(constructParameters, "no constructParameters provided")
-    assert(objName, "no objName provided")
-    assert(upgradeParameters, "no upgradeParameters provided")
-    assert(upgradeFieldsTest, "no upgradeFieldsTest provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(class) == "table", "no valid class provided")
+    assert(type(constructParameters) == "table", "no valid constructParameters provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(upgradeParameters) == "table", "no valid upgradeParameters provided")
+    assert(type(upgradeFieldsTest) == "table", "no valid upgradeFieldsTest provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog(indent.."* "..className..":upgrade() test (with "..objName..")")
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
 
@@ -171,11 +171,11 @@ end
 
 function T_ILObj.pt_getId(className, obj, objName, indent, logOk, expectedId)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     expectedId = expectedId or obj._id
     corelog.WriteToLog(indent.."* "..className..":getId() test")
 
@@ -186,11 +186,11 @@ end
 
 function T_ILObj.pt_getWIPId(className, obj, objName, indent, logOk)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(objName, "no objName provided")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(objName) == "string", "no valid objName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog(indent.."* "..className..":getWIPId() test")
 
     -- test

@@ -33,8 +33,8 @@ local compact = { compact = true }
 
 function T_IObj.pt_getClassName(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
     corelog.WriteToLog("* "..className..":getClassName() tests")
 
     -- test
@@ -123,9 +123,9 @@ end
 
 function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(otherObj, "no otherObj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
+    assert(type(otherObj) == "table", "no valid otherObj provided")
     corelog.WriteToLog("* "..className..":isEqual() tests")
 
     -- test identical obj equal
@@ -148,8 +148,8 @@ end
 
 function T_IObj.pt_copy(className, obj)
     -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
+    assert(type(className) == "string", "no valid className provided")
+    assert(type(obj) == "table", "no valid obj provided")
     corelog.WriteToLog("* "..className..":copy() tests")
 
     -- test

@@ -25,10 +25,10 @@ end
 
 function TestArrayTest:test(testObj, testObjName, indent, logOk)
     -- check input
-    assert(type(testObj) ~= "nil", "testObj shouldn't be nil")
-    assert(type(testObjName) == "string", "testObjName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(testObj) ~= "nil", "no valid testObj provided (shouldn't be nil)")
+    assert(type(testObjName) == "string", "no valid testObjName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- prepare test
     local testFieldsStr = testObjName.." tests"

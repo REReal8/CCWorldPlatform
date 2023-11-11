@@ -56,9 +56,9 @@ end
 
 function MultipleValuesTest:test(values, valuesName, indent, logOk)
     -- check input
-    assert(type(valuesName) == "string", "valuesName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+    assert(type(valuesName) == "string", "no valid valuesName provided")
+    assert(type(indent) == "string", "no valid indent provided")
+    assert(type(logOk) == "boolean", "no valid logOk provided")
 
     -- prepare test
 --    local testContextStr = valuesName.." values "..textutils.serialise(values, compact)

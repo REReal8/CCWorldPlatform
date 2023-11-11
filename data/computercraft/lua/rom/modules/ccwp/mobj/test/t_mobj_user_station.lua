@@ -279,9 +279,9 @@ end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, fromStr)
     -- prepare test (cont)
-    assert(itemsLocator, "no className provided")
-    assert(provideItems, "no provideItems provided")
-    assert(fromStr, "no fromStr provided")
+    assert(type(itemsLocator) == "table", "no valid itemsLocator provided")
+    assert(type(provideItems) == "table", "no valid provideItems provided")
+    assert(type(fromStr) == "string", "no valid fromStr provided")
     corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (from "..fromStr..")")
     local obj = UserStation:construct(constructParameters0) assert(obj, "Failed obtaining "..testClassName)
     local itemDepotLocator = obj:getOutputLocator() assert(itemDepotLocator, "Failed obtaining outputLocator")
