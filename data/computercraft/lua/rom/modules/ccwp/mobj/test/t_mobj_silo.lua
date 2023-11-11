@@ -347,10 +347,28 @@ end
 -- ToDo: implement
 function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
+    local inventory = Inventory:newInstance({
+        { name = "minecraft:dirt", count = 20 },
+    })
+    local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
+    local chestLocator = enterprise_chests:saveObject(chest)
+    local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
+    table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
-    -- test
+    local obj = T_Silo.CreateTestObj(nil, nil, nil, nil, nil, nil, topChests) assert(obj, "Failed obtaining "..testClassName)
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
+
+    -- tests
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, itemDepotLocator, nil, {
+        success         = true,
+        fuelNeed        = 10 + 1, -- ToDo: improve with real/ realistic value
+        ingredientsNeed = {},
+    }, logOk)
 
     -- cleanup test
+    enterprise_chests:deleteResource(chestLocator)
 end
 
 function T_Silo.T_can_ProvideItems_QOSrv()

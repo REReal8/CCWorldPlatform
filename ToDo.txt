@@ -84,17 +84,17 @@ RG UserStation v1.0                                                             
 R  Revise deleting and resetting the World and Workers.                                                                 (done)
    R  These can now easily be done in a Turtle from the "All" menu (option 1)                                           (done)
 
-R  Generalised IItemSupplier test functions for MObj's                                                                  (....)
-   R  generalise IItemSupplier test functions                                                                           (....)
+R  Generalised IItemSupplier test functions for MObj's                                                                  (done)
+   R  generalise IItemSupplier test functions                                                                           (done)
       R  provideItemsTo                                                                                                 (done)
-      R  needsTo_ProvideItemsTo                                                                                         (....)
+      R  needsTo_ProvideItemsTo                                                                                         (done)
       R  can_ProvideItems                                                                                               (done)
    R  use in Shop                                                                                                       (done)
    R  use in mobj_birchforest                                                                                           (done)
    R  use in mobj_chest                                                                                                 (done)
    R  use in mobj_factory                                                                                               (done)
-   R  use in mobj_silo                                                                                                  (....)
-   R  use in mobj_turtle                                                                                                (....)
+   R  use in mobj_silo                                                                                                  (done)
+   R  use in mobj_turtle                                                                                                (done)
 
 -  Generalised IItemDepot test functions for MObj's
    -  generalise IItemDepot test functions

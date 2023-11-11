@@ -344,19 +344,14 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
-
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
     local itemDepotLocator = testHost:saveObject(obj2)
     local itemDepotLocation = obj2:getBaseLocation()
 
     -- test
-    local expectedFuelNeed = 1 * role_energizer.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation())
-    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, nil, {
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { ["minecraft:birch_log"]  = 5, }, itemDepotLocator, nil, {
         success         = true,
-        fuelNeed        = expectedFuelNeed,
+        fuelNeed        = 1 * role_energizer.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation()),
         ingredientsNeed = {},
     }, logOk)
 
