@@ -1,22 +1,13 @@
-ToDo List
----------
+ToReview List
+-------------
 --[[
-   This section of this file contains the list of things we as developers (G & R) would like, or are considering to, ToDo w.r.t. the ccwp development project.
+   This section of this file contains the list of things that recently got completed by (one of) the developers (G or R) w.r.t. the ccwp development project.
 
-   ToDo List conventions:
-   -  ToDo line
-      -  A ToDo line start with either a "-" or the first letter of the name of the developer that has or intents to pickup the ToDo
-      -  A ToDo line contains a brief description of what we want to do.
-   -  Sub ToDo's
-      -  ToDo's can contain sub ToDo's by adding them on the lines following the parent ToDo, and indenting the line with 3 spaces
-      -  Grouping related ToDo's, in a list of sub ToDo's, is a good practice (especially if they are intended to be picked up in the same timeframe)
-   -  Priority
-      -  ToDo's which the developer(s) deem to have a higher priority can/will be put higher in the ToDo List.
-   -  Completed ToDo's
-      -  When a ToDo is completed "(done)" should be added at the end of the ToDo line
-      -  A ToDo with sub ToDo's should only be marked as done if all sub ToDo's are also done
-      -  When a master ToDo (i.e. those who do not have a parent ToDo) is marked as done, the other developer should move the ToDo (including the sub ToDo's)
-         to the ToDo history section of this file to indicate he/ she has taken notice of the completion of the ToDo.
+   Review List conventions:
+   -  When a ToDo was fully completed, the last developer working on it moved it to this section.
+   -  The other developer should move the ToDo (including the sub ToDo's) to the ToDo history section of this file to indicate he/ she has
+      taken notice of the completion of the ToDo.
+   -  The intend is to do this fairly often should that this list is empty and we have a clear view on the actual ToDo section. ;-)
 ]]
 
 R  Building blueprints/layers from front                                                                                (done)
@@ -102,6 +93,26 @@ R  Generalised IItemDepot storeItemsFrom_AOSrv test function for MObj's         
    R  use in mobj_chest                                                                                                 (done)
    R  use in mobj_silo                                                                                                  (done)
    R  use in mobj_turtle                                                                                                (done)
+
+ToDo List
+---------
+--[[
+   This section of this file contains the list of things we as developers (G & R) would like, or are considering to, ToDo w.r.t. the ccwp development project.
+
+   ToDo List conventions:
+   -  ToDo line
+      -  A ToDo line start with either a "-" or the first letter of the name of the developer that has or intents to pickup the ToDo
+      -  A ToDo line contains a brief description of what we want to do.
+   -  Sub ToDo's
+      -  ToDo's can contain sub ToDo's by adding them on the lines following the parent ToDo, and indenting the line with 3 spaces
+      -  Grouping related ToDo's, in a list of sub ToDo's, is a good practice (especially if they are intended to be picked up in the same timeframe)
+   -  Priority
+      -  ToDo's which the developer(s) deem to have a higher priority can/will be put higher in the ToDo List.
+   -  Completed ToDo's
+      -  When a ToDo is completed "(done)" should be added at the end of the ToDo line
+      -  A ToDo with sub ToDo's should only be marked as done if all sub ToDo's are also done
+      -  When a master ToDo (i.e. those who do not have a parent ToDo) is marked as done, the developer who does so should move it to the ToReview section.
+]]
 
 -  Improve IItemDepot tests after revising the interface
    -  ensure we have generalised "pt" test function similar to IItemDepot
