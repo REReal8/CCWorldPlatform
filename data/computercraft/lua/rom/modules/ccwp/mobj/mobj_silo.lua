@@ -627,7 +627,7 @@ function Silo:storeItemsFrom_AOSrv(...)
     local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemDepot service stores items from from an ItemSupplier.
 
-        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+        An ItemDepot should take special care the transfer from a Turtle inventory gets priority over other assignments of the Turtle.
 
         Return value:
                                         - (boolean) whether the service was scheduled successfully
