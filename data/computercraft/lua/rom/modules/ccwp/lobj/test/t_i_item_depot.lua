@@ -18,15 +18,19 @@ local compact = { compact = true }
 --                                             | |
 --                                             |_|
 
-function T_IItemDepot.pt_storeItemsFrom_AOSrv(className, objLocator, itemsLocator, logOk)
+function T_IItemDepot.pt_storeItemsFrom_AOSrv(className, objLocator, itemSupplierLocator, storeItems, logOk)
     -- prepare test
     assert(type(className) == "string", "no valid className provided")
     assert(type(objLocator) == "table", "no  valid objLocator provided")
-    assert(type(itemsLocator) == "table", "no valid itemsLocator provided")
+    assert(type(itemSupplierLocator) == "table", "no  valid itemSupplierLocator provided")
+    assert(type(storeItems) == "table", "no  valid storeItems provided")
     assert(type(logOk) == "boolean", "no valid logOk provided")
-    corelog.WriteToLog("* "..className..":storeItemsFrom_AOSrv() test (from "..itemsLocator:getURI()..")")
+    corelog.WriteToLog("* "..className..":storeItemsFrom_AOSrv() test ("..textutils.serialize(storeItems, compact).." from "..itemSupplierLocator:getURI()..")")
 
     local obj = ObjHost.GetObject(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
+
+    local itemsLocator = itemSupplierLocator:copy()
+    itemsLocator:setQuery(storeItems)
 
     local expectedDestinationItemsLocator = objLocator:copy()
     expectedDestinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
