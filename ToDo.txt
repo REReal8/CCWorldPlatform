@@ -98,12 +98,18 @@ R  Generalised IItemSupplier test functions for MObj's                          
    R  use in mobj_silo                                                                                                  (done)
    R  use in mobj_turtle                                                                                                (done)
 
-R  Generalised IItemDepot test functions for MObj's                                                                     (....)
-   -  generalise IItemDepot test functions                                                                              (....)
-      R  storeItemsFrom_AOSrv                                                                                           (done)
+R  Generalised IItemDepot storeItemsFrom_AOSrv test function for MObj's                                                 (done)
    R  use in mobj_chest                                                                                                 (done)
    R  use in mobj_silo                                                                                                  (done)
    R  use in mobj_turtle                                                                                                (done)
+
+-  Improve IItemDepot tests after revising the interface
+   -  ensure we have generalised "pt" test function similar to IItemDepot
+      -  can_StoreItems_QOSrv
+      -  needsTo_StoreItemsFrom_SOSrv
+   -  implement for mobj_chest
+   -  implement for mobj_silo
+   -  implement for mobj_turtle
 
 G  Robuste way to initialize and setup (like the core files do)
    R  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..."
