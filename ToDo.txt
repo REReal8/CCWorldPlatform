@@ -114,23 +114,10 @@ ToDo List
       -  When a master ToDo (i.e. those who do not have a parent ToDo) is marked as done, the developer who does so should move it to the ToReview section.
 ]]
 
--  Improve IItemDepot tests after revising the interface
-   -  ensure we have generalised "pt" test function similar to IItemDepot
-      -  can_StoreItems_QOSrv
-      -  needsTo_StoreItemsFrom_SOSrv
-   -  implement for mobj_chest
-   -  implement for mobj_silo
-   -  implement for mobj_turtle
-
 G  Robuste way to initialize and setup (like the core files do)
    R  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..."
       (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
    G  provide explantion or remove
-
--  DisplayStation
-   -  Split it off from current UserStation code
-
--  consider merging enterprise_chest into enterprise_storage
 
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
@@ -142,6 +129,39 @@ G  Descriptions for blueprints and project steps
          }},
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
+
+-  DisplayStation
+   -  Split it off from current UserStation code
+
+-  Turtle(s) improvements
+   -  getInventory(): implement allowing getting inventory of a turtle from any computer
+   -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
+   -  create & better support for multiple turtles
+
+-  enterprise_employment Turtle improvements
+   -  resolving anyTurtleLocator
+      -  currently resolved by an override of getObject() in enterprise_employment
+      -  problems with current design:
+         -  we now fix a Turtle to specific work to early
+         -  which Turtle should be selected? (we now either take the current Turtle, or (in case of a none Turtle Worker) take the first Turtle in the list)
+         -  we do not take into account if the Turtle is actually available/ accepting (that type of) Work at this stage
+      -  Solution directions:
+         -  consider adjusting calling code/ project logic to select a specific Turtle as late as possible. Example places to investigate:
+            -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
+            -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
+            -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
+         -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
+
+-  mine v2
+   -  uitdenken
+   -  maken
+
+-  Factory improvements
+   -  remove static method style code (remaining from before it was a mobj)
+   -  ensure no longer need to register it as a module in the mobj library
+   -  split into CraftSpot & SmeltSpot MObj's
+
+-  consider merging enterprise_chest into enterprise_storage
 
 -  hosting/ releasing, building/ dismantling v2.0
    RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
@@ -169,16 +189,6 @@ G  Descriptions for blueprints and project steps
 
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
--  introduce ObjLocator class extending URL class representing a locator of an IObj
-   -  with methods
-      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
-      -  getId             (note: optional; only if class is an ILObj)
-   -  work with ObjLocator's instead of URL's
-      -  ObjHost
-      -  LObjHost
-      -  MObjHost
-      -  ...
-
 -  ensure Shop/ enterprise_shop implement ILObj/ LObjHost
    -  Shop
       -  implement ILObj
@@ -187,35 +197,6 @@ G  Descriptions for blueprints and project steps
       -  use new LObjHost methods instead of current equivalent
       -  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
-
--  enterprise_employment improvements
-   -  resolving anyTurtleLocator
-      -  currently resolved by an override of getObject() in enterprise_employment
-      -  problems with current design:
-         -  we now fix a Turtle to specific work to early
-         -  which Turtle should be selected? (we now either take the current Turtle, or (in case of a none Turtle Worker) take the first Turtle in the list)
-         -  we do not take into account if the Turtle is actually available/ accepting (that type of) Work at this stage
-      -  Solution directions:
-         -  consider adjusting calling code/ project logic to select a specific Turtle as late as possible. Example places to investigate:
-            -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
-            -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
-            -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
-         -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
-
--  Turtle improvements
-   -  getInventory(): implement allowing getting inventory of a turtle from any computer
-   -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
-
-R  Factory improvements
-   -  remove static method style code (remaining from before it was a mobj)
-   -  ensure no longer need to register it as a module in the mobj library
-   -  split into CraftSpot & SmeltSpot MObj's
-
--  BirchForest improvements
-   - support more than 6 trees (in the one column)
-
--  blueprint
-   -  Introduce Blueprint objects
 
 -  ItemSupplierGroup & ItemDepotGroup
    -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
@@ -242,103 +223,133 @@ R  Factory improvements
       -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
       -  ensure it takes the closest
 
-RG mine v2
-   -  uitdenken
-   -  maken
+-  introduce ObjLocator class extending URL class representing a locator of an IObj
+   -  with methods
+      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+      -  getId             (note: optional; only if class is an ILObj)
+   -  work with ObjLocator's instead of URL's
+      -  ObjHost
+      -  LObjHost
+      -  MObjHost
+      -  ...
 
--  mobj advanced chest
+-  IItemSupplier & IItemDepot interface
+   -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
+   -  don't do anything when itemList is empty --> where do check?
+   -  Improve IItemDepot tests after revising the interface
+      -  ensure we have generalised "pt" test function similar to IItemDepot
+         -  can_StoreItems_QOSrv
+         -  needsTo_StoreItemsFrom_SOSrv
+      -  implement for mobj_chest
+      -  implement for mobj_silo
+      -  implement for mobj_turtle
+
+-  World Master or mobj_city
+   -  Operates at the (currently for seen) highest (abstraction) layer in ccwp
+      -  Operates on the (mobj)enterprise layer types
+   -  Implementation option 1: upgrade the world using levels
+      -  It requests all enterprises to upgrade to the next world level
+         -  A level of an enterprise is determined by KPI's like e.g. wood capacity, forest size, # forests, etc
+      -  Once all enterprises have been upgraded, it upgrades the world to the next world level
+   -  Implementation option 2: alternative without scripting via levels
+
+-  BirchForest improvements
+   - support more than 6 trees (in the one column)
+
+-  Introduce Blueprint objects
+
+-  Ordering
+   -  Het order proces
+      -  de start van het order proces is een reservering. De reservering kan gedaan worden bij een partij die reserveringen accepteerd.
+         -  er zijn in eerste instantie drie type reserveringen
+            -  items (provide item)
+            -  fuel (zelfde als item, alleen bestemming is altijd een turtle die de brandstof gebruikt als laatste stap)
+            -  opslagruimte (depot)
+         -  er zijn meer type reserveringen in de toekomst te verwachten
+            -  tijd van turtle om iets te doen (nu via assignmentboard)
+            -  tijd van een cpu om iets te doen (langer dan 1 tick, geen turtle API nodig)
+            -  ruimte in de map om te bewegen (zoals de schacht van een silo/mijn, deel van een snelweg)
+            -  tijd van items in de wereld, zoals furnace, crafting table
+      -  het antwoord / de return value op de reservering is altijd een object / table, twee mogelijkheden
+         -  success == True
+            -  Het antwoord is een order object, de benodigde middelen (items, opslagruimte, ...) zijn gereserveerd. In de order staat informatie hierover.
+            -  Er wordt extra informatie gegeven over de order, bijvoorbeeld verwachte levertijd, brandstof kosten, etc.
+            -  Er MOET iets met dit object gedaan worden!
+               -  execute, de order wordt uitgevoerd
+               -  cancel, de order (en de onderliggende reserveringen) worden geannuleerd / vrijgegeven
+         -  success == False
+            -  Het antwoord is een table
+            -  Het antwoord bevat eventueel extra informatie, zoals bij een item order hoeveel wel geleverd kan worden.
+            -  Met het antwoord kan niks gedaan worden, informatie gebruiken waar nodig.
+   -  order object
+      -  bestaat altijd uit een OrderBase
+      -  bestaat altijd uit een (of meer?) van de hieronder genoemde typen
+         -  OrderBase
+            -  id
+            -  status
+            -  bevat reservering informatie, waar zijn zaken gereserveerd (dus met een locator en details over de reservering)
+            -  completeCallback, welke functie moet worden aangeroepen zodra deze order complete is
+            -  description - handig voor systeem monitoring en zo
+         -  ItemOrder
+            -  ItemTable            - bestelde items
+            -  aflever adres        - locator
+         -  FuelOrder
+            - Zelfde als ItemOrder, waarbij het aflever adres altijd een turtle is die alle items uit de item table gebruikt voor refuel()
+         -  DepotOrder
+            -  ItemTable            - te verwerken items
+            -  _itemSlots           - aantal slots nodig om de items op te slaan, berekend op basis van de itemTable
+            -  pick adres           - locator
+         -  CraftOrder
+            -  ItemTable            - to craft
+            -  ItemTable            - ingredients
+            -  ingredients locator  - locator
+            -  aflever adres        - locator
+         -  SmeltOrder
+            -  ItemTable            - to craft
+            -  ItemTable            - ingredients
+            -  aflever adres        - locator
+         -  BuiltOrder?
+            -  Blueprint
+            -  Location
+            -  ItemTable            - ingredients
+            -  ingredients locator  - locator
+   -  Consider creating and using "order" objects (maybe even generalise this to reservations)
+      -  order object that holds an outstanding order
+      -  order object holds the items concerned
+      -  order object can hold more information, like description
+      -  this will make an overview of outstanding orders possible
+      -  Discuss: maybe we should generalise the concept of an "order" further
+         -  if we set this up in a generic way it could be used to reserve/ claim
+            -  items
+            -  item space (slots in a slot inventory)
+            -  physical turtle space (e.g. for no 2 turtles into 1 shaft)
+            -  turtle physical movement time (related to the concept of WIP)
+            -  (management) execution time
+            -  ?energy/ fuel
+            -  ?tools
+            -  ...
+         -  Discuss: what is the best name for this concept: ?order, ?claim, ?reservation, ...
+         -  Next to having Reservation/ "order" objects, we likely need
+            -  reservationHandler objects (?IReservationHandler)
+               -  with methods to reserve, claim and release Reservation's
+            -  reservationId  (which likely is, resolves to or is related to a locator (URL))
+      -  improve IItemDepot and IItemSupplier interfaces
+         -  claiming items (in IItemSupplier)
+         -  free slots (in IItemDepot's)
+      -  availability of physical turtle space (e.g. no 2 turtles into 1 silo shaft)
+         - denk richting:
+            -  silo managed de beweging door de shaft
+            -  oplossingrichting:
+               -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
+               -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
+
+-  advanced Chest
    -  different class like mobj chest
    -  handles orders with item reservation
       -  discuss: should this be part of/ handled via improved IItemSupplier interface (i.e. be applicable to all ItemSupplier's)?
    -  handles waste with free space reservation
       -  discuss: should this be part of/ handled via improved IItemDepot interface  (i.e. be applicable to all ItemDepot's)?
    -  when items are pickup up / delivered, reservation is complete
-
--  Het order proces
-   -  de start van het order proces is een reservering. De reservering kan gedaan worden bij een partij die reserveringen accepteerd.
-      -  er zijn in eerste instantie drie type reserveringen
-         -  items (provide item)
-         -  fuel (zelfde als item, alleen bestemming is altijd een turtle die de brandstof gebruikt als laatste stap)
-         -  opslagruimte (depot)
-      -  er zijn meer type reserveringen in de toekomst te verwachten
-         -  tijd van turtle om iets te doen (nu via assignmentboard)
-         -  tijd van een cpu om iets te doen (langer dan 1 tick, geen turtle API nodig)
-         -  ruimte in de map om te bewegen (zoals de schacht van een silo/mijn, deel van een snelweg)
-         -  tijd van items in de wereld, zoals furnace, crafting table
-   -  het antwoord / de return value op de reservering is altijd een object / table, twee mogelijkheden
-      -  success == True
-         -  Het antwoord is een order object, de benodigde middelen (items, opslagruimte, ...) zijn gereserveerd. In de order staat informatie hierover.
-         -  Er wordt extra informatie gegeven over de order, bijvoorbeeld verwachte levertijd, brandstof kosten, etc.
-         -  Er MOET iets met dit object gedaan worden!
-            -  execute, de order wordt uitgevoerd
-            -  cancel, de order (en de onderliggende reserveringen) worden geannuleerd / vrijgegeven
-      -  success == False
-         -  Het antwoord is een table
-         -  Het antwoord bevat eventueel extra informatie, zoals bij een item order hoeveel wel geleverd kan worden.
-         -  Met het antwoord kan niks gedaan worden, informatie gebruiken waar nodig.
-
--  order object
-   -  bestaat altijd uit een OrderBase
-   -  bestaat altijd uit een (of meer?) van de hieronder genoemde typen
-      -  OrderBase
-         -  id
-         -  status
-         -  bevat reservering informatie, waar zijn zaken gereserveerd (dus met een locator en details over de reservering)
-         -  completeCallback, welke functie moet worden aangeroepen zodra deze order complete is
-         -  description - handig voor systeem monitoring en zo
-      -  ItemOrder
-         -  ItemTable            - bestelde items
-         -  aflever adres        - locator
-      -  FuelOrder
-         - Zelfde als ItemOrder, waarbij het aflever adres altijd een turtle is die alle items uit de item table gebruikt voor refuel()
-      -  DepotOrder
-         -  ItemTable            - te verwerken items
-         -  _itemSlots           - aantal slots nodig om de items op te slaan, berekend op basis van de itemTable
-         -  pick adres           - locator
-      -  CraftOrder
-         -  ItemTable            - to craft
-         -  ItemTable            - ingredients
-         -  ingredients locator  - locator
-         -  aflever adres        - locator
-      -  SmeltOrder
-         -  ItemTable            - to craft
-         -  ItemTable            - ingredients
-         -  aflever adres        - locator
-      -  BuiltOrder?
-         -  Blueprint
-         -  Location
-         -  ItemTable            - ingredients
-         -  ingredients locator  - locator
-
--  Consider creating and using "order" objects (maybe even generalise this to reservations)
-   -  order object that holds an outstanding order
-   -  order object holds the items concerned
-   -  order object can hold more information, like description
-   -  this will make an overview of outstanding orders possible
-   -  Discuss: maybe we should generalise the concept of an "order" further
-      -  if we set this up in a generic way it could be used to reserve/ claim
-         -  items
-         -  item space (slots in a slot inventory)
-         -  physical turtle space (e.g. for no 2 turtles into 1 shaft)
-         -  turtle physical movement time (related to the concept of WIP)
-         -  (management) execution time
-         -  ?energy/ fuel
-         -  ?tools
-         -  ...
-      -  Discuss: what is the best name for this concept: ?order, ?claim, ?reservation, ...
-      -  Next to having Reservation/ "order" objects, we likely need
-         -  reservationHandler objects (?IReservationHandler)
-            -  with methods to reserve, claim and release Reservation's
-         -  reservationId  (which likely is, resolves to or is related to a locator (URL))
-   -  improve IItemDepot and IItemSupplier interfaces
-      -  claiming items (in IItemSupplier)
-      -  free slots (in IItemDepot's)
-   -  availability of physical turtle space (e.g. no 2 turtles into 1 silo shaft)
-      - denk richting:
-         -  silo managed de beweging door de shaft
-         -  oplossingrichting:
-            -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
-            -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
 
 -  Obj(ect) Initialisation & Destruction: v2.5/ v3.0
    -  ToDiscuss: Consider further revising Initialisation, some aspects to consider
@@ -389,24 +400,9 @@ RG mine v2
 -  enterprise management
    -  for claiming manament execution time
 
--  IItemSupplier & IItemDepot interface
-   -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
-   -  don't do anything when itemList is empty --> where do check?
-
--  World Master
-   -  Operates at the (currently for seen) highest (abstraction) layer in ccwp
-      -  Operates on the (mobj)enterprise layer types
-   -  Implementation option 1: upgrade the world using levels
-      -  It requests all enterprises to upgrade to the next world level
-         -  A level of an enterprise is determined by KPI's like e.g. wood capacity, forest size, # forests, etc
-      -  Once all enterprises have been upgraded, it upgrades the world to the next world level
-   -  Implementation option 2: alternative without scripting via levels
-
 -  recipe book
 
 -  Bug: Factory:provideItemsTo_AOSrv meerdere items zorgt voor meerdere keren aanroepen van callback terwijl het er maar 1 moet zijn
-
--  create (& use) multiple turtles
 
 -  enterprise_energy
    -  Investigate + possibly fix why we relatively soon need to go to L3 enterprise_energy in enterprise_colonization
@@ -430,7 +426,6 @@ RG mine v2
    ---differs alot from current implementation
 
 -  Other ToDo's to be found everywhere in all code files
-
 
 ToDo history
 ------------
