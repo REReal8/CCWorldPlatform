@@ -98,9 +98,10 @@ R  Generalised IItemSupplier test functions for MObj's                          
    R  use in mobj_silo                                                                                                  (done)
    R  use in mobj_turtle                                                                                                (done)
 
--  Generalised IItemDepot test functions for MObj's
-   -  generalise IItemDepot test functions
-   -  use in mobj_chest
+R  Generalised IItemDepot test functions for MObj's                                                                     (....)
+   -  generalise IItemDepot test functions                                                                              (....)
+      R  storeItemsFrom_AOSrv                                                                                           (done)
+   R  use in mobj_chest                                                                                                 (done)
    -  use in mobj_silo
    -  use in mobj_turtle
 

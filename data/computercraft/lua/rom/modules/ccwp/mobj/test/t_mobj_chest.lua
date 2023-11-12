@@ -301,9 +301,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
+    local provideItems = { ["minecraft:birch_log"]  = 5, }
 
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
@@ -321,9 +319,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     -- prepare test
     local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
+    local provideItems = { ["minecraft:birch_log"]  = 5, }
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
@@ -391,69 +387,44 @@ function T_Chest.T_IItemDepot_All()
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
-local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
-    -- prepare test (cont)
-    corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
-    --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = testHost:getObjectLocator(obj)
-
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
-    itemsLocator:setQuery(provideItems)
-
-    local expectedDestinationItemsLocator = chestLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Chest", "storeItemsFrom_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["chestLocator"]                    = chestLocator,
-        ["itemsLocator"]                    = itemsLocator:copy(),
-    })
-
-    -- test
-    local scheduleResult = obj:storeItemsFrom_AOSrv({
-        itemsLocator    = itemsLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
-
 function T_Chest.T_storeItemsFrom_AOSrv_FromTurtle()
     -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
     t_employment = t_employment or require "test.t_employment"
-    local itemsLocator = t_employment.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(itemSupplierLocator, "Failed obtaining itemSupplierLocator")
+
+    local itemsLocator = itemSupplierLocator:copy()
+    local storeItems = { ["minecraft:birch_log"]  = 5, }
+    itemsLocator:setQuery(storeItems)
 
     -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")
+    T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemsLocator, logOk)
+
+    -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     -- prepare test
-    local obj2 = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemsLocator = testHost:saveObject(obj2)
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
+    local itemSupplierConstructParameters = {
+        baseLocation    = baseLocation0:getRelativeLocation(0, 6, 0),
+        accessDirection = accessDirection0,
+    }
+    local itemSupplierLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
+    local itemsLocator = itemSupplierLocator:copy()
+    local storeItems = { ["minecraft:birch_log"]  = 5, }
+    itemsLocator:setQuery(storeItems)
 
     -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, "Chest")
-end
-
-function T_Chest.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemsLocator, logOk)
 
     -- cleanup test
-    local chestLocator = callbackData["chestLocator"]
-    testHost:deleteResource(chestLocator)
-    local itemsLocator = callbackData["itemsLocator"]
-    if testHost:isLocatorFromHost(itemsLocator) then
-        testHost:deleteResource(itemsLocator)
-    end
-
-    -- end
-    return true
+    testHost:releaseMObj_SSrv({ mobjLocator = itemSupplierLocator})
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
 return T_Chest

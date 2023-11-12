@@ -1,4 +1,5 @@
 local T_IItemSupplier = {}
+
 local corelog = require "corelog"
 
 local MethodExecutor = require "method_executor"
@@ -30,10 +31,13 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideI
     assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
-    local lobj = ObjHost.GetObject(objLocator) assert(lobj, "Failed obtaining "..className.." from mobjLocator "..objLocator:getURI())
+    local obj = ObjHost.GetObject(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
+
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
 
     -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "provideItemsTo_AOSrv", {
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, "provideItemsTo_AOSrv", {
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
@@ -45,8 +49,6 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideI
     assert(serviceResults.success, "failed executing service")
 
     -- check: items provided to destinationItemsLocator
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
