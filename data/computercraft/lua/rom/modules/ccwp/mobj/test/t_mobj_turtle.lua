@@ -29,6 +29,7 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
 local T_IItemSupplier = require "test.t_i_item_supplier"
+local T_IItemDepot = require "test.t_i_item_depot"
 
 local T_Chest = require "test.t_mobj_chest"
 
@@ -61,7 +62,9 @@ end
 
 function T_Turtle.T_AllPhysical()
     -- IItemSupplier
+    T_Turtle.T_storeItemsFrom_AOSrv_FromTurtle()
     T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
+    T_Turtle.T_storeItemsFrom_AOSrv_FromChest()
     T_Turtle.T_provideItemsTo_AOSrv_ToChest()
 end
 
@@ -317,9 +320,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToTurtle()
     t_employment = t_employment or require "test.t_employment"
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
+    local provideItems = { ["minecraft:birch_log"] = 5, }
 
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
@@ -336,9 +337,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     t_employment = t_employment or require "test.t_employment"
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
+    local provideItems = { ["minecraft:birch_log"] = 5, }
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocationChest) assert(obj2, "Failed obtaining "..testClassName.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
@@ -411,64 +410,36 @@ function T_Turtle.T_IItemDepot_All()
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
-local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
-    -- prepare test (cont)
-    corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-    local turtleLocator = enterprise_employment:getObjectLocator(objTurtle) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
-
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
-    itemsLocator:setQuery(provideItems)
-
-    local expectedDestinationItemsLocator = turtleLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Turtle", "storeItemsFrom_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["itemsLocator"]                    = itemsLocator:copy(),
-    })
-
-    -- test
-    local scheduleResult = objTurtle:storeItemsFrom_AOSrv({
-        itemsLocator    = itemsLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
-
-function T_Turtle.T_storeItemsFrom_AOSrv_Turtle()
+function T_Turtle.T_storeItemsFrom_AOSrv_FromTurtle()
     -- prepare test
-    local itemsLocator = t_employment.GetCurrentTurtleLocator()
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(itemSupplierLocator, "Failed obtaining itemSupplierLocator")
+
+    local storeItems = { ["minecraft:birch_log"] = 5, }
 
     -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")
-end
-
-function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
-    -- prepare test
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(2, 5, 0)) assert(chest2, "Failed obtaining Chest 2")
-    local itemsLocator = enterprise_chests:saveObject(chest2)
-
-    -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, "Chest")
-end
-
-function T_Turtle.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
-    local itemsLocator = callbackData["itemsLocator"]
-    if enterprise_chests:isLocatorFromHost(itemsLocator) then
-        enterprise_chests:deleteResource(itemsLocator)
-    end
+end
 
-    -- end
-    return true
+function T_Turtle.T_storeItemsFrom_AOSrv_FromChest()
+    -- prepare test
+    t_employment = t_employment or require "test.t_employment"
+    local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
+
+    local itemSupplierConstructParameters = { baseLocation = baseLocationChest:copy(), accessDirection = "top", }
+    local itemSupplierLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+
+    local storeItems = { ["minecraft:birch_log"] = 5, }
+
+    -- test
+    T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
+
+    -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = itemSupplierLocator})
 end
 
 return T_Turtle
