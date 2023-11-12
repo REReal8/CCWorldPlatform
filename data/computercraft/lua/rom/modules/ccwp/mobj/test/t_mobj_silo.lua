@@ -64,6 +64,7 @@ end
 function T_Silo.T_AllPhysical()
     -- IItemSupplier
     T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
+    T_Silo.T_storeItemsFrom_AOSrv_MultipleItems_FromTurtle()
 end
 
 local testClassName = "Silo"
@@ -275,26 +276,6 @@ function T_Silo.T_IMObj_All()
     }, logOk)
 end
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
-function T_Silo.T_integrityCheck_AOSrv()
-    -- prepare test
-    corelog.WriteToLog("* Silo:integrityCheck_AOSrv() tests")
-    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
-    local siloLocator = testHost:saveObject(obj)
-
-    -- test
-    obj:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
-
-    -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = siloLocator})
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -326,11 +307,7 @@ function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    local provideItems = {
-        ["minecraft:birch_planks"]  = 5,
-        ["minecraft:birch_log"]     = 3,
-        ["minecraft:coal"]          = 7,
-    }
+    local provideItems = { ["minecraft:birch_planks"] = 5, ["minecraft:birch_log"] = 3, ["minecraft:coal"] = 7, }
 
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
@@ -360,7 +337,7 @@ function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     -- tests
-    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, itemDepotLocator, nil, {
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10, }, itemDepotLocator, nil, {
         success         = true,
         fuelNeed        = 10 + 1, -- ToDo: improve with real/ realistic value
         ingredientsNeed = {},
@@ -383,8 +360,8 @@ function T_Silo.T_can_ProvideItems_QOSrv()
     local obj = T_Silo.CreateTestObj(nil, nil, nil, nil, nil, nil, topChests) assert(obj, "Failed obtaining "..testClassName)
 
     -- tests
-    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, true, logOk)
-    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:furnace"] = 1}, false, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10, }, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:furnace"] = 1, }, false, logOk)
 
     -- cleanup test
     enterprise_chests:deleteResource(chestLocator)
@@ -408,55 +385,40 @@ function T_Silo.T_IItemDepot_All()
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
-function T_Silo.T_storeItemsFrom_AOSrv()
+function T_Silo.T_storeItemsFrom_AOSrv_MultipleItems_FromTurtle()
     -- prepare test
-    corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
-    local itemsLocator = t_employment.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
-    local siloLocator = enterprise_storage:saveObject(obj)
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-        ["minecraft:birch_planks"]  = 2,
-    }
-    itemsLocator:setQuery(provideItems)
+    t_employment = t_employment or require "test.t_employment"
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(itemSupplierLocator, "Failed obtaining itemSupplierLocator")
 
-    local expectedDestinationItemsLocator = siloLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_Silo", "storeItemsFrom_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["siloLocator"]                     = siloLocator,
-        ["itemsLocator"]                    = itemsLocator:copy(),
-    })
+    local storeItems = { ["minecraft:birch_planks"] = 5, ["minecraft:birch_log"] = 3, ["minecraft:coal"] = 7, }
 
     -- test
-    local scheduleResult = obj:storeItemsFrom_AOSrv({
-        itemsLocator    = itemsLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
+    T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
 end
 
-function T_Silo.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
+--     _____ _ _
+--    / ____(_) |
+--   | (___  _| | ___
+--    \___ \| | |/ _ \
+--    ____) | | | (_) |
+--   |_____/|_|_|\___/
 
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+function T_Silo.T_integrityCheck_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Silo:integrityCheck_AOSrv() tests")
+    local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local siloLocator = testHost:saveObject(obj)
+
+    -- test
+    obj:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
 
     -- cleanup test
-    local siloLocator = callbackData["siloLocator"]
-    enterprise_storage:deleteResource(siloLocator)
-    -- ToDo: WHO (OWNS AND SO) DELETES the CHESTS in the silo???
-    local itemsLocator = callbackData["itemsLocator"]
-    if enterprise_chests:isLocatorFromHost(itemsLocator) then
-       enterprise_chests:deleteResource(itemsLocator)
-    end
-
-    -- end
-    return true
+    testHost:releaseMObj_SSrv({ mobjLocator = siloLocator})
 end
 
 function T_Silo.T_GetRandomSilo()
