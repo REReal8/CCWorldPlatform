@@ -295,10 +295,10 @@ end
 local function ShaftDismantle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
-            ["D"]   = Block:newInstance("minecraft:dirt"),
+            ["C"]   = Block:newInstance("minecraft:cobblestone"),
         }),
         CodeMap:newInstance({
-            [1] = "D",
+            [1] = "C",
         })
     )
 end
@@ -441,7 +441,7 @@ end
 -- ToDo: get this from some dictionary instead of this local (such that it can also be used from e.g. a full Mine)
 local mineItems = {
     "minecraft:deepslate",
-    "minecraft:stone",
+    "minecraft:cobblestone",
     "minecraft:clay",
 --    "minecraft:water", -- note: propably needs a special gathering technique with a bucket. doesn't it?
     "minecraft:gravel",

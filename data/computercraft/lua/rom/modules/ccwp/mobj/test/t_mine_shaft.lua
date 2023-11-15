@@ -48,6 +48,7 @@ end
 
 function T_MineShaft.T_AllPhysical()
     -- IItemSupplier
+    T_MineShaft.T_provideItemsTo_AOSrv_cobblestone_ToTurtle()
 end
 
 local testClassName = "MineShaft"
@@ -259,12 +260,29 @@ function T_MineShaft.T_IItemSupplier_All()
     T_MineShaft.T_can_ProvideItems_QOSrv()
 end
 
+function T_MineShaft.T_provideItemsTo_AOSrv_cobblestone_ToTurtle()
+    -- prepare test
+    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local provideItems = { ["minecraft:cobblestone"] = 9 }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
+    local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
+
+    -- test
+    T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
+
+    -- cleanup test
+    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+end
+
 function T_MineShaft.T_can_ProvideItems_QOSrv()
     -- prepare test
     local obj = T_MineShaft.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- tests
-    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:stone"] = 9}, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:cobblestone"] = 9}, true, logOk)
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:coal_ore"] = 2}, true, logOk)
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["unknown"] = 10}, false, logOk)
 
