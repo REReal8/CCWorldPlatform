@@ -260,5 +260,19 @@ function T_MineShaft.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
+    T_MineShaft.T_can_ProvideItems_QOSrv()
 end
 
+function T_MineShaft.T_can_ProvideItems_QOSrv()
+    -- prepare test
+    local obj = T_MineShaft.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- tests
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:stone"] = 9}, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:coal_ore"] = 2}, true, logOk)
+    T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["unknown"] = 10}, false, logOk)
+
+    -- cleanup test
+end
+
+return T_MineShaft
