@@ -717,4 +717,38 @@ function Turtle:getInventoryAsItemTable()
     return ItemTable:newInstance(itemTable)
 end
 
+function Turtle:getOutputAndWasteItemsSince(...)
+    -- get & check input from description
+    local checkSuccess, lastInventory, wishedOutputItems = InputChecker.Check([[
+        This function returns the ouput and other items obtained by this Turtle relative to a past snapshot of the Turtle inventory.
+
+        Return value:
+            task result                     - (table)
+                success                     - (boolean) whether the task was succesfull
+                outputItems                 - (ItemTable) with output items in the Turtle inventory
+                otherItems                  - (ItemTable) with other items in the Turtle inventory
+
+        Parameters:
+            lastInventory                   + (ItemTable) with last Inventory
+            wishedOutputItems               + (ItemTable) with one or more output items we wish to have
+    ]], ...)
+    if not checkSuccess then corelog.Error("Turtle:getOutputAndWasteItemsSince: Invalid input") return {success = false} end
+
+    -- determine output & waste items
+    local endTurtleItems = self:getInventoryAsItemTable()
+    local uniqueEndItems, _commonItems, _uniqueBeginItems = ItemTable.compare(endTurtleItems, lastInventory)
+    if not uniqueEndItems then corelog.Error("Turtle:getOutputAndWasteItemsSince: Failed obtaining uniqueEndItems") return {success = false} end
+    local otherItems, outputItems, _1 = ItemTable.compare(uniqueEndItems, wishedOutputItems)
+    if not outputItems then corelog.Error("Turtle:getOutputAndWasteItemsSince: Failed obtaining outputItems") return {success = false} end
+    if not otherItems then corelog.Error("Turtle:getOutputAndWasteItemsSince: Failed obtaining otherItems") return {success = false} end
+
+    -- end
+    return {
+        success     = true,
+        outputItems = outputItems,
+        otherItems  = otherItems,
+    }
+end
+
+
 return Turtle
