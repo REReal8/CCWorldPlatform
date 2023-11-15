@@ -12,6 +12,7 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
+
 local ItemTable = require "obj_item_table"
 
 local enterprise_employment
@@ -230,8 +231,12 @@ function role_alchemist.Craft_Task(...)
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
 
-    -- equip crafting_table
-    coreinventory.Equip("minecraft:crafting_table")
+    -- what should we provide?
+    -- ToDo: consider passing this in as task argument instead of productItemName and productItemCount
+    local provideItems = ItemTable:newInstance({ [productItemName] = productItemCount, })
+
+    -- calculate how many times we need to "do" the recipe
+    local times = math.ceil(productItemCount / yield)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
@@ -239,10 +244,10 @@ function role_alchemist.Craft_Task(...)
     if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items
-    local beginTurtleItemTable = turtleObj:getInventoryAsItemTable()
+    local beginTurtleItems = turtleObj:getInventoryAsItemTable()
 
-    -- calculate how many times we need to "do" the recipe
-    local times = math.ceil(productItemCount / yield)
+    -- equip crafting_table
+    coreinventory.Equip("minecraft:crafting_table")
 
     -- move to the crafting location
     coremove.GoTo(workingLocation)
@@ -254,27 +259,22 @@ function role_alchemist.Craft_Task(...)
     -- re-take the stuff from the Chest below
     coreinventory.GetAllItems("down")
 
-    -- determine output items
-    local endTurtleItemTable = turtleObj:getInventoryAsItemTable()
-    local uniqueEndItemTable, _commonItemTable, _uniqueBeginItemTable = ItemTable.compare(endTurtleItemTable, beginTurtleItemTable)
-    if not uniqueEndItemTable then corelog.Error("role_alchemist.Craft_Task: Failed obtaining uniqueEndItemTable") return {success = false} end
+    -- determine output & waste items
+    local serviceResults = turtleObj:getOutputAndWasteItemsSince(beginTurtleItems, provideItems)
+    if not serviceResults or not serviceResults.success then corelog.Error("role_alchemist.Craft_Task: Failed obtaining output & waste items") return {success = false} end
 
-    -- determine waste items
-    local wasteItems = {}
-    for wasteItemName, wasteItemCount in pairs(uniqueEndItemTable) do
-        if wasteItemName ~= productItemName then
-            wasteItems[wasteItemName] = wasteItemCount
-        end
-    end
+    -- determine output & waste locators
+    local outputItems = serviceResults.outputItems
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery(outputItems)
+
+    -- determine waste locator
+    local wasteItems = serviceResults.otherItems
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
     if next(wasteItems) ~= nil then
         corelog.WriteToLog(">crafting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
-
-    -- determine output & waste locators
-    local turtleOutputItemsLocator = turtleLocator:copy()
-    turtleOutputItemsLocator:setQuery({ [productItemName] = productItemCount })
-    local turtleWasteItemsLocator = turtleLocator:copy()
-    turtleWasteItemsLocator:setQuery(wasteItems)
 
     -- end
     local result = {
@@ -453,13 +453,17 @@ function role_alchemist.Pickup_Task(...)
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
 
+    -- what should we provide?
+    -- ToDo: consider passing this in as task argument instead of productItemName and productItemCount
+    local provideItems = ItemTable:newInstance({ [productItemName] = productItemCount, })
+
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local turtleObj = enterprise_employment:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current Turtle") return {success = false} end
 
     -- remember input items
-    local beginTurtleItemTable = turtleObj:getInventoryAsItemTable()
+    local beginTurtleItems = turtleObj:getInventoryAsItemTable()
 
     -- go to the furnace
     coremove.GoTo(workingLocation)
@@ -477,38 +481,26 @@ function role_alchemist.Pickup_Task(...)
     -- move back to workingLocation
     coremove.GoTo(workingLocation)
 
-    -- determine output items
-    local endTurtleItemTable = turtleObj:getInventoryAsItemTable()
-    local uniqueEndItemTable, _commonItemTable, _uniqueBeginItemTable = ItemTable.compare(endTurtleItemTable, beginTurtleItemTable)
-    if not uniqueEndItemTable then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining uniqueEndItemTable") return {success = false} end
-    local wasteItems = {}
-    local producedProductItems = 0
-    for itemName, itemCount in pairs(uniqueEndItemTable) do
-        if itemName == productItemName then
-            -- check enough
-            if itemCount < productItemCount then
-                corelog.Warning("role_alchemist.Pickup_Task: Only retrieved "..itemName.." "..productItemName.." from furnace (expected was "..productItemCount..")")
-            end
-            producedProductItems = productItemCount
+    -- determine output & waste items
+    local serviceResults = turtleObj:getOutputAndWasteItemsSince(beginTurtleItems, provideItems)
+    if not serviceResults or not serviceResults.success then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining output & waste items") return {success = false} end
 
-            -- check for waste
-            local wasteCount = itemCount - productItemCount
-            if wasteCount > 0 then
-                wasteItems[itemName] = wasteCount
-            end
-        else
-            wasteItems[itemName] = itemCount
-        end
+    -- determine output locators
+    local outputItems = serviceResults.outputItems
+    local producedItems = outputItems[productItemName]
+    if producedItems < productItemCount then
+        corelog.Warning("role_alchemist.Pickup_Task: Only retrieved "..producedItems.." "..productItemName.." from furnace (expected was "..productItemCount..")")
     end
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery(outputItems)
+
+    -- determine waste locator
+    local wasteItems = serviceResults.otherItems
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
     if next(wasteItems) ~= nil then
         corelog.WriteToLog(">smelting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
-
-    -- determine output & waste locators
-    local turtleOutputItemsLocator = turtleLocator:copy()
-    turtleOutputItemsLocator:setQuery({ [productItemName] = producedProductItems })
-    local turtleWasteItemsLocator = turtleLocator:copy()
-    turtleWasteItemsLocator:setQuery(wasteItems)
 
     -- end
     local result = {
