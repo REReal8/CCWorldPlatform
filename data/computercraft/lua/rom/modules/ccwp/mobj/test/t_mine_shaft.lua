@@ -10,8 +10,6 @@ local Location = require "obj_location"
 
 local MineShaft = require "mine_shaft"
 
-local role_forester = require "role_forester"
-
 local enterprise_forestry = require "enterprise_forestry"
 
 local TestArrayTest = require "test_array_test"
@@ -59,12 +57,10 @@ local testHost = enterprise_forestry
 
 local logOk = false
 
-local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
+local baseLocation0 = Location:newInstance(0, -12, 1, 0, 1):getRelativeLocation(3, 3, 0)
 local currentDepth0 = 2
 local maxDepth0 = 32
 local maxDepth1 = 48
-
-local nTrees1 = 1
 
 local constructParameters0 = {
     baseLocation    = baseLocation0,

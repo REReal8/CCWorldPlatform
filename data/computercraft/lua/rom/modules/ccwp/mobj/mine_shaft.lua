@@ -382,7 +382,7 @@ function MineShaft:provideItemsTo_AOSrv(...)
     local taskData = {
         baseLocation        = self:getBaseLocation(),
         startDepth          = self:getCurrentDepth(),
-        maxDepth            = self:getMaxeDepth(),
+        maxDepth            = self:getMaxDepth(),
 
         provideItems        = ItemTable:newInstance(provideItems),
 

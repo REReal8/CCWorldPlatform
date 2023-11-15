@@ -100,6 +100,7 @@ function role_miner.MineShaft_Task(...)
         -- one layer lower
         turtle.digDown()
         coremove.Down()
+        currentDepth = currentDepth + 1
 
         -- go round
         for i=1,4 do turtle.dig() coremove.Right() end

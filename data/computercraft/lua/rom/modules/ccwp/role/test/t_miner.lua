@@ -18,7 +18,7 @@ end
 
 local logOk = true
 
-local baseLocation0 = Location:newInstance(0, -12, 1, 0, 1)
+local baseLocation0 = Location:newInstance(0, -12, 1, 0, 1):getRelativeLocation(3, 3, 0)
 local startDepth = 0
 local maxDepth = 32
 
@@ -29,7 +29,7 @@ function t_miner.T_MineShaft_Task()
     corelog.WriteToLog("* role_miner.MineShaft_Task() tests")
     t_employment = t_employment or require "test.t_employment"
     local workerLocator = t_employment.GetCurrentTurtleLocator() assert(type(workerLocator) == "table", "Failed obtaining workerLocator")
-    local baseLocation = baseLocation0:getRelativeLocation(3, 3, 0)
+    local baseLocation = baseLocation0
     local provideItems = ItemTable:newInstance({ ["minecraft:cobblestone"] = 9, })
     local taskData = {
         baseLocation    = baseLocation:copy(),
