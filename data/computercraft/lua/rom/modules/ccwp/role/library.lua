@@ -28,8 +28,9 @@ local function ExecuteLibraryTest(t)
     local options	= {
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_RoleLibrary"}},
 
-        {key = "a", desc = "alchemist",         func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
+        {key = "a", desc = "alchemy",           func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
         {key = "b", desc = "builder",           func = ExecuteLibraryTest, param = {filename = "t_builder"}},
+        {key = "f", desc = "foresting",         func = ExecuteLibraryTest, param = {filename = "t_foresting"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
     return ExecuteXObjTest(t, "role", options, ExecuteLibraryTest)

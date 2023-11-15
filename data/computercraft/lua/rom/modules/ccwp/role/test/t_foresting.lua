@@ -6,9 +6,61 @@ local coreutils = require "coreutils"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
+local Location = require "obj_location"
+local ItemTable = require "obj_item_table"
+
 local role_forester = require "role_forester"
 
+local t_employment
+
 function t_foresting.T_All()
+end
+
+local logOk = true
+
+local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
+
+local compact = { compact = true }
+
+function t_foresting.T_HarvestForest_Task()
+    -- prepare test
+    corelog.WriteToLog("* role_forester.HarvestForest_Task() tests")
+    t_employment = t_employment or require "test.t_employment"
+    local workerLocator = t_employment.GetCurrentTurtleLocator() assert(type(workerLocator) == "table", "Failed obtaining workerLocator")
+    local firstTreeLocation = baseLocation0:getRelativeLocation(3, 2, 0)
+    local taskData = {
+        forestLevel       = 2,
+        firstTreeLocation = firstTreeLocation,
+        nTrees            = 1,
+        waitForFirstTree  = true,
+
+        workerLocator   = workerLocator,
+    }
+    local expectedTurtleOutputLogsLocator = workerLocator:copy()
+    local expectedTurtleOutputSaplingsLocator = workerLocator:copy()
+    local expectedTurtleWasteLocator = workerLocator:copy()
+
+    -- test
+    local result = role_forester.HarvestForest_Task(taskData)
+
+    -- check: result success
+    assert(result, "no result returned")
+    assert(result.success, "failed executing service")
+
+    -- check: turtleOutputLogsLocator
+    local turtleOutputLogsLocator = result.turtleOutputLogsLocator
+    assert(turtleOutputLogsLocator:sameBase(expectedTurtleOutputLogsLocator), "gotten turtleOutputLogsLocator(="..textutils.serialize(turtleOutputLogsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedTurtleOutputLogsLocator, compact)..")")
+
+    -- check: turtleOutputSaplingsLocator
+    local turtleOutputSaplingsLocator = result.turtleOutputSaplingsLocator
+    assert(turtleOutputSaplingsLocator:sameBase(expectedTurtleOutputSaplingsLocator), "gotten turtleOutputSaplingsLocator(="..textutils.serialize(turtleOutputSaplingsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedTurtleOutputSaplingsLocator, compact)..")")
+
+    -- check: turtleWasteItemsLocator
+    local turtleWasteItemsLocator = result.turtleWasteItemsLocator
+    assert(turtleWasteItemsLocator:sameBase(expectedTurtleWasteLocator), "gotten turtleOutputItemsLocator(="..textutils.serialize(turtleWasteItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedTurtleWasteLocator, compact)..")")
+
+    -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
 end
 
 function t_foresting.T_BirchGrow()
