@@ -31,6 +31,7 @@ local function ExecuteLibraryTest(t)
         {key = "a", desc = "alchemist",         func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
         {key = "b", desc = "builder",           func = ExecuteLibraryTest, param = {filename = "t_builder"}},
         {key = "f", desc = "forester",          func = ExecuteLibraryTest, param = {filename = "t_forester"}},
+        {key = "m", desc = "miner",             func = ExecuteLibraryTest, param = {filename = "t_miner"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
     return ExecuteXObjTest(t, "role", options, ExecuteLibraryTest)
@@ -43,9 +44,10 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("role_alchemist")
     moduleRegistry:requireAndRegisterModule("role_builder")
     moduleRegistry:requireAndRegisterModule("role_conservator")
+    moduleRegistry:requireAndRegisterModule("role_energizer")
     moduleRegistry:requireAndRegisterModule("role_forester")
     moduleRegistry:requireAndRegisterModule("role_interactor")
-    moduleRegistry:requireAndRegisterModule("role_energizer")
+    moduleRegistry:requireAndRegisterModule("role_miner")
     moduleRegistry:requireAndRegisterModule("role_settler")
 
     -- register library modules test modules
@@ -55,6 +57,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("t_alchemist", "test.t_alchemist")
     moduleRegistry:requireAndRegisterModule("t_builder", "test.t_builder")
     moduleRegistry:requireAndRegisterModule("t_forester", "test.t_forester")
+    moduleRegistry:requireAndRegisterModule("t_miner", "test.t_miner")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
