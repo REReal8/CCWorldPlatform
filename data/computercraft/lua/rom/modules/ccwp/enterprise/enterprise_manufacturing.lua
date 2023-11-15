@@ -70,6 +70,15 @@ local db = {
                 yield   = 1
             },
         },
+        ["minecraft:crafting_table"] = {
+            crafting  = {
+                [11]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
+                [12]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
+                [15]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
+                [16]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
+                yield   = 1
+            },
+        },
     }
 }
 
