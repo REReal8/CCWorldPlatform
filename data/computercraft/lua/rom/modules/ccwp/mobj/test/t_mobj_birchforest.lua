@@ -3,12 +3,10 @@ local T_BirchForest = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local MethodExecutor = require "method_executor"
 local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
-local URL = require "obj_url"
 
 local BirchForest = require "mobj_birchforest"
 

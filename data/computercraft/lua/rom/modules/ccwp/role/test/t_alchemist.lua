@@ -21,7 +21,7 @@ end
 
 local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
 
-local logOk = true
+local logOk = false
 
 local compact = { compact = true }
 
@@ -38,6 +38,7 @@ function t_alchemist.T_Craft_Task()
         productItemName = "minecraft:birch_planks",
         productItemCount= 4,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -4),
+
         workerLocator   = workerLocator,
     }
     local provideItems = ItemTable:newInstance({ [craftData.productItemName] = craftData.productItemCount, })
@@ -79,6 +80,7 @@ function t_alchemist.T_Smelt_Task()
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = 3,
+
         workerLocator   = workerLocator,
     }
 
@@ -105,6 +107,7 @@ function t_alchemist.T_Pickup_Task()
         productItemName = "minecraft:charcoal",
         productItemCount= 3,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
+
         workerLocator   = workerLocator,
     }
     local provideItems = ItemTable:newInstance({ [pickupData.productItemName] = pickupData.productItemCount, })

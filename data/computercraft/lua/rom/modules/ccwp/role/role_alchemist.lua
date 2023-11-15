@@ -243,11 +243,12 @@ function role_alchemist.Craft_Task(...)
     local turtleObj = enterprise_employment:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
+    -- equip crafting_table
+    -- note this statement should be before remember input items, otherwise possible other equiped tools will be considered waste!
+    coreinventory.Equip("minecraft:crafting_table")
+
     -- remember input items
     local beginTurtleItems = turtleObj:getInventoryAsItemTable()
-
-    -- equip crafting_table
-    coreinventory.Equip("minecraft:crafting_table")
 
     -- move to the crafting location
     coremove.GoTo(workingLocation)
