@@ -15,23 +15,25 @@ function library.T_All()
 
     local T_MObjTest = require "test.t_mobj_test"
     local t_mobj_host = require "test.t_mobj_host"
-    local T_Chest = require "test.t_mobj_chest"
-    local T_Turtle = require "test.t_mobj_turtle"
     local T_BirchForest = require "test.t_mobj_birchforest"
-    local T_ProductionSpot = require "test.t_mobj_production_spot"
+    local T_Chest = require "test.t_mobj_chest"
     local T_Factory = require "test.t_mobj_factory"
+    local T_MineShaft = require "test.t_mine_shaft"
+    local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Silo = require "test.t_mobj_silo"
+    local T_Turtle = require "test.t_mobj_turtle"
     local T_UserStation = require "test.t_mobj_user_station"
 
     -- library tests
     T_MObjTest.T_All()
     t_mobj_host.T_All()
-    T_Chest.T_All()
-    T_Turtle.T_All()
     T_BirchForest.T_All()
-    T_ProductionSpot.T_All()
+    T_Chest.T_All()
     T_Factory.T_All()
+    T_MineShaft.T_All()
+    T_ProductionSpot.T_All()
     T_Silo.T_All()
+    T_Turtle.T_All()
     T_UserStation.T_All()
 end
 
@@ -42,23 +44,25 @@ function library.T_AllPhysical()
 
     local T_MObjTest = require "test.t_mobj_test"
     local t_mobj_host = require "test.t_mobj_host"
-    local T_Chest = require "test.t_mobj_chest"
-    local T_Turtle = require "test.t_mobj_turtle"
     local T_BirchForest = require "test.t_mobj_birchforest"
-    local T_ProductionSpot = require "test.t_mobj_production_spot"
+    local T_Chest = require "test.t_mobj_chest"
     local T_Factory = require "test.t_mobj_factory"
+    local T_MineShaft = require "test.t_mine_shaft"
+    local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Silo = require "test.t_mobj_silo"
+    local T_Turtle = require "test.t_mobj_turtle"
     local T_UserStation = require "test.t_mobj_user_station"
 
     -- library tests
     T_MObjTest.T_AllPhysical()
     t_mobj_host.T_AllPhysical()
-    T_Chest.T_AllPhysical()
-    T_Turtle.T_AllPhysical()
     T_BirchForest.T_AllPhysical()
-    T_ProductionSpot.T_AllPhysical()
+    T_Chest.T_AllPhysical()
     T_Factory.T_AllPhysical()
+    T_MineShaft.T_AllPhysical()
+    T_ProductionSpot.T_AllPhysical()
     T_Silo.T_AllPhysical()
+    T_Turtle.T_AllPhysical()
     T_UserStation.T_AllPhysical()
 end
 
@@ -72,8 +76,9 @@ local function ExecuteLibraryTest(t)
 
         {key = "b", desc = "BirchForest",       func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
         {key = "c", desc = "Chest",             func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
-        {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
         {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
+        {key = "m", desc = "MineShaft",         func = ExecuteLibraryTest, param = {filename = "T_MineShaft"}},
+        {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
         {key = "s", desc = "Silo",              func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
         {key = "t", desc = "Turtle",            func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
         {key = "u", desc = "UserStation",       func = ExecuteLibraryTest, param = {filename = "T_UserStation"}},
@@ -90,9 +95,10 @@ function library.Setup()
     objectFactory:registerClass("MObjTest",     require "test.mobj_test")
 
     objectFactory:registerClass("MObjHost",     require "mobj_host")
-    objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
+    objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("Factory",      require "mobj_factory")
+    objectFactory:registerClass("MineShaft",    require "mine_shaft")
     objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
     objectFactory:registerClass("Silo",         require "mobj_silo")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
@@ -113,8 +119,9 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
-    moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
+    moduleRegistry:requireAndRegisterModule("T_MineShaft", "test.t_mine_shaft")
+    moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_UserStation", "test.t_mobj_user_station")
