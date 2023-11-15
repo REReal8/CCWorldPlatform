@@ -1,4 +1,4 @@
-local t_foresting = {}
+local t_forester = {}
 
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
@@ -13,7 +13,7 @@ local role_forester = require "role_forester"
 
 local t_employment
 
-function t_foresting.T_All()
+function t_forester.T_All()
 end
 
 local logOk = true
@@ -22,7 +22,7 @@ local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
 
 local compact = { compact = true }
 
-function t_foresting.T_HarvestForest_Task()
+function t_forester.T_HarvestForest_Task()
     -- prepare test
     corelog.WriteToLog("* role_forester.HarvestForest_Task() tests")
     t_employment = t_employment or require "test.t_employment"
@@ -63,7 +63,7 @@ function t_foresting.T_HarvestForest_Task()
     if logOk then corelog.WriteToLog(" ok") end
 end
 
-function t_foresting.T_BirchGrow()
+function t_forester.T_BirchGrow()
     -- zorg dat er een kist onder de turtle staat met een paar saplings. De turtle moet een modem (links) en een diamond axe (rechts of inventory) hebben
 
     local saplings
@@ -151,7 +151,7 @@ function t_foresting.T_BirchGrow()
     end
 end
 
-function t_foresting.T_BirchGrowToFile()
+function t_forester.T_BirchGrowToFile()
     -- get the data
     local filename  = '/log/birchgrow.csv'
     local data = coredht.GetData("test", "BirchGrow") if type(data) ~= "table" then corelog.Error("Failed obtaining data") return nil end
@@ -168,4 +168,4 @@ function t_foresting.T_BirchGrowToFile()
     end
 end
 
-return t_foresting
+return t_forester

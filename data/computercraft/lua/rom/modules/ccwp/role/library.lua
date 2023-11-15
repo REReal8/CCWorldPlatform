@@ -15,12 +15,12 @@ function library.T_All()
 
     local t_alchemist = require "test.t_alchemist"
     local t_builder = require "test.t_builder"
-    local t_foresting = require "test.t_foresting"
+    local t_forester = require "test.t_forester"
 
     -- library tests
     t_alchemist.T_All()
     t_builder.T_All()
-    t_foresting.T_All()
+    t_forester.T_All()
 end
 
 local function ExecuteLibraryTest(t)
@@ -28,9 +28,9 @@ local function ExecuteLibraryTest(t)
     local options	= {
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_RoleLibrary"}},
 
-        {key = "a", desc = "alchemy",           func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
+        {key = "a", desc = "alchemist",         func = ExecuteLibraryTest, param = {filename = "t_alchemist"}},
         {key = "b", desc = "builder",           func = ExecuteLibraryTest, param = {filename = "t_builder"}},
-        {key = "f", desc = "foresting",         func = ExecuteLibraryTest, param = {filename = "t_foresting"}},
+        {key = "f", desc = "forester",          func = ExecuteLibraryTest, param = {filename = "t_forester"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
     return ExecuteXObjTest(t, "role", options, ExecuteLibraryTest)
@@ -54,7 +54,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("role_test", "test.role_test")
     moduleRegistry:requireAndRegisterModule("t_alchemist", "test.t_alchemist")
     moduleRegistry:requireAndRegisterModule("t_builder", "test.t_builder")
-    moduleRegistry:requireAndRegisterModule("t_foresting", "test.t_foresting")
+    moduleRegistry:requireAndRegisterModule("t_forester", "test.t_forester")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
