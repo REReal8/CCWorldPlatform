@@ -70,6 +70,7 @@ function library.ExecuteLibraryTest(t)
 
         {key = "m", desc = "coremove", 			func = library.ExecuteLibraryTest,  param = {filename = "t_coremove"}},
         {key = "d", desc = "coredht", 			func = library.ExecuteLibraryTest,  param = {filename = "t_coredht"}},
+        {key = "e", desc = "edit dht", 			func = library.ExecuteLibraryTest,  param = {filename = "t_coredht"}},
         {key = "i", desc = "coreinventory",		func = library.ExecuteLibraryTest,  param = {filename = "t_coreinventory"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
