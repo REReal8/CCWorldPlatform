@@ -138,31 +138,28 @@ function role_forester.HarvestForest_Task(...)
         })
     end
 
-    -- determine output items
+    -- determine output & waste items
     local endTurtleItemTable = turtleObj:getInventoryAsItemTable()
     local uniqueEndItemTable, _commonItemTable, _uniqueBeginItemTable = ItemTable.compare(endTurtleItemTable, beginTurtleItemTable)
     if not uniqueEndItemTable then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining uniqueEndItemTable") return {success = false} end
+
     local logName = "minecraft:birch_log"
     local saplingName = "minecraft:birch_sapling"
-    local logCount = uniqueEndItemTable[logName]
-    local saplingCount = uniqueEndItemTable[saplingName]
+    local searchItems = ItemTable:newInstance({ [logName] = ItemTable.LargeItemCount(), [saplingName] = ItemTable.LargeItemCount()})
+    local wasteItems, foundItems, _1 = ItemTable.compare(uniqueEndItemTable, searchItems)
+    if not foundItems then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining foundItems") return {success = false} end
+    if not wasteItems then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining wasteItems") return {success = false} end
 
-    -- determine waste items
-    local wasteItems = {}
-    for wasteItemName, wasteItemCount in pairs(uniqueEndItemTable) do
-        if wasteItemName ~= logName and wasteItemName ~= saplingName then
-            wasteItems[wasteItemName] = wasteItemCount
-        end
-    end
+    -- log waste items
     if next(wasteItems) ~= nil then
         corelog.WriteToLog(">harvesting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
 
     -- determine output & waste locators
     local turtleOutputLogsLocator = turtleLocator:copy()
-    turtleOutputLogsLocator:setQuery({ [logName] = logCount })
+    turtleOutputLogsLocator:setQuery({ [logName] = foundItems[logName] })
     local turtleOutputSaplingsLocator = turtleLocator:copy()
-    turtleOutputSaplingsLocator:setQuery({ [saplingName] = saplingCount })
+    turtleOutputSaplingsLocator:setQuery({ [saplingName] = foundItems[saplingName] })
     local turtleWasteItemsLocator = turtleLocator:copy()
     turtleWasteItemsLocator:setQuery(wasteItems)
 
