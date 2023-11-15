@@ -16,7 +16,7 @@ local t_employment
 function t_forester.T_All()
 end
 
-local logOk = true
+local logOk = false
 
 local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
 
