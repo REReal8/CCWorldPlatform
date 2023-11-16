@@ -12,7 +12,6 @@ local IItemDepot = require "i_item_depot"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
-local URL = require "obj_url"
 
 local Chest = require "mobj_chest"
 

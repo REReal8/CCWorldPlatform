@@ -10,6 +10,8 @@ local Location = require "obj_location"
 
 local MineShaft = require "mine_shaft"
 
+local role_energizer = require "role_energizer"
+
 local enterprise_forestry = require "enterprise_forestry"
 
 local TestArrayTest = require "test_array_test"
@@ -25,6 +27,7 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 
+local enterprise_employment
 local t_employment
 
 function T_MineShaft.T_All()
@@ -257,6 +260,7 @@ function T_MineShaft.T_IItemSupplier_All()
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 
     -- test
+    T_MineShaft.T_needsTo_ProvideItemsTo_SOSrv()
     T_MineShaft.T_can_ProvideItems_QOSrv()
 end
 
@@ -275,6 +279,31 @@ function T_MineShaft.T_provideItemsTo_AOSrv_cobblestone_ToTurtle()
 
     -- cleanup test
     testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+end
+
+function T_MineShaft.T_needsTo_ProvideItemsTo_SOSrv()
+    -- prepare test
+    local obj = T_MineShaft.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    local provideItems = {
+        ["minecraft:cobblestone"]  = 9,
+    }
+
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleObj = enterprise_employment:getObject(itemDepotLocator) assert(turtleObj, "Failed obtaining turtleObj")
+    local destinationLocation = turtleObj:getItemDepotLocation()
+
+    -- test
+    local expectedFuelNeed = obj:getMaxDepth() + role_energizer.NeededFuelToFrom(destinationLocation, obj:getBaseLocation())
+    T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, nil, {
+        success         = true,
+        fuelNeed        = expectedFuelNeed,
+        ingredientsNeed = {},
+    }, logOk)
+
+    -- cleanup test
 end
 
 function T_MineShaft.T_can_ProvideItems_QOSrv()
