@@ -793,6 +793,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
 
         -- get localItemSupplier
         local localItemSupplier = ObjHost.GetObject(localItemLocator)
+        -- ToDo: investigate this odd situation that we use the knowledge here that we know that the localItemLocator is both an ItemDepot and an ItemSupplier...
         if not localItemSupplier or not Class.IsInstanceOf(localItemSupplier, IItemSupplier) then corelog.Error("BirchForest:provideItemsTo_AOSrv: Failed obtaining an IItemSupplier from localItemLocator "..localItemLocator:getURI()) return Callback.ErrorCall(callback) end
 
         -- check items already available in localItemSupplier
