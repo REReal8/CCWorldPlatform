@@ -33,7 +33,6 @@ local Turtle = require "mobj_turtle"
 local role_energizer = require "role_energizer"
 local role_conservator = require "role_conservator"
 
-local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment
 local enterprise_chests

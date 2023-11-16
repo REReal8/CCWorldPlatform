@@ -47,7 +47,9 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
--- ToDo: consider getting from/ moving to Chest
+local ObjHost = require "obj_host"
+local IItemDepot = require "i_item_depot"
+
 function enterprise_chests.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
@@ -66,17 +68,18 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get ItemDepot
+    local itemDepotLocator = itemsLocator:baseCopy()
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
 
     -- get location
-    local location = chest:getBaseLocation()
+    local itemDepotLocation = itemDepot:getItemDepotLocation()
 
     -- end
     return {
         success     = true,
-        locations   = { location:copy() },
+        locations   = { itemDepotLocation:copy() },
     }
 end
 

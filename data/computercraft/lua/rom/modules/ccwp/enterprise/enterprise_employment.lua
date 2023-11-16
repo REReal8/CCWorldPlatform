@@ -934,6 +934,8 @@ function enterprise_employment.Fuel_Callback(...)
     return {success = true}
 end
 
+local IItemDepot = require "i_item_depot"
+
 function enterprise_employment.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
@@ -952,22 +954,18 @@ function enterprise_employment.GetItemsLocations_SSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
+    -- get ItemDepot
     local itemDepotLocator = itemsLocator:baseCopy()
-    if not enterprise_employment:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
-
-    -- get turtle
-    local currentTurtleId = os.getComputerID()
-    local turtleObj = enterprise_employment:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
 
     -- get location
-    local location = turtleObj:getWorkerLocation()
+    local itemDepotLocation = itemDepot:getItemDepotLocation()
 
     -- end
     return {
         success     = true,
-        locations   = { location:copy() },
+        locations   = { itemDepotLocation:copy() },
     }
 end
 
