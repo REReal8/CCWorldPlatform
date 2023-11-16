@@ -49,6 +49,13 @@ G  Descriptions for blueprints and project steps
 -  DisplayStation
    -  Split it off from current UserStation code
 
+R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorld                                       (....)
+   R  Introduce role_miner (+ tests)                                                                                    (....)
+   R  Introduce MineShaft mobj (+ tests)                                                                                (done)
+   -  Add MineShaft construction to enterprise_gathering (+ tests)
+   -  Build MineShaft from enterprise_colonization
+      -  remove CollectCobbleStone_Task from role_settler
+
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
    -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
@@ -68,9 +75,7 @@ G  Descriptions for blueprints and project steps
             -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
          -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
 
--  mine v2
-   -  uitdenken
-   -  maken
+-  mine v2: Mine consisting of MineShaft (from surface level to underground) and MineLayers (underground)
 
 -  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
