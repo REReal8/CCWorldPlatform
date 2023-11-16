@@ -73,7 +73,7 @@ function IItemDepot:can_StoreItems_QOSrv(...)
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
     --]], ...)
-    if not checkSuccess then corelog.Error("Chest:can_StoreItems_QOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("IItemDepot:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemDepot", "can_StoreItems_QOSrv")
 
@@ -97,7 +97,7 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
     --]], ...)
-    if not checkSuccess then corelog.Error("Chest:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("IItemDepot:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
     IInterface.UnimplementedMethodError("IItemDepot", "needsTo_StoreItemsFrom_SOSrv")
 
