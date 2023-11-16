@@ -38,8 +38,6 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
         This sync public service returns the (fuel) needs for the transfer of items from one ItemDepot to another.
 
         This service is implemented using the following underlying ItemDepot services
-            GetItemsLocations_SSrv
-
             getItemDepotLocation
 
         Return value:
@@ -66,65 +64,26 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
         }
     end
 
-    -- determine sourceItemsLocations
-    local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = sourceItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: failed obtaining locations for items "..sourceItemsLocator:getURI()..".") return {success = false} end
-    local itemsLocations = serviceResults.locations
+    -- get sourceItemDepot
+    local sourceItemDepotLocator = sourceItemsLocator:baseCopy()
+    local sourceItemDepot = ObjHost.GetObject(sourceItemDepotLocator)
+    if not sourceItemDepot or not Class.IsInstanceOf(sourceItemDepot, IItemDepot) then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Failed obtaining an IItemDepot from sourceItemDepotLocator "..sourceItemDepotLocator:getURI()) return {success = false} end
 
     -- get destinationItemDepot
     local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
-    -- determine destinationLocation
+    -- get locations
+    local sourceItemDepotLocation = sourceItemDepot:getItemDepotLocation()
     local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
 
     -- determine fuelNeed
-    local fuelNeed = 0
-    for i, itemlocation in ipairs(itemsLocations) do
-        -- fuelNeed from itemlocation to ItemDepot
-        local fuelNeed_FromItemLocationToDestinationItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, itemlocation)
-
-        -- add fuelNeed
-        fuelNeed = fuelNeed + fuelNeed_FromItemLocationToDestinationItemDepot
-    end
+    local fuelNeed_FromSourceItemDepotToDestinationItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, sourceItemDepotLocation)
 
     -- end
     return {
         success     = true,
-        fuelNeed    = fuelNeed,
-    }
-end
-
-function enterprise_isp.GetItemsLocations_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public service provides the current world locations of different items in an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                locations           - (table) with Location's of the different items
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemsLocator        + (URL) locating the items for which to get the location
-                                        (the "base" component of the URL specifies the ItemDepot that provides the items)
-                                        (the "query" component of the URL specifies the items)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid input") return {success = false} end
-
-    -- get ItemDepot
-    local itemDepotLocator = itemsLocator:baseCopy()
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
-    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
-
-    -- get location
-    local itemDepotLocation = itemDepot:getItemDepotLocation()
-
-    -- end
-    return {
-        success     = true,
-        locations   = { itemDepotLocation:copy() },
+        fuelNeed    = fuelNeed_FromSourceItemDepotToDestinationItemDepot,
     }
 end
 
