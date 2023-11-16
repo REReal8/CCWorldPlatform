@@ -7,7 +7,6 @@ local enterprise_isp = {}
     those items.
 
     The ISP provides the following additional public services
-        NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.
         AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
 --]]
 
@@ -16,7 +15,6 @@ local corelog = require "corelog"
 local Class = require "class"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
 
 local URL = require "obj_url"
 local ObjHost = require "obj_host"
@@ -71,7 +69,7 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
 
     -- get destinationItemDepot
     local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
-    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("enterprise_isp:NeedsTo_TransferItems_SSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
     local sourceItemDepotLocation = sourceItemDepot:getItemDepotLocation()
