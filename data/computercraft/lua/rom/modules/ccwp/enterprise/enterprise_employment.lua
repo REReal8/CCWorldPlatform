@@ -952,42 +952,14 @@ function enterprise_employment.GetItemsLocations_SSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
-    -- get location
-    local serviceResults = enterprise_employment.GetItemDepotLocation_SSrv({ itemDepotLocator = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: failed obtaining location for ItemDepot "..itemsLocator:getURI()..".") return {success = false} end
-    local location = serviceResults.location
-
-    -- end
-    return {
-        success     = true,
-        locations   = { location:copy() },
-    }
-end
-
-function enterprise_employment.GetItemDepotLocation_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemDepotLocator = InputChecker.Check([[
-        This sync public service provides the world location of an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                location            - (Location) location of the ItemDepot
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
-                                        (the "base" component of the URL should specify this ItemDepot enterprise)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
-
-    -- check itemDepotLocator is for this enterprise
-    if not enterprise_employment:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
+    -- check itemsLocator is for this enterprise
+    local itemDepotLocator = itemsLocator:baseCopy()
+    if not enterprise_employment:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
 
     -- get turtle
     local currentTurtleId = os.getComputerID()
-    local turtleObj = enterprise_employment:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local turtleObj = enterprise_employment:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
+    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
     local location = turtleObj:getWorkerLocation()
@@ -995,7 +967,7 @@ function enterprise_employment.GetItemDepotLocation_SSrv(...)
     -- end
     return {
         success     = true,
-        location    = location:copy(),
+        locations   = { location:copy() },
     }
 end
 

@@ -741,6 +741,10 @@ function Silo:needsTo_StoreItemsFrom_SOSrv(...)
     return {success = true, fuelNeed = 10 + #self._storageChests} -- we can fix anything with that much fuel
 end
 
+function Silo:getItemDepotLocation()
+    return self:getBaseLocation()
+end
+
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___

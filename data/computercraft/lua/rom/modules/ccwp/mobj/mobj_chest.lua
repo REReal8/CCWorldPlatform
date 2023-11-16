@@ -486,27 +486,21 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
-    -- get location
+    -- get ItemDepot
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
+
+    -- get locations
     local chestLocation = self:getBaseLocation()
+    local itemDepotLocation = itemDepot:getItemDepotLocation()
+
+    -- fuelNeed from Chest to ItemDepot
+    local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(itemDepotLocation, chestLocation)
 
     -- loop on items
     local fuelNeed = 0
-    for itemName, itemCount in pairs(provideItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-
-        -- fuelNeed from Chest to itemDepotLocator
-        local serviceData = {
-            itemDepotLocator = itemDepotLocator,
-        }
-        local serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv(serviceData)
-        if not serviceResults or not serviceResults.success then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: failed obtaining location for ItemDepot "..type(itemDepotLocator)..".") return {success = false} end
-        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(serviceResults.location, chestLocation)
-
+    for _itemName, _itemCount in pairs(provideItems) do
         -- add fuelNeed
---        corelog.WriteToLog("C  fuelNeed_FromChestToItemDepot="..fuelNeed_FromChestToItemDepot)
         fuelNeed = fuelNeed + fuelNeed_FromChestToItemDepot
     end
 
@@ -673,6 +667,10 @@ function Chest:needsTo_StoreItemsFrom_SOSrv(...)
     -- ToDo: implement
     corelog.Warning("Chest:needsTo_StoreItemsFrom_SOSrv: not yet implemented")
     return {success = false}
+end
+
+function Chest:getItemDepotLocation()
+    return self:getBaseLocation()
 end
 
 return Chest

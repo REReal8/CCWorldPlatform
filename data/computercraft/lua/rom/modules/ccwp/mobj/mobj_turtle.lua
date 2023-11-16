@@ -499,8 +499,16 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
-    -- get location
+    -- get ItemDepot
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
+
+    -- get locations
     local turtleLocation = self:getWorkerLocation()
+    local itemDepotLocation = itemDepot:getItemDepotLocation()
+
+    -- fuelNeed from Turtle to ItemDepot
+    local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(itemDepotLocation, turtleLocation)
 
     -- loop on items
     local fuelNeed = 0
@@ -514,17 +522,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
         local hasItems = self:getInventory():hasItems(items)
         if not hasItems then corelog.Warning("Turtle:needsTo_ProvideItemsTo_SOSrv: Turtle does not have "..textutils.serialise(items, { compact = true })) return {success = false} end
 
-        -- fuelNeed from turtle to itemDepotLocator
-        local serviceData = {
-            itemDepotLocator = itemDepotLocator,
-        }
-        local serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv(serviceData)
-        if not serviceResults or not serviceResults.success then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: failed obtaining location for ItemDepot "..type(itemDepotLocator)..".") return {success = false} end
-        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(serviceResults.location, turtleLocation)
-
         -- add fuelNeed
---        corelog.WriteToLog("T  fuelNeed_FromTurtleToItemDepot="..fuelNeed_FromTurtleToItemDepot)
         fuelNeed = fuelNeed + fuelNeed_FromTurtleToItemDepot
     end
 
@@ -666,6 +664,10 @@ function Turtle:needsTo_StoreItemsFrom_SOSrv(...)
     -- ToDo: implement
     corelog.Warning("Turtle:needsTo_StoreItemsFrom_SOSrv: not yet implemented")
     return {success = false}
+end
+
+function Turtle:getItemDepotLocation()
+    return self:getWorkerLocation()
 end
 
 --                        _  __ _                       _   _               _

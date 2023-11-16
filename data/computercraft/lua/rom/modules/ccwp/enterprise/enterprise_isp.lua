@@ -13,9 +13,15 @@ local enterprise_isp = {}
 
 local corelog = require "corelog"
 
+local Class = require "class"
+
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
+
 local URL = require "obj_url"
+local ObjHost = require "obj_host"
+
+local IItemDepot = require "i_item_depot"
 
 local role_energizer = require "role_energizer"
 
@@ -33,7 +39,8 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
 
         This service is implemented using the following underlying ItemDepot services
             GetItemsLocations_SSrv
-            GetItemDepotLocation_SSrv
+
+            getItemDepotLocation
 
         Return value:
                                             - (table)
@@ -64,16 +71,21 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: failed obtaining locations for items "..sourceItemsLocator:getURI()..".") return {success = false} end
     local itemsLocations = serviceResults.locations
 
+    -- get destinationItemDepot
+    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
+
     -- determine destinationLocation
-    serviceResults = enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = destinationItemDepotLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: failed obtaining location for ItemDepot "..destinationItemDepotLocator:getURI()..".") return {success = false} end
-    local itemDepotLocation = serviceResults.location
+    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
 
     -- determine fuelNeed
     local fuelNeed = 0
     for i, itemlocation in ipairs(itemsLocations) do
-        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        fuelNeed = fuelNeed + role_energizer.NeededFuelToFrom(itemDepotLocation, itemlocation)
+        -- fuelNeed from itemlocation to ItemDepot
+        local fuelNeed_FromItemLocationToDestinationItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, itemlocation)
+
+        -- add fuelNeed
+        fuelNeed = fuelNeed + fuelNeed_FromItemLocationToDestinationItemDepot
     end
 
     -- end
@@ -140,36 +152,6 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
 
     -- call method on ItemDepot
     local serviceName = "GetItemsLocations_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
-
-    -- end
-    return serviceResults
-end
-
-function enterprise_isp.GetItemDepotLocation_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, serviceData, itemDepotLocator = InputChecker.Check([[
-        This sync public service provides the world location of an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                location            - (Location) location of the ItemDepot
-
-        Parameters:
-            serviceData             + (table) data about this service
-                itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
-                                        (the "base" component of the URL should specify an ItemDepot enterprise)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
-
-    -- get ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemDepotLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.GetItemDepotLocation_SSrv: failed obtaining itemDepotName for "..itemDepotLocator:getURI()..".") return {success = false} end
-    local itemDepotName = serviceResults.enterpriseName
-
-    -- call method on ItemDepot
-    local serviceName = "GetItemDepotLocation_SSrv"
     serviceResults = MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
 
     -- end

@@ -80,36 +80,4 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
     }
 end
 
--- ToDo: consider getting from/ moving to Chest
-function enterprise_chests.GetItemDepotLocation_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemDepotLocator = InputChecker.Check([[
-        This sync public service provides the world location of an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                location            - (Location) location of the ItemDepot
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
-                                        (the "base" component of the URL should specify this ItemDepot enterprise)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
-
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemDepotLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
-
-    -- get location
-    local location = chest:getBaseLocation()
-
-    -- end
-    return {
-        success     = true,
-        location    = location:copy(),
-    }
-end
-
 return enterprise_chests

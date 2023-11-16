@@ -105,4 +105,19 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
     return {success = false}
 end
 
+function IItemDepot:getItemDepotLocation()
+    --[[
+        This function provides the world location of an ItemDepot.
+
+        Return value:
+                location            - (Location) location of the ItemDepot
+
+        Parameters:
+    --]]
+    IInterface.UnimplementedMethodError("IItemDepot", "getItemDepotLocation")
+
+    -- end
+    return nil
+end
+
 return IItemDepot
