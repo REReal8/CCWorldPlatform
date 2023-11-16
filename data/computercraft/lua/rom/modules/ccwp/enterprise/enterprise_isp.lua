@@ -95,41 +95,9 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     }
 end
 
-local function GetItemDepotName_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemDepotLocator = InputChecker.Check([[
-        This sync private service provides the (enterprise) name of an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                enterpriseName      - (string) with (enterprise) name of the ItemDepot
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemDepotLocator    + (URL) locating the ItemDepot
-                                        (the "base" component of the URL should specify an ItemDepot enterprise)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Invalid input") return {success = false} end
-
-    -- determine ItemDepot name
-    local host = itemDepotLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
-    local enterpriseName = nil
-        if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
-    elseif host == "enterprise_employment"  then enterpriseName = "enterprise_employment"
-    else corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Not implemented for "..host .." host.") return {success = false} end
-
-    -- end
-    return {
-        success         = true,
-        enterpriseName  = enterpriseName,
-    }
-end
-
 function enterprise_isp.GetItemsLocations_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+    local checkSuccess, itemsLocator = InputChecker.Check([[
         This sync public service provides the current world locations of different items in an ItemDepot.
 
         Return value:
@@ -138,7 +106,7 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
                 locations           - (table) with Location's of the different items
 
         Parameters:
-            serviceData             + (table) data about this service
+            serviceData             - (table) data about this service
                 itemsLocator        + (URL) locating the items for which to get the location
                                         (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
@@ -146,16 +114,18 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
-    local itemDepotName = serviceResults.enterpriseName
+    local itemDepotLocator = itemsLocator:baseCopy()
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
 
-    -- call method on ItemDepot
-    local serviceName = "GetItemsLocations_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
+    -- get location
+    local itemDepotLocation = itemDepot:getItemDepotLocation()
 
     -- end
-    return serviceResults
+    return {
+        success     = true,
+        locations   = { itemDepotLocation:copy() },
+    }
 end
 
 function enterprise_isp.AddItemsLocators_SSrv(serviceData)

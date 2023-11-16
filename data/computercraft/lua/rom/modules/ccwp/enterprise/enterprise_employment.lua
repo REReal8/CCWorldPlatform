@@ -934,41 +934,6 @@ function enterprise_employment.Fuel_Callback(...)
     return {success = true}
 end
 
-local IItemDepot = require "i_item_depot"
-
-function enterprise_employment.GetItemsLocations_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public service provides the current world locations of different items in an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                locations           - (table) with Location's of the different items
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemsLocator        + (URL) locating the items for which to get the location
-                                        (the "base" component of the URL specifies the ItemDepot that provides the items)
-                                        (the "query" component of the URL specifies the items)
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid input") return {success = false} end
-
-    -- get ItemDepot
-    local itemDepotLocator = itemsLocator:baseCopy()
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
-    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
-
-    -- get location
-    local itemDepotLocation = itemDepot:getItemDepotLocation()
-
-    -- end
-    return {
-        success     = true,
-        locations   = { itemDepotLocation:copy() },
-    }
-end
-
 function enterprise_employment.GetFuelLevels_Att()
     -- determine fuelLevel_Priority
     local fuelNeed_Refuel = enterprise_energy.GetFuelNeed_Refuel_Att()
