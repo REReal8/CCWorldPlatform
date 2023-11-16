@@ -7,11 +7,11 @@ local IWorker = require "i_worker"
 local UserStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 --[[
-    The UserStation mobj represents a util station in the minecraft world and provides (production) services to operate on that UserStation.
+    The UserStation Worker represents a station in the minecraft world and provides (production) services for developers to operate on that UserStation.
 
-    There are (currently) two services
-        logger screens
-        item input and output chests
+    A UserStation allows for the the retrieval and dumping of items for the developer.
+        -   What items to retrieve is handled by the main menu of the UserStation. The retrieved items will eventually end up in the input (left) Chest.
+        -   Items can be dumped by placing them in the output (right) Chest.
 --]]
 
 local coreevent = require "coreevent"
@@ -205,7 +205,7 @@ end
 --                            _/ |
 --                           |__/
 
-function UserStation:getBaseLocation()  return self._baseLocation   end
+function UserStation:getBaseLocation() return self._baseLocation end
 
 local function Chest_layer()
     return LayerRectangle:newInstance(
@@ -275,38 +275,6 @@ local function ModemDismantle_layer()
     )
 end
 
-local function Monitor_Only_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(Block:getClassName(), {
-            ["M"]   = Block:newInstance("computercraft:monitor_normal"),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        }),
-        CodeMap:newInstance({
-            [1] = "MMMMMMMM?MMMMMMMM",
-        })
-    )
-end
-
-local function Dismantle_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(Block:getClassName(), {
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        }),
-        CodeMap:newInstance({
-            [8] = "                 ",
-            [7] = "                 ",
-            [6] = "                 ",
-            [5] = "                 ",
-            [4] = "                 ",
-            [3] = "                 ",
-            [2] = "                 ",
-            [1] = "???????   ???????",
-        })
-    )
-end
-
--- ToDo: split off DisplayStation
 function UserStation.GetBuildBlueprint(...)
     -- get & check input from description
     local checkSuccess, baseLocation = InputChecker.Check([[
@@ -326,13 +294,8 @@ function UserStation.GetBuildBlueprint(...)
     local layerList = {
         { startpoint = Location:newInstance(2, 3, 0), buildDirection = "Down", layer = Chest_layer()},
         { startpoint = Location:newInstance(3, 3, 0), buildDirection = "Down", layer = Computer_layer()},
-        -- { startpoint = Location:newInstance(3, 3, 2), buildDirection = "Down", layer = Computer_layer()},
     }
-    -- for i=7,2,-1 do
-    --     table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Front", layer = Monitor_Only_layer()})
-    -- end
     table.insert(layerList, { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Front", layer = Modem_layer()})
-    -- table.insert(layerList, { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Front", layer = Modem_layer()})
 
     -- escapeSequence
     local escapeSequence = {}
@@ -350,7 +313,6 @@ function UserStation.GetBuildBlueprint(...)
     return buildLocation, blueprint
 end
 
--- ToDo: split off DisplayStation
 function UserStation:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the UserStation in the physical minecraft world.
@@ -365,8 +327,6 @@ function UserStation:getDismantleBlueprint()
     -- layerList
     local layerList = {
         { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Down", layer = ModemDismantle_layer()},
---        { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Down", layer = ModemDismantle_layer()},
---        { startpoint = Location:newInstance(-5, 3, 0), buildDirection = "Front", layer = Dismantle_layer()}
         { startpoint = Location:newInstance(3, 3, 0), buildDirection = "Down", layer = ComputerDismantle_layer()},
         { startpoint = Location:newInstance(2, 3, 0), buildDirection = "Down", layer = ChestDismantle_layer()},
     }
@@ -458,7 +418,7 @@ function UserStation:isActive()
 end
 
 function UserStation:getWorkerLocation()
-    return self:getBaseLocation():getRelativeLocation(3, 3, 0) -- note: location of UserStation computer
+    return self:getBaseLocation():getRelativeLocation(3, 3, 0) -- note: location of UserStation computer relative to this UserStation baseLocation
 end
 
 function UserStation:getWorkerResume()

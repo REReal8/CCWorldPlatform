@@ -28,6 +28,7 @@ local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local Turtle = require "mobj_turtle"
 local UserStation = require "mobj_user_station"
+local DisplayStation = require "mobj_display_station"
 
 local role_interactor = require "role_interactor"
 
@@ -518,6 +519,20 @@ function enterprise_employment:deleteWorkers()
         -- release Worker
         enterprise_employment:releaseMObj_SSrv({ mobjLocator = workerLocator})
     end
+
+    -- get remaining DisplayStation's that where apparently not registered
+    local displayStationClassName = DisplayStation:getClassName()
+    local displayStations = self:getObjects(displayStationClassName)
+    if not displayStations then corelog.Error("enterprise_employment:deleteWorkers: Failed obtaining DisplayStation's") return nil end
+
+    -- release DisplayStation's
+    for _, objTable in pairs(displayStations) do
+        -- get locator
+        local workerLocator =  enterprise_employment:getObjectLocator(objTable)
+
+        -- release Worker
+        enterprise_employment:releaseMObj_SSrv({ mobjLocator = workerLocator})
+    end
 end
 
 function enterprise_employment:resetWorkers()
@@ -600,6 +615,32 @@ function enterprise_employment:resetWorkers()
             self:deleteResource(objLocator)
         end
     end
+
+    -- get DisplayStation's
+    local displayStationClassName = DisplayStation:getClassName()
+    local displayStations = self:getObjects(displayStationClassName)
+    if not displayStations then corelog.Error("enterprise_employment:resetWorkers: Failed obtaining DisplayStation's") return nil end
+
+    -- check/ reset/ recover all DisplayStation's
+    for id, objTable in pairs(displayStations) do
+        -- convert to DisplayStation
+        local obj = objectFactory:create(displayStationClassName, objTable) if not obj then corelog.Error("enterprise_employment:resetWorkers: Failed converting DisplayStation "..id.." objTable to DisplayStation") return nil end
+
+        -- check registered
+        local workerId = obj:getWorkerId()
+        local isRegistered = self:isRegistered(workerId)
+        if isRegistered then
+            -- reset DisplayStation
+            -- nothing to do for now
+
+            -- save DisplayStation
+            -- local objLocator = self:saveObject(obj) if not objLocator then corelog.Error("enterprise_employment:resetWorkers: Failed saving DisplayStation") return nil end
+        else
+            corelog.Warning("enterprise_employment:resetWorkers: DisplayStation "..workerId.." not registered => removing it")
+            local objLocator = self:getObjectLocator(obj)
+            self:deleteResource(objLocator)
+        end
+    end
 end
 
 local function DummyWorkerMenu(t)
@@ -607,13 +648,14 @@ local function DummyWorkerMenu(t)
         local className = t.workerClassName
         if className == "UserStation" then
             -- register birthCertificate
-            local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1) -- note: we don't know this
+            local baseLocation = Location:newInstance(-6, -12, 1, 0, 1) -- note: we don't know this
+            corelog.Warning("enterprise_employment.DummyWorkerMenu: Note assuming baseLocation: "..textutils.serialise(baseLocation))
             -- ToDo: see if there is a smarter way to retrieve baseLocation (e.g. from coremove.GetLocation())
             local workerId = os.getComputerID()
             local reconstructParameters = {
                 workerId        = workerId,
-                baseLocation    = baseLocation_UserStation,
-                workerLocation  = baseLocation_UserStation:getRelativeLocation(3, 3, 0),
+                baseLocation    = baseLocation,
+                workerLocation  = baseLocation:getRelativeLocation(3, 3, 0),
             }
             local serviceResults = enterprise_employment:registerBirthCertificate_SOSrv({
                 className           = className,
@@ -622,7 +664,29 @@ local function DummyWorkerMenu(t)
             if not serviceResults.success then corelog.Error("enterprise_employment.DummyWorkerMenu: Registering birthCertificate failed") return false end
 
             -- reboot
-            corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate")
+            corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate:")
+            os.sleep(1.0)
+            corelog.WriteToLog("rebooting...")
+            os.reboot()
+        elseif className == "DisplayStation" then
+            -- register birthCertificate
+            local baseLocation = Location:newInstance(-6, -12, 1, 0, 1) -- note: we don't know this
+            corelog.Warning("enterprise_employment.DummyWorkerMenu: Note assuming baseLocation: "..textutils.serialise(baseLocation))
+            -- ToDo: see if there is a smarter way to retrieve baseLocation (e.g. from coremove.GetLocation())
+            local workerId = os.getComputerID()
+            local reconstructParameters = {
+                workerId        = workerId,
+                baseLocation    = baseLocation,
+                workerLocation  = baseLocation:getRelativeLocation(3, 3, 2),
+            }
+            local serviceResults = enterprise_employment:registerBirthCertificate_SOSrv({
+                className           = className,
+                constructParameters = reconstructParameters,
+            })
+            if not serviceResults.success then corelog.Error("enterprise_employment.DummyWorkerMenu: Registering birthCertificate failed") return false end
+
+            -- reboot
+            corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate:")
             os.sleep(1.0)
             corelog.WriteToLog("rebooting...")
             os.reboot()

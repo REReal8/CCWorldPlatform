@@ -17,6 +17,7 @@ function library.T_All()
     local t_mobj_host = require "test.t_mobj_host"
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
+    local T_DisplayStation = require "test.t_mobj_display_station"
     local T_Factory = require "test.t_mobj_factory"
     local T_MineShaft = require "test.t_mine_shaft"
     local T_ProductionSpot = require "test.t_mobj_production_spot"
@@ -29,6 +30,7 @@ function library.T_All()
     t_mobj_host.T_All()
     T_BirchForest.T_All()
     T_Chest.T_All()
+    T_DisplayStation.T_All()
     T_Factory.T_All()
     T_MineShaft.T_All()
     T_ProductionSpot.T_All()
@@ -46,6 +48,7 @@ function library.T_AllPhysical()
     local t_mobj_host = require "test.t_mobj_host"
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
+    local T_DisplayStation = require "test.t_mobj_display_station"
     local T_Factory = require "test.t_mobj_factory"
     local T_MineShaft = require "test.t_mine_shaft"
     local T_ProductionSpot = require "test.t_mobj_production_spot"
@@ -58,6 +61,7 @@ function library.T_AllPhysical()
     t_mobj_host.T_AllPhysical()
     T_BirchForest.T_AllPhysical()
     T_Chest.T_AllPhysical()
+    T_DisplayStation.T_AllPhysical()
     T_Factory.T_AllPhysical()
     T_MineShaft.T_AllPhysical()
     T_ProductionSpot.T_AllPhysical()
@@ -76,6 +80,7 @@ local function ExecuteLibraryTest(t)
 
         {key = "b", desc = "BirchForest",       func = ExecuteLibraryTest, param = {filename = "T_BirchForest"}},
         {key = "c", desc = "Chest",             func = ExecuteLibraryTest, param = {filename = "T_Chest"}},
+        {key = "d", desc = "DisplayStation",    func = ExecuteLibraryTest, param = {filename = "T_DisplayStation"}},
         {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
         {key = "m", desc = "MineShaft",         func = ExecuteLibraryTest, param = {filename = "T_MineShaft"}},
         {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
@@ -97,6 +102,7 @@ function library.Setup()
     objectFactory:registerClass("MObjHost",     require "mobj_host")
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
     objectFactory:registerClass("Chest",        require "mobj_chest")
+    objectFactory:registerClass("DisplayStation",  require "mobj_display_station")
     objectFactory:registerClass("Factory",      require "mobj_factory")
     objectFactory:registerClass("MineShaft",    require "mine_shaft")
     objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
@@ -125,6 +131,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_UserStation", "test.t_mobj_user_station")
+    moduleRegistry:requireAndRegisterModule("T_DisplayStation", "test.t_mobj_display_station")
 
     -- add library test menu
     local coredisplay = require "coredisplay"

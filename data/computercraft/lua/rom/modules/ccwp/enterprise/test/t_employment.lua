@@ -19,6 +19,7 @@ local T_MObjHost = require "test.t_mobj_host"
 local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
 local T_UserStation = require "test.t_mobj_user_station"
+local T_DisplayStation = require "test.t_mobj_display_station"
 
 function t_employment.T_All()
     -- ObjHost
@@ -30,6 +31,9 @@ function t_employment.T_All()
 
     t_employment.T_hostMObj_SSrv_UtilStation()
     t_employment.T_releaseMObj_SSrv_UtilStation()
+
+    t_employment.T_hostMObj_SSrv_DisplayStation()
+    t_employment.T_releaseMObj_SSrv_DisplayStation()
 
     -- Worker
     t_employment.T_IRegistry_All()
@@ -48,6 +52,9 @@ function t_employment.T_AllPhysical()
 
     mobjLocator = t_employment.T_buildAndHostMObj_ASrv_UtilStation()
     t_employment.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
+
+    mobjLocator = t_employment.T_buildAndHostMObj_ASrv_DisplayStation0()
+    t_employment.T_dismantleAndReleaseMObj_ASrv_DisplayStation(mobjLocator)
 end
 
 local logOk = false
@@ -56,14 +63,22 @@ local testTurtleClassName = "Turtle"
 local testTurtleName = "turtle"
 local testUserStationClassName = "UserStation"
 local testUserStationName = "userStation"
+local testDisplayStationClassName = "DisplayStation"
+local testDisplayStationName = "displayStation"
+local testDisplayStationName0 = testDisplayStationName.."0"
+local testDisplayStationName1 = testDisplayStationName.."1"
 
 local level0 = 0
 local workerId0 = 111111
 local isActive_false = false
 local baseLocation0 = Location:newInstance(1, -1, 3, 0, 1)
 local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1)
+local baseLocation_DisplayStation0 = Location:newInstance(-6, -12, 1, 0, 1)
+local baseLocation_DisplayStation1 = baseLocation_DisplayStation0:getRelativeLocation(0, 0, 10) -- a second station above the first
 local workerLocation0 = baseLocation0:copy()
 local workerLocation_UserStation = baseLocation_UserStation:getRelativeLocation(3, 3, 0)
+local workerLocation_DisplayStation0 = baseLocation_DisplayStation0:getRelativeLocation(3, 3, 2)
+local workerLocation_DisplayStation1 = baseLocation_DisplayStation1:getRelativeLocation(3, 3, 2)
 local fuelPriorityKey = ""
 
 local constructParameters_Turtle = {
@@ -75,6 +90,16 @@ local constructParameters_UserStation = {
     workerId        = workerId0,
     baseLocation    = baseLocation_UserStation,
     workerLocation  = workerLocation_UserStation,
+}
+local constructParameters_DisplayStation0 = {
+    workerId        = workerId0,
+    baseLocation    = baseLocation_DisplayStation0,
+    workerLocation  = workerLocation_DisplayStation0,
+}
+local constructParameters_DisplayStation1 = {
+    workerId        = workerId0,
+    baseLocation    = baseLocation_DisplayStation1,
+    workerLocation  = workerLocation_DisplayStation1,
 }
 
 local compact = { compact = true }
@@ -256,6 +281,79 @@ function t_employment.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
         -- see if we locally remembered a mobjLocator
         assert(mobjLocator_UtilStation, "no mobjLocator to operate on")
         mobjLocator = mobjLocator_UtilStation
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_employment, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_UtilStation = nil
+end
+
+-- ** DisplayStation (s) **
+
+function t_employment.T_hostMObj_SSrv_DisplayStation()
+    -- prepare test
+    local fieldsTest = T_DisplayStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_DisplayStation0)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, fieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+local mobjLocator_DisplayStation = nil
+
+function t_employment.T_0buildAndHostMObj_ASrv_DisplayStation0()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+
+    -- remember what we just build
+    mobjLocator_DisplayStation = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_employment.T_1buildAndHostMObj_ASrv_DisplayStation1()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation1, testDisplayStationName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+
+    -- remember what we just build
+    mobjLocator_DisplayStation = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_employment.T_releaseMObj_SSrv_DisplayStation()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_employment.T_dismantleAndReleaseMObj_ASrv_DisplayStation(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_DisplayStation, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_DisplayStation
     end
 
     -- test

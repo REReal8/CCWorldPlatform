@@ -46,8 +46,11 @@ G  Descriptions for blueprints and project steps
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
--  DisplayStation
-   -  Split it off from current UserStation code
+GR DisplayStation                                                                                                       (....)
+   R  Split it off from current UserStation code                                                                        (done)
+   G  Implement it in line with discussion at the end of 15/11 (see email(s))
+      -  ...
+      -  ...
 
 R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorld                                       (....)
    R  Introduce role_miner (+ tests)                                                                                    (....)
