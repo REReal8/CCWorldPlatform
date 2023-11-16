@@ -779,21 +779,21 @@ function BirchForest:provideItemsTo_AOSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- check for birchlog or sapling
-        local localItemDepotLocator = nil
+        local localItemLocator = nil
         local localLogsLocator = self:getLocalLogsLocator()
         local localSaplingsLocator = self:getLocalSaplingsLocator()
         if itemName == "minecraft:birch_log" then
-            localItemDepotLocator = localLogsLocator
+            localItemLocator = localLogsLocator
         elseif itemName == "minecraft:birch_sapling" then
-            localItemDepotLocator = localSaplingsLocator
+            localItemLocator = localSaplingsLocator
         else
             corelog.Error("BirchForest:provideItemsTo_AOSrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
-        if not localItemDepotLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemDepotLocator (type="..type(localItemDepotLocator)..")") return Callback.ErrorCall(callback) end
+        if not localItemLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemLocator (type="..type(localItemLocator)..")") return Callback.ErrorCall(callback) end
 
-        -- get local ItemDepot
-        local localItemSupplier = ObjHost.GetObject(localItemDepotLocator)
-        if type(localItemSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: ItemSupplier "..localItemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+        -- get localItemSupplier
+        local localItemSupplier = ObjHost.GetObject(localItemLocator)
+        if not localItemSupplier or not Class.IsInstanceOf(localItemSupplier, IItemSupplier) then corelog.Error("BirchForest:provideItemsTo_AOSrv: Failed obtaining an IItemSupplier from localItemLocator "..localItemLocator:getURI()) return Callback.ErrorCall(callback) end
 
         -- check items already available in localItemSupplier
         local item = { [itemName] = itemCount }
@@ -892,7 +892,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 anyTurtleLocator                = enterprise_employment.GetAnyTurtleLocator(),
 
                 forestLocator                   = forestLocator,
-                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemDepotLocator
+                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemLocator
                 ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
                 wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
                 itemDepotLocator                = itemDepotLocator:copy(),
@@ -978,7 +978,7 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get location
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local destinationLocation = destinationItemDepot:getItemDepotLocation()
 
     -- loop on items
     local fuelNeed = 0
@@ -993,18 +993,18 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
         local itemPerRound = 1
         local localLogsLocator = self:getLocalLogsLocator()
         local localSaplingsLocator = self:getLocalSaplingsLocator()
-        local localItemDepotLocator = nil
+        local localItemLocator = nil
         if itemName == "minecraft:birch_log" then
             itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
-            localItemDepotLocator = localLogsLocator
+            localItemLocator = localLogsLocator
         elseif itemName == "minecraft:birch_sapling" then
             itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
-            localItemDepotLocator = localSaplingsLocator
+            localItemLocator = localSaplingsLocator
         else
             corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Provider does not provide "..itemName.."'s") return {success = false}
         end
-        if not localItemDepotLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Invalid localItemDepotLocator (type="..type(localItemDepotLocator)..")") return {success = false} end
+        if not localItemLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Invalid localItemLocator (type="..type(localItemLocator)..")") return {success = false} end
 
         -- fuelNeed per round
         local storeFuelPerRound = 1 + 1 -- first tree to front localLogsLocator/ localSaplingsLocator + back to first tree (note: hardcoded distances + ignored that <L2 will use turtle inventory)
@@ -1014,14 +1014,14 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
         local fuelNeed_Rounds = nRounds * fuelPerRound
 
         -- get localItemDepot
-        local localItemDepot = ObjHost.GetObject(localItemDepotLocator)
-        if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemDepotLocator "..localItemDepotLocator:getURI()) return {success = false} end
+        local localItemDepot = ObjHost.GetObject(localItemLocator)
+        if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemLocator "..localItemLocator:getURI()) return {success = false} end
 
         -- get location
-        local localItemDepotLocation = localItemDepot:getItemDepotLocation()
+        local localLocation = localItemDepot:getItemDepotLocation()
 
         -- fuelNeed transfer
-        local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, localItemDepotLocation)
+        local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
         -- ToDo: add fuelNeed for waste handling
 

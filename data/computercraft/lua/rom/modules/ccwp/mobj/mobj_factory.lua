@@ -972,7 +972,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get location
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local destinationLocation = destinationItemDepot:getItemDepotLocation()
 
     -- get ingredientsItemSupplier
     local ingredientsItemSupplier = ObjHost.GetObject(ingredientsItemSupplierLocator)
@@ -1018,10 +1018,10 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemDepotLocator "..localItemDepotLocator:getURI()) return {success = false} end
 
         -- get location
-        local localItemDepotLocation = localItemDepot:getItemDepotLocation()
+        local localLocation = localItemDepot:getItemDepotLocation()
 
         -- fuelNeed output transfer
-        local fuelNeed_ProductsSupply = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, localItemDepotLocation)
+        local fuelNeed_ProductsSupply = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
         -- add fuelNeed
         -- corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)

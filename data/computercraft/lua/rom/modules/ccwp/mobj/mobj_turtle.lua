@@ -503,11 +503,11 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
-    local turtleLocation = self:getWorkerLocation()
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local localLocation = self:getWorkerLocation()
+    local destinationLocation = destinationItemDepot:getItemDepotLocation()
 
     -- fuelNeed from Turtle to ItemDepot
-    local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, turtleLocation)
+    local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
     -- loop on items
     local fuelNeed = 0

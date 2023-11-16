@@ -527,11 +527,11 @@ function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("MineShaft:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local destinationLocation = destinationItemDepot:getItemDepotLocation()
     local localLocation = self:getBaseLocation()
 
     -- fuelNeed output transfer
-    local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, localLocation)
+    local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
     --
     local fuelNeed = fuelNeed_Mining + fuelNeed_Transfer

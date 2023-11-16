@@ -490,11 +490,11 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
-    local chestLocation = self:getBaseLocation()
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local localLocation = self:getBaseLocation()
+    local destinationLocation = destinationItemDepot:getItemDepotLocation()
 
     -- fuelNeed from Chest to ItemDepot
-    local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, chestLocation)
+    local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
     -- loop on items
     local fuelNeed = 0
