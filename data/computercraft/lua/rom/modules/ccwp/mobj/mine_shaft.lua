@@ -16,22 +16,24 @@ local MineShaft = Class.NewClass(ObjBase, ILObj, IMObj, IItemSupplier)
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
+local InputChecker = require "input_checker"
+
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local InputChecker = require "input_checker"
 local ObjTable = require "obj_table"
+local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 local ItemTable = require "obj_item_table"
 
+local IItemDepot = require "i_item_depot"
+
 local role_miner = require "role_miner"
+local role_energizer = require "role_energizer"
 
-local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
-local enterprise_gathering = require "enterprise_gathering"
-
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -500,7 +502,7 @@ end
 
 function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, destinationItemDepotLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
@@ -520,17 +522,16 @@ function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
     -- fuelNeed_Mining
     local fuelNeed_Mining = self:getMaxDepth() -- note: we return the maximum fuelNeed for mining this MineShaft, it could be less (and it could also be we don't find the items)
 
-    -- fuelNeed_Transfer
-    local mineShaftLocator = enterprise_gathering:getObjectLocator(self)
-    local mineShaftItemsLocator = mineShaftLocator:copy()
-    mineShaftItemsLocator:setQuery(provideItems)
-    local transferData = {
-        sourceItemsLocator          = mineShaftItemsLocator,
-        destinationItemDepotLocator = itemDepotLocator,
-    }
-    local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
-    if not serviceResults.success then corelog.Error("MineShaft:needsTo_ProvideItemsTo_SOSrv: Failed obtaining transfer needs for "..textutils.serialise(provideItems, {compact = true})) return {success = false} end
-    local fuelNeed_Transfer = serviceResults.fuelNeed
+    -- get destinationItemDepot
+    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("MineShaft:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
+
+    -- get locations
+    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
+    local localLocation = self:getBaseLocation()
+
+    -- fuelNeed output transfer
+    local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, localLocation)
 
     --
     local fuelNeed = fuelNeed_Mining + fuelNeed_Transfer

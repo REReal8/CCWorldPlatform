@@ -12,16 +12,7 @@ local enterprise_isp = {}
 
 local corelog = require "corelog"
 
-local Class = require "class"
-
-local InputChecker = require "input_checker"
-
 local URL = require "obj_url"
-local ObjHost = require "obj_host"
-
-local IItemDepot = require "i_item_depot"
-
-local role_energizer = require "role_energizer"
 
 --                        _
 --                       (_)
@@ -29,61 +20,6 @@ local role_energizer = require "role_energizer"
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
-
-function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, sourceItemsLocator, destinationItemDepotLocator = InputChecker.Check([[
-        This sync public service returns the (fuel) needs for the transfer of items from one ItemDepot to another.
-
-        This service is implemented using the following underlying ItemDepot services
-            getItemDepotLocation
-
-        Return value:
-                                            - (table)
-                success                     - (boolean) whether the service executed successfully
-                fuelNeed                    - (number) amount of fuel needed to transfer the items
-
-        Parameters:
-            transferData                    - (table) data about the transfer
-                sourceItemsLocator          + (URL) locating the items that need transfer
-                                                (the "query" component of the URL specifies the items to be transferred)
-                                                (the "host" component of the URL specifies the ItemDepot where the items are located)
-                destinationItemDepotLocator + (URL) locating the ItemDepot that needs to be transferred to
-    --]], ...)
-    if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid input") return {success = false} end
-
-    -- check there are actual items to transfer
-    local transferItems = sourceItemsLocator:getQuery()
-    if next(transferItems) == nil then
-        corelog.Warning("enterprise_isp.NeedsTo_TransferItems_SSrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationItemDepotLocator:getURI()..").")
-        return {
-            success     = true,
-            fuelNeed    = 0,
-        }
-    end
-
-    -- get sourceItemDepot
-    local sourceItemDepotLocator = sourceItemsLocator:baseCopy()
-    local sourceItemDepot = ObjHost.GetObject(sourceItemDepotLocator)
-    if not sourceItemDepot or not Class.IsInstanceOf(sourceItemDepot, IItemDepot) then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Failed obtaining an IItemDepot from sourceItemDepotLocator "..sourceItemDepotLocator:getURI()) return {success = false} end
-
-    -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
-    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("enterprise_isp:NeedsTo_TransferItems_SSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
-
-    -- get locations
-    local sourceItemDepotLocation = sourceItemDepot:getItemDepotLocation()
-    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
-
-    -- determine fuelNeed
-    local fuelNeed_FromSourceItemDepotToDestinationItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, sourceItemDepotLocation)
-
-    -- end
-    return {
-        success     = true,
-        fuelNeed    = fuelNeed_FromSourceItemDepotToDestinationItemDepot,
-    }
-end
 
 function enterprise_isp.AddItemsLocators_SSrv(serviceData)
     --[[

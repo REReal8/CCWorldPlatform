@@ -468,7 +468,7 @@ end
 
 function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, destinationItemDepotLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
@@ -486,15 +486,15 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
-    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
+    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
     local chestLocation = self:getBaseLocation()
-    local itemDepotLocation = itemDepot:getItemDepotLocation()
+    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
 
     -- fuelNeed from Chest to ItemDepot
-    local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(itemDepotLocation, chestLocation)
+    local fuelNeed_FromChestToItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, chestLocation)
 
     -- loop on items
     local fuelNeed = 0

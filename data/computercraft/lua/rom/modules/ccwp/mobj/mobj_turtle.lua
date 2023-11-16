@@ -31,7 +31,6 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local role_energizer = require "role_energizer"
 
-local enterprise_isp = require "enterprise_isp"
 local enterprise_employment
 
 --    _       _ _   _       _ _           _   _
@@ -482,7 +481,7 @@ end
 
 function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, destinationItemDepotLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
@@ -499,16 +498,16 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
-    -- get ItemDepot
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
-    if not itemDepot or not Class.IsInstanceOf(itemDepot, IItemDepot) then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..itemDepotLocator:getURI()) return {success = false} end
+    -- get destinationItemDepot
+    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
     local turtleLocation = self:getWorkerLocation()
-    local itemDepotLocation = itemDepot:getItemDepotLocation()
+    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
 
     -- fuelNeed from Turtle to ItemDepot
-    local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(itemDepotLocation, turtleLocation)
+    local fuelNeed_FromTurtleToItemDepot = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, turtleLocation)
 
     -- loop on items
     local fuelNeed = 0

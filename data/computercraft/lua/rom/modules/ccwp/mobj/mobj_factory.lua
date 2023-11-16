@@ -47,6 +47,8 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 local ObjHost = require "obj_host"
 
+local IItemDepot = require "i_item_depot"
+
 local ProductionSpot = require "mobj_production_spot"
 
 local role_alchemist = require "role_alchemist"
@@ -948,7 +950,7 @@ end
 
 function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, destinationItemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
@@ -964,6 +966,13 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
                 ingredientsItemSupplierLocator  + (URL, nil) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
+
+    -- get destinationItemDepot
+    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
+
+    -- get location
+    local destinationItemDepotLocation = destinationItemDepot:getItemDepotLocation()
 
     -- get ingredientsItemSupplier
     local ingredientsItemSupplier = ObjHost.GetObject(ingredientsItemSupplierLocator)
@@ -1002,17 +1011,17 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         local items = { [itemName] = itemCount }
         local fuelNeed_SiteProduction = self:getFuelNeed_Production_Att(items)
 
+        -- get localItemDepot
+        local localItemDepotLocator = self:getAvailableOutputLocator()
+        if not localItemDepotLocator then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining localItemDepotLocator (type="..type(localItemDepotLocator)..")") return {success = false} end
+        local localItemDepot = ObjHost.GetObject(localItemDepotLocator)
+        if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemDepotLocator "..localItemDepotLocator:getURI()) return {success = false} end
+
+        -- get location
+        local localItemDepotLocation = localItemDepot:getItemDepotLocation()
+
         -- fuelNeed output transfer
-        local localOutputLocator = self:getAvailableOutputLocator():copy()
-        local localOutputItemsLocator = localOutputLocator:copy()
-        localOutputItemsLocator:setQuery(items)
-        local serviceData = {
-            sourceItemsLocator          = localOutputItemsLocator,
-            destinationItemDepotLocator = itemDepotLocator,
-        }
-        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local fuelNeed_ProductsSupply = serviceResults.fuelNeed
+        local fuelNeed_ProductsSupply = role_energizer.NeededFuelToFrom(destinationItemDepotLocation, localItemDepotLocation)
 
         -- add fuelNeed
         -- corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
