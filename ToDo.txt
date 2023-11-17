@@ -53,9 +53,9 @@ GR DisplayStation                                                               
       -  ...
 
 R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorld                                       (....)
-   R  Introduce role_miner (+ tests)                                                                                    (....)
+   R  Introduce role_miner (+ tests)                                                                                    (done)
    R  Introduce MineShaft mobj (+ tests)                                                                                (done)
-   -  Add MineShaft construction to enterprise_gathering (+ tests)
+   R  Add MineShaft construction to enterprise_gathering (+ tests)                                                      (done)
    -  Build MineShaft from enterprise_colonization
       -  remove CollectCobbleStone_Task from role_settler
 

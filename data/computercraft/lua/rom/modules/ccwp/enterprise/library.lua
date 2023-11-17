@@ -15,26 +15,28 @@ function library.T_All()
 
     local t_test = require "test.t_test"
     local t_assignmentboard = require "test.t_assignmentboard"
-    local t_projects = require "test.t_projects"
-    local t_isp = require "test.t_isp"
-    local t_energy = require "test.t_energy"
     local t_chests = require "test.t_chests"
-    local t_manufacturing = require "test.t_manufacturing"
-    local t_forestry = require "test.t_forestry"
-    local t_shop = require "test.t_shop"
     local t_employment = require "test.t_employment"
+    local t_energy = require "test.t_energy"
+    local t_forestry = require "test.t_forestry"
+    local t_gathering = require "test.t_gathering"
+    local t_isp = require "test.t_isp"
+    local t_manufacturing = require "test.t_manufacturing"
+    local t_projects = require "test.t_projects"
+    local t_shop = require "test.t_shop"
 
     -- library tests
     t_test.T_All()
     t_assignmentboard.T_All()
-    t_projects.T_All()
-    t_isp.T_All()
-    t_forestry.T_All()
-    t_manufacturing.T_All()
-    t_energy.T_All()
     t_chests.T_All()
-    t_shop.T_All()
     t_employment.T_All()
+    t_energy.T_All()
+    t_forestry.T_All()
+    t_gathering.T_All()
+    t_isp.T_All()
+    t_manufacturing.T_All()
+    t_projects.T_All()
+    t_shop.T_All()
 end
 
 local function ExecuteLibraryTest(t)
@@ -44,17 +46,18 @@ local function ExecuteLibraryTest(t)
 
 		{key = "2", desc = "enterprise_test",   func = ExecuteLibraryTest, param = {filename = "t_test"}},
 		{key = "a", desc = "assignmentboard",   func = ExecuteLibraryTest, param = {filename = "t_assignmentboard"}},
-		{key = "t", desc = "employment",        func = ExecuteLibraryTest, param = {filename = "t_employment"}},
-		{key = "p", desc = "projects",          func = ExecuteLibraryTest, param = {filename = "t_projects"}},
-		{key = "e", desc = "energy",            func = ExecuteLibraryTest, param = {filename = "t_energy"}},
 		{key = "c", desc = "chests",            func = ExecuteLibraryTest, param = {filename = "t_chests"}},
-		{key = "i", desc = "isp",               func = ExecuteLibraryTest, param = {filename = "t_isp"}},
-		{key = "b", desc = "construction",      func = ExecuteLibraryTest, param = {filename = "t_construction"}},
-		{key = "s", desc = "storage",           func = ExecuteLibraryTest, param = {filename = "t_storage"}},
-		{key = "m", desc = "manufacturing",     func = ExecuteLibraryTest, param = {filename = "t_manufacturing"}},
-		{key = "f", desc = "forestry",          func = ExecuteLibraryTest, param = {filename = "t_forestry"}},
-		{key = "o", desc = "shop",              func = ExecuteLibraryTest, param = {filename = "t_shop"}},
 		{key = "n", desc = "colonization",      func = ExecuteLibraryTest, param = {filename = "t_colonization"}},
+		{key = "b", desc = "construction",      func = ExecuteLibraryTest, param = {filename = "t_construction"}},
+		{key = "t", desc = "employment",        func = ExecuteLibraryTest, param = {filename = "t_employment"}},
+		{key = "e", desc = "energy",            func = ExecuteLibraryTest, param = {filename = "t_energy"}},
+		{key = "f", desc = "forestry",          func = ExecuteLibraryTest, param = {filename = "t_forestry"}},
+		{key = "g", desc = "gathering",         func = ExecuteLibraryTest, param = {filename = "t_gathering"}},
+		{key = "i", desc = "isp",               func = ExecuteLibraryTest, param = {filename = "t_isp"}},
+		{key = "m", desc = "manufacturing",     func = ExecuteLibraryTest, param = {filename = "t_manufacturing"}},
+		{key = "p", desc = "projects",          func = ExecuteLibraryTest, param = {filename = "t_projects"}},
+		{key = "o", desc = "shop",              func = ExecuteLibraryTest, param = {filename = "t_shop"}},
+		{key = "s", desc = "storage",           func = ExecuteLibraryTest, param = {filename = "t_storage"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "enterprise", options, ExecuteLibraryTest)
@@ -76,6 +79,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
     moduleRegistry:requireAndRegisterModule("enterprise_manufacturing")
     moduleRegistry:requireAndRegisterModule("enterprise_forestry")
+    moduleRegistry:requireAndRegisterModule("enterprise_gathering")
     moduleRegistry:requireAndRegisterModule("enterprise_isp")
     moduleRegistry:requireAndRegisterModule("enterprise_projects")
     moduleRegistry:requireAndRegisterModule("enterprise_shop")
@@ -93,6 +97,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("t_energy")
     moduleRegistry:requireAndRegisterModuleTests("t_manufacturing")
     moduleRegistry:requireAndRegisterModuleTests("t_forestry")
+    moduleRegistry:requireAndRegisterModuleTests("t_gathering")
     moduleRegistry:requireAndRegisterModuleTests("t_isp")
     moduleRegistry:requireAndRegisterModuleTests("t_projects")
     moduleRegistry:requireAndRegisterModuleTests("t_shop")
