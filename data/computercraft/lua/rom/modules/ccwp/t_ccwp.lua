@@ -3,6 +3,7 @@ local t_ccwp = {}
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
+local coredht        = require "coredht"
 
 local t_coremove = require "test.t_coremove"
 
@@ -87,6 +88,20 @@ end
 
 function t_ccwp.T_ClearLogfile()
     corelog.ClearLog()
+end
+
+function t_ccwp.T_SetAssignmentsOpen()
+    local assignmentList = coredht.GetData("enterprise_assignmentboard", "assignmentList")
+
+    -- ivm stomme meldingen in code
+    if type(assignmentList) ~= "table" then return end
+
+    -- alle assignments langs lopen
+    for assignmentId, assignmentData in pairs(assignmentList) do
+
+        -- ff kijken of deze wel open is
+        if assignmentData["status"] == "staffed" then coredht.SaveData("open", "enterprise_assignmentboard", "assignmentList", assignmentId, "status") end
+    end
 end
 
 function t_ccwp.Func1_Callback(callbackData, taskResult)
