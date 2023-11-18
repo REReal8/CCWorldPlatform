@@ -20,6 +20,7 @@ local coreassignment = {}
 
 local coresystem = require "coresystem"
 local coredht    = require "coredht"
+local coreevent  = require "coreevent"
 local corelog    = require "corelog"
 local coremove   = require "coremove"
 
@@ -30,7 +31,16 @@ local enterprise_employment
 
 local db = {
     rejectAllAssignments    = false,
+    reboot                  = false,
 }
+local protocol          = "core:assignment"
+
+
+-- local function needs to be declared before setup
+function coreassignment.DoEventReboot(subject, envelope)
+    -- set to reboot
+    db.reboot = true
+end
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -45,6 +55,9 @@ function coreassignment.Init()
 end
 
 function coreassignment.Setup()
+    -- naar deze events luisteren
+    coreevent.AddEventListener(DoEventReboot,    protocol, "reboot")
+
     -- pas als de dht klaar is...
     coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup) -- ToDo: consider doing this in enterprise_assignmentboard itself
 end
@@ -108,6 +121,7 @@ function coreassignment.Run()
         end
 
         -- just wait a (quarter of a) second to try again
+        if db.reboot then os.reboot() end
         os.sleep(0.25)
     end
 end

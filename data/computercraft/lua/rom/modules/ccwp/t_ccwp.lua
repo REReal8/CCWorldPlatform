@@ -4,6 +4,7 @@ local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
 local coredht        = require "coredht"
+local coreevent      = require "coreevent"
 
 local t_coremove = require "test.t_coremove"
 
@@ -102,6 +103,14 @@ function t_ccwp.T_SetAssignmentsOpen()
         -- ff kijken of deze wel open is
         if assignmentData["status"] == "staffed" then coredht.SaveData("open", "enterprise_assignmentboard", "assignmentList", assignmentId, "status") end
     end
+end
+
+function t_ccwp.T_RebootAllWorkers()
+    -- inform everyone they need to reboot when ready
+    coreevent.SendMessage({protocol="core:assignment", subject="reboot"})
+
+    -- reboot ourself
+    coreassignment.DoEventReboot()
 end
 
 function t_ccwp.Func1_Callback(callbackData, taskResult)
