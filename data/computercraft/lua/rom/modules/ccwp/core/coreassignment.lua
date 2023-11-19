@@ -32,15 +32,14 @@ local enterprise_employment
 local db = {
     rejectAllAssignments    = false,
     reboot                  = false,
+    shutdown                = false,
 }
 local protocol          = "core:assignment"
 
 
 -- local function needs to be declared before setup
-function coreassignment.DoEventReboot(subject, envelope)
-    -- set to reboot
-    db.reboot = true
-end
+function coreassignment.DoEventReboot(subject,   envelope) db.reboot   = true end
+function coreassignment.DoEventShutdown(subject, envelope) db.shutdown = true end
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -56,7 +55,8 @@ end
 
 function coreassignment.Setup()
     -- naar deze events luisteren
-    coreevent.AddEventListener(DoEventReboot,    protocol, "reboot")
+    coreevent.AddEventListener(coreassignment.DoEventReboot,    protocol, "reboot")
+    coreevent.AddEventListener(coreassignment.DoEventShutdown,  protocol, "shutdown")
 
     -- pas als de dht klaar is...
     coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup) -- ToDo: consider doing this in enterprise_assignmentboard itself
@@ -120,8 +120,11 @@ function coreassignment.Run()
             end
         end
 
+        -- any reboot or shutdown needed?
+        if db.shutdown then os.shutdown() end
+        if db.reboot   then os.reboot()   end
+
         -- just wait a (quarter of a) second to try again
-        if db.reboot then os.reboot() end
         os.sleep(0.25)
     end
 end

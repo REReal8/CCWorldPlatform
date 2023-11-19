@@ -109,13 +109,16 @@ function t_ccwp.T_RebootAllWorkers()
     -- inform everyone they need to reboot when ready
     coreevent.SendMessage({protocol="core:assignment", subject="reboot"})
 
-    -- debugging
---    for k, _ in pairs(package.loaded) do
---        corelog.WriteToLog(k)
---    end
-
     -- reboot ourself
     coreassignment.DoEventReboot()
+end
+
+function t_ccwp.T_ShutdownAllWorkers()
+    -- inform everyone they need to reboot when ready
+    coreevent.SendMessage({protocol="core:assignment", subject="shutdown"})
+
+    -- reboot ourself
+    coreassignment.DoEventShutdown()
 end
 
 function t_ccwp.Func1_Callback(callbackData, taskResult)
