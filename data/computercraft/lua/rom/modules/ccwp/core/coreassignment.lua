@@ -127,6 +127,17 @@ function coreassignment.Run()
         -- just wait a (quarter of a) second to try again
         os.sleep(0.25)
     end
+
+    -- for weirdo workers
+    while db.rejectAllAssignments do
+
+        -- any reboot or shutdown needed?
+        if db.shutdown then os.shutdown() end
+        if db.reboot   then os.reboot()   end
+
+        -- just wait a (quarter of a) second to try again
+        os.sleep(0.25)
+    end
 end
 
 function coreassignment.RejectAllAssignments()
