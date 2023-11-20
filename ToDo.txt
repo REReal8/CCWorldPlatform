@@ -56,8 +56,8 @@ R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorl
    R  Introduce role_miner (+ tests)                                                                                    (done)
    R  Introduce MineShaft mobj (+ tests)                                                                                (done)
    R  Add MineShaft construction to enterprise_gathering (+ tests)                                                      (done)
-   -  Build MineShaft from enterprise_colonization
-      -  remove CollectCobbleStone_Task from role_settler
+   R  Build MineShaft from enterprise_colonization                                                                      (done)
+      R  remove CollectCobbleStone_Task from role_settler                                                               (done)
 
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
