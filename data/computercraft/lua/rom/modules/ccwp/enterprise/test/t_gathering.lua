@@ -2,7 +2,7 @@ local t_gathering = {}
 
 local Location = require "obj_location"
 
-local enterprise_manufacturing = require "enterprise_manufacturing"
+local enterprise_gathering = require "enterprise_gathering"
 
 local T_MineShaft = require "test.t_mine_shaft"
 local T_MObjHost = require "test.t_mobj_host"
@@ -19,7 +19,6 @@ function t_gathering.T_AllPhysical()
 
     -- MObjHost
     local mobjLocator = t_gathering.T_buildAndHostMObj_ASrv_MineShaft()
-    t_gathering.T_dismantleAndReleaseMObj_ASrv_MineShaft(mobjLocator)
     t_gathering.T_extendAndUpgradeMObj_ASrv_MineShaft(mobjLocator)
     t_gathering.T_dismantleAndReleaseMObj_ASrv_MineShaft(mobjLocator)
 end
@@ -58,7 +57,7 @@ function t_gathering.T_hostMObj_SSrv_MineShaft()
     local constructFieldsTest = T_MineShaft.CreateInitialisedTest(nil, baseLocation0, currentDepth0, maxDepth0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, constructFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_gathering, testMObjClassName, constructParameters0, testMObjName0, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -70,7 +69,7 @@ function t_gathering.T_buildAndHostMObj_ASrv_MineShaft()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_gathering, testMObjClassName, constructParameters0, testMObjName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -85,7 +84,7 @@ function t_gathering.T_upgradeMObj_SSrv_MineShaft()
     local upgradeFieldsTest = T_MineShaft.CreateInitialisedTest(nil, baseLocation0, currentDepth0, maxDepth1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters0, upgradeParameters0, testMObjName0, upgradeFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_gathering, testMObjClassName, constructParameters0, upgradeParameters0, testMObjName0, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -102,7 +101,7 @@ function t_gathering.T_extendAndUpgradeMObj_ASrv_MineShaft(mobjLocator)
     end
 
     -- test
-    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_manufacturing, mobjLocator, upgradeParameters0, testMObjName0, upgradeFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_gathering, mobjLocator, upgradeParameters0, testMObjName0, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -112,7 +111,7 @@ function t_gathering.T_releaseMObj_SSrv_MineShaft()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_gathering, testMObjClassName, constructParameters0, testMObjName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -127,7 +126,7 @@ function t_gathering.T_dismantleAndReleaseMObj_ASrv_MineShaft(mobjLocator)
     end
 
     -- test
-    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_manufacturing, mobjLocator, logOk)
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_gathering, mobjLocator, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

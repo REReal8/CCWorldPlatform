@@ -271,7 +271,6 @@ function MineShaft:getExtendBlueprint(...)
     if maxDepth > upgradedMaxDepth then corelog.Error("MineShaft:upgrade: Downgradging maxDepth (from "..maxDepth.." to "..upgradedMaxDepth..") not supported") return false end
     if maxDepth < upgradedMaxDepth then
         if upgradedMaxDepth > 128 then corelog.Error("MineShaft:upgrade: Upgrading to depth of "..upgradedMaxDepth.." not supported") return false end
-        self._currentDepth = upgradedMaxDepth
     end
 
     -- layerList
