@@ -317,7 +317,7 @@ function MineShaft:getDismantleBlueprint()
 
     -- layerList
     local layerList = {}
-    local closeLayerLocation = Location:newInstance(0, 0, 0)
+    local closeLayerLocation = Location:newInstance(0, 0, -1)
     table.insert(layerList, { startpoint = closeLayerLocation, buildDirection = "Down", layer = ShaftDismantle_layer()})
     -- ToDo: possibly introduce option to completely fill the MineShaft over the full depth with blocks.
 
