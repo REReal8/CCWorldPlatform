@@ -213,6 +213,18 @@ function MineShaft:getBaseLocation()
     return self._baseLocation
 end
 
+local function EntryExit_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ? ",
+        })
+    )
+end
+
 function MineShaft.GetBuildBlueprint(...)
     -- get & check input from description
     local checkSuccess, baseLocation, maxDepth = InputChecker.Check([[
@@ -237,6 +249,8 @@ function MineShaft.GetBuildBlueprint(...)
 
     -- layerList
     local layerList = {}
+    local buildLayerLocation = Location:newInstance(-1, 0, -1)
+    table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = EntryExit_layer()})
 
     -- escapeSequence
     local escapeSequence = {}
@@ -317,8 +331,8 @@ function MineShaft:getDismantleBlueprint()
 
     -- layerList
     local layerList = {}
-    local closeLayerLocation = Location:newInstance(0, 0, -1)
-    table.insert(layerList, { startpoint = closeLayerLocation, buildDirection = "Down", layer = ShaftDismantle_layer()})
+    local dismantleLayerLocation = Location:newInstance(0, 0, -1)
+    table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = ShaftDismantle_layer()})
     -- ToDo: possibly introduce option to completely fill the MineShaft over the full depth with blocks.
 
     -- escapeSequence
@@ -386,6 +400,7 @@ function MineShaft:provideItemsTo_AOSrv(...)
         maxDepth            = self:getMaxDepth(),
 
         provideItems        = ItemTable:newInstance(provideItems),
+        escape              = true,
 
         priorityKey         = assignmentsPriorityKey,
     }
@@ -533,7 +548,9 @@ function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
     local fuelNeed_Transfer = role_energizer.NeededFuelToFrom(destinationLocation, localLocation)
 
     --
-    local fuelNeed = fuelNeed_Mining + fuelNeed_Transfer
+    local fuelNeedEntry = 4 -- from base to move just undersurface
+    local fuelNeedExit = fuelNeed_Mining + 4 -- to go back up + moving back to base
+    local fuelNeed = fuelNeedEntry + fuelNeed_Mining + fuelNeedExit + fuelNeed_Transfer
     local ingredientsNeed = {}
 
     -- end

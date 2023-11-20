@@ -56,7 +56,7 @@ end
 
 function role_miner.MineShaft_Task(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, startDepth, maxDepth, toProvideItems, turtleLocator = InputChecker.Check([[
+    local checkSuccess, baseLocation, startDepth, maxDepth, toProvideItems, escape, turtleLocator = InputChecker.Check([[
         This Task function mines a MineShaft for items.
 
         Return value:
@@ -71,6 +71,7 @@ function role_miner.MineShaft_Task(...)
                 maxDepth                + (number) with maximum depth of the MineShaft
 
                 provideItems            + (ItemTable) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to mine
+                escape                  + (boolean) whether Turtle should escape from the MineShaft after it's operation
 
                 workerLocator           + (URL) locating the Turtle
     ]], ...)
@@ -89,9 +90,25 @@ function role_miner.MineShaft_Task(...)
     if not axePresent then corelog.Error("role_miner.MineShaft_Task: No axePresent ") return {success = false} end
 
     -- move to the baseLocation
+    -- corelog.WriteToLog("Moving to (base)")
+    -- corelog.WriteToLog(baseLocation)
     coremove.GoTo(baseLocation)
 
+    -- perform entry sequence
+    -- corelog.WriteToLog("entering...")
+    local entrySequence = {
+        baseLocation:getRelativeLocation(1, 0, 0),
+        baseLocation:getRelativeLocation(1, 0, -2),
+        baseLocation:getRelativeLocation(0, 0, -2),
+    }
+    for i, entryLocation in ipairs(entrySequence) do
+        -- corelog.WriteToLog("Moving to")
+        -- corelog.WriteToLog(entryLocation)
+        coremove.GoTo(entryLocation)
+    end
+
     -- dig a hole while depth left and not all provideItems found
+    -- corelog.WriteToLog("gathering...")
     local currentDepth = startDepth
     local allProvideItemsFound = false
     local outputItems = ItemTable:newInstance()
@@ -116,6 +133,22 @@ function role_miner.MineShaft_Task(...)
         if not uniqueProvideItems then corelog.Error("role_miner.MineShaft_Task: Failed obtaining uniqueProvideItems") return {success = false} end
         if uniqueProvideItems:isEmpty() then
             allProvideItemsFound = true
+        end
+    end
+
+    -- perform exit sequence
+    if escape then
+        -- corelog.WriteToLog("escaping...")
+        local exitSequence = {
+            baseLocation:getRelativeLocation(-1, 0, -2 - currentDepth),
+            baseLocation:getRelativeLocation(-1, 0, -2),
+            baseLocation:getRelativeLocation(-1, 0, 0),
+            baseLocation:getRelativeLocation(0, 0, 0),
+        }
+        for i, exitLocation in ipairs(exitSequence) do
+            -- corelog.WriteToLog("Moving to")
+            -- corelog.WriteToLog(exitLocation)
+            coremove.GoTo(exitLocation)
         end
     end
 

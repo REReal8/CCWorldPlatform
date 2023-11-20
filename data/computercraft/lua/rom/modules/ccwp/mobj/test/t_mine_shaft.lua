@@ -296,7 +296,7 @@ function T_MineShaft.T_needsTo_ProvideItemsTo_SOSrv()
     local destinationLocation = turtleObj:getItemDepotLocation()
 
     -- test
-    local expectedFuelNeed = obj:getMaxDepth() + role_energizer.NeededFuelToFrom(destinationLocation, obj:getBaseLocation())
+    local expectedFuelNeed = role_energizer.NeededFuelToFrom(destinationLocation, obj:getBaseLocation()) + 4 + 2*obj:getMaxDepth() + 4
     T_IItemSupplier.pt_needsTo_ProvideItemsTo_SOSrv(testClassName, obj, testObjName, provideItems, itemDepotLocator, nil, {
         success         = true,
         fuelNeed        = expectedFuelNeed,
