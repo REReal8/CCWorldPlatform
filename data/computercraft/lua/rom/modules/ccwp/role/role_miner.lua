@@ -96,10 +96,11 @@ function role_miner.MineShaft_Task(...)
 
     -- perform entry sequence
     -- corelog.WriteToLog("entering...")
+    local actualMineStart = -3
     local entrySequence = {
         baseLocation:getRelativeLocation(1, 0, 0),
-        baseLocation:getRelativeLocation(1, 0, -2),
-        baseLocation:getRelativeLocation(0, 0, -2),
+        baseLocation:getRelativeLocation(1, 0, actualMineStart),
+        baseLocation:getRelativeLocation(0, 0, actualMineStart),
     }
     for i, entryLocation in ipairs(entrySequence) do
         -- corelog.WriteToLog("Moving to")
@@ -140,8 +141,8 @@ function role_miner.MineShaft_Task(...)
     if escape then
         -- corelog.WriteToLog("escaping...")
         local exitSequence = {
-            baseLocation:getRelativeLocation(-1, 0, -2 - currentDepth),
-            baseLocation:getRelativeLocation(-1, 0, -2),
+            baseLocation:getRelativeLocation(-1, 0, actualMineStart - currentDepth),
+            baseLocation:getRelativeLocation(-1, 0, actualMineStart),
             baseLocation:getRelativeLocation(-1, 0, 0),
             baseLocation:getRelativeLocation(0, 0, 0),
         }

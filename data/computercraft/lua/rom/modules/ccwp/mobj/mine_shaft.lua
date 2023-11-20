@@ -265,18 +265,6 @@ function MineShaft.GetBuildBlueprint(...)
     return buildLocation, blueprint
 end
 
-local function EntryExitDismantle_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(Block:getClassName(), {
-            ["D"]   = Block:newInstance("minecraft:dirt"),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        }),
-        CodeMap:newInstance({
-            [1] = "D?D",
-        })
-    )
-end
-
 function MineShaft:getExtendBlueprint(...)
     -- get & check input from description
     local checkSuccess, upgradedMaxDepth = InputChecker.Check([[
@@ -319,13 +307,49 @@ function MineShaft:getExtendBlueprint(...)
     return buildLocation, blueprint
 end
 
-local function ShaftDismantle_layer()
+local function MidPos_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = "?",
+        })
+    )
+end
+
+local function RowDismantle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("minecraft:cobblestone"),
         }),
         CodeMap:newInstance({
+            [1] = "CCC",
+        })
+    )
+end
+
+local function ColumnDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["C"]   = Block:newInstance("minecraft:cobblestone"),
+        }),
+        CodeMap:newInstance({
+            [3] = "C",
+            [2] = "C",
             [1] = "C",
+        })
+    )
+end
+
+local function EntryExitDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["D"]   = Block:newInstance("minecraft:dirt"),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = "D?D",
         })
     )
 end
@@ -341,11 +365,42 @@ function MineShaft:getDismantleBlueprint()
         Parameters:
     ]]
 
-    -- layerList
+    local fillMine = true -- ToDo: consider parameterising this
+
+    -- layerList: fill MineShaft?
     local layerList = {}
+    if fillMine then
+        -- entry to actualMineStart (by tricking builder)
+        local actualMineStart = -3
+        local dismantleLayerLocation = Location:newInstance(1, 0, -1)
+        table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+        dismantleLayerLocation = Location:newInstance(1, 0, actualMineStart)
+        table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+        dismantleLayerLocation = Location:newInstance(0, 0, actualMineStart)
+        table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+
+        -- fill loop
+        local currentDepth = self:getCurrentDepth()
+        for depth=-currentDepth, 0, 1 do
+            dismantleLayerLocation = Location:newInstance(0, 0, actualMineStart + depth)
+            table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+            dismantleLayerLocation = Location:newInstance(-1, 0, actualMineStart + depth)
+            table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = RowDismantle_layer()})
+            dismantleLayerLocation = Location:newInstance(0, 0, actualMineStart + depth)
+            table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()}) -- note: prevent remove corner
+            dismantleLayerLocation = Location:newInstance(0, -1, actualMineStart + depth)
+            table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = ColumnDismantle_layer()})
+        end
+
+        -- exit (by tricking builder)
+        dismantleLayerLocation = Location:newInstance(0, 0, actualMineStart)
+        table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+        dismantleLayerLocation = Location:newInstance(-1, 0, actualMineStart)
+        table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = MidPos_layer()})
+    end
+    -- layerList: entry/exit layers
     local dismantleLayerLocation = Location:newInstance(-1, 0, -1)
     table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = EntryExitDismantle_layer()})
-    -- ToDo: possibly introduce option to completely fill the MineShaft over the full depth with blocks.
 
     -- escapeSequence
     local escapeSequence = {}

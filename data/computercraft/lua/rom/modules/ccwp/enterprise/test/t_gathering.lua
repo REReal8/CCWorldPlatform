@@ -125,6 +125,11 @@ function t_gathering.T_dismantleAndReleaseMObj_ASrv_MineShaft(mobjLocator)
         mobjLocator = mobjLocator_MineShaft
     end
 
+    -- modify currentDepth, to show refill of MineShaft
+    local mobj = enterprise_gathering:getObject(mobjLocator) assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..enterprise_gathering:getHostName())
+    mobj._currentDepth = 4
+    enterprise_gathering:saveObject(mobj)
+
     -- test
     local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_gathering, mobjLocator, logOk)
     assert(serviceResults, "no serviceResults returned")
