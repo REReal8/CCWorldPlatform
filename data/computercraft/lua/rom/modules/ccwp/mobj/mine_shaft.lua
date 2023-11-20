@@ -265,6 +265,18 @@ function MineShaft.GetBuildBlueprint(...)
     return buildLocation, blueprint
 end
 
+local function EntryExitDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["D"]   = Block:newInstance("minecraft:dirt"),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = "D?D",
+        })
+    )
+end
+
 function MineShaft:getExtendBlueprint(...)
     -- get & check input from description
     local checkSuccess, upgradedMaxDepth = InputChecker.Check([[
@@ -331,8 +343,8 @@ function MineShaft:getDismantleBlueprint()
 
     -- layerList
     local layerList = {}
-    local dismantleLayerLocation = Location:newInstance(0, 0, -1)
-    table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = ShaftDismantle_layer()})
+    local dismantleLayerLocation = Location:newInstance(-1, 0, -1)
+    table.insert(layerList, { startpoint = dismantleLayerLocation, buildDirection = "Down", layer = EntryExitDismantle_layer()})
     -- ToDo: possibly introduce option to completely fill the MineShaft over the full depth with blocks.
 
     -- escapeSequence
