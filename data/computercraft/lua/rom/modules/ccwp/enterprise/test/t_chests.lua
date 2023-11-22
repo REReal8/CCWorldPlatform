@@ -27,19 +27,19 @@ function t_chests.T_AllPhysical()
     t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
 end
 
-local testMObjClassName = "Chest"
-local testMObjName = "chest"
+local testChestClassName = "Chest"
+local testChestName = "chest"
 
 local logOk = false
 
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
-local baseLocation0 = testStartLocation:getRelativeLocation(2, 5, 0)
+local baseLocation_Chest0 = testStartLocation:getRelativeLocation(2, 5, 0)
 local accessDirection0 = "top"
 local inventory1 = Inventory:newInstance() -- optionally add elements
 
-local constructParameters0 = {
-    baseLocation    = baseLocation0,
+local constructParameters_Chest0 = {
+    baseLocation    = baseLocation_Chest0,
     accessDirection = accessDirection0,
 }
 
@@ -102,10 +102,10 @@ end
 
 function t_chests.T_hostMObj_SSrv_Chest()
     -- prepare test
-    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation0, accessDirection0, inventory1)
+    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation_Chest0, accessDirection0, inventory1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters0, testMObjName, constructFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_chests, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -117,7 +117,7 @@ function t_chests.T_buildAndHostMObj_ASrv_Chest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_chests, testChestClassName, constructParameters_Chest0, testChestName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -131,7 +131,7 @@ function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, testChestClassName, constructParameters_Chest0, testChestName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

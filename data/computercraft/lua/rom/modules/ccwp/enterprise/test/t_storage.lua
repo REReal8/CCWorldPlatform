@@ -30,19 +30,19 @@ function t_storage.T_AllPhysical()
     t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
 end
 
-local testMObjClassName = "Silo"
-local testMObjName = "silo"
+local testSiloClassName = "Silo"
+local testSiloName = "silo"
 
 local logOk = false
 
-local baseLocation0  = Location:newInstance(12, -12, 1, 0, 1)
-local entryLocation0 = baseLocation0:getRelativeLocation(3, 3, 0)
+local baseLocation_Silo0  = Location:newInstance(12, -12, 1, 0, 1)
+local entryLocation_Silo0 = baseLocation_Silo0:getRelativeLocation(3, 3, 0)
 local dropLocation0 = 1
 local pickupLocation0 = 2
 local nTopChests0 = 2
 local nLayers0 = 2
-local constructParameters0 = {
-    baseLocation    = baseLocation0,
+local constructParameters_Silo0 = {
+    baseLocation    = baseLocation_Silo0,
     nTopChests      = nTopChests0,
     nLayers         = nLayers0,
 }
@@ -55,6 +55,11 @@ local constructParameters0 = {
 --   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                      _/ |
 --                     |__/
+
+-- ** Chest **
+
+
+-- ** Silo **
 
 function t_storage.T_hostMObj_SSrv_Silo()
     -- prepare test
@@ -69,10 +74,10 @@ function t_storage.T_hostMObj_SSrv_Silo()
         MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
     ))
-    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation0, entryLocation0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)
+    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation_Silo0, entryLocation_Silo0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_storage, testMObjClassName, constructParameters0, testMObjName, constructFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -85,7 +90,7 @@ function t_storage.T_buildAndHostMObj_ASrv_Silo()
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_storage, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -100,7 +105,7 @@ function t_storage.T_releaseMObj_SSrv_Silo()
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testMObjClassName, constructParameters0, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

@@ -59,6 +59,8 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
+-  consider merging enterprise_chest into enterprise_storage
+
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
    -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
@@ -84,8 +86,6 @@ GR DisplayStation                                                               
    -  remove static method style code (remaining from before it was a mobj)
    -  ensure no longer need to register it as a module in the mobj library
    -  split into CraftSpot & SmeltSpot MObj's
-
--  consider merging enterprise_chest into enterprise_storage
 
 -  hosting/ releasing, building/ dismantling v2.0
    RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
