@@ -1,6 +1,10 @@
 local t_gathering = {}
 
+local corelog = require "corelog"
+
 local Location = require "obj_location"
+
+local MineShaft = require "mine_shaft"
 
 local enterprise_gathering = require "enterprise_gathering"
 
@@ -125,10 +129,27 @@ function t_gathering.T_dismantleAndReleaseMObj_ASrv_MineShaft(mobjLocator)
         mobjLocator = mobjLocator_MineShaft
     end
 
-    -- modify currentDepth, to show refill of MineShaft
-    local mobj = enterprise_gathering:getObject(mobjLocator) assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..enterprise_gathering:getHostName())
-    mobj._currentDepth = 4
-    enterprise_gathering:saveObject(mobj)
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_gathering, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_MineShaft = nil
+end
+
+function t_gathering.T_dismantleFillAndRelease_CurrentMineShaft()
+    -- prepare test
+
+    -- get mobjLocator of first MineShaft in enterprise_gathering
+    local mineShafts = enterprise_gathering:getObjects("MineShaft")
+    if not mineShafts then corelog.Warning("t_gathering.T_dismantleFillAndRelease_CurrentMineShaft: No MineShafts to dismantle, fill and release") return nil end
+    local mineShaft = nil
+    for k, objTable in pairs(mineShafts) do
+        mineShaft = MineShaft:new(objTable)
+        break
+    end
+    if not mineShaft then corelog.Warning("t_gathering.T_dismantleFillAndRelease_CurrentMineShaft: No MineShaft to dismantle, fill and release") return nil end
+    local mobjLocator = enterprise_gathering:getObjectLocator(mineShaft) assert(mobjLocator, "Failed obtaining mobjLocator")
 
     -- test
     local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_gathering, mobjLocator, logOk)

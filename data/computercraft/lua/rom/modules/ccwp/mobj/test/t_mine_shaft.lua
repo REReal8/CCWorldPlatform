@@ -12,7 +12,7 @@ local MineShaft = require "mine_shaft"
 
 local role_energizer = require "role_energizer"
 
-local enterprise_forestry = require "enterprise_forestry"
+local enterprise_gathering = require "enterprise_gathering"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
@@ -57,7 +57,7 @@ end
 local testClassName = "MineShaft"
 local testObjName = "mineShaft"
 local testObjName0 = testObjName.."0"
-local testHost = enterprise_forestry
+local testHost = enterprise_gathering
 
 local logOk = false
 
