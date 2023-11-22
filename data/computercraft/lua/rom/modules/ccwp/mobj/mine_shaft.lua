@@ -480,9 +480,13 @@ function MineShaft:provideItemsTo_AOSrv(...)
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "mineShaftMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "mineShaftTaskCall" },
             }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineShaft task"},
-            -- update MineShaft
-            -- ToDo: implement updating currentDepth
-
+            -- save MineShaft
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_gathering", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+                { keyDef = "hostName"                       , sourceStep = 0, sourceKeyDef = "hostName" },
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "mineShaft" },
+                { keyDef = "objectTable._currentDepth"      , sourceStep = 1, sourceKeyDef = "endDepth" },
+            }},
             -- deliver mined items
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "turtleOutputItemsLocator" },
@@ -495,10 +499,14 @@ function MineShaft:provideItemsTo_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"            , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectData = {
+        hostName                        = "enterprise_gathering",
+        className                       = "MineShaft",
+        mineShaft                       = self:copy(),
+
         wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
 
