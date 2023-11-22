@@ -257,4 +257,65 @@ function coredht.SaveData(data, ...)
     return SaveDataToDB(data, table.unpack(arg))
 end
 
+--        _ _           _
+--       | (_)         | |
+--     __| |_ ___ _ __ | | __ _ _   _
+--    / _` | / __| '_ \| |/ _` | | | |
+--   | (_| | \__ \ |_) | | (_| | |_| |
+--    \__,_|_|___/ .__/|_|\__,_|\__, |
+--               | |             __/ |
+--               |_|            |___/
+
+
+function coredht.EditDHTDisplay(t)
+    -- import display
+    local coredisplay = require "coredisplay"
+
+    -- usefull
+    local keyList   = t.keyList or {}
+    local subRoot   = db
+
+    -- add a new key if present
+    if t.newKey ~= nil  then table.insert(keyList, t.newKey) end
+    if t.removeKey      then if #keyList == 0 then return true else table.remove(keyList) end end
+
+    -- find the subRoot
+    for i, key in ipairs(keyList) do
+
+        -- check and change subroot if oke
+        if subRoot[key] ~= nil then subRoot = subRoot[key] else corelog.WriteToLog("coredht.EditDHTDisplay(): Invalid key: "..tostring(key)) end
+    end
+
+    -- which keys are present in the subroot?
+    local intro     = "Available keys in the dht"
+    local options   = {{key = "x", desc = "back", func = coredht.EditDHTDisplay, param = {keyList=keyList, removeKey=true}}}
+
+    -- loop subroot (if it's a table)
+    local lastKey = 97
+    if type(subRoot) == "table" then
+        for key, _ in pairs(subRoot) do
+
+            -- insert option
+            table.insert(options, {key = string.char(lastKey), desc = key, func = coredht.EditDHTDisplay, param = {keyList = keyList, newKey = key }})
+
+            -- update
+            lastKey = lastKey + 1
+        end
+    else
+        -- different intro
+        intro = "The value = "..tostring(subRoot)
+    end
+
+    -- create the next screen
+    coredisplay.NextScreen({
+        clear = true,
+        intro = intro,
+        option = options,
+        question = "Make your choice"
+    })
+
+    -- done!
+    return true
+end
+
 return coredht
