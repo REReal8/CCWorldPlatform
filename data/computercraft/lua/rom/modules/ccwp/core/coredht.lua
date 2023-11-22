@@ -319,7 +319,11 @@ function coredht.EditDHTDisplay(t, userInput)
             else
                 -- process the new value
                 local f, err = load("return "..userInput)
-                if f ~= nil and not err then corelog.WriteToLog("We have a new value: "..tostring(f())) end
+                if f ~= nil and not err then
+
+                    -- usefull value?
+                    coredht.SaveData(tostring(f()), unpack(t.keyList))
+                end
             end
         end
     end
