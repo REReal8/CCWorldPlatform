@@ -10,6 +10,13 @@ ToReview List
    -  The intend is to do this fairly often should that this list is empty and we have a clear view on the actual ToDo section. ;-)
 ]]
 
+R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorld                                       (done)
+   R  Introduce role_miner (+ tests)                                                                                    (done)
+   R  Introduce MineShaft mobj (+ tests)                                                                                (done)
+   R  Add MineShaft construction to enterprise_gathering (+ tests)                                                      (done)
+   R  Build MineShaft from enterprise_colonization                                                                      (done)
+      R  remove CollectCobbleStone_Task from role_settler                                                               (done)
+
 ToDo List
 ---------
 --[[
@@ -51,13 +58,6 @@ GR DisplayStation                                                               
    G  Implement it in line with discussion at the end of 15/11 (see email(s))
       -  ...
       -  ...
-
-R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorld                                       (....)
-   R  Introduce role_miner (+ tests)                                                                                    (done)
-   R  Introduce MineShaft mobj (+ tests)                                                                                (done)
-   R  Add MineShaft construction to enterprise_gathering (+ tests)                                                      (done)
-   R  Build MineShaft from enterprise_colonization                                                                      (done)
-      R  remove CollectCobbleStone_Task from role_settler                                                               (done)
 
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
