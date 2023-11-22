@@ -35,7 +35,7 @@ local role_conservator = require "role_conservator"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment
-local enterprise_chests
+local enterprise_storage
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -313,7 +313,7 @@ function Chest:updateChestRecord_AOSrv(...)
         accessDirection = self:getAccessDirection(),
     }
     local projectData = {
-        hostName        = "enterprise_chests",
+        hostName        = "enterprise_storage",
         className       = "Chest",
         chest           = self:copy(),
 
@@ -327,7 +327,7 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }, description = "Fetching Chest "..self:getId().." inventory"},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
@@ -398,7 +398,7 @@ function Chest:provideItemsTo_AOSrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
-        hostName                = "enterprise_chests",
+        hostName                = "enterprise_storage",
         className               = "Chest",
         chest                   = self:copy(),
 
@@ -416,7 +416,7 @@ function Chest:provideItemsTo_AOSrv(...)
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
@@ -549,8 +549,8 @@ function Chest:storeItemsFrom_AOSrv(...)
     if not checkSuccess then corelog.Error("Chest:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set (expected) destinationItemsLocator
-    enterprise_chests = enterprise_chests or require "enterprise_chests"
-    local destinationItemsLocator = enterprise_chests:getObjectLocator(self)
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    local destinationItemsLocator = enterprise_storage:getObjectLocator(self)
     destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
 
     -- work around
@@ -568,7 +568,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     }
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local projectData = {
-        hostName                = "enterprise_chests",
+        hostName                = "enterprise_storage",
         className               = "Chest",
         chest                   = self:copy(),
 
@@ -601,7 +601,7 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "methodResults" },
             }},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },

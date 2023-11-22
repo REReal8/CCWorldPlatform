@@ -21,7 +21,6 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_employment = require "enterprise_employment"
-local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_dump = require "enterprise_dump"
 local enterprise_gathering = require "enterprise_gathering"
@@ -50,7 +49,7 @@ function t_ccwp.T_DeleteAll()
     t_ccwp.T_DeleteWorkers()
 
     -- anything remaining?
-    enterprise_chests:releaseLObjs_SSrv({ className = "Chest" })
+    enterprise_storage:releaseLObjs_SSrv({ className = "Chest" })
 end
 
 function t_ccwp.T_DeleteWorld()

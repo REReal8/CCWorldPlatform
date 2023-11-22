@@ -11,9 +11,9 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_construction = require "enterprise_construction"
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 
-local t_chests = require "test.t_chests"
+local t_storage = require "test.t_storage"
 local t_employment = require "test.t_employment"
 
 local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
@@ -123,16 +123,16 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
         projectDef  = buildRectangularPattern_ASrvProjectDef,
         projectData = {
             -- Chest
-            projectDef  = t_chests.GetHostAndUpdateChestProjectDef(),
+            projectDef  = t_storage.GetHostAndUpdateChestProjectDef(),
             projectData = {
-                hostLocator         = enterprise_chests:getHostLocator(),
+                hostLocator         = enterprise_storage:getHostLocator(),
                 className           = "Chest",
                 constructParameters = {
                     baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
                     accessDirection = "top",
                 }
             },
-            hostLocator = enterprise_chests:getHostLocator(),
+            hostLocator = enterprise_storage:getHostLocator(),
 
             -- build data
             startpoint              = testStartLocation2,

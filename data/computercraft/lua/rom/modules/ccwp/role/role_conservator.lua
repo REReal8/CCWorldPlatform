@@ -18,7 +18,7 @@ local ItemTable = require "obj_item_table"
 
 local ObjHost = require "obj_host"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_dump
 
 --    _______        _                   __  __      _        _____        _

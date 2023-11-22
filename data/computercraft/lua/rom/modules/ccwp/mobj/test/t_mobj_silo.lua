@@ -17,7 +17,7 @@ local Inventory = require "obj_inventory"
 
 local Silo = require "mobj_silo"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
@@ -327,7 +327,7 @@ function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
         { name = "minecraft:dirt", count = 20 },
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_chests:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObject(chest)
     local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
@@ -344,7 +344,7 @@ function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
     }, logOk)
 
     -- cleanup test
-    enterprise_chests:deleteResource(chestLocator)
+    enterprise_storage:deleteResource(chestLocator)
 end
 
 function T_Silo.T_can_ProvideItems_QOSrv()
@@ -353,7 +353,7 @@ function T_Silo.T_can_ProvideItems_QOSrv()
         { name = "minecraft:dirt", count = 20 },
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_chests:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObject(chest)
     local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
@@ -364,7 +364,7 @@ function T_Silo.T_can_ProvideItems_QOSrv()
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:furnace"] = 1, }, false, logOk)
 
     -- cleanup test
-    enterprise_chests:deleteResource(chestLocator)
+    enterprise_storage:deleteResource(chestLocator)
 end
 
 --    _____ _____ _                 _____                   _

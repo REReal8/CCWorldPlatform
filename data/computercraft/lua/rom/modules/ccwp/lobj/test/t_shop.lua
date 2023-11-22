@@ -17,7 +17,7 @@ local Shop = require "shop"
 
 local role_forester = require "role_forester"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
@@ -276,7 +276,7 @@ function T_Shop.T_delistAllItemSuppliers()
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
 
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_chests:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 2, "Shop "..obj:getId().." does not have 2 ItemSupplier's")
@@ -289,7 +289,7 @@ function T_Shop.T_delistAllItemSuppliers()
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator) -- note: delistAllItemSuppliers saved the test Shop
-    enterprise_chests:deleteResource(chestLocator)
+    enterprise_storage:deleteResource(chestLocator)
 end
 
 function T_Shop.T_bestItemSupplier()
@@ -303,17 +303,17 @@ function T_Shop.T_bestItemSupplier()
     local ingredientsItemSupplierLocator = objectLocator
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
-    local itemDepotLocator = enterprise_chests:saveObject(chest)
+    local itemDepotLocator = enterprise_storage:saveObject(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
     chest = T_Chest.CreateTestObj(nil, closeLocation) assert(chest, "Failed obtaining Chest")
-    local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
+    local closeItemSupplierLocator = enterprise_storage:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(Location.FarX(), 1, 0)
     chest = T_Chest.CreateTestObj(nil, farLocation) assert(chest, "Failed obtaining Chest")
-    local farItemSupplierLocator = enterprise_chests:saveObject(chest)
+    local farItemSupplierLocator = enterprise_storage:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local bestItemSupplierLocator = obj:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, farItemSupplierLocator, closeItemSupplierLocator)
@@ -322,9 +322,9 @@ function T_Shop.T_bestItemSupplier()
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator)
-    enterprise_chests:deleteResource(itemDepotLocator)
-    enterprise_chests:deleteResource(closeItemSupplierLocator)
-    enterprise_chests:deleteResource(farItemSupplierLocator)
+    enterprise_storage:deleteResource(itemDepotLocator)
+    enterprise_storage:deleteResource(closeItemSupplierLocator)
+    enterprise_storage:deleteResource(farItemSupplierLocator)
 end
 
 --    _____ _____ _                  _____                   _ _

@@ -37,7 +37,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local role_conservator = require "role_conservator"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_employment
 

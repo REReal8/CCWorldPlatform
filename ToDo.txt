@@ -59,7 +59,7 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
--  consider merging enterprise_chest into enterprise_storage
+R  merge enterprise_chest into enterprise_storage                                                                       (....)
 
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer

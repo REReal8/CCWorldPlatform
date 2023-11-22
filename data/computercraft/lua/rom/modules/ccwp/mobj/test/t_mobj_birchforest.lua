@@ -13,7 +13,7 @@ local BirchForest = require "mobj_birchforest"
 local role_forester = require "role_forester"
 
 local enterprise_employment = require "enterprise_employment"
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 
 local TestArrayTest = require "test_array_test"
@@ -226,8 +226,8 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local localLogsLocator1 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator1 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator1 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator1 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator1 = enterprise_storage:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator1 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator1 = enterprise_storage:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator1 then corelog.Error("failed registering Chest") return end
 
     -- test
     obj:setLevel(level2)
@@ -243,7 +243,7 @@ function T_BirchForest.T_Setters()
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
-    return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator1 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator1 })
+    return enterprise_storage:releaseMObj_SSrv({ mobjLocator = localLogsLocator1 }) and enterprise_storage:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator1 })
 end
 
 --    _____ ____  _     _
@@ -282,11 +282,11 @@ function T_BirchForest.T_ILObj_All()
 
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("URL"),
-        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("URL"),
-        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
 
     local fieldsTestm1 = T_BirchForest.CreateInitialisedTest(nil, levelm1, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)

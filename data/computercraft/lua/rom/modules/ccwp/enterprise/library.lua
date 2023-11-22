@@ -15,7 +15,6 @@ function library.T_All()
 
     local t_test = require "test.t_test"
     local t_assignmentboard = require "test.t_assignmentboard"
-    local t_chests = require "test.t_chests"
     local t_employment = require "test.t_employment"
     local t_energy = require "test.t_energy"
     local t_forestry = require "test.t_forestry"
@@ -23,12 +22,12 @@ function library.T_All()
     local t_isp = require "test.t_isp"
     local t_manufacturing = require "test.t_manufacturing"
     local t_projects = require "test.t_projects"
+    local t_storage = require "test.t_storage"
     local t_shop = require "test.t_shop"
 
     -- library tests
     t_test.T_All()
     t_assignmentboard.T_All()
-    t_chests.T_All()
     t_employment.T_All()
     t_energy.T_All()
     t_forestry.T_All()
@@ -36,6 +35,7 @@ function library.T_All()
     t_isp.T_All()
     t_manufacturing.T_All()
     t_projects.T_All()
+    t_storage.T_All()
     t_shop.T_All()
 end
 
@@ -46,9 +46,8 @@ local function ExecuteLibraryTest(t)
 
 		{key = "2", desc = "enterprise_test",   func = ExecuteLibraryTest, param = {filename = "t_test"}},
 		{key = "a", desc = "assignmentboard",   func = ExecuteLibraryTest, param = {filename = "t_assignmentboard"}},
-		{key = "c", desc = "chests",            func = ExecuteLibraryTest, param = {filename = "t_chests"}},
 		{key = "n", desc = "colonization",      func = ExecuteLibraryTest, param = {filename = "t_colonization"}},
-		{key = "b", desc = "construction",      func = ExecuteLibraryTest, param = {filename = "t_construction"}},
+		{key = "c", desc = "construction",      func = ExecuteLibraryTest, param = {filename = "t_construction"}},
 		{key = "t", desc = "employment",        func = ExecuteLibraryTest, param = {filename = "t_employment"}},
 		{key = "e", desc = "energy",            func = ExecuteLibraryTest, param = {filename = "t_energy"}},
 		{key = "f", desc = "forestry",          func = ExecuteLibraryTest, param = {filename = "t_forestry"}},
@@ -72,7 +71,6 @@ function library.Setup()
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("enterprise_assignmentboard")
-    moduleRegistry:requireAndRegisterModule("enterprise_chests")
     moduleRegistry:requireAndRegisterModule("enterprise_colonization")
     moduleRegistry:requireAndRegisterModule("enterprise_construction")
     moduleRegistry:requireAndRegisterModule("enterprise_dump")
@@ -91,7 +89,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_EnterpriseLibrary", libraryName..".library")
 
     moduleRegistry:requireAndRegisterModuleTests("t_assignmentboard")
-    moduleRegistry:requireAndRegisterModuleTests("t_chests")
     moduleRegistry:requireAndRegisterModuleTests("t_colonization")
     moduleRegistry:requireAndRegisterModuleTests("t_construction")
     moduleRegistry:requireAndRegisterModuleTests("t_energy")

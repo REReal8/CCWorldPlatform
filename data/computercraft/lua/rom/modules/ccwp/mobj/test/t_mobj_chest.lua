@@ -15,7 +15,7 @@ local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
@@ -65,7 +65,7 @@ end
 
 local testClassName = "Chest"
 local testObjName = "chest"
-local testHost = enterprise_chests
+local testHost = enterprise_storage
 
 local logOk = false
 

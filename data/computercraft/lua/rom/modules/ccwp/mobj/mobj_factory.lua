@@ -58,7 +58,7 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_employment = require "enterprise_employment"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing
 
@@ -216,14 +216,14 @@ function Factory:construct(...)
         table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
     elseif level == 2 then
         -- inputLocators
-        local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
         table.insert(inputLocators, inputChestLocator)
 
         -- outputLocators
-        local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -269,7 +269,7 @@ function Factory:upgrade(...)
     if level == 1 and upgradeLevel == 2 then
         -- inputLocators
         table.remove(inputLocators, 1) -- remove previous level
-        local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -277,7 +277,7 @@ function Factory:upgrade(...)
 
         -- outputLocators
         table.remove(outputLocators, 1) -- remove previous level
-        local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -315,8 +315,8 @@ function Factory:destruct()
     local destructSuccess = true
     for i, mobjLocator in ipairs(self._inputLocators) do
         local hostName = mobjLocator:getHost()
-        if hostName == enterprise_chests:getHostName() then
-            local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+        if hostName == enterprise_storage:getHostName() then
+            local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = mobjLocator })
             if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._inputLocators[i] = nil
@@ -325,8 +325,8 @@ function Factory:destruct()
     -- release outputLocators
     for i, mobjLocator in ipairs(self._outputLocators) do
         local hostName = mobjLocator:getHost()
-        if hostName == enterprise_chests:getHostName() then
-            local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+        if hostName == enterprise_storage:getHostName() then
+            local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = mobjLocator })
             if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._outputLocators[i] = nil

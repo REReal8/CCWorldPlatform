@@ -16,7 +16,7 @@ local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
 local enterprise_employment = require "enterprise_employment"
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_shop = require "enterprise_shop"
 
@@ -434,12 +434,12 @@ function T_Factory.T_getFuelNeed_Production_Att()
 
     -- prepare test L2
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
-    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation0:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
     local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
-    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation0:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
@@ -452,8 +452,8 @@ function T_Factory.T_getFuelNeed_Production_Att()
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
-    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
+    enterprise_storage:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
+    enterprise_storage:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
 end
 
 --    _____ _____ _                  _____                   _ _

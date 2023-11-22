@@ -30,7 +30,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local role_conservator = require "role_conservator"
 
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_employment
 
@@ -133,11 +133,11 @@ function UserStation:construct(...)
     if not checkSuccess then corelog.Error("UserStation:construct: Invalid input") return nil end
 
     -- determine UserStation fields
-    local inputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local inputLocator = enterprise_storage:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(4, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
-    local outputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local outputLocator = enterprise_storage:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(2, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
@@ -167,15 +167,15 @@ function UserStation:destruct()
     local destructSuccess = true
 
     -- input locator
-    if self._inputLocator:getHost() == enterprise_chests:getHostName() then
-        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = self._inputLocator })
+    if self._inputLocator:getHost() == enterprise_storage:getHostName() then
+        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = self._inputLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("UserStation:destruct(): failed releasing input locator "..self._inputLocator:getURI()) destructSuccess = false end
     end
     self._inputLocator = nil
 
     -- output locator
-    if self._outputLocator:getHost() == enterprise_chests:getHostName() then
-        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = self._outputLocator })
+    if self._outputLocator:getHost() == enterprise_storage:getHostName() then
+        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = self._outputLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("UserStation:destruct(): failed releasing output locator "..self._outputLocator:getURI()) destructSuccess = false end
     end
     self._outputLocator = nil

@@ -14,7 +14,7 @@ local URL = require "obj_url"
 local Turtle = require "mobj_turtle"
 
 local enterprise_employment = require "enterprise_employment"
-local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
@@ -340,7 +340,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     local provideItems = { ["minecraft:birch_log"] = 5, }
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocationChest) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = enterprise_chests:saveObject(obj2)
+    local itemDepotLocator = enterprise_storage:saveObject(obj2)
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 
@@ -348,7 +348,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    enterprise_chests:deleteResource(itemDepotLocator)
+    enterprise_storage:deleteResource(itemDepotLocator)
 end
 
 function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
@@ -431,7 +431,7 @@ function T_Turtle.T_storeItemsFrom_AOSrv_FromChest()
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
 
     local itemSupplierConstructParameters = { baseLocation = baseLocationChest:copy(), accessDirection = "top", }
-    local itemSupplierLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local itemSupplierLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local storeItems = { ["minecraft:birch_log"] = 5, }
 

@@ -2,22 +2,30 @@ local t_storage = {}
 
 local corelog = require "corelog"
 
+local Callback = require "obj_callback"
 local Location = require "obj_location"
 local URL = require "obj_url"
+local Inventory = require "obj_inventory"
 
 local TestArrayTest = require "test_array_test"
 local FieldTest = require "field_test"
 local ValueTypeTest = require "value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
+local T_Chest = require "test.t_mobj_chest"
 local T_Silo = require "test.t_mobj_silo"
 local T_MObjHost = require "test.t_mobj_host"
+
+local enterprise_projects = require "enterprise_projects"
 local enterprise_storage
 
 function t_storage.T_All()
     -- IObj
 
     -- MObjHost
+    t_storage.T_hostMObj_SSrv_Chest()
+    t_storage.T_releaseMObj_SSrv_Chest()
+
     t_storage.T_hostMObj_SSrv_Silo()
     t_storage.T_releaseMObj_SSrv_Silo()
 end
@@ -26,14 +34,29 @@ function t_storage.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = t_storage.T_buildAndHostMObj_ASrv_Silo()
+    local mobjLocator = t_storage.T_buildAndHostMObj_ASrv_Chest()
+    t_storage.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
+
+    mobjLocator = t_storage.T_buildAndHostMObj_ASrv_Silo()
     t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
 end
 
+local testChestClassName = "Chest"
+local testChestName = "chest"
+
+local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
+local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
+local baseLocation_Chest0 = testStartLocation:getRelativeLocation(2, 5, 0)
+local accessDirection0 = "top"
+local inventory1 = Inventory:newInstance() -- optionally add elements
+
+local constructParameters_Chest0 = {
+    baseLocation    = baseLocation_Chest0,
+    accessDirection = accessDirection0,
+}
+
 local testSiloClassName = "Silo"
 local testSiloName = "silo"
-
-local logOk = false
 
 local baseLocation_Silo0  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation_Silo0 = baseLocation_Silo0:getRelativeLocation(3, 3, 0)
@@ -47,6 +70,8 @@ local constructParameters_Silo0 = {
     nLayers         = nLayers0,
 }
 
+local logOk = false
+
 --    __  __  ____  _     _ _    _           _                    _   _               _
 --   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
 --   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
@@ -58,6 +83,104 @@ local constructParameters_Silo0 = {
 
 -- ** Chest **
 
+function t_storage.T_hostAndUpdateChest()
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    corelog.WriteToLog("* Test host and update Chest")
+    local callback = Callback:newInstance("t_ccwp", "Func1_Callback", { } )
+
+    -- create project
+    local projectData = {
+        hostLocator         = enterprise_storage:getHostLocator(),
+        className           = "Chest",
+        constructParameters = {
+            baseLocation    = testStartLocation2:getRelativeLocation(2, 5, 0),
+            accessDirection = "back",
+        }
+    }
+    local projectServiceData = {
+        projectDef  = t_storage.GetHostAndUpdateChestProjectDef(),
+        projectData = projectData,
+        projectMeta = { title = "Testing", description = "Register and update Chest" },
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+function t_storage.GetHostAndUpdateChestProjectDef()
+    return {
+        steps = {
+            -- host Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "className"          , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "constructParameters", sourceStep = 0, sourceKeyDef = "constructParameters" },
+            }},
+            -- update Chest
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "updateChestRecord_AOSrv", locatorStep = 1, locatorKeyDef = "mobjLocator" }, stepDataDef = {
+            }, description = "Updating Chest record"},
+        },
+        returnData = {
+            { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "mobjLocator" },
+        }
+    }
+end
+
+function t_storage.T_hostMObj_SSrv_Chest()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation_Chest0, accessDirection0, inventory1)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+local mobjLocator_Chest = nil
+
+function t_storage.T_buildAndHostMObj_ASrv_Chest()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+
+    -- test
+    local serviceResults = T_MObjHost.pt_buildAndHostMObj_ASrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Chest = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_storage.T_releaseMObj_SSrv_Chest()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+
+    -- test
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_storage.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_Chest, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_Chest
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_storage, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Chest = nil
+end
 
 -- ** Silo **
 
