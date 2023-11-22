@@ -24,6 +24,7 @@ local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_dump = require "enterprise_dump"
+local enterprise_gathering = require "enterprise_gathering"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_colonization = require "enterprise_colonization"
@@ -65,9 +66,10 @@ function t_ccwp.T_DeleteWorld()
     enterprise_shop:deleteShop()
     enterprise_dump.Reset()
 
-    -- LObj's
-    enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" })
+    -- L/MObj's
     enterprise_forestry:releaseLObjs_SSrv({ className = "BirchForest" })
+    enterprise_gathering:releaseLObjs_SSrv({ className = "MineShaft" })
+    enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" })
     enterprise_storage:releaseLObjs_SSrv({ className = "Silo"})
 end
 
