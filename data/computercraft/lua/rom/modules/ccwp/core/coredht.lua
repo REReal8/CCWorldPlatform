@@ -271,6 +271,21 @@ function coredht.EditDHTDisplay(t, userInput)
     -- import display
     local coredisplay = require "coredisplay"
 
+    -- did we get user input?
+    if t.editValue and userInput ~= "e" then
+
+        -- process the new value
+        local f, err = load("return "..userInput)
+        if f ~= nil and not err then
+
+            -- usefull value?
+            coredht.SaveData(tostring(f()), unpack(t.keyList))
+        end
+
+        -- back to usefull screen
+        t.editValue = false
+    end
+
     -- usefull
     local keyList   = t.keyList or {}
     local subRoot   = db
@@ -304,26 +319,18 @@ function coredht.EditDHTDisplay(t, userInput)
         end
     else
 
-        -- editing?
+        -- single value, show option for editing?
         if not t.editValue then
             -- different intro and allow editing
             intro = "The value : '"..tostring(subRoot).."'"
             table.insert(options, {key = "e", desc = "edit value", func = coredht.EditDHTDisplay, param = {keyList = keyList, editValue = true }})
         else
-            -- value
+            -- we are editing, show screen for user input
             if userInput == "e" then
                 -- start the screen to edit the value
                 intro    = "Type the new value of this key. Use quotes for strings!!"
                 options  = nil
                 question = nil
-            else
-                -- process the new value
-                local f, err = load("return "..userInput)
-                if f ~= nil and not err then
-
-                    -- usefull value?
-                    coredht.SaveData(tostring(f()), unpack(t.keyList))
-                end
             end
         end
     end
