@@ -303,7 +303,8 @@ function coredht.EditDHTDisplay(t)
         end
     else
         -- different intro
-        intro = "The value = "..tostring(subRoot)
+        intro = "The value : '"..tostring(subRoot).."'"
+        table.insert(options, {key = "e", desc = "edit value", func = coredht.EditDHTDisplay, param = {keyList = keyList, editValue = true }})
     end
 
     -- create the next screen
