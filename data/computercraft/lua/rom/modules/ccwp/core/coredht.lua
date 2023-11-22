@@ -267,7 +267,7 @@ end
 --               |_|            |___/
 
 
-function coredht.EditDHTDisplay(t)
+function coredht.EditDHTDisplay(t, userInput)
     -- import display
     local coredisplay = require "coredisplay"
 
@@ -289,6 +289,7 @@ function coredht.EditDHTDisplay(t)
     -- which keys are present in the subroot?
     local intro     = "Available keys in the dht"
     local options   = {{key = "x", desc = "back", func = coredht.EditDHTDisplay, param = {keyList=keyList, removeKey=true}}}
+    local question  = "Make your choice"
 
     -- loop subroot (if it's a table)
     local lastKey = 97
@@ -302,9 +303,25 @@ function coredht.EditDHTDisplay(t)
             lastKey = lastKey + 1
         end
     else
-        -- different intro
-        intro = "The value : '"..tostring(subRoot).."'"
-        table.insert(options, {key = "e", desc = "edit value", func = coredht.EditDHTDisplay, param = {keyList = keyList, editValue = true }})
+
+        -- editing?
+        if not t.editValue then
+            -- different intro and allow editing
+            intro = "The value : '"..tostring(subRoot).."'"
+            table.insert(options, {key = "e", desc = "edit value", func = coredht.EditDHTDisplay, param = {keyList = keyList, editValue = true }})
+        else
+            -- value
+            if userInput == "e" then
+                -- start the screen to edit the value
+                intro    = "Type the new value of this key. Use quotes for strings!!"
+                options  = nil
+                question = nil
+            else
+                -- process the new value
+                local f, err = load("return "..userInput)
+                if f ~= nil and not err then corelog.WriteToLog("We have a new value: "..tostring(f())) end
+            end
+        end
     end
 
     -- create the next screen
@@ -312,7 +329,11 @@ function coredht.EditDHTDisplay(t)
         clear = true,
         intro = intro,
         option = options,
-        question = "Make your choice"
+        question = question,
+
+        -- only for edit value screen
+        func = coredht.EditDHTDisplay,
+        param = t
     })
 
     -- done!
