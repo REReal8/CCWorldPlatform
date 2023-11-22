@@ -292,15 +292,15 @@ function coredht.EditDHTDisplay(t, userInput)
     local question  = "Make your choice"
 
     -- loop subroot (if it's a table)
-    local lastKey = 97
+    local lastChar = 97
     if type(subRoot) == "table" then
         for key, _ in pairs(subRoot) do
 
             -- insert option
-            table.insert(options, {key = string.char(lastKey), desc = key, func = coredht.EditDHTDisplay, param = {keyList = keyList, newKey = key }})
+            table.insert(options, {key = string.char(lastChar), desc = key, func = coredht.EditDHTDisplay, param = {keyList = keyList, newKey = key }})
 
             -- update
-            lastKey = lastKey + 1
+            lastChar = lastChar + 1
         end
     else
 
