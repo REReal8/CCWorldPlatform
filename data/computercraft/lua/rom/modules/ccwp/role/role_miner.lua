@@ -105,7 +105,7 @@ function role_miner.MineShaft_Task(...)
     for i, entryLocation in ipairs(entrySequence) do
         -- corelog.WriteToLog("Moving to")
         -- corelog.WriteToLog(entryLocation)
-        coremove.GoTo(entryLocation)
+        coremove.GoTo(entryLocation, true)
     end
 
     -- dig a hole while depth left and not all provideItems found
@@ -149,7 +149,7 @@ function role_miner.MineShaft_Task(...)
         for i, exitLocation in ipairs(exitSequence) do
             -- corelog.WriteToLog("Moving to")
             -- corelog.WriteToLog(exitLocation)
-            coremove.GoTo(exitLocation)
+            coremove.GoTo(exitLocation, true)
         end
     end
 
