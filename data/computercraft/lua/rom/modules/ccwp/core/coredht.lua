@@ -279,7 +279,7 @@ function coredht.EditDHTDisplay(t, userInput)
         if f ~= nil and not err then
 
             -- usefull value?
-            coredht.SaveData(tostring(f()), unpack(t.keyList))
+            coredht.SaveData(f(), unpack(t.keyList))
         end
 
         -- back to usefull screen
