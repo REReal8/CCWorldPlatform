@@ -276,11 +276,7 @@ function coredht.EditDHTDisplay(t, userInput)
 
         -- process the new value
         local f, err = load("return "..userInput)
-        if f ~= nil and not err then
-
-            -- usefull value?
-            coredht.SaveData(f(), unpack(t.keyList))
-        end
+        if f ~= nil and not err then coredht.SaveData(f(), unpack(t.keyList)) end
 
         -- back to usefull screen
         t.editValue = false
