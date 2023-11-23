@@ -59,6 +59,16 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
+R  introduce ObjL class extending URL class representing a locator of an IObj
+   -  with methods
+      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+      -  getId             (note: optional; only if class is an ILObj)
+   -  work with ObjL's instead of URL's
+      -  ObjHost
+      -  LObjHost
+      -  MObjHost
+      -  ...
+
 R  merge enterprise_chest into enterprise_storage                                                                       (....)
 
 -  Turtle(s) improvements
@@ -146,16 +156,6 @@ R  merge enterprise_chest into enterprise_storage                               
    -  v3
       -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
       -  ensure it takes the closest
-
--  introduce ObjLocator class extending URL class representing a locator of an IObj
-   -  with methods
-      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
-      -  getId             (note: optional; only if class is an ILObj)
-   -  work with ObjLocator's instead of URL's
-      -  ObjHost
-      -  LObjHost
-      -  MObjHost
-      -  ...
 
 -  IItemSupplier & IItemDepot interface
    -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
