@@ -1,52 +1,43 @@
-local T_MObjTest = {}
+local T_LObjTest = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
-local Location = require "obj_location"
 
 local LObjTest = require "test.lobj_test"
-local MObjTest = require "test.mobj_test"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
-local IsBlueprintTest = require "test.is_blueprint_test"
+local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
-local T_IMObj = require "test.t_i_mobj"
+local T_ILObj = require "test.t_i_lobj"
 
-function T_MObjTest.T_All()
+function T_LObjTest.T_All()
     -- initialisation
-    T_MObjTest.T__init()
-    T_MObjTest.T_new()
+    T_LObjTest.T__init()
+    T_LObjTest.T_new()
+    T_LObjTest.T_Getters()
 
     -- IObj
-    T_MObjTest.T_IObj_All()
+    T_LObjTest.T_IObj_All()
 
     -- ILObj
-    T_MObjTest.T_ILObj_All()
-
-    -- IMObj
-    T_MObjTest.T_IMObj_All()
+    T_LObjTest.T_ILObj_All()
 end
 
-function T_MObjTest.T_AllPhysical()
-end
-
-local testClassName = "MObjTest"
-local testObjName = "mobjTest"
+local testClassName = "LObjTest"
+local testObjName = "lobjTest"
 
 local logOk = false
 
-local baseLocation0  = Location:newInstance(-6, 0, 1, 0, 1)
 local field1_0 = "field1 0"
 local field1_1 = "field1 1"
 
 local constructParameters0 = {
-    baseLocation    = baseLocation0,
     field1Value     = field1_0,
 }
 local upgradeParameters0 = {
@@ -62,20 +53,19 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_MObjTest.CreateTestObj(id, baseLocation, field1)
+function T_LObjTest.CreateTestObj(id, field1)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or baseLocation0
     field1 = field1 or field1_0
 
     -- create testObj
-    local testObj = MObjTest:newInstance(id, baseLocation:copy(), field1)
+    local testObj = LObjTest:newInstance(id, field1)
 
     -- end
     return testObj
 end
 
-function T_MObjTest.CreateInitialisedTest(id, baseLocation, field1)
+function T_LObjTest.CreateInitialisedTest(id, field1)
     -- check input
 
     -- create test
@@ -83,7 +73,6 @@ function T_MObjTest.CreateInitialisedTest(id, baseLocation, field1)
     if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
     local test = TestArrayTest:newInstance(
         idTest,
-        FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_field1", field1)
     )
 
@@ -91,32 +80,46 @@ function T_MObjTest.CreateInitialisedTest(id, baseLocation, field1)
     return test
 end
 
-function T_MObjTest.T__init()
+function T_LObjTest.T__init()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":_init() tests")
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_MObjTest.CreateTestObj(id, baseLocation0, field1_0) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation0, field1_0)
+    local obj = T_LObjTest.CreateTestObj(id, field1_0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_LObjTest.CreateInitialisedTest(id, field1_0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
 
-function T_MObjTest.T_new()
+function T_LObjTest.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
 
     -- test
-    local obj = MObjTest:new({
+    local obj = LObjTest:new({
         _id             = id,
 
-        _baseLocation   = baseLocation0:copy(),
         _field1         = field1_0,
     })
-    local test = T_MObjTest.CreateInitialisedTest(id, baseLocation0, field1_0)
+    local test = T_LObjTest.CreateInitialisedTest(id, field1_0)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
+end
+
+function T_LObjTest.T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName.." base getter tests")
+    local id = coreutils.NewId()
+    local obj = T_LObjTest.CreateTestObj(id, field1_0) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local test = TestArrayTest:newInstance(
+        MethodResultEqualTest:newInstance("getField1", field1_0)
+    )
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -131,11 +134,11 @@ end
 --                    _/ |
 --                   |__/
 
-function T_MObjTest.T_IObj_All()
+function T_LObjTest.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_MObjTest.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_MObjTest.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_LObjTest.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_LObjTest.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -152,39 +155,25 @@ end
 --                           _/ |
 --                          |__/
 
-function T_MObjTest.T_ILObj_All()
+function T_LObjTest.T_ILObj_All()
     -- prepare test
-    local obj = T_MObjTest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local destructFieldsTest = TestArrayTest:newInstance()
 
-    -- test
-    T_Class.pt_IsInstanceOf(testClassName, obj, "LObjTest", LObjTest)
-end
+    local constructFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_0)
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
-
-function T_MObjTest.T_IMObj_All()
-    -- prepare test
-    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
+    local upgradeFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_1)
 
     -- test cases
-    T_IMObj.pt_all(testClassName, MObjTest, {
+    T_ILObj.pt_all(testClassName, LObjTest, {
         {
-            objName                 = testObjName,
-            constructParameters     = constructParameters0,
-            constructBlueprintTest  = isBlueprintTest,
-            expectedBaseLocation    = baseLocation0:copy(),
-            upgradeParameters       = upgradeParameters0,
-            upgradeBlueprintTest    = isBlueprintTest,
-            dismantleBlueprintTest  = isBlueprintTest,
+            objName             = testObjName,
+            constructParameters = constructParameters0,
+            constructFieldsTest = constructFieldsTest,
+            destructFieldsTest  = destructFieldsTest,
+            upgradeParameters   = upgradeParameters0,
+            upgradeFieldsTest   = upgradeFieldsTest,
         },
     }, logOk)
 end
 
-return T_MObjTest
+return T_LObjTest

@@ -98,8 +98,8 @@ function library.Setup()
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
     objectFactory:registerClass("MObjTest",     require "test.mobj_test")
-
     objectFactory:registerClass("MObjHost",     require "mobj_host")
+
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
     objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("DisplayStation",  require "mobj_display_station")
@@ -121,8 +121,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_MObjLibrary", libraryName..".library")
 
     moduleRegistry:requireAndRegisterModule("T_MObjTest", "test.t_mobj_test")
-
     moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
+
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
