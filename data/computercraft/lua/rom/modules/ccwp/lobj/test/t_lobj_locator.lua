@@ -8,8 +8,9 @@ local Class = require "class"
 local IObj = require "i_obj"
 local ILObj = require "i_lobj"
 local ObjBase = require "obj_base"
-local LObjLocator = require "lobj_locator"
+local ObjLocator = require "obj_locator"
 
+local LObjLocator = require "lobj_locator"
 local LObjTest = require "test.lobj_test"
 
 local TestArrayTest = require "test_array_test"
@@ -147,6 +148,7 @@ function T_LObjLocator.T_IObj_All()
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjLocator", ObjLocator) -- ToDo: is this the right place to put this statement (as it's not IObj related)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 

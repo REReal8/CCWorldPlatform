@@ -6,6 +6,7 @@ local Class = require "class"
 
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
+local URL = require "obj_url"
 local ObjLocator = require "obj_locator"
 
 local TestObj = require "test.obj_test"
@@ -156,6 +157,7 @@ function T_ObjLocator.T_IObj_All()
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "URL", URL) -- ToDo: is this the right place to put this statement (as it's not IObj related)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
