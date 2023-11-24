@@ -59,7 +59,7 @@ function ObjLocator:getObjClassName()
     return objClassName
 end
 
-local objRefPattern = "%/id=([%w]+)"
+local objRefPattern = "%/id=([%w:]+)"
 function ObjLocator:getObjRef()
     -- get objClassName from path
     local objRef = self:getPath():match(objRefPattern)

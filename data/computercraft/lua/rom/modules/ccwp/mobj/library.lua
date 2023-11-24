@@ -46,6 +46,7 @@ function library.T_AllPhysical()
 
     local T_MObjTest = require "test.t_mobj_test"
     local t_mobj_host = require "test.t_mobj_host"
+
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
     local T_DisplayStation = require "test.t_mobj_display_station"
@@ -59,6 +60,7 @@ function library.T_AllPhysical()
     -- library tests
     T_MObjTest.T_AllPhysical()
     t_mobj_host.T_AllPhysical()
+
     T_BirchForest.T_AllPhysical()
     T_Chest.T_AllPhysical()
     T_DisplayStation.T_AllPhysical()
