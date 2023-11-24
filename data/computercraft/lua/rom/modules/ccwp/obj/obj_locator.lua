@@ -6,7 +6,7 @@ local ObjLocator = Class.NewClass(URL)
 --[[
     This module implements the class ObjLocator.
 
-    A ObjLocator is a URL that locates an IObj.
+    A ObjLocator is a URL that locates an Obj.
 --]]
 
 local corelog = require "corelog"
@@ -36,9 +36,9 @@ function ObjLocator:_init(...)
     if not checkSuccess then corelog.Error("ObjLocator:_init: Invalid input") return nil end
     if not Class.IsInstanceOf(obj, IObj) then corelog.Error("ObjLocator:_init: obj is not an IObj") return nil end
 
-    -- determine path
-    local className = obj:getClassName()
-    local objPath = "/objects/class="..className
+    -- determine objPath
+    local objClassName = obj:getClassName()
+    local objPath = "/objects/class="..objClassName
     if objRef ~= "" then
         -- ToDo: consider renaming id to ref
         objPath = objPath.."/id="..objRef
@@ -53,12 +53,21 @@ local classNamePattern = "%/class=([%w]+)"
 function ObjLocator:getObjClassName()
     -- get objClassName from path
     local objClassName = self:getPath():match(classNamePattern)
-    if not objClassName then corelog.Warning("ObjLocator:getObjClassName: no className in path of "..self:getURI()) return nil end
+    if not objClassName then corelog.Warning("ObjLocator:getObjClassName: no objClassName in path of "..self:getURI()) return nil end
 
     -- end
     return objClassName
 end
 
+local objRefPattern = "%/id=([%w]+)"
+function ObjLocator:getObjRef()
+    -- get objClassName from path
+    local objRef = self:getPath():match(objRefPattern)
+    if not objRef then corelog.Warning("ObjLocator:getObjRef: no objRef in path of "..self:getURI()) return nil end
+
+    -- end
+    return objRef
+end
 
 --    _____ ____  _     _
 --   |_   _/ __ \| |   (_)
