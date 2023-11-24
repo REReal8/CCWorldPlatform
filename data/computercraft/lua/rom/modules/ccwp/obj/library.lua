@@ -20,6 +20,7 @@ function library.T_All()
     local T_Callback = require "test.t_obj_callback"
     local T_TaskCall = require "test.t_obj_task_call"
     local T_URL = require "test.t_obj_url"
+    local T_ObjLocator = require "test.t_obj_locator"
     local T_Host = require "test.t_host"
     local T_ObjHost = require "test.t_obj_host"
     local T_Location = require "test.t_obj_location"
@@ -38,6 +39,7 @@ function library.T_All()
     T_Callback.T_All()
     T_TaskCall.T_All()
     T_URL.T_All()
+    T_ObjLocator.T_All()
     T_Host.T_All()
     T_ObjHost.T_All()
     T_Location.T_All()
@@ -54,18 +56,19 @@ local function ExecuteLibraryTest(t)
 	local options	= {
         {key = "1", desc = "All",			    func = ExecuteLibraryTest, param = {filename = "T_ObjLibrary"}},
 
-		{key = "2", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
+		{key = "b", desc = "ObjBase", 			func = ExecuteLibraryTest, param = {filename = "T_ObjBase"}},
 		{key = "a", desc = "ObjArray", 			func = ExecuteLibraryTest, param = {filename = "T_ObjArray"}},
-		{key = "o", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
+		{key = "t", desc = "ObjTable", 			func = ExecuteLibraryTest, param = {filename = "T_ObjTable"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteLibraryTest, param = {filename = "T_CallDef"}},
-		{key = "c", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},
+		{key = "2", desc = "Callback", 			func = ExecuteLibraryTest, param = {filename = "T_Callback"}},
 		{key = "t", desc = "TaskCall", 			func = ExecuteLibraryTest, param = {filename = "T_TaskCall"}},
 		{key = "u", desc = "URL", 				func = ExecuteLibraryTest, param = {filename = "T_URL"}},
+		{key = "l", desc = "ObjLocator",		func = ExecuteLibraryTest, param = {filename = "T_ObjLocator"}},
 		{key = "h", desc = "Host", 				func = ExecuteLibraryTest, param = {filename = "T_Host"}},
 		{key = "j", desc = "ObjHost", 			func = ExecuteLibraryTest, param = {filename = "T_ObjHost"}},
-		{key = "l", desc = "Location",			func = ExecuteLibraryTest, param = {filename = "T_Location"}},
-		{key = "b", desc = "Block",				func = ExecuteLibraryTest, param = {filename = "T_Block"}},
-		{key = "p", desc = "CodeMap",			func = ExecuteLibraryTest, param = {filename = "T_CodeMap"}},
+		{key = "3", desc = "Location",			func = ExecuteLibraryTest, param = {filename = "T_Location"}},
+		{key = "4", desc = "Block",				func = ExecuteLibraryTest, param = {filename = "T_Block"}},
+		{key = "m", desc = "CodeMap",			func = ExecuteLibraryTest, param = {filename = "T_CodeMap"}},
 		{key = "r", desc = "LayerRectangle",	func = ExecuteLibraryTest, param = {filename = "T_LayerRectangle"}},
 		{key = "i", desc = "Inventory",			func = ExecuteLibraryTest, param = {filename = "T_Inventory"}},
 		{key = "g", desc = "ItemTable",			func = ExecuteLibraryTest, param = {filename = "T_ItemTable"}},
@@ -87,6 +90,7 @@ function library.Setup()
     objectFactory:registerClass("Callback", require "obj_callback")
     objectFactory:registerClass("TaskCall", require "obj_task_call")
     objectFactory:registerClass("URL", require "obj_url")
+    objectFactory:registerClass("ObjLocator", require "obj_locator")
     objectFactory:registerClass("Host", require "host")
     objectFactory:registerClass("ObjHost", require "obj_host")
     objectFactory:registerClass("Location", require "obj_location")
@@ -118,6 +122,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Callback", "test.t_obj_callback")
     moduleRegistry:requireAndRegisterModule("T_TaskCall", "test.t_obj_task_call")
     moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
+    moduleRegistry:requireAndRegisterModule("T_ObjLocator", "test.t_obj_locator")
     moduleRegistry:requireAndRegisterModule("T_Host", "test.t_host")
     moduleRegistry:requireAndRegisterModule("T_ObjHost", "test.t_obj_host")
     moduleRegistry:requireAndRegisterModule("T_Location", "test.t_obj_location")
