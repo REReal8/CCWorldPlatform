@@ -36,10 +36,11 @@ function LObjLocator:_init(...)
     if not Class.IsInstanceOf(lobj, ILObj) then corelog.Error("LObjLocator:_init: lobj is not an ILObj") return nil end
 
     -- determine objRef
+    local objClassName = lobj:getClassName()
     local objRef = lobj:getId()
 
     -- initialisation
-    ObjLocator._init(self, hostName, lobj, objRef, query)
+    ObjLocator._init(self, hostName, objClassName, objRef, query)
 end
 
 function LObjLocator:getObjId()

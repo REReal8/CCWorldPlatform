@@ -71,9 +71,10 @@ function T_LObjLocator.CreateInitialisedTest(hostName, locatedLObj, query)
     assert(Class.IsInstanceOf(locatedLObj, ILObj), "locatedLObj not an ILObj")
 
     -- create test
+    local objClassName = locatedLObj:getClassName()
     local objRef = locatedLObj:getId()
 
-    local test = T_ObjLocator.CreateInitialisedTest(hostName, locatedLObj, objRef, query)
+    local test = T_ObjLocator.CreateInitialisedTest(hostName, objClassName, objRef, query)
 
     -- end
     return test

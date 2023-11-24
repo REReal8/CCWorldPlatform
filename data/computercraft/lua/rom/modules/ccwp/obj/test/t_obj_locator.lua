@@ -33,7 +33,7 @@ local testObjName = "objLocator"
 local logOk = false
 
 local hostName0 = "TestObjHost"
-local locatedObj0 = TestObj:newInstance("field1", 4)
+local objClassName0 = "TestObj"
 local objRef0 = ""
 local objRef1 = "anObjRef:withColon"
 local noQuery = {}
@@ -52,27 +52,25 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_ObjLocator.CreateTestObj(hostName, locatedObj, objRef, query)
+function T_ObjLocator.CreateTestObj(hostName, objClassName, objRef, query)
     -- check input
     hostName = hostName or hostName0
-    locatedObj = locatedObj or locatedObj0
+    objClassName = objClassName or objClassName0
     objRef = objRef or objRef1
     query = query or {[itemName0] = itemCount0, [itemName1] = itemCount1}
 
     -- create testObj
-    local testObj = ObjLocator:newInstance(hostName, locatedObj, objRef, query)
+    local testObj = ObjLocator:newInstance(hostName, objClassName, objRef, query)
 
     -- end
     return testObj
 end
 
-function T_ObjLocator.CreateInitialisedTest(hostName, locatedObj, objRef, query)
+function T_ObjLocator.CreateInitialisedTest(hostName, objClassName, objRef, query)
     -- check input
-    assert(Class.IsInstanceOf(locatedObj, IObj), "locatedObj not an IObj")
 
     -- create test
-    local className = locatedObj:getClassName()
-    local objPath = "/objects/class="..className
+    local objPath = "/objects/class="..objClassName
     if objRef ~= "" then
         -- ToDo: consider renaming id to ref
         objPath = objPath.."/id="..objRef
@@ -89,13 +87,13 @@ function T_ObjLocator.T__init()
     corelog.WriteToLog("* "..testClassName..":_init() tests")
 
     -- test
-    local obj = T_ObjLocator.CreateTestObj(hostName0, locatedObj0, objRef1, query0) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_ObjLocator.CreateInitialisedTest(hostName0, locatedObj0, objRef1, query0)
+    local obj = T_ObjLocator.CreateTestObj(hostName0, objClassName0, objRef1, query0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_ObjLocator.CreateInitialisedTest(hostName0, objClassName0, objRef1, query0)
     test:test(obj, testObjName, "", logOk)
 
     -- test default
-    obj = ObjLocator:newInstance(hostName0, locatedObj0)
-    test = T_ObjLocator.CreateInitialisedTest(hostName0, locatedObj0, objRef0, noQuery)
+    obj = ObjLocator:newInstance(hostName0, objClassName0)
+    test = T_ObjLocator.CreateInitialisedTest(hostName0, objClassName0, objRef0, noQuery)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -104,8 +102,7 @@ end
 function T_ObjLocator.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
-    local objClassName = locatedObj0:getClassName()
-    local objPath = "/objects/class="..objClassName
+    local objPath = "/objects/class="..objClassName0
     if objRef1 ~= "" then
         -- ToDo: consider renaming id to ref
         objPath = objPath.."/id="..objRef1
@@ -118,7 +115,20 @@ function T_ObjLocator.T_new()
         _query  = query0,
         _port   = nil,
     })
-    local test = T_ObjLocator.CreateInitialisedTest(hostName0, locatedObj0, objRef1, query0)
+    local test = T_ObjLocator.CreateInitialisedTest(hostName0, objClassName0, objRef1, query0)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
+end
+
+function T_ObjLocator.T_newInstanceFromObj()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":newInstanceFromObj() tests")
+    local locatedObj0 = TestObj:newInstance("field1", 4)
+
+    -- test full
+    local obj = ObjLocator:newInstanceFromObj(hostName0, locatedObj0, objRef1, query0)
+    local test = T_ObjLocator.CreateInitialisedTest(hostName0, objClassName0, objRef1, query0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -127,12 +137,11 @@ end
 function T_ObjLocator.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")
-    local obj = T_ObjLocator.CreateTestObj(hostName0, locatedObj0, objRef1, query0) assert(obj, "Failed obtaining "..testClassName)
-    local locatedObjClassName = locatedObj0:getClassName()
+    local obj = T_ObjLocator.CreateTestObj(hostName0, objClassName0, objRef1, query0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getObjClassName", locatedObjClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", objClassName0),
         MethodResultEqualTest:newInstance("getObjRef", objRef1)
     )
     test:test(obj, testObjName, "", logOk)

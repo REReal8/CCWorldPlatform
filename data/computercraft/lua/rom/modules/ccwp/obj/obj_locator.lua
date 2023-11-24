@@ -24,29 +24,50 @@ local IObj = require "i_obj"
 
 function ObjLocator:_init(...)
     -- get & check input from description
-    local checkSuccess, hostName, obj, objRef, query = InputChecker.Check([[
+    local checkSuccess, hostName, objClassName, objRef, query = InputChecker.Check([[
         Initialise a ObjLocator.
 
         Parameters:
             hostName                + (string) with hostName of the Host
-            obj                     + (?) with IObj
-            objRef                  + (string, "") with a object reference (e.g. the id of the IObj)
+            objClassName            + (string) with className of the Obj
+            objRef                  + (string, "") with a Obj reference (e.g. the id of the IObj)
             query                   + (table, {}) of key-value pairs with (item) query segments
     ]], ...)
     if not checkSuccess then corelog.Error("ObjLocator:_init: Invalid input") return nil end
-    if not Class.IsInstanceOf(obj, IObj) then corelog.Error("ObjLocator:_init: obj is not an IObj") return nil end
 
     -- determine objPath
-    local objClassName = obj:getClassName()
     local objPath = "/objects/class="..objClassName
     if objRef ~= "" then
-        -- ToDo: consider renaming id to ref
         objPath = objPath.."/id="..objRef
     end
 
     -- initialisation
     local port = nil
     URL._init(self, hostName, objPath, query, port)
+end
+
+function ObjLocator:newInstanceFromObj(...)
+    -- get & check input from description
+    local checkSuccess, hostName, obj, objRef, query = InputChecker.Check([[
+        Initialise a ObjLocator.
+
+        Parameters:
+            hostName                + (string) with hostName of the Host
+            obj                     + (?) with IObj
+            objRef                  + (string, "") with a Obj reference (e.g. the id of the IObj)
+            query                   + (table, {}) of key-value pairs with (item) query segments
+    ]], ...)
+    if not checkSuccess then corelog.Error("ObjLocator:newInstanceFromObj: Invalid input") return nil end
+    if not Class.IsInstanceOf(obj, IObj) then corelog.Error("ObjLocator:newInstanceFromObj: obj is not an IObj") return nil end
+
+    -- determine objClassName
+    local objClassName = obj:getClassName()
+
+    -- initialisation
+    local instance = ObjLocator:newInstance(hostName, objClassName, objRef, query)
+
+    -- end
+    return instance
 end
 
 local classNamePattern = "%/class=([%w]+)"
