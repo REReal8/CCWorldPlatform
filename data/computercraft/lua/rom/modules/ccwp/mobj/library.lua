@@ -46,6 +46,7 @@ function library.T_AllPhysical()
 
     local T_MObjTest = require "test.t_mobj_test"
     local t_mobj_host = require "test.t_mobj_host"
+
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
     local T_DisplayStation = require "test.t_mobj_display_station"
@@ -59,6 +60,7 @@ function library.T_AllPhysical()
     -- library tests
     T_MObjTest.T_AllPhysical()
     t_mobj_host.T_AllPhysical()
+
     T_BirchForest.T_AllPhysical()
     T_Chest.T_AllPhysical()
     T_DisplayStation.T_AllPhysical()
@@ -98,8 +100,8 @@ function library.Setup()
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
     objectFactory:registerClass("MObjTest",     require "test.mobj_test")
-
     objectFactory:registerClass("MObjHost",     require "mobj_host")
+
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
     objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("DisplayStation",  require "mobj_display_station")
@@ -121,8 +123,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_MObjLibrary", libraryName..".library")
 
     moduleRegistry:requireAndRegisterModule("T_MObjTest", "test.t_mobj_test")
-
     moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
+
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")

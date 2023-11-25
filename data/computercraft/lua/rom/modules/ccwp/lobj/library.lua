@@ -13,9 +13,15 @@ function library.T_All()
     local corelog = require "corelog"
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
+    local T_LObjTest = require "test.t_lobj_test"
+
+    local T_LObjLocator = require "test.t_lobj_locator"
     local T_Shop = require "test.t_shop"
 
     -- library tests
+    T_LObjTest.T_All()
+
+    T_LObjLocator.T_All()
     T_Shop.T_All()
 end
 
@@ -23,6 +29,10 @@ local function ExecuteLibraryTest(t)
     -- forward call with options
     local options	= {
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_LObjLibrary"}},
+
+        {key = "2", desc = "LObjTest",          func = ExecuteLibraryTest, param = {filename = "T_LObjTest"}},
+
+        {key = "l", desc = "LObjLocator",		func = ExecuteLibraryTest, param = {filename = "T_LObjLocator"}},
 
         {key = "s", desc = "Shop",              func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
@@ -34,6 +44,9 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
+    objectFactory:registerClass("LObjTest",     require "test.lobj_test")
+
+    objectFactory:registerClass("LObjLocator",  require "lobj_locator")
     objectFactory:registerClass("Shop",         require "shop")
 
     -- register library modules
@@ -45,8 +58,11 @@ function library.Setup()
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_LObjLibrary", libraryName..".library")
 
+    moduleRegistry:requireAndRegisterModule("T_LObjTest", "test.t_lobj_test")
+
     moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
     moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
+    moduleRegistry:requireAndRegisterModule("T_LObjLocator", "test.t_lobj_locator")
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_shop")
 
     -- add library test menu

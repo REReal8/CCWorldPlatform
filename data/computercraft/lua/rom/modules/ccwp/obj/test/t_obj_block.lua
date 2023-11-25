@@ -28,6 +28,7 @@ function T_Block.T_All()
 end
 
 local testClassName = "Block"
+local testObjName = "block"
 local logOk = false
 local dx1 = 0
 local dy1 = 1
@@ -77,17 +78,17 @@ function T_Block.T__init()
     -- test
     local obj = T_Block.CreateTestObj(saplingItemName, dx1, dy1) assert(obj, "Failed obtaining "..testClassName)
     local test = T_Block.CreateInitialisedTest(saplingItemName, dx1, dy1)
-    test:test(obj, "block", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- test without orientations (i.e dx, dy)
     obj = Block:newInstance(saplingItemName)
     test = T_Block.CreateInitialisedTest(saplingItemName, 0, 0)
-    test:test(obj, "block", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- test default
     obj = Block:newInstance()
     test = T_Block.CreateInitialisedTest("", 0, 0)
-    test:test(obj, "block", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -104,7 +105,7 @@ function T_Block.T_new()
         _name   = saplingItemName,
     })
     local test = T_Block.CreateInitialisedTest(saplingItemName, dx1, dy1)
-    test:test(obj, "block", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -140,7 +141,7 @@ end
 
 function T_Block.T_isMinecraftItem()
     -- prepare test
-    corelog.WriteToLog("* Block:isMinecraftItem() tests")
+    corelog.WriteToLog("* "..testClassName..":isMinecraftItem() tests")
     local blockName = saplingItemName
     local obj = Block:newInstance(blockName, dx1, dy1)
 
@@ -165,15 +166,15 @@ end
 
 function T_Block.T_isAnyBlock()
     -- prepare test
-    corelog.WriteToLog("* Block:isAnyBlock() tests")
+    corelog.WriteToLog("* "..testClassName..":isAnyBlock() tests")
     local blockName = Block.AnyBlockName()
     local obj = Block:newInstance(blockName, dx1, dy1)
 
-    -- test any block
+    -- test any Block
     local isAnyBlock = obj:isAnyBlock()
     assert(isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(true)")
 
-    -- test not any block
+    -- test not any Block
     blockName = saplingItemName
     obj:setName(blockName)
     isAnyBlock = obj:isAnyBlock()
@@ -184,15 +185,15 @@ end
 
 function T_Block.T_isNoneBlock()
     -- prepare test
-    corelog.WriteToLog("* Block:isNoneBlock() tests")
+    corelog.WriteToLog("* "..testClassName..":isNoneBlock() tests")
     local blockName = Block.NoneBlockName()
     local obj = Block:newInstance(blockName, dx1, dy1)
 
-    -- test any block
+    -- test any Block
     local isNoneBlock = obj:isNoneBlock()
     assert(isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(true)")
 
-    -- test not any block
+    -- test not any Block
     blockName = saplingItemName
     obj:setName(blockName)
     isNoneBlock = obj:isNoneBlock()
@@ -203,7 +204,7 @@ end
 
 function T_Block.T_isComputercraftItem()
     -- prepare test
-    corelog.WriteToLog("* Block:isComputercraftItem() tests")
+    corelog.WriteToLog("* "..testClassName..":isComputercraftItem() tests")
     local blockName = computerItemName
     local obj = Block:newInstance(blockName, dx1, dy1)
 
@@ -228,7 +229,7 @@ end
 
 function T_Block.T_hasValidDirection()
     -- prepare test
-    corelog.WriteToLog("* Block:hasValidDirection() tests")
+    corelog.WriteToLog("* "..testClassName..":hasValidDirection() tests")
     local blockName = saplingItemName
     local obj = Block:newInstance(blockName)
 

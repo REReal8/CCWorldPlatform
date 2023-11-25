@@ -59,11 +59,11 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
-R  introduce ObjL class extending URL class representing a locator of an IObj
-   -  with methods
-      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+R  introduce ObjLocator class extending URL class representing a locator of an IObj                                     (....)
+   R  with methods                                                                                                      (....)
+      R  getObjClassName   (note: not getClassName as that is already reserved to identify the ObjLocator class itself) (done)
       -  getId             (note: optional; only if class is an ILObj)
-   -  work with ObjL's instead of URL's
+   -  work with ObjLocator's instead of URL's
       -  ObjHost
       -  LObjHost
       -  MObjHost

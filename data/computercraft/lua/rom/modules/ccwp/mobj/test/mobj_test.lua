@@ -1,9 +1,8 @@
 -- define class
 local Class = require "class"
-local ObjBase = require "obj_base"
-local ILObj = require "i_lobj"
+local LObjTest = require "test.lobj_test"
 local IMObj = require "i_mobj"
-local MObjTest = Class.NewClass(ObjBase, ILObj, IMObj)
+local MObjTest = Class.NewClass(LObjTest, IMObj)
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -36,10 +35,8 @@ function MObjTest:_init(...)
     if not checkSuccess then corelog.Error("MObjTest:_init: Invalid input") return nil end
 
     -- initialisation
-    ObjBase._init(self)
-    self._id            = id
+    LObjTest._init(self, id, field1)
     self._baseLocation  = baseLocation
-    self._field1        = field1
 end
 
 -- ToDo: should be renamed to newFromTable at some point
@@ -62,17 +59,6 @@ function MObjTest:new(...)
 
     -- end
     return o
-end
-
-function MObjTest:getField1()
-    return self._field1
-end
-
-function MObjTest:setField1(strValue)
-    -- check input
-    if type(strValue) ~= "string" then corelog.Error("MObjTest:setField1: invalid strValue: "..type(strValue)) return end
-
-    self._field1 = strValue
 end
 
 --    _____ ____  _     _
@@ -124,64 +110,6 @@ function MObjTest:construct(...)
 
     -- end
     return obj
-end
-
-function MObjTest:upgrade(...)
-    -- get & check input from description
-    local checkSuccess, field1 = InputChecker.Check([[
-        This method upgrades a MObjTest instance from a table of parameters.
-
-        The upgraded MObjTest is not yet saved in the MObjHost.
-
-        Return value:
-                                        - (boolean) whether the MObjTest was succesfully upgraded.
-
-        Parameters:
-            upgradeParameters           - (table) parameters for upgrading the MObjTest
-                field1                  + (string) with field1 value to upgrade to
-    ]], ...)
-    if not checkSuccess then corelog.Error("MObjTest:upgrade: Invalid input") return false end
-
-    -- upgrade
-    if self._field1 == field1 then corelog.Warning("MObjTest:upgrade: field1 is already equal to "..field1) end
-    self._field1 = field1
-
-    -- end
-    return true
-end
-
-function MObjTest:destruct()
-    --[[
-        This method destructs a MObjTest instance.
-
-        It also ensures all child MObj's the MObjTest is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
-
-        The MObjTest is not yet deleted from the MObjHost.
-
-        Return value:
-                                        - (boolean) whether the MObjTest was succesfully destructed.
-
-        Parameters:
-    ]]
-
-    -- end
-    return true
-end
-
-function MObjTest:getId()
-    --[[
-        Return a unique Id of the MObjTest.
-    ]]
-
-    return self._id
-end
-
-function MObjTest:getWIPId()
-    --[[
-        Returns the unique Id of the MObjTest used for administering WIP.
-    ]]
-
-    return self:getClassName().." "..self:getId()
 end
 
 --    _____ __  __  ____  _     _
