@@ -136,8 +136,12 @@ local function DoDHTReady()
     dhtReady = true
 
     -- check input box for the first time!
-    local fileAttributes = fs.attributes(filename)
-    fileTime = fileAttributes.modified
+    if fs.exists(filename) then
+        local fileAttributes = fs.attributes(filename)
+        fileTime = fileAttributes.modified
+    else
+        fileTime = 0
+    end
 
 	-- seems we are ready, run requested functions
 	for i, func in ipairs(dhtReadyFunctions) do func() end
@@ -185,10 +189,14 @@ local function DoEventSaveData(subject, envelope)
 end
 
 local function DoEventDHTFileTimer(subject, envelope)
+    -- local var
+    local thisTime = 0
 
     -- laatste wijzigings datum opzoeken
-    local fileAttributes    = fs.attributes(filename)
-    local thisTime          = fileAttributes.modified
+    if fs.exists(filename) then
+        local fileAttributes = fs.attributes(filename)
+        thisTime = fileAttributes.modified
+    end
 
     -- unknown time?
     if fileTime ~= thisTime then
