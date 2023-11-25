@@ -41,6 +41,15 @@ local enterprise_storage = require "enterprise_storage"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_employment
 
+local monitorLeft	= nil
+local monitorRight	= nil
+local db = {
+    loggerChannel   = 65534,
+    protocol        = "mobj_display_station",
+	heartbeatTimer  = 100,
+	status			= {},
+}
+
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
@@ -330,6 +339,152 @@ function DisplayStation:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+
+local function WriteToMonitor(message, monitor)
+	-- default monitor
+	monitor = monitor or monitorLeft
+
+	-- write to an attached monitor if available (usefull for a status monitor screen)
+	if monitor then
+		local w, h = monitor.getSize()
+
+		-- scroll the existing stuff up
+		monitor.scroll(1)
+
+		-- write the message
+		monitor.write(message)
+
+		-- set the cursus back at the start of the line
+		monitor.setCursorPos(1,h)
+	end
+end
+
+local function MonitorWriteLine(message, monitor)
+	local onderaan	= true
+	local x, y		= monitor.getCursorPos()
+	local w, h		= monitor.getSize()
+
+
+	if not onderaan and y < h then
+		-- where do we start?
+
+		-- write the line
+		monitor.write(message)
+
+		-- ready for the next line
+		monitor.setCursorPos(1, y + 1)
+
+	else
+		-- scroll the existing stuff up
+		monitor.scroll(1)
+
+		-- set the cursus back at the start of the line
+		monitor.setCursorPos(1,h)
+
+		-- write the message
+		monitor.write(message)
+	end
+end
+
+function DisplayStation.UpdateStatus(statusData, monitor)
+	-- which do we use?
+	monitor = monitor or monitorRight
+
+	-- make sure the status data is valid
+	if type(statusData) == "table"				then
+		if not statusData.me						then return end
+		if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
+		if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
+		if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
+		if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
+		if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
+		if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
+
+		-- nicer
+		if statusData.fuelLevel == 0 then
+			if statusData.kind == "turtle"	then statusData.fuelLevel	= "empty"
+											else statusData.fuelLevel	= "n/a"
+			end
+		end
+
+		-- remember the status (and forget the previous status)
+		if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
+		db.status[statusData.me].kind				= statusData.kind
+		db.status[statusData.me].fuelLevel			= statusData.fuelLevel
+		db.status[statusData.me].heartbeat			= os.clock()
+		db.status[statusData.me][statusData.group]	= statusData
+	end
+
+	-- now, show this to the monitor
+	monitor.clear()
+
+	-- maybe set cursor to be sure
+	monitor.setCursorPos(1, 1)
+
+	-- here we go
+	for id, data in pairs(db.status) do
+
+		local projectStatus		= data.project or {}
+		local assignmentStatus	= data.assignment or {}
+
+		-- check for dead mates
+		local deadMessage		= "DEAD "
+		if os.clock() - data.heartbeat < (db.heartbeatTimer / 20) or id == os.getComputerID() then deadMessage = "" end
+
+		-- write!
+		MonitorWriteLine("", monitor)
+		MonitorWriteLine(deadMessage..(data.kind or "unknown").." "..id..", fuel: "..data.fuelLevel, monitor)
+		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor)
+		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor)
+		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor)
+	end
+end
+
+local function DoEventWriteToLog(subject, envelope)
+	-- write the message on the monitor
+	WriteToMonitor(envelope.from ..":".. (envelope.message.text or "no text?!?"))
+end
+
+local function DoEventStatusUpdate(subject, envelope)
+	-- do the status update
+	DisplayStation.UpdateStatus(envelope.message)
+end
+
+local function DoEventHeartbeatTimer()
+	-- just send a heartbeat request to anyone around
+	coreevent.SendMessage({
+		channel		= 65535,			-- public channel
+		protocol	= db.protocol,
+		subject		= "send heartbeat",
+		message		= {}})
+
+	-- do this event again in 5
+	coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer")
+
+	-- update the status
+	DisplayStation.UpdateStatus()
+end
+
+local function DoEventReceiveHeartbeat(subject, envelope)
+	-- remember this one is alive
+	if type(db.status[envelope.from]) ~= "table" then db.status[envelope.from] = {} end
+	db.status[envelope.from].heartbeat = os.clock()
+	db.status[envelope.from].fuelLevel = envelope.message.fuelLevel
+
+	-- update the status
+	DisplayStation.UpdateStatus()
+end
+
+
+
 --    _______          __        _
 --   |_   _\ \        / /       | |
 --     | |  \ \  /\  / /__  _ __| | _____ _ __
@@ -359,11 +514,41 @@ function DisplayStation:activate()
     if self:getWorkerId() ~= os.getComputerID() then
         corelog.Warning("DisplayStation:activate() not supported on DisplayStation(="..self:getWorkerId()..") from other computer(="..os.getComputerID()..") => not adding event")
     else
-        -- setup timer for input Chest checking
-        -- coreevent.AddEventListener(DisplayStation.DoEventInputChestTimer, "mobj_user_station", subject)
+		-- get monitor handles
+		monitorLeft		= peripheral.wrap("left")
+		monitorRight	= peripheral.wrap("right")
 
-        -- check input box for the first time!
-        -- DisplayStation.DoEventInputChestTimer(subject, self:getOutputLocator())
+		-- fresh start
+		monitorLeft.clear()
+		monitorRight.clear()
+
+		-- no blinking!
+		monitorLeft.setCursorBlink(false)
+		monitorRight.setCursorBlink(false)
+
+		-- start the left one at the bottom
+		local w, h = monitorLeft.getSize()
+		monitorLeft.setCursorPos(1,h)
+
+		-- right monitor has bigger text size
+		monitorRight.setTextScale(2)
+
+		-- listen to the logger port
+		coreevent.OpenChannel(db.loggerChannel, db.protocol)
+
+		-- listen to our events
+		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
+		coreevent.AddEventListener(DoEventStatusUpdate, db.protocol, "status update")
+		coreevent.AddEventListener(DoEventHeartbeatTimer, db.protocol, "heartbeat timer")
+		coreevent.AddEventListener(DoEventReceiveHeartbeat, db.protocol, "receive heartbeat")
+
+        -- set up heartbeat timer
+	    coreevent.CreateTimeEvent(db.heartbeatTimer, "mobj_display_station", "heartbeat timer")
+
+
+		-- show who's boss!
+		corelog.WriteToLog("--- starting up monitor ---")
+		corelog.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
     end
 
     -- set active
