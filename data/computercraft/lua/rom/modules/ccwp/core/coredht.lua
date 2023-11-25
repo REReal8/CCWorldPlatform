@@ -19,6 +19,7 @@ local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false
 local filename          = "/db/dht.lua"
+local fileTime          = 0
 local logfile           = "/log/dht.txt"
 local protocol          = "core:dht"
 
@@ -59,6 +60,8 @@ local function SaveDBToFile()
 
     -- save the db table to a file (this may take some time with larger dht's)
     coreutils.WriteToFile(filename, db, "overwrite")
+    local fileAttributes = fs.attributes(filename)
+    fileTime = fileAttributes.modified
 
     -- create seperate files for each key (if the key is a table)
     for key, value in pairs(db) do
@@ -132,6 +135,10 @@ local function DoDHTReady()
     -- we zijn er klaar voor
     dhtReady = true
 
+    -- check input box for the first time!
+    local fileAttributes = fs.attributes(filename)
+    fileTime = fileAttributes.modified
+
 	-- seems we are ready, run requested functions
 	for i, func in ipairs(dhtReadyFunctions) do func() end
 
@@ -177,6 +184,32 @@ local function DoEventSaveData(subject, envelope)
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
 end
 
+local function DoEventDHTFileTimer(subject, envelope)
+
+    -- laatste wijzigings datum opzoeken
+    local fileAttributes    = fs.attributes(filename)
+    local thisTime          = fileAttributes.modified
+
+    -- unknown time?
+    if fileTime ~= thisTime then
+
+        -- go for it!
+        corelog.WriteToLog("coredht DoEventDHTFileTimer: About to reset the dht based on what's found on disk!!")
+
+        -- this is our new time
+        fileTime = thisTime
+
+        -- alles van disk inlezen
+        db = coreutils.ReadTableFromFile(filename)
+
+        -- de rest van de wereld laten weten dat we dit hebben
+        coredht.SaveData(db)
+    end
+
+    -- klaar, volgende keer over 1 seconde
+    coreevent.CreateTimeEvent(20 * 1, protocol, "time to check file change")
+end
+
 function coredht.Setup()
     -- set up stuff when other apis are loading
 
@@ -186,8 +219,11 @@ function coredht.Setup()
 	coreevent.AddEventListener(DoEventAllDataTimer,  protocol, "all data timer")
 	coreevent.AddEventListener(DoEventSaveData,      protocol, "save data")
 
+    coreevent.AddEventListener(DoEventDHTFileTimer,  protocol, "time to check file change")
+
 	-- start sending messages when we are ready to receive them too
 	coreevent.EventReadyFunction(CoreDHTEventReadySetup)
+    coredht.DHTReadyFunction(DoEventDHTFileTimer)
 end
 
 function coredht.DHTReadyFunction(func)
