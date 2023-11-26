@@ -46,7 +46,7 @@ local baseLocation_MineLayer0 = Location:newInstance(0, -12, -36, 0, 1):getRelat
 local currentDepth0 = 0
 local maxDepth0 = 36
 local maxDepth1 = 48
-local currentHalfRib0 = 4
+local currentHalfRib0 = 3
 
 local constructParameters_MineShaft0 = {
     baseLocation    = baseLocation_MineShaft0,

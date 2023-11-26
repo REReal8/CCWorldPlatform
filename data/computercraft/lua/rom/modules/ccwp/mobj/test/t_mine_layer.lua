@@ -62,7 +62,7 @@ local testHost = enterprise_gathering
 local logOk = false
 
 local baseLocation0 = Location:newInstance(0, -12, -36, 0, 1):getRelativeLocation(3, 3, 0)
-local currentHalfRib0 = 8
+local currentHalfRib0 = 3
 
 local constructParameters0 = {
     baseLocation    = baseLocation0,
@@ -189,8 +189,8 @@ function T_MineLayer.T_ILObj_All()
     -- prepare test
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
-    local fieldsTest0 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 4)
-    local fieldsTest1 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 4)
+    local fieldsTest0 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3)
+    local fieldsTest1 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3)
 
     -- test cases
     T_ILObj.pt_all(testClassName, MineLayer, {
