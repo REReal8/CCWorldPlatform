@@ -20,7 +20,7 @@ local MethodExecutor = require "method_executor"
 local Callback = require "obj_callback"
 local ObjHost = require "obj_host"
 
-local DisplayStation = require "mobj_display_station"
+local DisplayStation
 
 local enterprise_administration = require "enterprise_administration"
 
@@ -380,7 +380,10 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     project.outputs[ previousStep ] = stepResults
 
     -- was this the last step?
-    if #project.projectDef.steps == previousStep then DisplayStation.SetStatus("project", project.projectMeta.title, "Project completed") return EndProject(internalProjectData) end
+    if #project.projectDef.steps == previousStep then
+        DisplayStation = DisplayStation or require "mobj_display_station"
+        DisplayStation.SetStatus("project", project.projectMeta.title, "Project completed") return EndProject(internalProjectData)
+    end
 
     -- next step
     project.currentStep = previousStep + 1
@@ -414,6 +417,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     end
 
     -- update the status
+    DisplayStation = DisplayStation or require "mobj_display_station"
     DisplayStation.SetStatus("project", project.projectMeta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, stepDesc)
 
     -- select and do stepType

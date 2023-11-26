@@ -23,23 +23,16 @@ local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 local coreassignment = require "coreassignment"
 local coreevent = require "coreevent"
-local coretask = require "coretask"
-local coredht = require "coredht"
 local coredisplay = require "coredisplay"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
 local ObjTable = require "obj_table"
 local Block = require "obj_block"
 local Location = require "obj_location"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local role_conservator = require "role_conservator"
-
-local enterprise_storage = require "enterprise_storage"
-local enterprise_shop = require "enterprise_shop"
 local enterprise_employment
 
 local monitorLeft	= nil
