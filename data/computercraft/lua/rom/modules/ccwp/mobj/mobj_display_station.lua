@@ -404,6 +404,49 @@ end
 --   | |
 --   |_|
 
+
+
+function DisplayStation.SetStatus(group, message, subline, details)
+	-- what kind are we?
+	local kind = "computer"	-- default type
+	if turtle   then kind = "turtle" end
+	if pocket   then kind = "pocket" end
+	if commands then kind = "command computer" end
+
+	-- get us and our fuel level
+	local fuelLevel = 0
+	if turtle then fuelLevel = turtle.getFuelLevel() end
+
+	-- all relevant information for the status update together
+	local statusUpdate = {
+		me			= os.getComputerID(),
+		kind		= kind,
+		fuelLevel	= fuelLevel,
+		group		= group,
+		message		= message,
+		subline		= subline,
+		details		= details
+	}
+
+	enterprise_employment = enterprise_employment or require "enterprise_employment"
+	local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("corelog.SetStatus: Failed obtaining current workerLocator") return false end
+    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("corelog.SetStatus: Failed obtaining Worker "..workerLocator:getURI()) return false end
+
+	-- send to the logger (unless that's us)
+	if workerObj:getClassName() == "DisplayStation" then
+
+		-- update the status
+		DisplayStation.UpdateStatus(statusUpdate)
+	end
+
+	-- not us, send the info
+	coreevent.SendMessage({
+		channel		= db.loggerChannel,
+		protocol	= db.protocol,
+		subject		= "status update",
+		message		= statusUpdate})
+end
+
 function DisplayStation.UpdateStatus(statusData, monitor)
 	-- which do we use?
 	monitor = monitor or monitorRight
@@ -490,7 +533,18 @@ local function DoEventHeartbeatTimer()
 	DisplayStation.UpdateStatus()
 end
 
-local function DoEventReceiveHeartbeat(subject, envelope)
+local function ProcessLoggingCallback(message)
+   	-- ToDo: update log when I am a display station
+    -- send a message to who ever is the display station
+	coreevent.SendMessage({
+		channel		= db.loggerChannel,
+		protocol	= db.protocol,
+		subject		= "write to log",
+		message		= {text = message}
+    })
+end
+
+local function ProcessReceiveHeartbeat(subject, envelope)
 	-- remember this one is alive
 	if type(db.status[envelope.from]) ~= "table" then db.status[envelope.from] = {} end
 	db.status[envelope.from].heartbeat = os.clock()
@@ -556,15 +610,18 @@ function DisplayStation:activate()
 		coreevent.AddEventListener(DoEventStatusUpdate,     db.protocol, "status update")
 		coreevent.AddEventListener(DoEventHeartbeatTimer,   db.protocol, "heartbeat timer")
 
+        -- setup logger hook
+        corelog.SetLoggerFunction(ProcessLoggingCallback)
+
         -- setup heartbeat hook
-        coreassignment.SetHeartbeatFunction(DoEventReceiveHeartbeat)
+        coreassignment.SetHeartbeatFunction(ProcessReceiveHeartbeat)
 
         -- set up heartbeat timer
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
-		corelog.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
+		DisplayStation.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
     end
 
     -- set active

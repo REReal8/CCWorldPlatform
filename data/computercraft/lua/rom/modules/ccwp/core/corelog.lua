@@ -6,7 +6,6 @@ local corelog = {}
     This module ...
 --]]
 
-local coreevent = require "coreevent"
 local coreassignment
 local coreutils = require "coreutils"
 
@@ -18,7 +17,7 @@ local db	= {
 	assignmentLogFile   = "/log/coreassignment.log",
 	projectsLogFile     = "/log/enterprise_projects.log",
 	protocol		    = "corelog",
-	loggerChannel	    = 65534,
+	loggerFunctions		= {},
 	lastStack           = 0,
 }
 
@@ -31,13 +30,9 @@ end
 
 function corelog.Setup()
 	corelog.WriteToLog("corelog.Setup()")
-
-	-- start sending messages when we are ready to receive them too
-	coreevent.EventReadyFunction(CoreLogEventReadySetup)
 end
 
-function CoreLogEventReadySetup()
-end
+function corelog.SetLoggerFunction(func) table.insert(db.loggerFunctions, func) end
 
 function corelog.ClearLog()
 	-- just overwrite the logfile, this does create a first empty line
@@ -56,55 +51,8 @@ function corelog.WriteToLog(message, writeMode)
 	-- write to the logfile
 	coreutils.WriteToFile(db.logfile, coreutils.UniversalTime()..': '..message, writeMode)
 
-	-- ToDo: update log when I am a display station
-	-- send message two whoever is loggin our stuff
-	coreevent.SendMessage({
-		channel		= 65534,
-		protocol	= "mobj_display_station",
-		subject		= "write to log",
-		message		= {text = message} })
-end
-
-function corelog.SetStatus(group, message, subline, details)
-	-- what kind are we?
-	local kind = "computer"	-- default type
-	if turtle   then kind = "turtle" end
-	if pocket   then kind = "pocket" end
-	if commands then kind = "command computer" end
-
-	-- get us and our fuel level
-	local fuelLevel = 0
-	if turtle then fuelLevel = turtle.getFuelLevel() end
-
-	-- all relevant information for the status update together
-	local statusUpdate = {
-		me			= os.getComputerID(),
-		kind		= kind,
-		fuelLevel	= fuelLevel,
-		group		= group,
-		message		= message,
-		subline		= subline,
-		details		= details
-	}
-
-	enterprise_employment = enterprise_employment or require "enterprise_employment"
-	local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("corelog.SetStatus: Failed obtaining current workerLocator") return false end
-    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("corelog.SetStatus: Failed obtaining Worker "..workerLocator:getURI()) return false end
-
-	-- send to the logger (unless that's us)
-	if workerObj:getClassName() == "DisplayStation" then
-
-		-- update the status
-		DisplayStation = DisplayStation or require "mobj_display_station"
-		DisplayStation.UpdateStatus(statusUpdate)
-	end
-
-	-- not us, send the info
-	coreevent.SendMessage({
-		channel		= 65534,
-		protocol	= "mobj_display_station",
-		subject		= "status update",
-		message		= statusUpdate})
+	-- process external loggers
+	for i, func in ipairs(db.loggerFunctions) do func(message) end
 end
 
 function corelog.Warning(message)
@@ -116,12 +64,8 @@ function corelog.Warning(message)
 	if type(message) == "table" then message = textutils.serialize(message) end
 	message = "WARNING: "..message
 
-	-- send message two whoever is loggin our stuff
-	coreevent.SendMessage({
-		channel		= db.loggerChannel,
-		protocol	= db.protocol,
-		subject		= "write to log",
-		message		= {text = message} })
+	-- process external loggers
+	for i, func in ipairs(db.loggerFunctions) do func(message) end
 end
 
 function corelog.Error(message)
@@ -140,6 +84,10 @@ function corelog.Error(message)
 
 	-- requested messaage
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
+
+	-- process external loggers
+	message = "ERROR: "..message
+	for i, func in ipairs(db.loggerFunctions) do func(message) end
 end
 
 function WriteToFormattedLog(message, id, logType, writeMode)

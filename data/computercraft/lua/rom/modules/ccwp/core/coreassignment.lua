@@ -167,7 +167,8 @@ function coreassignment.Run()
                 -- apparently no assignment for me now
 
                 -- update status
-                corelog.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
+                DispayStation = require "mobj_display_station"
+                DispayStation.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
             end
         end
 
@@ -218,7 +219,8 @@ function DoAssignment(...)
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
 --    corelog.WriteToLog("Starting "..taskCall:getModuleName().."."..taskCall:getMethodName())
-    corelog.SetStatus("assignment", "Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
+    DispayStation = require "mobj_display_station"
+    DispayStation.SetStatus("assignment", "Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
     local taskResult = taskCall:call()
     corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)
 
