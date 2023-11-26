@@ -7,6 +7,29 @@ local enterprise_gathering = Class.NewClass(MObjHost)
     The enterprise_gathering is a MObjHost. It provides services for building and using MObj's where materials can be gathered, like mines and on the surface.
 --]]
 
+-- minable items below the surface (from https://minecraft.fandom.com/wiki/Altitude)
+local minableItems = {
+    "minecraft:deepslate",
+    "minecraft:cobblestone",
+    "minecraft:clay",
+--    "minecraft:water", -- note: propably needs a special gathering technique with a bucket. doesn't it?
+    "minecraft:gravel",
+    "minecraft:copper_ore",
+    "minecraft:coal_ore",
+--    "minecraft:lava", -- note: propably needs a special gathering technique with a bucket. doesn't it?
+    "minecraft:iron_ore",
+    "minecraft:redstone_ore",
+    "minecraft:diamond_ore",
+    "minecraft:gold_ore",
+    "minecraft:lapis_ore",
+--    "minecraft:emerald_ore",
+}
+
+-- ToDo: consider refactoring and putting this elsewhere in some dictionary?
+function enterprise_gathering.GetMinableItems()
+    return minableItems
+end
+
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __

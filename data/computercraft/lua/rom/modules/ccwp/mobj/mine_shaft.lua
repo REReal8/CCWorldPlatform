@@ -34,6 +34,7 @@ local role_miner = require "role_miner"
 local role_energizer = require "role_energizer"
 
 local enterprise_projects = require "enterprise_projects"
+local enterprise_gathering
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -528,25 +529,6 @@ function MineShaft:provideItemsTo_AOSrv(...)
     return scheduleResult
 end
 
--- minable items below the surface (from https://minecraft.fandom.com/wiki/Altitude)
--- ToDo: get this from some dictionary instead of this local (such that it can also be used from e.g. a full Mine)
-local mineItems = {
-    "minecraft:deepslate",
-    "minecraft:cobblestone",
-    "minecraft:clay",
---    "minecraft:water", -- note: propably needs a special gathering technique with a bucket. doesn't it?
-    "minecraft:gravel",
-    "minecraft:copper_ore",
-    "minecraft:coal_ore",
---    "minecraft:lava", -- note: propably needs a special gathering technique with a bucket. doesn't it?
-    "minecraft:iron_ore",
-    "minecraft:redstone_ore",
-    "minecraft:diamond_ore",
-    "minecraft:gold_ore",
-    "minecraft:lapis_ore",
---    "minecraft:emerald_ore",
-}
-
 function MineShaft:can_ProvideItems_QOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
@@ -562,6 +544,9 @@ function MineShaft:can_ProvideItems_QOSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("MineShaft:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
+    enterprise_gathering = enterprise_gathering or require "enterprise_gathering"
+    local minableItems = enterprise_gathering.GetMinableItems()
+
     -- check if there is still materials left in the MineShaft
     if self:getCurrentDepth() >= self:getMaxDepth() then
         return {success = false}
@@ -574,7 +559,7 @@ function MineShaft:can_ProvideItems_QOSrv(...)
 
         -- check it's a mineable item
         local isMineableItem = false
-        for _, mineItemName in ipairs(mineItems) do
+        for _, mineItemName in ipairs(minableItems) do
             if itemName == mineItemName then
                 isMineableItem = true
             end
