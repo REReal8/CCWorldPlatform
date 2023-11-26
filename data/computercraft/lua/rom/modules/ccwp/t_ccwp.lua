@@ -111,7 +111,7 @@ function t_ccwp.T_RebootAllWorkers()
     coreevent.SendMessage({protocol="core:assignment", subject="reboot"})
 
     -- reboot ourself
-    coreassignment.DoEventReboot()
+    coreassignment.RebootWhenIdle()
 end
 
 function t_ccwp.T_ShutdownAllWorkers()
@@ -119,7 +119,7 @@ function t_ccwp.T_ShutdownAllWorkers()
     coreevent.SendMessage({protocol="core:assignment", subject="shutdown"})
 
     -- reboot ourself
-    coreassignment.DoEventShutdown()
+    coreassignment.ShutdownWhenIdle()
 end
 
 function t_ccwp.Func1_Callback(callbackData, taskResult)

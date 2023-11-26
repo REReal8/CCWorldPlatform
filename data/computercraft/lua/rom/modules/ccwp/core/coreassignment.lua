@@ -30,15 +30,44 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_employment
 
 local db = {
+    protocol                = "core:assignment",
     reboot                  = false,
     shutdown                = false,
+    heartbeatFunctions      = {},
 }
-local protocol          = "core:assignment"
 
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
 
 -- local function needs to be declared before setup
-function coreassignment.DoEventReboot(subject,   envelope) db.reboot   = true end
-function coreassignment.DoEventShutdown(subject, envelope) db.shutdown = true end
+local function DoEventReboot(subject,   envelope) coreassignment.RebootWhenIdle()   end
+local function DoEventShutdown(subject, envelope) coreassignment.ShutdownWhenIdle() end
+
+local function DoEventSendHeartbeat(subject, envelope)
+    -- local vars
+	local fuelLevel = 0
+	local selectedSlot = 0
+
+    -- only available for turtles
+	if turtle then
+        fuelLevel       = turtle.getFuelLevel()
+        selectedSlot    = turtle.getSelectedSlot()
+    end
+
+	-- easy reply since we have a heartbeat
+	coreevent.ReplyToMessage(envelope, "receive heartbeat", {fuelLevel = fuelLevel, selectedSlot=selectedSlot})
+end
+
+local function DoEventReceiveHeartbeat(subject, envelope)
+    -- just pass forward to who ever is interested
+	for i, func in ipairs(db.heartbeatFunctions) do func(subject, envelope) end
+end
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -54,11 +83,29 @@ end
 
 function coreassignment.Setup()
     -- naar deze events luisteren
-    coreevent.AddEventListener(coreassignment.DoEventReboot,    protocol, "reboot")
-    coreevent.AddEventListener(coreassignment.DoEventShutdown,  protocol, "shutdown")
+    coreevent.AddEventListener(DoEventReboot,           db.protocol, "reboot")
+    coreevent.AddEventListener(DoEventShutdown,         db.protocol, "shutdown")
+
+    -- heartbeat
+    coreevent.AddEventListener(DoEventSendHeartbeat,    db.protocol, "send heartbeat")
+    coreevent.AddEventListener(DoEventReceiveHeartbeat, db.protocol, "receive heartbeat")
+
 
     -- pas als de dht klaar is...
     coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup) -- ToDo: consider doing this in enterprise_assignmentboard itself
+end
+
+-- public functions to reboot en shutdown
+function coreassignment.RebootWhenIdle()    db.reboot   = true end
+function coreassignment.ShutdownWhenIdle()  db.shutdown = true end
+
+function coreassignment.SetHeartbeatFunction(func)
+    -- just add function to the list
+	table.insert(db.heartbeatFunctions, func)
+end
+
+function coreassignment.RemoveHeartbeatFunction(func)
+    -- ToDo (eignelijk ook helemaal niet boeiend maar goed)
 end
 
 function coreassignment.Run()

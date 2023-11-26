@@ -34,9 +34,6 @@ function corelog.Setup()
 
 	-- start sending messages when we are ready to receive them too
 	coreevent.EventReadyFunction(CoreLogEventReadySetup)
-
-	-- responde to heartbeat
-	coreevent.AddEventListener(DoEventSendHeartbeat, "mobj_display_station", "send heartbeat")
 end
 
 function CoreLogEventReadySetup()
@@ -203,23 +200,6 @@ function corelog.FindCaller(...) -- give ignore string as parameters. corelog.Fi
 		-- still here, try the next level
 		level = level + 1
 	end
-end
-
---                         _
---                        | |
---     _____   _____ _ __ | |_ ___
---    / _ \ \ / / _ \ '_ \| __/ __|
---   |  __/\ V /  __/ | | | |_\__ \
---    \___| \_/ \___|_| |_|\__|___/
---
---
-
-function DoEventSendHeartbeat(subject, envelope)
-	local fuelLevel 	= 0
-	if turtle then fuelLevel = turtle.getFuelLevel() end
-
-	-- easy reply since we have a heartbeat
-	coreevent.ReplyToMessage(envelope, "receive heartbeat", {fuelLevel = fuelLevel})
 end
 
 return corelog
