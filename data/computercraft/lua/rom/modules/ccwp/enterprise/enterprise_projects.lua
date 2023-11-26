@@ -380,7 +380,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     project.outputs[ previousStep ] = stepResults
 
     -- was this the last step?
-    if #project.projectDef.steps == previousStep then corelog.SetStatus("project", project.projectMeta.title, "Project completed") return EndProject(internalProjectData) end
+    if #project.projectDef.steps == previousStep then DisplayStation.SetStatus("project", project.projectMeta.title, "Project completed") return EndProject(internalProjectData) end
 
     -- next step
     project.currentStep = previousStep + 1

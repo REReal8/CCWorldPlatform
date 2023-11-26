@@ -429,8 +429,8 @@ function DisplayStation.SetStatus(group, message, subline, details)
 	}
 
 	enterprise_employment = enterprise_employment or require "enterprise_employment"
-	local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("corelog.SetStatus: Failed obtaining current workerLocator") return false end
-    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("corelog.SetStatus: Failed obtaining Worker "..workerLocator:getURI()) return false end
+	local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("DisplayStation.SetStatus: Failed obtaining current workerLocator") return false end
+    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("DisplayStation.SetStatus: Failed obtaining Worker "..workerLocator:getURI()) return false end
 
 	-- send to the logger (unless that's us)
 	if workerObj:getClassName() == "DisplayStation" then
