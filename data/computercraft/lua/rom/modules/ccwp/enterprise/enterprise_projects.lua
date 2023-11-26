@@ -20,6 +20,8 @@ local MethodExecutor = require "method_executor"
 local Callback = require "obj_callback"
 local ObjHost = require "obj_host"
 
+local DisplayStation = require "mobj_display_station"
+
 local enterprise_administration = require "enterprise_administration"
 
 local db = {
@@ -412,7 +414,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     end
 
     -- update the status
-    corelog.SetStatus("project", project.projectMeta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, stepDesc)
+    DisplayStation.SetStatus("project", project.projectMeta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, stepDesc)
 
     -- select and do stepType
     if stepType == "ASrv" then
