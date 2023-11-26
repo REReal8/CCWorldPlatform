@@ -90,27 +90,22 @@ function role_miner.MineShaft_Task(...)
     if not axePresent then corelog.Error("role_miner.MineShaft_Task: No axePresent ") return {success = false} end
 
     -- move to the baseLocation
-    -- corelog.WriteToLog("Moving to (base)")
-    -- corelog.WriteToLog(baseLocation)
     coremove.GoTo(baseLocation)
 
     -- perform entry sequence
-    -- corelog.WriteToLog("entering...")
-    local actualMineStart = -3
+    local currentDepth = startDepth
+    local minStartDepth = 3
+    if currentDepth < minStartDepth then currentDepth = minStartDepth end
     local entrySequence = {
         baseLocation:getRelativeLocation(1, 0, 0),
-        baseLocation:getRelativeLocation(1, 0, actualMineStart),
-        baseLocation:getRelativeLocation(0, 0, actualMineStart),
+        baseLocation:getRelativeLocation(1, 0, -currentDepth),
+        baseLocation:getRelativeLocation(0, 0, -currentDepth),
     }
     for i, entryLocation in ipairs(entrySequence) do
-        -- corelog.WriteToLog("Moving to")
-        -- corelog.WriteToLog(entryLocation)
         coremove.GoTo(entryLocation, true)
     end
 
     -- dig a hole while depth left and not all provideItems found
-    -- corelog.WriteToLog("gathering...")
-    local currentDepth = startDepth
     local allProvideItemsFound = false
     local outputItems = ItemTable:newInstance()
     local wasteItems = ItemTable:newInstance()
@@ -139,16 +134,12 @@ function role_miner.MineShaft_Task(...)
 
     -- perform exit sequence
     if escape then
-        -- corelog.WriteToLog("escaping...")
         local exitSequence = {
-            baseLocation:getRelativeLocation(-1, 0, actualMineStart - currentDepth),
-            baseLocation:getRelativeLocation(-1, 0, actualMineStart),
+            baseLocation:getRelativeLocation(-1, 0, -currentDepth),
             baseLocation:getRelativeLocation(-1, 0, 0),
             baseLocation:getRelativeLocation(0, 0, 0),
         }
         for i, exitLocation in ipairs(exitSequence) do
-            -- corelog.WriteToLog("Moving to")
-            -- corelog.WriteToLog(exitLocation)
             coremove.GoTo(exitLocation, true)
         end
     end
