@@ -30,7 +30,6 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_employment
 
 local db = {
-    rejectAllAssignments    = false,
     reboot                  = false,
     shutdown                = false,
 }
@@ -79,7 +78,7 @@ function coreassignment.Run()
     enterprise_employment:saveObject(workerObj)
 
     -- infinite loop
-    while coresystem.IsRunning() and not db.rejectAllAssignments do
+    while coresystem.IsRunning() do
         -- get Worker
         workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
         -- note: we getObject every loop as it might have changed
@@ -127,27 +126,10 @@ function coreassignment.Run()
         -- just wait a (quarter of a) second to try again
         os.sleep(0.25)
     end
-
-    -- for weirdo workers
-    while db.rejectAllAssignments do
-
-        -- any reboot or shutdown needed?
-        if db.shutdown then os.shutdown() end
-        if db.reboot   then os.reboot()   end
-
-        -- just wait a (quarter of a) second to try again
-        os.sleep(0.25)
-    end
-end
-
-function coreassignment.RejectAllAssignments()
-    -- just remember for now, nothing else
-    db.rejectAllAssignments = true
 end
 
 function coreassignment.Reset()
     -- reset (local) db
-    db.rejectAllAssignments                     = false
 end
 
 --    _                 _    __                  _   _
