@@ -42,7 +42,7 @@ local testMineLayerName = "mineLayer"
 local testMineLayerName0 = testMineLayerName.."0"
 
 local baseLocation_MineShaft0 = Location:newInstance(0, -12, 1, 0, 1):getRelativeLocation(3, 3, 0)
-local baseLocation_MineLayer0 = Location:newInstance(0, -12, 24, 0, 1):getRelativeLocation(3, 3, 0)
+local baseLocation_MineLayer0 = Location:newInstance(0, -12, -36, 0, 1):getRelativeLocation(3, 3, 0)
 local currentDepth0 = 0
 local maxDepth0 = 32
 local maxDepth1 = 48

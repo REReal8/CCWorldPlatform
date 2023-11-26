@@ -61,7 +61,7 @@ local testHost = enterprise_gathering
 
 local logOk = false
 
-local baseLocation0 = Location:newInstance(0, -12, 24, 0, 1):getRelativeLocation(3, 3, 0)
+local baseLocation0 = Location:newInstance(0, -12, -36, 0, 1):getRelativeLocation(3, 3, 0)
 local currentHalfRib0 = 8
 
 local constructParameters0 = {
