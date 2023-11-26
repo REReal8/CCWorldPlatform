@@ -63,7 +63,7 @@ local logOk = false
 
 local baseLocation0 = Location:newInstance(0, -12, 1, 0, 1):getRelativeLocation(3, 3, 0)
 local currentDepth0 = 2
-local maxDepth0 = 36
+local maxDepth0 = 37
 local maxDepth1 = 48
 
 local constructParameters0 = {
