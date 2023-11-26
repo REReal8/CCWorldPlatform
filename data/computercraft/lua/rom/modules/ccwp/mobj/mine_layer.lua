@@ -9,8 +9,8 @@ local MineLayer = Class.NewClass(ObjBase, ILObj, IMObj, IItemSupplier)
 --[[
     This module implements a MineLayer.
 
-    A MineLayer is a layer for mining resources in the minecraft world. 
-    
+    A MineLayer is a layer for mining resources in the minecraft world.
+
     A MineLayer is 3 blocks high, contains a base, and gatheres the resources concentric around that base.
 --]]
 
@@ -129,7 +129,7 @@ function MineLayer:construct(...)
 
     -- construct new MineLayer
     local id = coreutils.NewId()
-    local startHalfRib = 4 -- ToDo:check
+    local startHalfRib = 3
     local obj = MineLayer:newInstance(id, baseLocation:copy(), startHalfRib)
 
     -- end
@@ -403,7 +403,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
     -- construct taskData
     local taskData = {
         baseLocation        = self:getBaseLocation(),
-        startHalfRib        = self:getCurrentHalfRib(),
+        startHalfRib        = self:getCurrentHalfRib()+1,
 
         provideItems        = ItemTable:newInstance(provideItems),
         escape              = true,
@@ -424,7 +424,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
                 { keyDef = "hostName"                       , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "MineLayer" },
-                { keyDef = "objectTable._currentHalfRib"      , sourceStep = 1, sourceKeyDef = "endDepth" },
+                { keyDef = "objectTable._currentHalfRib"    , sourceStep = 1, sourceKeyDef = "endHalfRib" },
             }},
             -- deliver mined items
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
@@ -527,7 +527,7 @@ function MineLayer:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("MineLayer:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- fuelNeed_Mining
-    local fuelNeed_Mining = 2*4*(self:getCurrentHalfRib() + 1) -- note: we return the fuelNeed for mining the next square 
+    local fuelNeed_Mining = 2*4*(self:getCurrentHalfRib() + 1) -- note: we return the fuelNeed for mining the next square
 
     -- get destinationItemDepot
     local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
