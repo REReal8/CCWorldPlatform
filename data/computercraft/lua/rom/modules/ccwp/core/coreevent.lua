@@ -131,6 +131,9 @@ function CloseChannel(channel, protocol)
 	end
 end
 
+-- usefull
+function coreevent.PublicChannel() return db.publicChannel end
+
 -- to send a message to an other computer
 function coreevent.SendMessage(t)
 	-- format input
