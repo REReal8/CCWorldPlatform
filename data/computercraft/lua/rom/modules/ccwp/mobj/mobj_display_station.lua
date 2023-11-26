@@ -339,12 +339,12 @@ function DisplayStation:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
---                         _
---                        | |
---     _____   _____ _ __ | |_ ___
---    / _ \ \ / / _ \ '_ \| __/ __|
---   |  __/\ V /  __/ | | | |_\__ \
---    \___| \_/ \___|_| |_|\__|___/
+--    _                 _
+--   | |               | |
+--   | | ___   ___ __ _| |
+--   | |/ _ \ / __/ _` | |
+--   | | (_) | (_| (_| | |
+--   |_|\___/ \___\__,_|_|
 --
 --
 
@@ -393,6 +393,15 @@ local function MonitorWriteLine(message, monitor)
 		monitor.write(message)
 	end
 end
+
+--                _     _ _
+--               | |   | (_)
+--    _ __  _   _| |__ | |_  ___
+--   | '_ \| | | | '_ \| | |/ __|
+--   | |_) | |_| | |_) | | | (__
+--   | .__/ \__,_|_.__/|_|_|\___|
+--   | |
+--   |_|
 
 function DisplayStation.UpdateStatus(statusData, monitor)
 	-- which do we use?
@@ -448,6 +457,17 @@ function DisplayStation.UpdateStatus(statusData, monitor)
 	end
 end
 
+
+
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+
 local function DoEventWriteToLog(subject, envelope)
 	-- write the message on the monitor
 	WriteToMonitor(envelope.from ..":".. (envelope.message.text or "no text?!?"))
@@ -482,8 +502,6 @@ local function DoEventReceiveHeartbeat(subject, envelope)
 	-- update the status
 	DisplayStation.UpdateStatus()
 end
-
-
 
 --    _______          __        _
 --   |_   _\ \        / /       | |
