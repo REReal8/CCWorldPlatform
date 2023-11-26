@@ -95,15 +95,10 @@ function coreassignment.Setup()
     coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup) -- ToDo: consider doing this in enterprise_assignmentboard itself
 end
 
--- public functions to reboot en shutdown
+-- public functions to reboot, shutdown & register heartbeat function
 function coreassignment.RebootWhenIdle()    db.reboot   = true end
 function coreassignment.ShutdownWhenIdle()  db.shutdown = true end
-
-function coreassignment.SetHeartbeatFunction(func)
-    -- just add function to the list
-	table.insert(db.heartbeatFunctions, func)
-end
-
+function coreassignment.SetHeartbeatFunction(func) table.insert(db.heartbeatFunctions, func) end
 function coreassignment.RemoveHeartbeatFunction(func)
     -- ToDo (eignelijk ook helemaal niet boeiend maar goed)
 end
