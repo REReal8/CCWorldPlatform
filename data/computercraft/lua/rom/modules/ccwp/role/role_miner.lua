@@ -235,8 +235,8 @@ function role_miner.MineLayer_Task(...)
     -- ToDo: consider having the Mine that contains the MineLayer do this somehow
     local baseZ = baseLocation:getZ()
     local entrySequence = {
-        baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
-        baseLocation:getRelativeLocation(1, 0, -baseZ + 2), -- entry shaft surface
+        -- baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
+        -- baseLocation:getRelativeLocation(1, 0, -baseZ + 2), -- entry shaft surface
         baseLocation:getRelativeLocation(1, 0, 0), -- entry shaft MineLayer
         baseLocation,
     }
@@ -295,8 +295,8 @@ function role_miner.MineLayer_Task(...)
         local exitSequence = {
             baseLocation,
             baseLocation:getRelativeLocation(-1, 0, 0), -- exit shaft MineLayer
-            baseLocation:getRelativeLocation(-1, 0, -baseZ + 2), -- exit shaft surface
-            baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
+            -- baseLocation:getRelativeLocation(-1, 0, -baseZ + 2), -- exit shaft surface
+            -- baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
         }
         for i, exitLocation in ipairs(exitSequence) do
             coremove.GoTo(exitLocation, true)

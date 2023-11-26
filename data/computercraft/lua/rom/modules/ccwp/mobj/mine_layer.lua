@@ -267,21 +267,22 @@ function MineLayer.GetBuildBlueprint(...)
     if not checkSuccess then corelog.Error("MineLayer.GetBuildBlueprint: Invalid input") return nil, nil end
 
     -- buildLocation
-    local buildLocation = baseLocation:copy()
+    local offsetX = 1
+    local buildLocation = baseLocation:getRelativeLocation(1, 0, 0)
 
     -- layerList
     local layerList = {}
-    local buildLayerLocation = Location:newInstance(-3, -3, -1)
+    local buildLayerLocation = Location:newInstance(-3 - offsetX, -3, -1)
     table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = Bottom_layer()})
-    buildLayerLocation = Location:newInstance(-3, -3, 1)
+    buildLayerLocation = Location:newInstance(-3 - offsetX, -3, 1)
     table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Up", layer = Top_layer()})
-    buildLayerLocation = Location:newInstance(-3, -3, 0)
+    buildLayerLocation = Location:newInstance(-3 - offsetX, -3, 0)
     table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = Mid_layer()})
 
     -- escapeSequence
     local escapeSequence = {}
-    table.insert(escapeSequence, buildLocation:getRelativeLocation(-1, 0, 0))
-    table.insert(escapeSequence, buildLocation:getRelativeLocation(-1, 0, buildLocation:getZ() + 1))
+    table.insert(escapeSequence, baseLocation:getRelativeLocation(-1, 0, 0))
+    table.insert(escapeSequence, baseLocation:getRelativeLocation(-1, 0, baseLocation:getZ() + 2))
 
     -- blueprint
     local blueprint = {
