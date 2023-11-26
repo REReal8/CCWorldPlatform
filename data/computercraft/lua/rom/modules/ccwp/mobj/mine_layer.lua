@@ -280,6 +280,8 @@ function MineLayer.GetBuildBlueprint(...)
 
     -- escapeSequence
     local escapeSequence = {}
+    table.insert(escapeSequence, buildLocation:getRelativeLocation(-1, 0, 0))
+    table.insert(escapeSequence, buildLocation:getRelativeLocation(-1, 0, buildLocation:getZ() + 1))
 
     -- blueprint
     local blueprint = {
