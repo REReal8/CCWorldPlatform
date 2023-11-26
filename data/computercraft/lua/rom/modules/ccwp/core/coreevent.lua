@@ -24,6 +24,7 @@ local db = {
 	bulkMode		= true,		-- send messages in bulk per tick, not one by one
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
+	publicChannel	= 65535,
 
 	debug			= false,
 }
@@ -44,9 +45,9 @@ function coreevent.Init()
 	-- activate the modem
 	ActivateModem()
 
-	-- computer id is for private messages, 65535 is the public channel
+	-- computer id is for private messages
 	coreevent.OpenChannel(os.getComputerID(), "system.event")
-	coreevent.OpenChannel(65535,              "system.event")
+	coreevent.OpenChannel(db.publicChannel,   "system.event")
 end
 
 -- event setup
@@ -134,7 +135,7 @@ end
 function coreevent.SendMessage(t)
 	-- format input
 	local from		= os.getComputerID()
-	local to		= t.to      	or { 65535 }    -- public channel if no other is specified
+	local to		= t.to      	or { db.publicChannel }    -- public channel if no other is specified
 	local channel	= t.channel
 	local protocol	= t.protocol	or ""
 	local subject	= t.subject		or ""
@@ -223,7 +224,7 @@ end
 -- this function send the message, and organizes that the replies to this messages are saved
 function SendMessageSaveReply(t)
     -- possible entries of the parameter table
-	local to			= t.to      		or 65535    -- public channel if no other is specified
+	local to			= t.to      		or db.publicChannel -- public channel if no other is specified
 	local channel		= t.channel
    	local protocol		= t.protocol		or ""
 	local subject		= t.subject			or ""
