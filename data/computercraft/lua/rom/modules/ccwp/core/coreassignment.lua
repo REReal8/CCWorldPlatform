@@ -51,17 +51,19 @@ local function DoEventShutdown(subject, envelope) coreassignment.ShutdownWhenIdl
 
 local function DoEventSendHeartbeat(subject, envelope)
     -- local vars
-	local fuelLevel = 0
-	local selectedSlot = 0
+    local bonusInformation = {
+        fuelLevel    = 0,
+        selectedSlot = 0,
+    }
 
     -- only available for turtles
-	if turtle then
-        fuelLevel       = turtle.getFuelLevel()
-        selectedSlot    = turtle.getSelectedSlot()
-    end
+	if turtle then bonusInformation = {
+            fuelLevel    = turtle.getFuelLevel(),
+            selectedSlot = turtle.getSelectedSlot(),
+    } end
 
 	-- easy reply since we have a heartbeat
-	coreevent.ReplyToMessage(envelope, "receive heartbeat", {fuelLevel = fuelLevel, selectedSlot=selectedSlot})
+	coreevent.ReplyToMessage(envelope, "receive heartbeat", bonusInformation)
 end
 
 local function DoEventReceiveHeartbeat(subject, envelope)
@@ -100,7 +102,15 @@ function coreassignment.RebootWhenIdle()    db.reboot   = true end
 function coreassignment.ShutdownWhenIdle()  db.shutdown = true end
 function coreassignment.SetHeartbeatFunction(func) table.insert(db.heartbeatFunctions, func) end
 function coreassignment.RemoveHeartbeatFunction(func)
-    -- ToDo (eignelijk ook helemaal niet boeiend maar goed)
+    -- ToDo (eigenlijk ook helemaal niet boeiend maar goed)
+end
+function coreassignment.SendHearbeatRequests()
+	-- just send a heartbeat request to anyone around
+	coreevent.SendMessage({
+		channel		= coreevent.PublicChannel(),
+		protocol	= db.protocol,
+		subject		= "send heartbeat",
+		message		= {}})
 end
 
 function coreassignment.Run()

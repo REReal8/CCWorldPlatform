@@ -21,6 +21,7 @@ local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
         6)  mobj's overview
 --]]
 
+local coreassignment = require "coreassignment"
 local coreevent = require "coreevent"
 local coretask = require "coretask"
 local coredht = require "coredht"
@@ -479,17 +480,13 @@ local function DoEventStatusUpdate(subject, envelope)
 end
 
 local function DoEventHeartbeatTimer()
-	-- just send a heartbeat request to anyone around
-	coreevent.SendMessage({
-		channel		= 65535,			-- public channel
-		protocol	= db.protocol,
-		subject		= "send heartbeat",
-		message		= {}})
+    -- pass request to coreassignemnt
+    coreassignment.SendHearbeatRequests()
 
 	-- do this event again in 5
 	coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer")
 
-	-- update the status
+	-- update the status (weird here)
 	DisplayStation.UpdateStatus()
 end
 
@@ -555,14 +552,15 @@ function DisplayStation:activate()
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
 
 		-- listen to our events
-		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
-		coreevent.AddEventListener(DoEventStatusUpdate, db.protocol, "status update")
-		coreevent.AddEventListener(DoEventHeartbeatTimer, db.protocol, "heartbeat timer")
-		coreevent.AddEventListener(DoEventReceiveHeartbeat, db.protocol, "receive heartbeat")
+		coreevent.AddEventListener(DoEventWriteToLog,       db.protocol, "write to log")
+		coreevent.AddEventListener(DoEventStatusUpdate,     db.protocol, "status update")
+		coreevent.AddEventListener(DoEventHeartbeatTimer,   db.protocol, "heartbeat timer")
+
+        -- setup heartbeat hook
+        coreassignment.SetHeartbeatFunction(DoEventReceiveHeartbeat)
 
         -- set up heartbeat timer
-	    coreevent.CreateTimeEvent(db.heartbeatTimer, "mobj_display_station", "heartbeat timer")
-
+	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
