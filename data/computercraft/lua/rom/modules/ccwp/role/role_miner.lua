@@ -173,4 +173,163 @@ function role_miner.MineShaft_Task(...)
     }
 end
 
+function role_miner.MineLayer_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, startHalfRib, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for MineLayer_Task.
+
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the task
+                baseLocation            + (Location) base location of the MineLayer
+                startHalfRib            + (number) with mining start halfRib within the MineLayer
+
+                priorityKey             + (string, "") priorityKey for this assignment
+    ]], ...)
+    if not checkSuccess then corelog.Error("role_miner.MineLayer_MetaData: Invalid input") return {success = false} end
+
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = baseLocation:copy(),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 4*2*startHalfRib + 2*startHalfRib,
+        itemsNeeded = {
+        },
+
+        priorityKey = priorityKey,
+    }
+end
+
+function role_miner.MineLayer_Task(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, startHalfRib, toProvideItems, escape, turtleLocator = InputChecker.Check([[
+        This Task function mines a MineShaft for items.
+
+        Return value:
+            task result                 - (table)
+                success                 - (boolean) whether the task was succesfull
+                endHalfRib              - (number) with mining ending depth within the MineLayer
+
+        Parameters:
+            taskData                    - (table) data about the task
+                baseLocation            + (Location) base location of the MineLayer
+                startHalfRib            + (number) with mining start halfRib within the MineLayer
+
+                provideItems            + (ItemTable) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to mine
+                escape                  + (boolean) whether Turtle should escape from the MineLayer after it's operation
+
+                workerLocator           + (URL) locating the Turtle
+    ]], ...)
+    if not checkSuccess then corelog.Error("role_miner.MineLayer_Task: Invalid input") return {success = false} end
+
+    -- get turtle we are doing task with
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    if not turtleObj then corelog.Error("role_miner.MineLayer_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
+
+    -- remember input items
+    local beginTurtleItems = turtleObj:getInventoryAsItemTable()
+
+    -- equip diamond_pickaxe
+    local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
+    if not axePresent then corelog.Error("role_miner.MineLayer_Task: No axePresent ") return {success = false} end
+
+    -- -- move to the baseLocation
+    -- coremove.GoTo(baseLocation)
+
+    -- perform entry sequence
+    -- ToDo: consider having the Mine that contains the MineLayer do this somehow
+    local baseZ = baseLocation:getZ()
+    local entrySequence = {
+        baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
+        baseLocation:getRelativeLocation(1, 0, -baseZ + 2), -- entry shaft surface
+        baseLocation:getRelativeLocation(1, 0, 0), -- entry shaft MineLayer
+        baseLocation,
+    }
+    for i, entryLocation in ipairs(entrySequence) do coremove.MoveTo(entryLocation, true) end
+
+    -- mine vierkantje's
+    local currentHalfRib = startHalfRib
+    local maxHalfRib = currentHalfRib + 1 -- maar 1 vierkantje voor nu
+    local allProvideItemsFound = false
+    local outputItems = ItemTable:newInstance()
+    local wasteItems = ItemTable:newInstance()
+    while currentHalfRib < maxHalfRib and not allProvideItemsFound do
+        -- ga naar de start van de rand
+        local randStart = baseLocation:getRelativeLocation(currentHalfRib, 0, 0)
+        coremove.GoTo(randStart, true)
+
+        -- loop het vierkantje
+        for iRand=1,4 do
+            -- loop de 2e helft van de 1e rand
+            for i=1,currentHalfRib do
+                coremove.Forward(1, true)
+                turtle.digUp()
+                turtle.digDown()
+            end
+
+            -- linksom
+            coremove.Left()
+
+            -- loop de 1e helft van de 2e rand
+            for i=1,currentHalfRib do
+                coremove.Forward(1, true)
+                turtle.digUp()
+                turtle.digDown()
+            end
+        end
+
+        -- determine output & waste items
+        local serviceResults = turtleObj:getOutputAndWasteItemsSince(beginTurtleItems, toProvideItems)
+        if not serviceResults or not serviceResults.success then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining output & waste items") return {success = false} end
+        outputItems = serviceResults.outputItems
+        wasteItems = serviceResults.otherItems
+
+        -- did we already find all?
+        local uniqueProvideItems, _commonItems, _uniqueFoundItems = ItemTable.compare(toProvideItems, outputItems)
+        if not uniqueProvideItems then corelog.Error("role_miner.MineLayer_Task: Failed obtaining uniqueProvideItems") return {success = false} end
+        if uniqueProvideItems:isEmpty() then
+            allProvideItemsFound = true
+        end
+
+        -- one layer lower
+        currentHalfRib = currentHalfRib + 1
+    end
+
+    -- perform exit sequence
+    if escape then
+        local exitSequence = {
+            baseLocation,
+            baseLocation:getRelativeLocation(-1, 0, 0), -- exit shaft MineLayer
+            baseLocation:getRelativeLocation(-1, 0, -baseZ + 2), -- exit shaft surface
+            baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
+        }
+        for i, exitLocation in ipairs(exitSequence) do
+            coremove.GoTo(exitLocation, true)
+        end
+    end
+
+    -- determine output locator
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery(outputItems)
+
+    -- determine waste locator
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
+    if next(wasteItems) ~= nil then
+        corelog.WriteToLog(">mining waste: "..textutils.serialise(wasteItems, {compact = true}))
+    end
+
+    -- end
+    return {
+        success                     = allProvideItemsFound,
+        endHalfRib                  = currentHalfRib,
+        turtleOutputItemsLocator    = turtleOutputItemsLocator,
+        turtleWasteItemsLocator     = turtleWasteItemsLocator,
+    }
+end
+
 return role_miner
