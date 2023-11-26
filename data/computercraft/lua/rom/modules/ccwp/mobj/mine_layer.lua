@@ -223,10 +223,10 @@ local function Mid_layer()
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
-            [7] = "       ",
+            [7] = "   T   ",
             [6] = "  C C  ",
             [5] = "       ",
-            [4] = "T      ",
+            [4] = "T     T",
             [3] = "       ",
             [2] = "       ",
             [1] = "   T   ",
