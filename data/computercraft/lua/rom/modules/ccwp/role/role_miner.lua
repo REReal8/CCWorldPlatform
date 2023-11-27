@@ -232,71 +232,66 @@ function role_miner.MineLayer_Task(...)
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then corelog.Error("role_miner.MineLayer_Task: No axePresent ") return {success = false} end
 
-    -- perform entry sequence
-    -- ToDo: consider having the Mine that contains the MineLayer do this somehow
+    -- perform entry sequence from main path to ribe start 
     local entrySequence = {
-        baseLocation:getRelativeLocation(1, 0, 0), -- entry shaft MineLayer
-        baseLocation,
+        -- entry from main path to MineLayer shaft
+        baseLocation:getRelativeLocation(1, 0, 0), 
+        -- prevent killing torch
+        baseLocation:getRelativeLocation(1, 1, 0),
+        baseLocation:getRelativeLocation(4, 1, 0),
+        baseLocation:getRelativeLocation(4, 0, 0),
     }
     for i, entryLocation in ipairs(entrySequence) do coremove.MoveTo(entryLocation, true) end
 
-    -- mine vierkantje's
-    local currentHalfRib = startHalfRib
-    local maxHalfRib = currentHalfRib + 1 -- maar 1 vierkantje voor nu
+    -- go to rib start position + direction
+    coremove.GoTo(baseLocation:getRelativeLocation(startHalfRib, 0, 0))
+
+    -- loop het vierkantje
+    for iRand=1,4 do
+        -- loop de 2e helft van de 1e rand
+        for i=1,startHalfRib do
+            coremove.Forward(1, true)
+            turtle.digUp()
+            turtle.digDown()
+        end
+
+        -- linksom
+        coremove.Left()
+
+        -- loop de 1e helft van de 2e rand
+        for i=1,startHalfRib do
+            coremove.Forward(1, true)
+            turtle.digUp()
+            turtle.digDown()
+        end
+    end
+
+    -- determine output & waste items
+    local serviceResults = turtleObj:getOutputAndWasteItemsSince(beginTurtleItems, toProvideItems)
+    if not serviceResults or not serviceResults.success then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining output & waste items") return {success = false} end
+    local outputItems = serviceResults.outputItems
+    local wasteItems = serviceResults.otherItems
+
+    -- did we already find all?
+    local uniqueProvideItems, _commonItems, _uniqueFoundItems = ItemTable.compare(toProvideItems, outputItems)
+    if not uniqueProvideItems then corelog.Error("role_miner.MineLayer_Task: Failed obtaining uniqueProvideItems") return {success = false} end
     local allProvideItemsFound = false
-    local outputItems = ItemTable:newInstance()
-    local wasteItems = ItemTable:newInstance()
-    while currentHalfRib < maxHalfRib and not allProvideItemsFound do
-        -- ga naar de start van de rand
-        local randStart = baseLocation:getRelativeLocation(currentHalfRib, 0, 0)
-        coremove.GoTo(randStart, true)
-
-        -- loop het vierkantje
-        for iRand=1,4 do
-            -- loop de 2e helft van de 1e rand
-            for i=1,currentHalfRib do
-                coremove.Forward(1, true)
-                turtle.digUp()
-                turtle.digDown()
-            end
-
-            -- linksom
-            coremove.Left()
-
-            -- loop de 1e helft van de 2e rand
-            for i=1,currentHalfRib do
-                coremove.Forward(1, true)
-                turtle.digUp()
-                turtle.digDown()
-            end
-        end
-
-        -- determine output & waste items
-        local serviceResults = turtleObj:getOutputAndWasteItemsSince(beginTurtleItems, toProvideItems)
-        if not serviceResults or not serviceResults.success then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining output & waste items") return {success = false} end
-        outputItems = serviceResults.outputItems
-        wasteItems = serviceResults.otherItems
-
-        -- did we already find all?
-        local uniqueProvideItems, _commonItems, _uniqueFoundItems = ItemTable.compare(toProvideItems, outputItems)
-        if not uniqueProvideItems then corelog.Error("role_miner.MineLayer_Task: Failed obtaining uniqueProvideItems") return {success = false} end
-        if uniqueProvideItems:isEmpty() then
-            allProvideItemsFound = true
-        end
-
-        -- one layer lower
-        currentHalfRib = currentHalfRib + 1
+    if uniqueProvideItems:isEmpty() then
+        allProvideItemsFound = true
     end
 
     -- perform exit sequence
-    if escape then
-        local exitSequence = {
-            baseLocation,
-            baseLocation:getRelativeLocation(-1, 0, 0), -- exit shaft MineLayer
-        }
-        for i, exitLocation in ipairs(exitSequence) do
-            coremove.GoTo(exitLocation, true)
-        end
+    local exitSequence = {
+        -- prevent killing torch
+        baseLocation:getRelativeLocation(startHalfRib, 1, 0),
+        baseLocation:getRelativeLocation(0, 1, 0),
+        -- to the base
+        baseLocation,
+        -- on my way out
+        baseLocation:getRelativeLocation(-1, 0, 0),
+    }
+    for i, exitLocation in ipairs(exitSequence) do
+        coremove.MoveTo(exitLocation, true)
     end
 
     -- determine output locator
@@ -313,7 +308,7 @@ function role_miner.MineLayer_Task(...)
     -- end
     return {
         success                     = allProvideItemsFound,
-        endHalfRib                  = currentHalfRib,
+        endHalfRib                  = startHalfRib + 1,
         turtleOutputItemsLocator    = turtleOutputItemsLocator,
         turtleWasteItemsLocator     = turtleWasteItemsLocator,
     }
