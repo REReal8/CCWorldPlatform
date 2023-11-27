@@ -268,7 +268,7 @@ function MineLayer.GetBuildBlueprint(...)
 
     -- buildLocation
     local offsetX = 1
-    local buildLocation = baseLocation:getRelativeLocation(1, 0, 0)
+    local buildLocation = baseLocation:getRelativeLocation(offsetX, 0, 0)
 
     -- layerList
     local layerList = {}
@@ -281,8 +281,8 @@ function MineLayer.GetBuildBlueprint(...)
 
     -- escapeSequence
     local escapeSequence = {}
-    table.insert(escapeSequence, baseLocation:getRelativeLocation(-1, 0, 0))
-    table.insert(escapeSequence, baseLocation:getRelativeLocation(-1, 0, baseLocation:getZ() + 2))
+    table.insert(escapeSequence, Location:newInstance(-1 - offsetX, 0, 0))
+    table.insert(escapeSequence, Location:newInstance(-1 - offsetX, 0, -baseLocation:getZ() + 2))
 
     -- blueprint
     local blueprint = {
