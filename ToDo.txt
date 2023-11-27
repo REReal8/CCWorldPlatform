@@ -17,6 +17,10 @@ R  mine v1: MineShaft mobj to generalise cobblestone collection in createNewWorl
    R  Build MineShaft from enterprise_colonization                                                                      (done)
       R  remove CollectCobbleStone_Task from role_settler                                                               (done)
 
+R  merge enterprise_chest into enterprise_storage                                                                       (done)
+
+R  implement MineLayer                                                                                                  (done)
+
 ToDo List
 ---------
 --[[
@@ -68,8 +72,6 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
       -  LObjHost
       -  MObjHost
       -  ...
-
-R  merge enterprise_chest into enterprise_storage                                                                       (....)
 
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
