@@ -23,10 +23,11 @@ local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
         6)  mobj's overview
 --]]
 
-local coreassignment = require "coreassignment"
-local coreevent = require "coreevent"
-local coredisplay = require "coredisplay"
-local corelog = require "corelog"
+local coresystem        = require "coresystem"
+local coreassignment    = require "coreassignment"
+local coreevent         = require "coreevent"
+local coredisplay       = require "coredisplay"
+local corelog           = require "corelog"
 
 local InputChecker = require "input_checker"
 local ObjTable = require "obj_table"
@@ -37,13 +38,32 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_employment
 
-local monitorLeft	= nil
-local monitorRight	= nil
 local db = {
-    loggerChannel   = 65534,
-    protocol        = "mobj_display_station",
-	heartbeatTimer  = 100,
-	status			= {},
+    -- facts
+    maxLines            = 40,
+    maxCharPerLine      = 82,
+
+    -- basic parameters
+    loggerChannel       = 65534,
+    protocol            = "mobj_display_station",
+	heartbeatTimer      = 100,
+	status			    = {},
+
+    -- monitor handlers
+    monitorLeft		    = nil,
+    monitorRight        = nil,
+
+    -- screens
+    loggingScreen       = {},
+    workerScreen        = {},
+    projectScreen       = {},
+    assignmentScreen    = {},
+    inventoryScreen     = {},
+    mobjScreen          = {},
+
+    -- what's on the monitor?
+    leftMonitor         = "loggingScreen",
+    rightMonitor        = "workerScreen",
 }
 
 --    _       _ _   _       _ _           _   _
@@ -344,23 +364,41 @@ end
 --
 --
 
-local function WriteToMonitor(message, monitor)
-	-- default monitor
-	monitor = monitor or monitorLeft
+local function ScreenToMonitor(screen, monitor)
+    -- check input, do nothing without tables
+    if type(screen) ~= "table" or type(monitor) ~= "table" or not monitor.setCursorPos then return end
 
-	-- write to an attached monitor if available (usefull for a status monitor screen)
-	if monitor then
-		local w, h = monitor.getSize()
+    -- loop all lines
+    for i=1, db.maxLines do
 
-		-- scroll the existing stuff up
-		monitor.scroll(1)
+        -- do the line
+        monitor.setCursorPos(1, i)
+        monitor.clearLine()
+        monitor.write(screen[i] or "")
+    end
+end
 
-		-- write the message
-		monitor.write(message)
+local function ScreenScroll(screen)
+    -- check input, do nothing without a table
+    if type(screen) ~= "table" then return screen end
 
-		-- set the cursus back at the start of the line
-		monitor.setCursorPos(1,h)
-	end
+    -- move the lines
+    for i=1, db.maxLines - 1 do screen[i] = screen[i + 1] end
+
+    -- last line should be empty now
+    screen[db.maxLines] = ""
+
+    -- done
+    return screen
+end
+
+local function ScreenWriteLine(screen, line)
+
+    -- start with scrolling the screen
+    ScreenScroll(screen)
+
+    -- add the new line to the bottom
+    screen[db.maxLines] = line
 end
 
 local function MonitorWriteLine(message, monitor)
@@ -399,7 +437,20 @@ end
 --   | |
 --   |_|
 
+function DisplayStation.SetMonitorPurpose(side, purpose)
+    -- format side
+    if side == "left"  then db.leftMonitor  = purpose end
+    if side == "right" then db.rightMonitor = purpose end
+end
 
+function DisplayStation.LoggerLine(line)
+	-- write the message on the monitor
+    ScreenWriteLine(db.loggingScreen, line)
+
+    -- update the screen
+    if db.leftMonitor  == "loggingScreen" then ScreenToMonitor(db.loggingScreen, db.monitorLeft)  end
+    if db.rightMonitor == "loggingScreen" then ScreenToMonitor(db.loggingScreen, db.rightMonitor) end
+end
 
 function DisplayStation.SetStatus(group, message, subline, details)
 	-- what kind are we?
@@ -444,7 +495,7 @@ end
 
 function DisplayStation.UpdateStatus(statusData, monitor)
 	-- which do we use?
-	monitor = monitor or monitorRight
+	monitor = monitor or db.monitorRight
 
 	-- make sure the status data is valid
 	if type(statusData) == "table"				then
@@ -508,8 +559,8 @@ end
 --
 
 local function DoEventWriteToLog(subject, envelope)
-	-- write the message on the monitor
-	WriteToMonitor(envelope.from ..":".. (envelope.message.text or "no text?!?"))
+    -- pass through function
+    DisplayStation.LoggerLine(envelope.from ..":".. (envelope.message.text or "no text?!?"))
 end
 
 local function DoEventStatusUpdate(subject, envelope)
@@ -582,23 +633,23 @@ function DisplayStation:activate()
         corelog.Warning("DisplayStation:activate() not supported on DisplayStation(="..self:getWorkerId()..") from other computer(="..os.getComputerID()..") => not adding event")
     else
 		-- get monitor handles
-		monitorLeft		= peripheral.wrap("left")
-		monitorRight	= peripheral.wrap("right")
+		db.monitorLeft		= peripheral.wrap("left")
+		db.monitorRight     = peripheral.wrap("right")
 
 		-- fresh start
-		monitorLeft.clear()
-		monitorRight.clear()
+		db.monitorLeft.clear()
+		db.monitorRight.clear()
 
 		-- no blinking!
-		monitorLeft.setCursorBlink(false)
-		monitorRight.setCursorBlink(false)
+		db.monitorLeft.setCursorBlink(false)
+		db.monitorRight.setCursorBlink(false)
 
 		-- start the left one at the bottom
-		local w, h = monitorLeft.getSize()
-		monitorLeft.setCursorPos(1,h)
+		local w, h = db.monitorLeft.getSize()
+		db.monitorLeft.setCursorPos(1,h)
 
 		-- right monitor has bigger text size
-		monitorRight.setTextScale(2)
+		db.monitorRight.setTextScale(2)
 
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
@@ -681,6 +732,18 @@ local function DisplayStationMenu(t, searchString)
     local displayStation = t.displayStation -- note a way to pass the concrete DisplayStation instance to this function if you think you need it
 end
 
+function DisplayStation.MenuSetPurpose(tab)
+
+    corelog.WriteToLog("DisplayStation.MenuSetPurpose")
+    corelog.WriteToLog(tab)
+
+    -- just do it
+    DisplayStation.SetMonitorPurpose(tab.side, tab.purpose)
+
+    -- always happy
+    return true
+end
+
 -- ToDo: this is the hook to put the menu of the DisplayStation
 function DisplayStation:getMainUIMenu()
     --[[
@@ -697,24 +760,25 @@ function DisplayStation:getMainUIMenu()
                 question        - (string, nil) final question to print
     ]]
 
+    -- da main menu
     return {
         clear   = true,
         intro   = "Choose what you want to see on the screens!",
         option  = {
-            {key = "q", desc = "Logging",          	    func = function () return true end,		param = {}},
-            {key = "w", desc = "Worker overview",       func = function () return true end,		param = {}},
-            {key = "e", desc = "Projects",              func = function () return true end,		param = {}},
-            {key = "r", desc = "Assignments",          	func = function () return true end,		param = {}},
-            {key = "t", desc = "Inventory on stock",    func = function () return true end,		param = {}},
-            {key = "y", desc = "mobj's overview",       func = function () return true end,		param = {}},
-            {key = "o", desc = "Quit",                  func = function () return true end,		param = {}},
-            {key = "a", desc = "Logging",          	    func = function () return true end,		param = {}},
-            {key = "s", desc = "Worker overview",       func = function () return true end,		param = {}},
-            {key = "d", desc = "Projects",              func = function () return true end,		param = {}},
-            {key = "f", desc = "Assignments",          	func = function () return true end,		param = {}},
-            {key = "g", desc = "Inventory on stock",    func = function () return true end,		param = {}},
-            {key = "h", desc = "mobj's overview",       func = function () return true end,		param = {}},
-            {key = "l", desc = "Quit",                  func = function () return true end,		param = {}},
+            {key = "q", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "loggingScreen"}},
+            {key = "w", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "workerScreen"}},
+            {key = "e", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "projectScreen"}},
+            {key = "r", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "assignmentScreen"}},
+            {key = "t", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "inventoryScreen"}},
+            {key = "y", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "mobjScreen"}},
+            {key = "o", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
+            {key = "a", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "loggingScreen"}},
+            {key = "s", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "workerScreen"}},
+            {key = "d", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "projectScreen"}},
+            {key = "f", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "assignmentScreen"}},
+            {key = "g", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "inventoryScreen"}},
+            {key = "h", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "mobjScreen"}},
+            {key = "l", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
         },
         question	= "Make your choice",
     }
