@@ -68,6 +68,7 @@ function t_ccwp.T_DeleteWorld()
     -- L/MObj's
     enterprise_forestry:releaseLObjs_SSrv({ className = "BirchForest" })
     enterprise_gathering:releaseLObjs_SSrv({ className = "MineShaft" })
+    enterprise_gathering:releaseLObjs_SSrv({ className = "MineLayer" })
     enterprise_manufacturing:releaseLObjs_SSrv({ className = "Factory" })
     enterprise_storage:releaseLObjs_SSrv({ className = "Silo"})
 end

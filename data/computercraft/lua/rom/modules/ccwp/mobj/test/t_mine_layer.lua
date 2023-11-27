@@ -12,10 +12,13 @@ local MineLayer = require "mine_layer"
 
 local role_energizer = require "role_energizer"
 
+local enterprise_employment = require "enterprise_employment"
 local enterprise_gathering = require "enterprise_gathering"
 
 local TestArrayTest = require "test_array_test"
+local FieldTest = require "field_test"
 local FieldValueEqualTest = require "field_value_equal_test"
+local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 local IsBlueprintTest = require "test.is_blueprint_test"
@@ -27,7 +30,6 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 
-local enterprise_employment
 local t_employment
 
 function T_MineLayer.T_All()
@@ -64,6 +66,9 @@ local logOk = false
 local baseLocation0 = Location:newInstance(0, -12, -36, 0, 1):getRelativeLocation(3, 3, 0)
 local currentHalfRib0 = 3
 
+local cacheItemsLocator0 = enterprise_employment.GetAnyTurtleLocator()
+local cacheItemsLocatorTest0 = FieldValueEqualTest:newInstance("_cacheItemsLocator", cacheItemsLocator0)
+
 local constructParameters0 = {
     baseLocation    = baseLocation0,
 }
@@ -80,20 +85,21 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_MineLayer.CreateTestObj(id, baseLocation, currentHalfRib)
+function T_MineLayer.CreateTestObj(id, baseLocation, currentHalfRib, cacheItemsLocator)
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation0
     currentHalfRib = currentHalfRib or currentHalfRib0
+    cacheItemsLocator = cacheItemsLocator or cacheItemsLocator0
 
     -- create testObj
-    local testObj = MineLayer:newInstance(id, baseLocation:copy(), currentHalfRib)
+    local testObj = MineLayer:newInstance(id, baseLocation:copy(), currentHalfRib, cacheItemsLocator)
 
     -- end
     return testObj
 end
 
-function T_MineLayer.CreateInitialisedTest(id, baseLocation, currentHalfRib)
+function T_MineLayer.CreateInitialisedTest(id, baseLocation, currentHalfRib, cacheItemsLocatorTest)
     -- check input
 
     -- create test
@@ -116,7 +122,7 @@ function T_MineLayer.T__init()
 
     -- test
     local obj = T_MineLayer.CreateTestObj(id, baseLocation0, currentHalfRib0) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_MineLayer.CreateInitialisedTest(id, baseLocation0, currentHalfRib0)
+    local test = T_MineLayer.CreateInitialisedTest(id, baseLocation0, currentHalfRib0, cacheItemsLocatorTest0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -133,8 +139,10 @@ function T_MineLayer.T_new()
 
         _baseLocation           = baseLocation0:copy(),
         _currentHalfRib         = currentHalfRib0,
+
+        _cacheItemsLocator      = cacheItemsLocator0,
     })
-    local test = T_MineLayer.CreateInitialisedTest(id, baseLocation0, currentHalfRib0)
+    local test = T_MineLayer.CreateInitialisedTest(id, baseLocation0, currentHalfRib0, cacheItemsLocatorTest0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -144,11 +152,12 @@ function T_MineLayer.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
-    local obj = T_MineLayer.CreateTestObj(id, baseLocation0, currentHalfRib0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_MineLayer.CreateTestObj(id, baseLocation0, currentHalfRib0, cacheItemsLocator0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getCurrentHalfRib", currentHalfRib0)
+        MethodResultEqualTest:newInstance("getCurrentHalfRib", currentHalfRib0),
+        MethodResultEqualTest:newInstance("getCacheItemsLocator", cacheItemsLocator0)
     )
     test:test(obj, testObjName, "", logOk)
 
@@ -189,8 +198,13 @@ function T_MineLayer.T_ILObj_All()
     -- prepare test
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
-    local fieldsTest0 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3)
-    local fieldsTest1 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3)
+    local cacheItemsLocatorTest1 = FieldTest:newInstance("_cacheItemsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL"),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
+    ))
+
+    local fieldsTest0 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3, cacheItemsLocatorTest1)
+    local fieldsTest1 = T_MineLayer.CreateInitialisedTest(nil, baseLocation0, 3, cacheItemsLocatorTest1)
 
     -- test cases
     T_ILObj.pt_all(testClassName, MineLayer, {
@@ -218,7 +232,7 @@ end
 
 function T_MineLayer.T_IMObj_All()
     -- prepare test
-    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0:getRelativeLocation(1, 0, 0))
 
     -- test cases
     T_IMObj.pt_all(testClassName, MineLayer, {
@@ -283,7 +297,6 @@ function T_MineLayer.T_needsTo_ProvideItemsTo_SOSrv()
 
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local turtleObj = enterprise_employment:getObject(itemDepotLocator) assert(turtleObj, "Failed obtaining turtleObj")
     local destinationLocation = turtleObj:getItemDepotLocation()
 

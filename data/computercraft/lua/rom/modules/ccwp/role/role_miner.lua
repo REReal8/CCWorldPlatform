@@ -232,10 +232,10 @@ function role_miner.MineLayer_Task(...)
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then corelog.Error("role_miner.MineLayer_Task: No axePresent ") return {success = false} end
 
-    -- perform entry sequence from main path to ribe start 
+    -- perform entry sequence from main path to ribe start
     local entrySequence = {
         -- entry from main path to MineLayer shaft
-        baseLocation:getRelativeLocation(1, 0, 0), 
+        baseLocation:getRelativeLocation(1, 0, 0),
         -- prevent killing torch
         baseLocation:getRelativeLocation(1, 1, 0),
         baseLocation:getRelativeLocation(4, 1, 0),
@@ -244,7 +244,7 @@ function role_miner.MineLayer_Task(...)
     for i, entryLocation in ipairs(entrySequence) do coremove.MoveTo(entryLocation, true) end
 
     -- go to rib start position + direction
-    coremove.GoTo(baseLocation:getRelativeLocation(startHalfRib, 0, 0))
+    coremove.GoTo(baseLocation:getRelativeLocation(startHalfRib, 0, 0), true)
 
     -- loop het vierkantje
     for iRand=1,4 do
@@ -275,10 +275,6 @@ function role_miner.MineLayer_Task(...)
     -- did we already find all?
     local uniqueProvideItems, _commonItems, _uniqueFoundItems = ItemTable.compare(toProvideItems, outputItems)
     if not uniqueProvideItems then corelog.Error("role_miner.MineLayer_Task: Failed obtaining uniqueProvideItems") return {success = false} end
-    local allProvideItemsFound = false
-    if uniqueProvideItems:isEmpty() then
-        allProvideItemsFound = true
-    end
 
     -- perform exit sequence
     local exitSequence = {
@@ -307,8 +303,8 @@ function role_miner.MineLayer_Task(...)
 
     -- end
     return {
-        success                     = allProvideItemsFound,
-        endHalfRib                  = startHalfRib + 1,
+        success                     = true,
+        endHalfRib                  = startHalfRib,
         turtleOutputItemsLocator    = turtleOutputItemsLocator,
         turtleWasteItemsLocator     = turtleWasteItemsLocator,
     }

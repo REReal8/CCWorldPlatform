@@ -30,11 +30,13 @@ local LayerRectangle = require "obj_layer_rectangle"
 local ItemTable = require "obj_item_table"
 
 local IItemDepot = require "i_item_depot"
+local LObjLocator = require "lobj_locator"
 
 local role_miner = require "role_miner"
 local role_energizer = require "role_energizer"
 
 local enterprise_projects = require "enterprise_projects"
+local enterprise_storage = require "enterprise_storage"
 local enterprise_gathering
 
 --    _       _ _   _       _ _           _   _
@@ -46,13 +48,14 @@ local enterprise_gathering
 
 function MineLayer:_init(...)
     -- get & check input from description
-    local checkSuccess, id, baseLocation, currentHalfRib = InputChecker.Check([[
+    local checkSuccess, id, baseLocation, currentHalfRib, cacheItemsLocator = InputChecker.Check([[
         Initialise a MineLayer.
 
         Parameters:
             id                      + (string) id of the MineLayer
             baseLocation            + (Location) base location of the MineLayer
             currentHalfRib          + (number) with current halfRib of the MineLayer
+            cacheItemsLocator       + (URL) locating the cache ItemSupplier of mined items
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:_init: Invalid input") return nil end
 
@@ -61,6 +64,7 @@ function MineLayer:_init(...)
     self._id                    = id
     self._baseLocation          = baseLocation
     self._currentHalfRib        = currentHalfRib
+    self._cacheItemsLocator     = cacheItemsLocator
 end
 
 -- ToDo: should be renamed to newFromTable at some point
@@ -74,6 +78,7 @@ function MineLayer:new(...)
                 _id                     - (string) id of the MineLayer
                 _baseLocation           - (Location) base location of the MineLayer
                 _currentHalfRib         - (number) with current halfRib of the MineLayer
+                _cacheItemsLocator      - (URL) locating the cache ItemSupplier of mined items
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:new: Invalid input") return nil end
 
@@ -87,6 +92,10 @@ end
 
 function MineLayer:getCurrentHalfRib()
     return self._currentHalfRib
+end
+
+function MineLayer:getCacheItemsLocator()
+    return self._cacheItemsLocator
 end
 
 --    _____ ____  _     _
@@ -127,10 +136,16 @@ function MineLayer:construct(...)
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:construct: Invalid input") return nil end
 
+    -- cacheItemsLocator
+    local cacheItemsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation:getRelativeLocation(-1, 2, 0),
+        accessDirection = "back",
+    }}).mobjLocator
+
     -- construct new MineLayer
     local id = coreutils.NewId()
     local startHalfRib = 3
-    local obj = MineLayer:newInstance(id, baseLocation:copy(), startHalfRib)
+    local obj = MineLayer:newInstance(id, baseLocation:copy(), startHalfRib, cacheItemsLocator)
 
     -- end
     return obj
@@ -167,8 +182,14 @@ function MineLayer:destruct()
         Parameters:
     ]]
 
+    -- cacheItemsLocator
+    local destructSuccess = true
+    local cacheItemsLocator = self:getCacheItemsLocator()
+    local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = cacheItemsLocator })
+    if not releaseResult or not releaseResult.success then corelog.Warning("MineLayer:destruct(): failed releasing cacheItemsLocator "..cacheItemsLocator:getURI()) destructSuccess = false end
+
     -- end
-    return true
+    return destructSuccess
 end
 
 function MineLayer:getId()
@@ -322,7 +343,8 @@ function MineLayer:getExtendBlueprint(...)
 
     -- buildLocation
     local baseLocation = self:getBaseLocation()
-    local buildLocation = baseLocation:copy()
+    local offsetX = 1
+    local buildLocation = baseLocation:getRelativeLocation(offsetX, 0, 0)
 
     -- end
     return buildLocation, blueprint
@@ -353,7 +375,9 @@ function MineLayer:getDismantleBlueprint()
     }
 
     -- buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local baseLocation = self:getBaseLocation()
+    local offsetX = 1
+    local buildLocation = baseLocation:getRelativeLocation(offsetX, 0, 0)
 
     -- end
     return buildLocation, blueprint
@@ -367,6 +391,8 @@ end
 --   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|
 --                                              | |   | |
 --                                              |_|   |_|
+
+local defaultHostName = "enterprise_gathering"
 
 function MineLayer:provideItemsTo_AOSrv(...)
     -- get & check input from description
@@ -394,6 +420,21 @@ function MineLayer:provideItemsTo_AOSrv(...)
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- check cacheItemsLocator (Chest) can provide the requested items
+    local cacheItemsLocator = self:getCacheItemsLocator()
+    local cacheItemsSupplier = ObjHost.GetObject(cacheItemsLocator)
+    if not cacheItemsSupplier or not Class.IsInstanceOf(cacheItemsSupplier, IItemSupplier) then corelog.Error("MineLayer:provideItemsTo_AOSrv: Failed obtaining an IItemSupplier from cacheItemsLocator "..cacheItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    if cacheItemsSupplier:can_ProvideItems_QOSrv({ provideItems = provideItems, }).success then
+        -- provide items from cacheItemsSupplier to requested ItemDepot
+        return cacheItemsSupplier:provideItemsTo_AOSrv({
+            provideItems                    = provideItems,
+            itemDepotLocator                = itemDepotLocator,
+            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+            wasteItemDepotLocator           = wasteItemDepotLocator,
+            assignmentsPriorityKey          = assignmentsPriorityKey,
+        }, callback)
+    end
+
     -- check MineLayer can "in principal" provide the requested items
     local canProvideResult = self:can_ProvideItems_QOSrv({ provideItems = provideItems, })
     if not canProvideResult or not canProvideResult.success then
@@ -402,9 +443,10 @@ function MineLayer:provideItemsTo_AOSrv(...)
     end
 
     -- construct taskData
+    local startHalfRib = self:getCurrentHalfRib() + 1
     local taskData = {
         baseLocation        = self:getBaseLocation(),
-        startHalfRib        = self:getCurrentHalfRib()+1,
+        startHalfRib        = startHalfRib,
 
         provideItems        = ItemTable:newInstance(provideItems),
         escape              = true,
@@ -419,16 +461,16 @@ function MineLayer:provideItemsTo_AOSrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "mineLayerMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "mineLayerTaskCall" },
-            }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineLayer task"},
+            }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineLayer (rectangle "..startHalfRib..") task"},
             -- save MineLayer
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_gathering", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = defaultHostName, serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"                       , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "MineLayer" },
+                { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "mineLayer" },
                 { keyDef = "objectTable._currentHalfRib"    , sourceStep = 1, sourceKeyDef = "endHalfRib" },
             }},
-            -- deliver mined items
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
+            -- store mined items in cache
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "cacheItemsLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "turtleOutputItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
@@ -437,16 +479,29 @@ function MineLayer:provideItemsTo_AOSrv(...)
                 { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "turtleWasteItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
+            -- recursive call to provide items
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "mineLayerLocator" }, stepDataDef = {
+                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }, description = "Providing "..textutils.serialise(provideItems, {compact = true}).." recursively"},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"            , sourceStep = 5, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectData = {
-        hostName                        = "enterprise_gathering",
+        hostName                        = defaultHostName,
         className                       = "MineLayer",
-        MineLayer                       = self:copy(),
+        mineLayerLocator                = LObjLocator:newInstance(defaultHostName, self),
+        mineLayer                       = self:copy(),
 
+        provideItems                    = ItemTable:newInstance(provideItems),
+
+        cacheItemsLocator               = cacheItemsLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
         wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
 
