@@ -134,7 +134,7 @@ function DoScreen(t)
             local rightOffset	= 10
 
             -- might look nicer this way
-            if #t.option > 10 and #t.option < 20 then rightOffset = 1 + math.floor(#t.option / 2) end
+            if #t.option > 10 and #t.option < 20 then rightOffset = math.floor((1 + #t.option) / 2) end
 
             -- we have max 10 lines
             for i=1,10 do
