@@ -697,6 +697,29 @@ function DisplayStation:getMainUIMenu()
                 question        - (string, nil) final question to print
     ]]
 
+    return {
+        clear   = true,
+        intro   = "Choose what you want to see on the screens!",
+        option  = {
+            {key = "q", desc = "Logging",          	    func = function () return true end,		param = {}},
+            {key = "w", desc = "Worker overview",       func = function () return true end,		param = {}},
+            {key = "e", desc = "Projects",              func = function () return true end,		param = {}},
+            {key = "r", desc = "Assignments",          	func = function () return true end,		param = {}},
+            {key = "t", desc = "Inventory on stock",    func = function () return true end,		param = {}},
+            {key = "y", desc = "mobj's overview",       func = function () return true end,		param = {}},
+            {key = "o", desc = "Quit",                  func = function () return true end,		param = {}},
+            {key = "a", desc = "Logging",          	    func = function () return true end,		param = {}},
+            {key = "s", desc = "Worker overview",       func = function () return true end,		param = {}},
+            {key = "d", desc = "Projects",              func = function () return true end,		param = {}},
+            {key = "f", desc = "Assignments",          	func = function () return true end,		param = {}},
+            {key = "g", desc = "Inventory on stock",    func = function () return true end,		param = {}},
+            {key = "h", desc = "mobj's overview",       func = function () return true end,		param = {}},
+            {key = "l", desc = "Quit",                  func = function () return true end,		param = {}},
+        },
+        question	= "Make your choice",
+    }
+
+--[[
     -- end
     return {
         clear       = true,
@@ -705,6 +728,7 @@ function DisplayStation:getMainUIMenu()
         param	    = { displayStation = self },
         question    = nil
     }
+]]
 end
 
 -- ToDo: consider adding assigment filter criteria if you want the DisplayStation to only take specific assignments.
