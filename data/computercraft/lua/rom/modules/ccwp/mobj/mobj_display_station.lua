@@ -53,18 +53,22 @@ local db = {
     monitorLeft         = nil,
     monitorRight        = nil,
 
-    -- screens
-    loggingScreen       = {},
-    workerScreen        = {},
-    projectScreen       = {},
-    assignmentScreen    = {},
-    inventoryScreen     = {},
-    mobjScreen          = {},
+    -- screen holders
+    loggingScreen       = { textScale=1, },
+    workerScreen        = { textScale=2, },
+    projectScreen       = { textScale=1, },
+    assignmentScreen    = { textScale=1, },
+    inventoryScreen     = { textScale=1, },
+    mobjScreen          = { textScale=1, },
 
     -- what's on the monitor?
-    leftMonitor         = "loggingScreen",
-    rightMonitor        = "workerScreen",
+    leftMonitorScreen   = nil,
+    rightMonitorScreen  = nil,
 }
+
+-- set initial values
+db.leftMonitorScreen  = db.loggingScreen
+db.rightMonitorScreen = db.workerScreen
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -365,8 +369,9 @@ end
 --
 
 local function ScreenToMonitor(screen, monitor)
-    -- check input, do nothing without tables
-    if type(screen) ~= "table" or type(monitor) ~= "table" or not monitor.setCursorPos then return end
+
+    -- right monitor has bigger text size
+    monitor.setTextScale(screen.textScale or 1)
 
     -- loop all lines
     for i=1, db.maxLines do
@@ -438,9 +443,9 @@ end
 --   |_|
 
 function DisplayStation.SetMonitorPurpose(side, purpose)
-    -- format side
-    if side == "left"  then db.leftMonitor  = purpose end
-    if side == "right" then db.rightMonitor = purpose end
+    -- which side
+    if side == "left"  then db.leftMonitorScreen  = purpose ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft) end
+    if side == "right" then db.rightMonitorScreen = purpose ScreenToMonitor(db.rightMonitorScreen, db.monitorRight) end
 end
 
 function DisplayStation.LoggerLine(line)
@@ -448,8 +453,8 @@ function DisplayStation.LoggerLine(line)
     ScreenWriteLine(db.loggingScreen, line)
 
     -- update the screen
-    if db.leftMonitor  == "loggingScreen" then ScreenToMonitor(db.loggingScreen, db.monitorLeft)  end
-    if db.rightMonitor == "loggingScreen" then ScreenToMonitor(db.loggingScreen, db.rightMonitor) end
+    ScreenToMonitor(db.leftMonitorScreen,   db.monitorLeft)
+    ScreenToMonitor(db.rightMonitorScreen,  db.monitorRight)
 end
 
 function DisplayStation.SetStatus(group, message, subline, details)
@@ -494,6 +499,10 @@ function DisplayStation.SetStatus(group, message, subline, details)
 end
 
 function DisplayStation.UpdateStatus(statusData, monitor)
+
+    -- be useless
+    if true then return end
+
 	-- which do we use?
 	monitor = monitor or db.monitorRight
 
@@ -648,9 +657,6 @@ function DisplayStation:activate()
 		local w, h = db.monitorLeft.getSize()
 		db.monitorLeft.setCursorPos(1,h)
 
-		-- right monitor has bigger text size
-		db.monitorRight.setTextScale(2)
-
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
 
@@ -734,9 +740,6 @@ end
 
 function DisplayStation.MenuSetPurpose(tab)
 
-    corelog.WriteToLog("DisplayStation.MenuSetPurpose")
-    corelog.WriteToLog(tab)
-
     -- just do it
     DisplayStation.SetMonitorPurpose(tab.side, tab.purpose)
 
@@ -765,19 +768,21 @@ function DisplayStation:getMainUIMenu()
         clear   = true,
         intro   = "Choose what you want to see on the screens!",
         option  = {
-            {key = "q", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "loggingScreen"}},
-            {key = "w", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "workerScreen"}},
-            {key = "e", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "projectScreen"}},
-            {key = "r", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "assignmentScreen"}},
-            {key = "t", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "inventoryScreen"}},
-            {key = "y", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "left",  purpose = "mobjScreen"}},
+            {key = "q", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.loggingScreen     }},
+            {key = "w", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.workerScreen      }},
+            {key = "e", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.projectScreen     }},
+            {key = "r", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.assignmentScreen  }},
+            {key = "t", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.inventoryScreen   }},
+            {key = "y", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.mobjScreen        }},
+            {key = "u", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose={}                   }},
             {key = "o", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
-            {key = "a", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "loggingScreen"}},
-            {key = "s", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "workerScreen"}},
-            {key = "d", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "projectScreen"}},
-            {key = "f", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "assignmentScreen"}},
-            {key = "g", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "inventoryScreen"}},
-            {key = "h", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side = "right", purpose = "mobjScreen"}},
+            {key = "a", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.loggingScreen     }},
+            {key = "s", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.workerScreen      }},
+            {key = "d", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.projectScreen     }},
+            {key = "f", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.assignmentScreen  }},
+            {key = "g", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.inventoryScreen   }},
+            {key = "h", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.mobjScreen        }},
+            {key = "j", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose={}                   }},
             {key = "l", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
         },
         question	= "Make your choice",
