@@ -148,7 +148,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         mineClassName                   = "MineShaft",
         mineConstructParameters         = {
             baseLocation                    = mineLocation:copy(),
-            maxDepth                        = 32,
+            maxDepth                        = 37,
         },
 
         factoryConstructParameters1     = {
@@ -391,7 +391,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
         mineClassName                   = "MineShaft",
         mineConstructParameters         = {
             baseLocation                    = mineLocation:copy(),
-            maxDepth                        = 32,
+            maxDepth                        = 37,
         },
 
         energyL3                        = 3,
