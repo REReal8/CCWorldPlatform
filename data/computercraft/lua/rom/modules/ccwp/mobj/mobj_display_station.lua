@@ -46,11 +46,11 @@ local db = {
     -- basic parameters
     loggerChannel       = 65534,
     protocol            = "mobj_display_station",
-	heartbeatTimer      = 100,
-	status			    = {},
+    heartbeatTimer      = 100,
+    status              = {},
 
     -- monitor handlers
-    monitorLeft		    = nil,
+    monitorLeft         = nil,
     monitorRight        = nil,
 
     -- screens
