@@ -62,7 +62,9 @@ function role_miner.MineShaft_Task(...)
         Return value:
             task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
-                endDepth                 (number) with mining ending depth within the MineShaft
+                endDepth                - (number) with mining ending depth within the MineShaft
+                turtleOutputItemsLocator- (URL) locating the provideItems that where gathered (in the turtle)
+                turtleWasteItemsLocator - (URL) locating waste items collected (in the turtle) during gathering
 
         Parameters:
             taskData                    - (table) data about the task
@@ -203,6 +205,8 @@ function role_miner.MineLayer_Task(...)
             task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
                 endHalfRib              - (number) with mining ending depth within the MineLayer
+                turtleOutputItemsLocator- (URL) locating the provideItems that where gathered (in the turtle)
+                turtleWasteItemsLocator - (URL) locating waste items collected (in the turtle) during gathering
 
         Parameters:
             taskData                    - (table) data about the task
@@ -228,15 +232,9 @@ function role_miner.MineLayer_Task(...)
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then corelog.Error("role_miner.MineLayer_Task: No axePresent ") return {success = false} end
 
-    -- -- move to the baseLocation
-    -- coremove.GoTo(baseLocation)
-
     -- perform entry sequence
     -- ToDo: consider having the Mine that contains the MineLayer do this somehow
-    local baseZ = baseLocation:getZ()
     local entrySequence = {
-        -- baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
-        -- baseLocation:getRelativeLocation(1, 0, -baseZ + 2), -- entry shaft surface
         baseLocation:getRelativeLocation(1, 0, 0), -- entry shaft MineLayer
         baseLocation,
     }
@@ -295,8 +293,6 @@ function role_miner.MineLayer_Task(...)
         local exitSequence = {
             baseLocation,
             baseLocation:getRelativeLocation(-1, 0, 0), -- exit shaft MineLayer
-            -- baseLocation:getRelativeLocation(-1, 0, -baseZ + 2), -- exit shaft surface
-            -- baseLocation:getRelativeLocation(0, 0, -baseZ + 2), -- on the surface
         }
         for i, exitLocation in ipairs(exitSequence) do
             coremove.GoTo(exitLocation, true)
