@@ -537,6 +537,9 @@ local function ProcessLoggingCallback(message)
     })
 end
 
+-- setup logger hook
+coreevent.EventReadyFunction(function () corelog.SetLoggerFunction(ProcessLoggingCallback) end)
+
 local function ProcessReceiveHeartbeat(subject, envelope)
 	-- remember this one is alive
 	if type(db.status[envelope.from]) ~= "table" then db.status[envelope.from] = {} end
@@ -602,9 +605,6 @@ function DisplayStation:activate()
 		coreevent.AddEventListener(DoEventWriteToLog,       db.protocol, "write to log")
 		coreevent.AddEventListener(DoEventStatusUpdate,     db.protocol, "status update")
 		coreevent.AddEventListener(DoEventHeartbeatTimer,   db.protocol, "heartbeat timer")
-
-        -- setup logger hook
-        corelog.SetLoggerFunction(ProcessLoggingCallback)
 
         -- setup heartbeat hook
         coreassignment.SetHeartbeatFunction(ProcessReceiveHeartbeat)
