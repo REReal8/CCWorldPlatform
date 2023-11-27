@@ -7,6 +7,8 @@ local IWorker = require "i_worker"
 local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 --[[
+    << a full size monitor has 40 lines and 82 char per line >>
+
     The DisplayStation Worker represents a station in the minecraft world and provides (production) services for developers to operate on that DisplayStation.
 
     A DisplayStation has at least 2 displays (consisting of minecraft monitors) attached. The main menu of the DisplayStation should at a minimum enable
