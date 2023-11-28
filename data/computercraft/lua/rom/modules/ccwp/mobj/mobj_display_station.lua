@@ -29,12 +29,12 @@ local coreevent         = require "coreevent"
 local coredisplay       = require "coredisplay"
 local corelog           = require "corelog"
 
-local InputChecker = require "input_checker"
-local ObjTable = require "obj_table"
-local Block = require "obj_block"
-local Location = require "obj_location"
-local CodeMap = require "obj_code_map"
-local LayerRectangle = require "obj_layer_rectangle"
+local InputChecker      = require "input_checker"
+local ObjTable          = require "obj_table"
+local Block             = require "obj_block"
+local Location          = require "obj_location"
+local CodeMap           = require "obj_code_map"
+local LayerRectangle    = require "obj_layer_rectangle"
 
 local enterprise_employment
 
@@ -47,19 +47,24 @@ local db = {
     loggerChannel       = 65534,
     protocol            = "mobj_display_station",
     heartbeatTimer      = 100,
-    status              = {},
 
     -- monitor handlers
     monitorLeft         = nil,
     monitorRight        = nil,
 
+    -- data containers
+    status              = {},
+
+    -- screen defaults
+    textScale           = 1,
+
     -- screen holders
-    loggingScreen       = { textScale=1, },
-    workerScreen        = { textScale=2, },
-    projectScreen       = { textScale=1, },
-    assignmentScreen    = { textScale=1, },
-    inventoryScreen     = { textScale=1, },
-    mobjScreen          = { textScale=1, },
+    loggingScreen       = {},
+    workerScreen        = {textScale=2},
+    projectScreen       = {},
+    assignmentScreen    = {},
+    inventoryScreen     = {},
+    mobjScreen          = {},
 
     -- what's on the monitor?
     leftMonitorScreen   = nil,
@@ -371,7 +376,7 @@ end
 local function ScreenToMonitor(screen, monitor)
 
     -- right monitor has bigger text size
-    monitor.setTextScale(screen.textScale or 1)
+    monitor.setTextScale(screen.textScale or db.textScale)
 
     -- loop all lines
     for i=1, db.maxLines do
