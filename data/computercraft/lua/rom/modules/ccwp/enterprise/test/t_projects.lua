@@ -108,7 +108,7 @@ function t_projects.T_StartProject_ASrv()
             -- test located SMtd
             { stepType = "LSOMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            }},
+            }, description = "test located Sync Obj method"},
         },
         returnData  = {
             { keyDef = "testBArg0"              , sourceStep = 0, sourceKeyDef = "testArgSource" },
