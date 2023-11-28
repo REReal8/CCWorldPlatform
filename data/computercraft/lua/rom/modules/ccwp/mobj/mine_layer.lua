@@ -585,6 +585,7 @@ function MineLayer:needsTo_ProvideItemsTo_SOSrv(...)
 
     -- fuelNeed_Mining
     local fuelNeed_Mining = 2*4*(self:getCurrentHalfRib() + 1) -- note: we return the fuelNeed for mining the next square
+    -- ToDo: take # rounds into account!
 
     -- get destinationItemDepot
     local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)

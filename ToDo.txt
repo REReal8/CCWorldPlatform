@@ -95,6 +95,7 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
          -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
 
 -  mine v2: Mine consisting of MineShaft (from surface level to underground) and MineLayers (underground)
+   -  MineLayer:needsTo_ProvideItemsTo: take # expected squares into account
 
 -  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
