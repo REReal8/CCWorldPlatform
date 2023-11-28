@@ -744,7 +744,7 @@ function DisplayStation.MenuSetPurpose(tab)
     DisplayStation.SetMonitorPurpose(tab.side, tab.purpose)
 
     -- always happy
-    return true
+--    return true
 end
 
 -- ToDo: this is the hook to put the menu of the DisplayStation
@@ -768,22 +768,22 @@ function DisplayStation:getMainUIMenu()
         clear   = true,
         intro   = "Choose what you want to see on the screens!",
         option  = {
-            {key = "q", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.loggingScreen     }},
-            {key = "w", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.workerScreen      }},
-            {key = "e", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.projectScreen     }},
-            {key = "r", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.assignmentScreen  }},
-            {key = "t", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.inventoryScreen   }},
-            {key = "y", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.mobjScreen        }},
-            {key = "u", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose={}                   }},
-            {key = "o", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
-            {key = "a", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.loggingScreen     }},
-            {key = "s", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.workerScreen      }},
-            {key = "d", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.projectScreen     }},
-            {key = "f", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.assignmentScreen  }},
-            {key = "g", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.inventoryScreen   }},
-            {key = "h", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.mobjScreen        }},
-            {key = "j", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose={}                   }},
-            {key = "l", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
+            {key = "w", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.loggingScreen     }},
+            {key = "e", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.workerScreen      }},
+            {key = "r", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.projectScreen     }},
+            {key = "t", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.assignmentScreen  }},
+            {key = "y", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.inventoryScreen   }},
+            {key = "u", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.mobjScreen        }},
+            {key = "i", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose={}                   }},
+            {key = "q", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
+            {key = "s", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.loggingScreen     }},
+            {key = "d", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.workerScreen      }},
+            {key = "f", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.projectScreen     }},
+            {key = "g", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.assignmentScreen  }},
+            {key = "h", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.inventoryScreen   }},
+            {key = "j", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.mobjScreen        }},
+            {key = "k", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose={}                   }},
+--            {key = "l", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
         },
         question	= "Make your choice",
     }
