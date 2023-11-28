@@ -455,41 +455,4 @@ function ObjHost.GetObject(...)
     return object
 end
 
--- ToDo: consider if it's better to make this a method of a ObjHost object (instead of the global function we have now)
-function ObjHost.SaveObject_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, hostName, className, objectTable = InputChecker.Check([[
-        This sync service saves an object in ObjHost named hostName.
-
-        Return value:
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-                objectLocator   - (URL) locating the object
-
-        Parameters:
-            serviceData         - (table) data for this service
-                hostName        + (string) with hostName of the ObjHost
-                className       + (string) with the name of the class of the object
-                objectTable     + (table) of the object
-    ]], ...)
-    if not checkSuccess then corelog.Error("ObjHost.SaveObject_SSrv: Invalid input") return {success = false} end
-
-    -- get ObjHost
-    local host = Host.GetHost(hostName)
-    if not host then corelog.Error("ObjHost.SaveObject_SSrv: host "..hostName.." not found") return {success = false} end
-
-    -- convert to object
-    local object = objectFactory:create(className, objectTable)
-
-    -- save object
-    local objectLocator = host:saveObject(object)
-    if not objectLocator then corelog.Error("ObjHost.SaveObject_SSrv: Failed saving object "..textutils.serialise(object)) return {success = false} end
-
-    -- end
-    return {
-        success         = true,
-        objectLocator   = objectLocator,
-    }
-end
-
 return ObjHost

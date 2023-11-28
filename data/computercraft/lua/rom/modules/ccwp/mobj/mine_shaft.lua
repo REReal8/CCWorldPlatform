@@ -20,8 +20,9 @@ local InputChecker = require "input_checker"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local ObjTable = require "obj_table"
+local URL = require "obj_url"
 local ObjHost = require "obj_host"
+local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
@@ -29,6 +30,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 local ItemTable = require "obj_item_table"
 
 local IItemDepot = require "i_item_depot"
+local LObjLocator = require "lobj_locator"
 
 local role_miner = require "role_miner"
 local role_energizer = require "role_energizer"
@@ -428,6 +430,8 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
+local defaultHostName = "enterprise_gathering"
+
 function MineShaft:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -461,7 +465,7 @@ function MineShaft:provideItemsTo_AOSrv(...)
         return Callback.ErrorCall(callback)
     end
 
-    -- construct taskData
+    -- create project data
     local taskData = {
         baseLocation        = self:getBaseLocation(),
         startDepth          = self:getCurrentDepth(),
@@ -472,8 +476,20 @@ function MineShaft:provideItemsTo_AOSrv(...)
 
         priorityKey         = assignmentsPriorityKey,
     }
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
+    local projectData = {
+        hostLocator                     = URL:newInstance(defaultHostName),
+        lobjLocator                     = lobjLocator,
 
-    -- create project service data
+        wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
+        itemDepotLocator                = itemDepotLocator:copy(),
+
+        mineShaftMetaData               = role_miner.MineShaft_MetaData(taskData),
+        mineShaftTaskCall               = TaskCall:newInstance("role_miner", "MineShaft_Task", taskData),
+
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }
+    -- create project definition
     local projectDef = {
         steps = {
             -- mine MineShaft
@@ -481,12 +497,15 @@ function MineShaft:provideItemsTo_AOSrv(...)
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "mineShaftMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "mineShaftTaskCall" },
             }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineShaft task"},
+
+            -- get MineShaft
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"                     , sourceStep = 0, sourceKeyDef = "lobjLocator" },
+            }},
             -- save MineShaft
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_gathering", serviceName = "SaveObject_SSrv" }, stepDataDef = {
-                { keyDef = "hostName"                       , sourceStep = 0, sourceKeyDef = "hostName" },
-                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "mineShaft" },
-                { keyDef = "objectTable._currentDepth"      , sourceStep = 1, sourceKeyDef = "endDepth" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                            , sourceStep = 2, sourceKeyDef = "obj" },
+                { keyDef = "obj._currentDepth"              , sourceStep = 1, sourceKeyDef = "endDepth" },
             }},
             -- deliver mined items
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
@@ -500,21 +519,8 @@ function MineShaft:provideItemsTo_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"            , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
         }
-    }
-    local projectData = {
-        hostName                        = "enterprise_gathering",
-        className                       = "MineShaft",
-        mineShaft                       = self:copy(),
-
-        wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
-        itemDepotLocator                = itemDepotLocator:copy(),
-
-        mineShaftMetaData               = role_miner.MineShaft_MetaData(taskData),
-        mineShaftTaskCall               = TaskCall:newInstance("role_miner", "MineShaft_Task", taskData),
-
-        assignmentsPriorityKey          = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = projectDef,
