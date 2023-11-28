@@ -106,7 +106,7 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }, description = "test located AOSrv"},
             -- test located SMtd
-            { stepType = "LSMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
+            { stepType = "LSOMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
         },

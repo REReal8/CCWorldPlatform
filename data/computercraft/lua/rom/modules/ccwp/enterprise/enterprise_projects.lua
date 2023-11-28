@@ -570,7 +570,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)
-    elseif stepType == "LSMtd" then
+    elseif stepType == "LSOMtd" then
         -- get & check input from description
         local checkSuccess, methodName, locatorStep, locatorKeyDef = InputChecker.Check([[
             Parameters:
@@ -579,11 +579,11 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     locatorStep         + (number)
                     locatorKeyDef       + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepTypeDef fields for LSMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepTypeDef fields for LSOMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         -- get sourceStepData
         local sourceStepData = project.outputs[ locatorStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for locator of LSMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for locator of LSOMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         -- get objLocator
         local objLocator = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)

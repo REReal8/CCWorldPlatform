@@ -86,7 +86,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain workerId
-            { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+            { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
@@ -184,7 +184,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain workerId
-            { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+            { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {

@@ -846,7 +846,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }, description = "Gathering "..normSaplings.." input sapling(s)"},
                     -- obtain workerId (of Turtle)
-                    { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+                    { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
                     }},
                     -- harvest BirchForest
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
