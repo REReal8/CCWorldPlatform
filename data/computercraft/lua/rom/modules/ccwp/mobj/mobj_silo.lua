@@ -26,6 +26,9 @@ local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+local ItemTable = require "obj_item_table"
+
+local LObjLocator = require "lobj_locator"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment
@@ -454,6 +457,8 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
+local defaultHostName = "enterprise_storage"
+
 function Silo:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -648,13 +653,10 @@ function Silo:storeItemsFrom_AOSrv(...)
     ]], ...)
     if not checkSuccess then corelog.Error("Silo:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- set (expected) destinationItemsLocator
-    enterprise_storage = enterprise_storage or require "enterprise_storage"
-    local destinationItemsLocator = enterprise_storage:getObjectLocator(self)
-    destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
-
-    -- create project definition
+    -- create project data
     enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local itemTable = ItemTable:newInstance(itemsLocator:getQuery())
+    local destinationItemsLocator = LObjLocator:newInstance(defaultHostName, self, itemTable:copy())
     local projectData = {
         itemsLocator            = itemsLocator,
         dropLocator             = self:getDropLocation(),
@@ -664,6 +666,7 @@ function Silo:storeItemsFrom_AOSrv(...)
 
         silo                    = self:copy(),
     }
+    -- create project definition
     local projectDef = {
         steps   = {
             -- roept functie aan die goederen van pickup locati enaar silo topchest

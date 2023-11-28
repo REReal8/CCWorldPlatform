@@ -29,6 +29,8 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
+local LObjLocator = require "lobj_locator"
+
 local role_energizer = require "role_energizer"
 
 local enterprise_employment
@@ -410,6 +412,8 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
+local defaultHostName = "enterprise_employment"
+
 function Turtle:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -439,9 +443,7 @@ function Turtle:provideItemsTo_AOSrv(...)
     if not hasItems then corelog.Error("Turtle:provideItemsTo_AOSrv: provideItems(="..textutils.serialise(provideItems)..") not (all) available in Turtle") return Callback.ErrorCall(callback) end
 
     -- create turtleItemsLocator
-    enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleItemsLocator = enterprise_employment:getObjectLocator(self) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
-    turtleItemsLocator:setQuery(provideItems)
+    local turtleItemsLocator = LObjLocator:newInstance(defaultHostName, self, provideItems)
 
     -- get ItemDepot
     local itemDepot = ObjHost.GetObject(itemDepotLocator)
@@ -588,8 +590,8 @@ function Turtle:storeItemsFrom_AOSrv(...)
         if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all="..textutils.serialise(storeItems, {compact = true})..") items available in Turtle inventory(="..textutils.serialise(turtleInventory, {compact = true})..")") return Callback.ErrorCall(callback) end
 
         -- determine destinationItemsLocator
-        local destinationItemsLocator = enterprise_employment:getObjectLocator(self)
-        destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
+        local itemTable = ItemTable:newInstance(itemsLocator:getQuery())
+        local destinationItemsLocator = LObjLocator:newInstance(defaultHostName, self, itemTable)
 
         -- end
         local result = {
@@ -600,7 +602,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     else -- source is not a turtle
         -- ToDo: investigate if there are ways to prevent this (as below code seems a bit ackward)
         -- create turtleLocator
-        local turtleLocator = enterprise_employment:getObjectLocator(self) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
+        local turtleLocator = LObjLocator:newInstance(defaultHostName, self)
 
         -- get source ItemSupplier
         local itemSupplierLocator = itemsLocator:baseCopy()

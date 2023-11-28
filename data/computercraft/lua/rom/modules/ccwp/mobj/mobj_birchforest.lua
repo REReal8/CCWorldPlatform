@@ -20,7 +20,6 @@ local TaskCall = require "obj_task_call"
 
 local ObjTable = require "obj_table"
 local URL = require "obj_url"
-local Host = require "host"
 local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
@@ -28,6 +27,7 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local IItemDepot = require "i_item_depot"
+local LObjLocator = require "lobj_locator"
 
 local role_forester = require "role_forester"
 local role_energizer = require "role_energizer"
@@ -745,6 +745,8 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
+local defaultHostName = "enterprise_forestry"
+
 function BirchForest:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -819,22 +821,35 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 inputSaplings = { ["minecraft:birch_sapling"] = 0 }
             end
 
-            -- get locator for this BirchForest
-            local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
-            local forestLocator = host:getObjectLocator(self)
-
-            -- construct taskData
+            -- create project data
             local harvestForestTaskData = {
                 forestLevel         = self:getLevel(),
                 firstTreeLocation   = self:getFirstTreeLocation(),
                 nTrees              = self:getNTrees(),
                 waitForFirstTree    = true,
---                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
 
                 priorityKey         = assignmentsPriorityKey,
             }
+            local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
+            enterprise_employment = enterprise_employment or require "enterprise_employment"
+            local projectData = {
+                inputSaplings                   = inputSaplings,
+                anyTurtleLocator                = enterprise_employment.GetAnyTurtleLocator(),
 
-            -- create project service data
+                lobjLocator                     = lobjLocator,
+                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemLocator
+                ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
+                wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
+                itemDepotLocator                = itemDepotLocator:copy(),
+
+                localLogsLocator                = localLogsLocator,
+                localSaplingsLocator            = localSaplingsLocator,
+                harvestForestMetaData           = role_forester.HarvestForest_MetaData(harvestForestTaskData),
+                harvestForestTaskCall           = TaskCall:newInstance("role_forester", "HarvestForest_Task", harvestForestTaskData),
+
+                assignmentsPriorityKey          = assignmentsPriorityKey,
+            }
+            -- create project definition
             local projectDef = {
                 steps = {
                     -- get input saplings from localSaplingsLocator into a Turtle
@@ -875,7 +890,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- recursive call to provide (remaining) items
-                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "forestLocator" }, stepDataDef = {
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "lobjLocator" }, stepDataDef = {
                         { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "item" },
                         { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
@@ -886,24 +901,6 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 returnData  = {
                     { keyDef = "destinationItemsLocator"            , sourceStep = 8, sourceKeyDef = "destinationItemsLocator" },
                 }
-            }
-            enterprise_employment = enterprise_employment or require "enterprise_employment"
-            local projectData = {
-                inputSaplings                   = inputSaplings,
-                anyTurtleLocator                = enterprise_employment.GetAnyTurtleLocator(),
-
-                forestLocator                   = forestLocator,
-                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemLocator
-                ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-                wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
-                itemDepotLocator                = itemDepotLocator:copy(),
-
-                localLogsLocator                = localLogsLocator,
-                localSaplingsLocator            = localSaplingsLocator,
-                harvestForestMetaData           = role_forester.HarvestForest_MetaData(harvestForestTaskData),
-                harvestForestTaskCall           = TaskCall:newInstance("role_forester", "HarvestForest_Task", harvestForestTaskData),
-
-                assignmentsPriorityKey          = assignmentsPriorityKey,
             }
             local projectServiceData = {
                 projectDef  = projectDef,

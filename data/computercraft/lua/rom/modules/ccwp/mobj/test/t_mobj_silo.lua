@@ -421,6 +421,7 @@ function T_Silo.T_integrityCheck_AOSrv()
     testHost:releaseMObj_SSrv({ mobjLocator = siloLocator})
 end
 
+-- ToDo: rename to something with integrityCheck (production code, i.e. not release it again like the above test)
 function T_Silo.T_GetRandomSilo()
     local data = coredht.GetData("enterprise_storage", "objects", "class=Silo")
     if type(data) ~= "table" then return nil end
@@ -432,41 +433,9 @@ function T_Silo.T_GetRandomSilo()
     -- see what's inside
     silo:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
 
-    -- usefull if this silo is active
---    silo:Activate()
-
     -- do the testing
 --    corelog.WriteToLog("can_ProvideItems_QOSrv test")
 --    corelog.WriteToLog(silo:can_ProvideItems_QOSrv({provideItems = {["minecraft:coal"] = 7}}))
-
---[[     -- prepare test
-    local provideItems = {
-        ["minecraft:birch_planks"]  = 5,
-        ["minecraft:birch_log"]     = 3,
-        ["minecraft:coal"]          = 7,
-    }
-
-    -- test
-    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_employment.GetCurrentTurtleLocator()}, Callback.GetNewDummyCallBack())
- ]]
---[[
-    -- da silo
-    local daSilo    = silo:getObjectLocator()
-
-    -- da shop
-    local daShop = enterprise_shop.GetShopLocator()             assert(daShop, "Oops")
-    local daTurtle = t_employment.GetCurrentTurtleLocator()         assert(daTurtle, "Oops")
-    local turtleLocator = daTurtle.GetCurrentTurtleLocator()
-    local daCallback = Callback.GetNewDummyCallBack()
-
-    -- test
-    return daShop:provideItemsTo_AOSrv({
-        provideItems                    = { [""] = 64},
-        itemDepotLocator                = daSilo,
-        ingredientsItemSupplierLocator  = turtleLocator,
-        wasteItemDepotLocator           = turtleLocator,
-    }, daCallback)
- ]]
 end
 
 return T_Silo

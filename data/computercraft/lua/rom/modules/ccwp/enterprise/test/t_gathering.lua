@@ -4,6 +4,8 @@ local corelog = require "corelog"
 
 local Location = require "obj_location"
 
+local LObjLocator = require "lobj_locator"
+
 local MineShaft = require "mine_shaft"
 
 local enterprise_gathering = require "enterprise_gathering"
@@ -168,7 +170,7 @@ function t_gathering.T_dismantleFillAndRelease_CurrentMineShaft()
         break
     end
     if not mineShaft then corelog.Warning("t_gathering.T_dismantleFillAndRelease_CurrentMineShaft: No MineShaft to dismantle, fill and release") return nil end
-    local mobjLocator = enterprise_gathering:getObjectLocator(mineShaft) assert(mobjLocator, "Failed obtaining mobjLocator")
+    local mobjLocator = LObjLocator:newInstance("enterprise_gathering", mineShaft) assert(mobjLocator, "Failed obtaining mobjLocator")
 
     -- test
     local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_gathering, mobjLocator, logOk)
