@@ -73,9 +73,7 @@ function coredisplay.Setup()
 end
 
 -- to know if the dislay is still being used
-function Active()
-    return db.mainmenu ~= nil
-end
+function Active() return db.mainmenu ~= nil end
 
 -- endless loop function for the display
 function coredisplay.Run()
@@ -192,6 +190,7 @@ function DoScreen(t)
                 end
             end
         else
+            -- when there are no options, read a line
             success = t.func(t.param, ReadLine())
         end
     end
