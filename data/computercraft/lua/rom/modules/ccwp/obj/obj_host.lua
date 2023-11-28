@@ -14,6 +14,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local ObjLocator = require "obj_locator"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -322,15 +323,12 @@ function ObjHost:deleteObjects(...)
 
     -- delete all objects
 --    corelog.Warning("All objects of class "..className.." are being deleted!")
-    for id, object in pairs(objects) do
-        -- convert to object
-        object = objectFactory:create(className, object)
-
+    for id, _obj in pairs(objects) do
         -- get locator
-        local objectLocator = self:getObjectLocator(object)
+        local objLocator = ObjLocator:newInstance(self:getHostName(), className, id)
 
         -- delete
-        self:deleteResource(objectLocator)
+        self:deleteResource(objLocator)
     end
 end
 
