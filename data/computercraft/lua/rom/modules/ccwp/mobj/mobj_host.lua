@@ -17,6 +17,8 @@ local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
 local ILObj = require "i_lobj"
+local LObjLocator = require "lobj_locator"
+
 local IMObj = require "i_mobj"
 
 local enterprise_projects = require "enterprise_projects"
@@ -440,11 +442,11 @@ function MObjHost:releaseLObjs_SSrv(...)
         lobj = objectFactory:create(className, lobj)
 
         -- get locator
-        local objectLocator = self:getObjectLocator(lobj)
+        local lobjLocator = LObjLocator:newInstance(self:getClassName(), lobj)
 
         -- release
-        local releaseResult = self:releaseMObj_SSrv({ mobjLocator = objectLocator })
-        if not releaseResult or not releaseResult.success then corelog.Warning("MObjHost:releaseLObjs_SSrv: failed releasing objectLocator "..objectLocator:getURI()) releaseSuccess = false end
+        local releaseResult = self:releaseMObj_SSrv({ mobjLocator = lobjLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("MObjHost:releaseLObjs_SSrv: Failed releasing lobj "..lobjLocator:getURI()) releaseSuccess = false end
     end
 
     -- end
