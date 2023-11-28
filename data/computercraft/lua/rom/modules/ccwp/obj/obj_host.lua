@@ -107,6 +107,33 @@ function ObjHost:getObject(...)
     return object
 end
 
+function ObjHost:getObj_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, objLocator = InputChecker.Check([[
+        This sync service saves an Obj in the ObjHost.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                obj             - (IObj) Obj obtained from the ObjHost
+
+        Parameters:
+            serviceData         - (table) data for this service
+                objLocator      + (URL) locator of the Obj within the ObjHost
+    ]], ...)
+    if not checkSuccess then corelog.Error("ObjHost:getObj_SSrv: Invalid input") return {success = false} end
+
+    -- save object
+    local obj = self:getObject(objLocator)
+    if not obj then corelog.Error("ObjHost:getObj_SSrv: Failed obtaining from objLocator="..objLocator:getURI()) return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        obj             = obj,
+    }
+end
+
 function ObjHost:getObjectLocator(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
@@ -164,6 +191,33 @@ function ObjHost:saveObject(...)
 
     -- end
     return objectLocator
+end
+
+function ObjHost:saveObj_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, obj = InputChecker.Check([[
+        This sync service saves an Obj in the ObjHost.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                objLocator      - (URL) locating the object
+
+        Parameters:
+            serviceData         - (table) data for this service
+                obj             + (table) the Obj
+    ]], ...)
+    if not checkSuccess then corelog.Error("ObjHost:saveObj_SSrv: Invalid input") return {success = false} end
+
+    -- save object
+    local objLocator = self:saveObject(obj)
+    if not objLocator then corelog.Error("ObjHost:saveObj_SSrv: Failed saving Obj "..textutils.serialise(obj)) return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        objLocator      = objLocator,
+    }
 end
 
 local function GetObjectsPath(...)

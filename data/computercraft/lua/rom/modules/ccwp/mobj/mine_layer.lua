@@ -22,6 +22,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
+local URL = require "obj_url"
 local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
@@ -462,12 +463,14 @@ function MineLayer:provideItemsTo_AOSrv(...)
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "mineLayerMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "mineLayerTaskCall" },
             }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineLayer (rectangle "..startHalfRib..") task"},
+            -- get MineLayer
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"                     , sourceStep = 0, sourceKeyDef = "mineLayerLocator" },
+            }},
             -- save MineLayer
-            { stepType = "SSrv", stepTypeDef = { moduleName = defaultHostName, serviceName = "SaveObject_SSrv" }, stepDataDef = {
-                { keyDef = "hostName"                       , sourceStep = 0, sourceKeyDef = "hostName" },
-                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"                    , sourceStep = 0, sourceKeyDef = "mineLayer" },
-                { keyDef = "objectTable._currentHalfRib"    , sourceStep = 1, sourceKeyDef = "endHalfRib" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                            , sourceStep = 2, sourceKeyDef = "obj" },
+                { keyDef = "obj._currentHalfRib"            , sourceStep = 1, sourceKeyDef = "endHalfRib" },
             }},
             -- store mined items in cache
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "cacheItemsLocator" }, stepDataDef = {
@@ -489,14 +492,12 @@ function MineLayer:provideItemsTo_AOSrv(...)
             }, description = "Providing "..textutils.serialise(provideItems, {compact = true}).." recursively"},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"            , sourceStep = 5, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"            , sourceStep = 6, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectData = {
-        hostName                        = defaultHostName,
-        className                       = "MineLayer",
-        mineLayerLocator                = LObjLocator:newInstance(defaultHostName, self),
-        mineLayer                       = self:copy(),
+        hostLocator                     = URL:newInstance(defaultHostName),
+        mineLayerLocator                = mineLayerLocator,
 
         provideItems                    = ItemTable:newInstance(provideItems),
 
