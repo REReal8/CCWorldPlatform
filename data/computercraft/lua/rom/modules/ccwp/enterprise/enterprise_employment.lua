@@ -24,6 +24,8 @@ local ObjTable = require "obj_table"
 local URL = require "obj_url"
 local Location  = require "obj_location"
 
+local LObjLocator = require "lobj_locator"
+
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local Turtle = require "mobj_turtle"
@@ -516,8 +518,8 @@ local function resetWorkerOfType(employmentHost, className)
             obj:reset()
         else
             corelog.Warning("enterprise_employment:resetWorkerOfType: "..className.." "..workerId.." not registered => removing it")
-            local objLocator = employmentHost:getObjectLocator(obj)
-            employmentHost:deleteResource(objLocator)
+            local lobjLocator = LObjLocator:newInstance(employmentHost:getHostName(), obj)
+            employmentHost:deleteResource(lobjLocator)
         end
     end
 end
