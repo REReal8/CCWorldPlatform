@@ -74,6 +74,16 @@ function IWorker:isActive()
     return false
 end
 
+function IWorker:reset()
+    --[[
+        Reset the Worker. This implies the Worker is reset to construct conditions.
+
+        Return value:
+    ]]
+
+    IInterface.UnimplementedMethodError("IWorker", "reset")
+end
+
 function IWorker:getWorkerLocation()
     --[[
         Get the (current) location of the Worker

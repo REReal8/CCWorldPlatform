@@ -23,6 +23,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjTable = require "obj_table"
+local ObjHost = require "obj_host"
 local Block = require "obj_block"
 local Location = require "obj_location"
 local CodeMap = require "obj_code_map"
@@ -415,6 +416,43 @@ end
 
 function UserStation:isActive()
     return self._isActive == true
+end
+
+function UserStation:reset()
+    -- reset fields
+    -- nothing to do for now
+
+    -- save UserStation
+    -- local objLocator = enterprise_employment:saveObject(self) if not objLocator then corelog.Error("UserStation:reset: Failed saving UserStation") return nil end
+
+    -- check input Chest (still) exist
+    local inputLocator = self:getInputLocator()
+    local inputChest = ObjHost.GetObject(inputLocator)
+    if type(inputChest) ~= "table" then
+        corelog.Warning("UserStation:reset: inputChest "..inputLocator:getURI().." not found.")
+    end
+
+    -- check output Chest (still) exist
+    local outputLocator = self:getOutputLocator()
+    local outputChest = ObjHost.GetObject(outputLocator)
+    if type(outputChest) ~= "table" then
+        corelog.Warning("UserStation:reset: outputChest "..outputLocator:getURI().." not found.")
+    end
+
+    -- recover if needed
+    if type(inputChest) ~= "table" or type(outputChest) ~= "table" then
+        -- re host UserStation
+        local constructParameters = {
+            workerId        = self:getWorkerId(),
+            baseLocation    = self:getBaseLocation()
+        }
+        corelog.Warning("UserStation:reset: => recovering UserStation "..self:getId().." by rehosting it")
+        enterprise_employment = enterprise_employment or require "enterprise_employment"
+        enterprise_employment:hostMObj_SSrv({
+            className           = self:getClassName(),
+            constructParameters = constructParameters,
+        })
+    end
 end
 
 function UserStation:getWorkerLocation()

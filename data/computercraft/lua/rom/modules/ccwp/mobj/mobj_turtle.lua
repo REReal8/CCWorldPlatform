@@ -316,6 +316,16 @@ function Turtle:isActive()
     return self._isActive == true
 end
 
+function Turtle:reset()
+    -- reset fields
+    self:setFuelPriorityKey("")
+
+    -- save
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local objLocator = enterprise_employment:saveObject(self)
+    if not objLocator then corelog.Error("Turtle:reset: Failed saving Turtle") return nil end
+end
+
 function Turtle:getWorkerLocation()
     -- check current Turtle
     if self:getWorkerId() == os.getComputerID() then
@@ -752,6 +762,5 @@ function Turtle:getOutputAndWasteItemsSince(...)
         otherItems  = otherItems,
     }
 end
-
 
 return Turtle

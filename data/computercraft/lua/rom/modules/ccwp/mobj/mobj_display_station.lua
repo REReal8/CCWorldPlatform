@@ -717,6 +717,16 @@ function DisplayStation:isActive()
     return self._isActive == true
 end
 
+function DisplayStation:reset()
+    -- reset fields
+    -- nothing to do for now
+
+    -- save
+    -- enterprise_employment = enterprise_employment or require "enterprise_employment"
+    -- local objLocator = enterprise_employment:saveObject(self)
+    -- if not objLocator then corelog.Error("DisplayStation:reset: Failed saving DisplayStation") return nil end
+end
+
 function DisplayStation:getWorkerLocation()
     return self:getBaseLocation():getRelativeLocation(3, 3, 2) -- note: location of DisplayStation computer relative to this DisplayStation baseLocation
 end
