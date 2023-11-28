@@ -215,8 +215,8 @@ function T_DisplayStation.T_IWorker_All()
     local isMainUIMenuTest = TestArrayTest:newInstance(
         FieldValueTypeTest:newInstance("clear", "boolean"),
         FieldValueTypeTest:newInstance("intro", "string"),
-        FieldValueTypeTest:newInstance("param", "table"),
-        FieldValueTypeTest:newInstance("question", "nil")
+        FieldValueTypeTest:newInstance("option", "table"),
+        FieldValueTypeTest:newInstance("question", "string")
     )
     local assignmentFilterTest = TestArrayTest:newInstance(
         -- ToDo: add tests if we decide to have a specific filter
