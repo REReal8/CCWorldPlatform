@@ -13,6 +13,7 @@ local ObjArray = require "obj_array"
 local URL = require "obj_url"
 local Location = require "obj_location"
 
+local LObjLocator = require "lobj_locator"
 local Shop = require "shop"
 
 local role_forester = require "role_forester"
@@ -71,11 +72,14 @@ end
 
 local testClassName = "Shop"
 local testObjName = "shop"
-local testHost = enterprise_shop
+local testHostName = "enterprise_shop"
 
 local logOk = false
 
-local itemSuppliersLocators1 = ObjArray:newInstance(URL:getClassName())
+local itemSuppliersLocators0 = ObjArray:newInstance(URL:getClassName())
+
+local constructParameters0 = {
+}
 
 local compact = { compact = true }
 
@@ -89,7 +93,7 @@ local compact = { compact = true }
 function T_Shop.CreateTestObj(id, itemSuppliersLocators)
     -- check input
     id = id or coreutils.NewId()
-    itemSuppliersLocators = itemSuppliersLocators or itemSuppliersLocators1
+    itemSuppliersLocators = itemSuppliersLocators or itemSuppliersLocators0
 
     -- create testObj
     local testObj = Shop:newInstance(id, itemSuppliersLocators:copy())
@@ -119,8 +123,8 @@ function T_Shop.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators1)
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -135,9 +139,9 @@ function T_Shop.T_new()
     local obj = Shop:new({
         _id                     = id,
 
-        _itemSuppliersLocators  = itemSuppliersLocators1:copy(),
+        _itemSuppliersLocators  = itemSuppliersLocators0:copy(),
     })
-    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators1)
+    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -147,11 +151,11 @@ function T_Shop.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) if not obj then corelog.Error("Failed obtaining Shop") return end
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators0) if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getItemSuppliersLocators", itemSuppliersLocators1)
+        MethodResultEqualTest:newInstance("getItemSuppliersLocators", itemSuppliersLocators0)
     )
     test:test(obj, testObjName, "", logOk)
 
@@ -190,22 +194,19 @@ end
 
 function T_Shop.T_ILObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
+    local destructFieldsTest = TestArrayTest:newInstance()
 
-    -- local destructFieldsTest = TestArrayTest:newInstance()
+    local fieldsTest1 = T_Shop.CreateInitialisedTest(nil, itemSuppliersLocators0)
 
-    -- local constructFieldsTest = T_Shop.CreateInitialisedTest(nil, itemSuppliersLocators1)
-
-    -- test
-    -- T_ILObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    -- T_ILObj.pt_Implements_IMObj(testClassName, obj)
-
-    -- T_ILObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    -- T_ILObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
-
-    T_ILObj.pt_getId(testClassName, obj, testObjName, "", logOk)
-    -- T_ILObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- test cases
+    T_ILObj.pt_all(testClassName, Shop, {
+        {
+            objName             = testObjName,
+            constructParameters = constructParameters0,
+            constructFieldsTest = fieldsTest1,
+            destructFieldsTest  = destructFieldsTest,
+        },
+    }, logOk)
 end
 
 --                        _
@@ -219,7 +220,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":registerItemSupplier_SOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
@@ -240,7 +241,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     assert(result.success == false, "registerItemSupplier_SOSrv services should fail with a non IItemSupplier")
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
+    enterprise_shop:deleteResource(lobjLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
     moduleRegistry:delist(testObjHost:getHostName())
     testObjHost:deleteResource(nonItemSupplierLocator)
 end
@@ -249,7 +250,7 @@ function T_Shop.T_delistItemSupplier_SOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":delistItemSupplier_SOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
@@ -262,14 +263,14 @@ function T_Shop.T_delistItemSupplier_SOSrv()
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator) -- note: delistItemSupplier_SOSrv saved the test Shop
+    enterprise_shop:deleteResource(lobjLocator) -- note: delistItemSupplier_SOSrv saved the test Shop
 end
 
 function T_Shop.T_delistAllItemSuppliers()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":delistAllItemSuppliers() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
@@ -288,7 +289,7 @@ function T_Shop.T_delistAllItemSuppliers()
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten # ItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator) -- note: delistAllItemSuppliers saved the test Shop
+    enterprise_shop:deleteResource(lobjLocator) -- note: delistAllItemSuppliers saved the test Shop
     enterprise_storage:deleteResource(chestLocator)
 end
 
@@ -296,11 +297,11 @@ function T_Shop.T_bestItemSupplier()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":bestItemSupplier() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local item = {
         ["minecraft:birch_log"]  = 5,
     }
-    local ingredientsItemSupplierLocator = objectLocator
+    local ingredientsItemSupplierLocator = lobjLocator
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
     local itemDepotLocator = enterprise_storage:saveObject(chest)
@@ -321,7 +322,7 @@ function T_Shop.T_bestItemSupplier()
     assert(bestItemSupplierLocator:isEqual(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator)
+    enterprise_shop:deleteResource(lobjLocator)
     enterprise_storage:deleteResource(itemDepotLocator)
     enterprise_storage:deleteResource(closeItemSupplierLocator)
     enterprise_storage:deleteResource(farItemSupplierLocator)
@@ -409,8 +410,8 @@ end
 function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local ingredientsItemSupplierLocator = objectLocator
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
+    local ingredientsItemSupplierLocator = lobjLocator
     local nTrees = 1
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
@@ -432,14 +433,14 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     }, logOk)
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator)
+    enterprise_shop:deleteResource(lobjLocator)
     enterprise_forestry:deleteResource(forestLocator)
 end
 
 function T_Shop.T_can_ProvideItems_QOSrv()
     -- prepare test
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
-    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
@@ -450,7 +451,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, false, logOk)
 
     -- cleanup test
-    enterprise_shop:deleteResource(objectLocator)
+    enterprise_shop:deleteResource(lobjLocator)
     enterprise_forestry:deleteResource(forestLocator)
 end
 

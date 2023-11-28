@@ -21,6 +21,8 @@ R  merge enterprise_chest into enterprise_storage                               
 
 R  implement MineLayer                                                                                                  (done)
 
+R  Shop: implement ILObj                                                                                                (done)
+
 ToDo List
 ---------
 --[[
@@ -125,14 +127,11 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
 
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
--  ensure Shop/ enterprise_shop implement ILObj/ LObjHost
-   -  Shop
-      -  implement ILObj
-   -  enterprise_shop
-      -  upgrade into an LObjHost
-      -  use new LObjHost methods instead of current equivalent
-      -  use generalised test functions
-      -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
+-  ensure enterprise_shop implement LObjHost
+   -  upgrade into an LObjHost
+   -  use new LObjHost methods instead of current equivalent
+   -  use generalised test functions
+   -  rename enterprise_shop to better name: e.g. enterprise_govern
 
 -  ItemSupplierGroup & ItemDepotGroup
    -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.

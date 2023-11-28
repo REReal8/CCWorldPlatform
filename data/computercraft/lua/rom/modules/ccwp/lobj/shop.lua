@@ -1,8 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local ILObj = require "i_lobj"
 local IItemSupplier = require "i_item_supplier"
-local Shop = Class.NewClass(ObjBase, IItemSupplier)
+local Shop = Class.NewClass(ObjBase, ILObj, IItemSupplier)
 
 --[[
     This module implements a Shop.
@@ -19,10 +20,13 @@ local Shop = Class.NewClass(ObjBase, IItemSupplier)
     <It is envisioned (but not yet implemented) that a shop can also "store" (i.e. the opposite of ordering) items.>
 --]]
 
+local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
+local ObjArray = require "obj_array"
+local URL = require "obj_url"
 local ObjHost = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
@@ -91,17 +95,67 @@ function Shop:getClassName()
     return "Shop"
 end
 
---    _____ __  __  ____  _     _
---   |_   _|  \/  |/ __ \| |   (_)
---     | | | \  / | |  | | |__  _
---     | | | |\/| | |  | | '_ \| |
---    _| |_| |  | | |__| | |_) | |
---   |_____|_|  |_|\____/|_.__/| |
---                            _/ |
---                           |__/
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function Shop:construct(...)
+    -- get & check input from description
+    local checkSuccess  = InputChecker.Check([[
+        This method constructs a Shop instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        The constructed Shop is not yet saved in the MObjHost.
+
+        Return value:
+                                        - (Shop) the constructed Shop
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the Shop
+    ]], ...)
+    if not checkSuccess then corelog.Error("Shop:construct: Invalid input") return nil end
+
+    -- determine Shop fields
+    local id = coreutils.NewId()
+    local itemSuppliersLocators = ObjArray:newInstance(URL:getClassName())
+
+    -- construct new Shop
+    local obj = Shop:newInstance(id, itemSuppliersLocators)
+
+    -- end
+    return obj
+end
+
+function Shop:destruct()
+    --[[
+        This method destructs a Shop instance.
+
+        The Shop is not yet deleted from the MObjHost.
+
+        Return value:
+                                        - (boolean) whether the Shop was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- end
+    return true
+end
 
 function Shop:getId()
     return self._id
+end
+
+function Shop:getWIPId()
+    --[[
+        Returns the unique Id of the Shop used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
 end
 
 --                        _  __ _

@@ -1,7 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjHost = require "obj_host"
+-- ToDo: upgrade to M/LObjHost
 local enterprise_shop = Class.NewClass(ObjHost)
+-- ToDo: rename to something like enterprise_govern
 
 --[[
     The enterprise_shop is a ObjHost. It hosts one ItemSupplier Shop to provide items.
@@ -10,11 +12,10 @@ local enterprise_shop = Class.NewClass(ObjHost)
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local InputChecker = require "input_checker"
-
 local ObjArray = require "obj_array"
 local URL = require "obj_url"
 
+local LObjLocator = require "lobj_locator"
 local Shop = require "shop"
 
 --    _       _ _   _       _ _           _   _
@@ -70,6 +71,7 @@ function enterprise_shop:getShop()
     if nShops == 0 then
         -- the Shop is not there yet => create it
         shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(URL:getClassName()))
+        -- ToDo: use hostMObj_SSrv to construct Shop
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it
@@ -106,11 +108,10 @@ function enterprise_shop.GetShopLocator()
     local shop = enterprise_shop:getShop()
 
     -- get locator
-    local shopLocator = enterprise_shop:getObjectLocator(shop)
-    if not shopLocator then corelog.Error("enterprise_shop.GetShopLocator: Failed getting shopLocator") return nil end
+    local lobjLocator = LObjLocator:newInstance("enterprise_shop", shop)
 
     -- end
-    return shopLocator
+    return lobjLocator
 end
 
 function enterprise_shop:deleteShop()
