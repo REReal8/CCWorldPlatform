@@ -12,6 +12,8 @@ local corelog = require "corelog"
 local ObjTable = require "obj_table"
 local WIPAdministrator = require "obj_wip_administrator"
 
+local ObjLocator = require "obj_locator"
+
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
@@ -81,13 +83,13 @@ function enterprise_administration:getWIPAdministratorLocator()
 
     -- get WIPAdministrator
     local administrator = enterprise_administration:getWIPAdministrator()
+    if not administrator then corelog.Error("enterprise_administration:getWIPAdministratorLocator: Failed getting administrator") return nil end
 
     -- get locator
-    local administratorLocator = enterprise_administration:getObjectLocator(administrator)
-    if not administratorLocator then corelog.Error("enterprise_administration.GetWIPAdministratorLocator: Failed getting administratorLocator") return nil end
+    local objLocator = ObjLocator:newInstance("enterprise_administration", administrator:getClassName())
 
     -- end
-    return administratorLocator
+    return objLocator
 end
 
 function enterprise_administration:createNewWIPAdministrator()
