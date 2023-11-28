@@ -66,9 +66,9 @@ local db = {
     inventoryScreen     = {},
     mobjScreen          = {},
 
-    -- what's on the monitor?
-    leftMonitorScreen   = nil,
-    rightMonitorScreen  = nil,
+    -- what screen is on which monitor?
+    leftMonitorScreen   = nil,  -- can't be set here
+    rightMonitorScreen  = nil,  -- can't be set here
 }
 
 -- set initial values
@@ -392,7 +392,8 @@ local function ScreenScroll(screen)
     -- check input, do nothing without a table
     if type(screen) ~= "table" then return screen end
 
-    -- move the lines
+    -- remove the first element, move the other lines
+    -- table.remove(screen, 1) -- this should be faster, but does not work...
     for i=1, db.maxLines - 1 do screen[i] = screen[i + 1] end
 
     -- last line should be empty now
@@ -512,7 +513,7 @@ function DisplayStation.UpdateStatus(statusData, monitor)
 	monitor = monitor or db.monitorRight
 
 	-- make sure the status data is valid
-	if type(statusData) == "table"				then
+	if type(statusData) == "table"				    then
 		if not statusData.me						then return end
 		if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
 		if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
