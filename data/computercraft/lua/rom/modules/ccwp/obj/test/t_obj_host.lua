@@ -24,7 +24,6 @@ function T_ObjHost.T_All()
     T_ObjHost.T_new()
 
     -- ObjHost
-    T_ObjHost.T_getObjectLocator()
     T_ObjHost.T_saveObject()
     T_ObjHost.T_getObject()
     T_ObjHost.T_getNumberOfObjects()
@@ -131,34 +130,6 @@ end
 
 local testObject = TestObj:newInstance("field1", 4)
 local className = "TestObj"
-
-function T_ObjHost.T_getObjectLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getObjectLocator tests")
-    local objectId = coreutils.NewId()
-
-    -- test with supplying className and id
-    local objectLocator = objHost1:getObjectLocator(testObject, className, objectId)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-
-    -- test without supplying id
-    objectLocator = objHost1:getObjectLocator(testObject, className)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-
-    -- test without supplying className (but object has getClassName method) and id
-    objectLocator = objHost1:getObjectLocator(testObject)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-
-    -- test without supplying className (but object has getClassName method) but with id
-    objectLocator = objHost1:getObjectLocator(testObject, "", objectId)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-
-    -- cleanup test
-end
 
 function T_ObjHost.T_saveObject()
     -- prepare test

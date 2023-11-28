@@ -135,36 +135,6 @@ function ObjHost:getObj_SSrv(...)
     }
 end
 
-function ObjHost:getObjectLocator(...)
-    -- get & check input from description
-    local checkSuccess, object, className, objectId = InputChecker.Check([[
-        This method provides the objectLocator of an object in the ObjHost using a className and objectId argument.
-
-        If the object has a getClassName() method the className argument can be set to "".
-        If the object has a getId() method the objectId argument can be set to "".
-
-        Return value:
-            objectLocator           - (URL) locating the object
-
-        Parameters:
-            object                  + (table) the object
-            className               + (string, "") with the name of the class of the object
-            objectId                + (string, "") with the optional id of the object
-    --]], ...)
-    if not checkSuccess then corelog.Error("ObjHost:getObjectLocator: Invalid input") return nil end
-
-    -- get resourcePath
-    local objectPath = ObjHost.GetObjectPath(className, objectId, object)
-    if not objectPath then corelog.Error("ObjHost:getObjectLocator: Failed obtaining objectPath") return nil end
-
-    -- get objectLocator
-    local objectLocator = self:getResourceLocator(objectPath)
-    if not objectLocator then corelog.Error("ObjHost:getObjectLocator: Failed obtaining objectLocator") return nil end
-
-    -- end
-    return objectLocator
-end
-
 function ObjHost:saveObject(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
