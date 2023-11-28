@@ -20,6 +20,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local URL = require "obj_url"
 local ObjHost = require "obj_host"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
@@ -27,6 +28,9 @@ local Inventory = require "obj_inventory"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+local ItemTable = require "obj_item_table"
+
+local LObjLocator = require "lobj_locator"
 
 local Turtle = require "mobj_turtle"
 
@@ -35,7 +39,6 @@ local role_conservator = require "role_conservator"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment
-local enterprise_storage
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -285,6 +288,8 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
+local defaultHostName = "enterprise_storage"
+
 function Chest:updateChestRecord_AOSrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
@@ -307,31 +312,35 @@ function Chest:updateChestRecord_AOSrv(...)
     ]], ...)
     if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- create project definition
+    -- create project data
     local taskData = {
         location = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
     }
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
     local projectData = {
-        hostName        = "enterprise_storage",
-        className       = "Chest",
-        chest           = self:copy(),
+        hostLocator     = URL:newInstance(defaultHostName),
+        lobjLocator     = lobjLocator,
 
         metaData        = role_conservator.FetchChestSlotsInventory_MetaData(taskData),
         taskCall        = TaskCall:newInstance("role_conservator", "FetchChestSlotsInventory_Task", taskData),
     }
+    -- create project definition
     local projectDef = {
         steps   = {
+            -- fetch inventory from Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }, description = "Fetching Chest "..self:getId().." inventory"},
+            -- get Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"             , sourceStep = 0, sourceKeyDef = "lobjLocator" },
+            }},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
-                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
-                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                    , sourceStep = 2, sourceKeyDef = "obj" },
+                { keyDef = "obj._inventory"         , sourceStep = 1, sourceKeyDef = "inventory" },
             }, description = "Saving Chest "..self:getId()},
         },
         returnData  = {
@@ -388,7 +397,7 @@ function Chest:provideItemsTo_AOSrv(...)
         depotTurtleId = turtleObj:getWorkerId()
     end
 
-    -- create project definition
+    -- create project data
     local taskData = {
         location        = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
@@ -397,10 +406,10 @@ function Chest:provideItemsTo_AOSrv(...)
         turtleId        = depotTurtleId,
         priorityKey     = assignmentsPriorityKey,
     }
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
     local projectData = {
-        hostName                = "enterprise_storage",
-        className               = "Chest",
-        chest                   = self:copy(),
+        hostLocator             = URL:newInstance(defaultHostName),
+        lobjLocator             = lobjLocator,
 
         metaData                = role_conservator.FetchItemsFromChestIntoTurtle_MetaData(taskData),
         taskCall                = TaskCall:newInstance("role_conservator", "FetchItemsFromChestIntoTurtle_Task", taskData),
@@ -408,6 +417,7 @@ function Chest:provideItemsTo_AOSrv(...)
         itemDepotLocator        = itemDepotLocator,
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
+    -- create project definition
     local projectDef = {
         steps   = {
             -- put items from Chest
@@ -415,12 +425,14 @@ function Chest:provideItemsTo_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
+            -- get Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"             , sourceStep = 0, sourceKeyDef = "lobjLocator" },
+            }},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
-                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
-                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                    , sourceStep = 2, sourceKeyDef = "obj" },
+                { keyDef = "obj._inventory"         , sourceStep = 1, sourceKeyDef = "inventory" },
             }},
             -- store items to ItemDepot
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
@@ -429,7 +441,7 @@ function Chest:provideItemsTo_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"    , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectServiceData = {
@@ -548,29 +560,22 @@ function Chest:storeItemsFrom_AOSrv(...)
     ]], ...)
     if not checkSuccess then corelog.Error("Chest:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- set (expected) destinationItemsLocator
-    enterprise_storage = enterprise_storage or require "enterprise_storage"
-    local destinationItemsLocator = enterprise_storage:getObjectLocator(self)
-    destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
-
-    -- work around
-    local itemsLocatorCopy = itemsLocator:copy()
-
-    -- create project definition
+    -- create project data
+    local itemTable = ItemTable:newInstance(itemsLocator:getQuery())
     local taskData = {
         turtleId        = -1,
---        itemsQuery      = coreutils.DeepCopy(itemsLocator:getQuery()),
-        itemsQuery      = itemsLocatorCopy:getQuery(),
+        itemsQuery      = itemTable:copy(),
         location        = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
 
         priorityKey     = assignmentsPriorityKey,
     }
     enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
+    local destinationItemsLocator = LObjLocator:newInstance(defaultHostName, self, itemTable:copy())
     local projectData = {
-        hostName                = "enterprise_storage",
-        className               = "Chest",
-        chest                   = self:copy(),
+        hostLocator             = URL:newInstance(defaultHostName),
+        lobjLocator             = lobjLocator,
 
         metaData                = role_conservator.PutItemsFromTurtleIntoChest_MetaData(taskData),
         taskCall                = TaskCall:newInstance("role_conservator", "PutItemsFromTurtleIntoChest_Task", taskData),
@@ -582,6 +587,7 @@ function Chest:storeItemsFrom_AOSrv(...)
 
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
+    -- create project definition
     local projectDef = {
         steps   = {
             -- get items into a turtle
@@ -600,12 +606,14 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
                 { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "methodResults" },
             }},
+            -- get Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"             , sourceStep = 0, sourceKeyDef = "lobjLocator" },
+            }},
             -- save Chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "SaveObject_SSrv" }, stepDataDef = {
-                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
-                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
-                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "objectTable._inventory" , sourceStep = 3, sourceKeyDef = "inventory" },
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                    , sourceStep = 4, sourceKeyDef = "obj" },
+                { keyDef = "obj._inventory"         , sourceStep = 3, sourceKeyDef = "inventory" },
             }},
         },
         returnData  = {

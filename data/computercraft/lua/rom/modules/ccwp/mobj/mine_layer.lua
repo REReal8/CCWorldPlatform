@@ -21,9 +21,9 @@ local InputChecker = require "input_checker"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local ObjTable = require "obj_table"
 local URL = require "obj_url"
 local ObjHost = require "obj_host"
+local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
@@ -443,7 +443,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
         return Callback.ErrorCall(callback)
     end
 
-    -- construct taskData
+    -- create project data
     local startHalfRib = self:getCurrentHalfRib() + 1
     local taskData = {
         baseLocation        = self:getBaseLocation(),
@@ -454,8 +454,24 @@ function MineLayer:provideItemsTo_AOSrv(...)
 
         priorityKey         = assignmentsPriorityKey,
     }
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
+    local projectData = {
+        hostLocator                     = URL:newInstance(defaultHostName),
+        lobjLocator                     = lobjLocator,
 
-    -- create project service data
+        provideItems                    = ItemTable:newInstance(provideItems),
+
+        cacheItemsLocator               = cacheItemsLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
+        wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
+        itemDepotLocator                = itemDepotLocator:copy(),
+
+        mineLayerMetaData               = role_miner.MineLayer_MetaData(taskData),
+        mineLayerTaskCall               = TaskCall:newInstance("role_miner", "MineLayer_Task", taskData),
+
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }
+    -- create project definition
     local projectDef = {
         steps = {
             -- mine MineLayer
@@ -465,7 +481,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
             }, description = "Mining "..textutils.serialise(provideItems, {compact = true}).." from MineLayer (rectangle "..startHalfRib..") task"},
             -- get MineLayer
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "objLocator"                     , sourceStep = 0, sourceKeyDef = "mineLayerLocator" },
+                { keyDef = "objLocator"                     , sourceStep = 0, sourceKeyDef = "lobjLocator" },
             }},
             -- save MineLayer
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
@@ -483,7 +499,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             -- recursive call to provide items
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "mineLayerLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "lobjLocator" }, stepDataDef = {
                 { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
@@ -494,22 +510,6 @@ function MineLayer:provideItemsTo_AOSrv(...)
         returnData  = {
             { keyDef = "destinationItemsLocator"            , sourceStep = 6, sourceKeyDef = "destinationItemsLocator" },
         }
-    }
-    local projectData = {
-        hostLocator                     = URL:newInstance(defaultHostName),
-        mineLayerLocator                = mineLayerLocator,
-
-        provideItems                    = ItemTable:newInstance(provideItems),
-
-        cacheItemsLocator               = cacheItemsLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-        wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
-        itemDepotLocator                = itemDepotLocator:copy(),
-
-        mineLayerMetaData               = role_miner.MineLayer_MetaData(taskData),
-        mineLayerTaskCall               = TaskCall:newInstance("role_miner", "MineLayer_Task", taskData),
-
-        assignmentsPriorityKey          = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = projectDef,
