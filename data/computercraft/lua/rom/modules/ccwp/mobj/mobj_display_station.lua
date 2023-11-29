@@ -53,7 +53,7 @@ local db = {
     monitorRight        = nil,
 
     -- data containers
-    status              = {},
+    statusInfo          = {},
 
     -- screen defaults
     textScale           = 1,
@@ -439,6 +439,17 @@ local function MonitorWriteLine(message, monitor)
 	end
 end
 
+local function SetMonitorPurpose(side, purpose)
+    -- which side
+    if side == "left"  then db.leftMonitorScreen  = purpose ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft)  end
+    if side == "right" then db.rightMonitorScreen = purpose ScreenToMonitor(db.rightMonitorScreen, db.monitorRight) end
+end
+
+local function UpdateMonitors()
+    -- update the screen
+    ScreenToMonitor(db.leftMonitorScreen,   db.monitorLeft)
+    ScreenToMonitor(db.rightMonitorScreen,  db.monitorRight)
+end
 --                _     _ _
 --               | |   | (_)
 --    _ __  _   _| |__ | |_  ___
@@ -448,19 +459,12 @@ end
 --   | |
 --   |_|
 
-local function SetMonitorPurpose(side, purpose)
-    -- which side
-    if side == "left"  then db.leftMonitorScreen  = purpose ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft) end
-    if side == "right" then db.rightMonitorScreen = purpose ScreenToMonitor(db.rightMonitorScreen, db.monitorRight) end
-end
-
 function DisplayStation.LoggerLine(line)
 	-- write the message on the monitor
     ScreenWriteLine(db.loggingScreen, line)
 
-    -- update the screen
-    ScreenToMonitor(db.leftMonitorScreen,   db.monitorLeft)
-    ScreenToMonitor(db.rightMonitorScreen,  db.monitorRight)
+    -- new info means we need to update both monitors
+    UpdateMonitors()
 end
 
 function DisplayStation.SetStatus(group, message, subline, details)
@@ -530,11 +534,11 @@ function DisplayStation.UpdateStatus(statusData, monitor)
 		end
 
 		-- remember the status (and forget the previous status)
-		if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
-		db.status[statusData.me].kind				= statusData.kind
-		db.status[statusData.me].fuelLevel			= statusData.fuelLevel
-		db.status[statusData.me].heartbeat			= os.clock()
-		db.status[statusData.me][statusData.group]	= statusData
+		if type(db.statusInfo[statusData.me]) ~= "table" then db.statusInfo[statusData.me] = {} end
+		db.statusInfo[statusData.me].kind				= statusData.kind
+		db.statusInfo[statusData.me].fuelLevel			= statusData.fuelLevel
+		db.statusInfo[statusData.me].heartbeat			= os.clock()
+		db.statusInfo[statusData.me][statusData.group]	= statusData
 	end
 
 	-- now, show this to the monitor
@@ -544,7 +548,7 @@ function DisplayStation.UpdateStatus(statusData, monitor)
 	monitor.setCursorPos(1, 1)
 
 	-- here we go
-	for id, data in pairs(db.status) do
+	for id, data in pairs(db.statusInfo) do
 
 		local projectStatus		= data.project or {}
 		local assignmentStatus	= data.assignment or {}
@@ -610,9 +614,9 @@ coreevent.EventReadyFunction(function () corelog.SetLoggerFunction(ProcessLoggin
 
 local function ProcessReceiveHeartbeat(subject, envelope)
 	-- remember this one is alive
-	if type(db.status[envelope.from]) ~= "table" then db.status[envelope.from] = {} end
-	db.status[envelope.from].heartbeat = os.clock()
-	db.status[envelope.from].fuelLevel = envelope.message.fuelLevel
+	if type(db.statusInfo[envelope.from]) ~= "table" then db.statusInfo[envelope.from] = {} end
+	db.statusInfo[envelope.from].heartbeat = os.clock()
+	db.statusInfo[envelope.from].fuelLevel = envelope.message.fuelLevel
 
 	-- update the status
 	DisplayStation.UpdateStatus()
