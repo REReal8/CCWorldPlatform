@@ -37,11 +37,12 @@ function ObjArray:_init(...)
     -- initialisation
     ObjBase._init(self)
     self._objClassName  = objClassName
+    local objClass = objectFactory:getClass(objClassName)
     for i, obj in ipairs(objsArray) do
         if not Class.IsInstanceOf(obj, IObj) then
             corelog.Warning("ObjArray:_init: obj not an IObj => skipped")
         else
-            if obj:getClassName() ~= objClassName then
+            if not Class.IsInstanceOf(obj, objClass) then
                 corelog.Warning("ObjArray:_init: obj type(="..obj:getClassName()..") not "..objClassName.." => skipped")
             else
                 self[i] = obj
@@ -145,8 +146,8 @@ function ObjArray:transformObjectTables(suppressWarning)
         local obj = nil
         if objectTableClassName then
             -- check Obj of correct type
-            if objClassName == objectTableClassName then
-                obj = objectTable -- already an object of type 'class'
+            if Class.IsInstanceOf(objectTable, objClass) then
+                obj = objectTable -- already an object of (at least) type 'objClass'
             else
                 if not suppressWarning then corelog.Warning("ObjArray:transformObjectTables(): objectTable class (="..objectTableClassName..") different from objClassName(="..objClassName..")") end
             end

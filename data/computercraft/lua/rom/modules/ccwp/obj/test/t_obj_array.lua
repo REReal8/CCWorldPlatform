@@ -7,7 +7,9 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
+local URL = require "obj_url"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
@@ -225,6 +227,22 @@ function T_ObjArray.T_transformObjectTables()
     assert(obj[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     obj[1] = nil
     obj[2] = nil
+
+    -- test derived Obj's are also accepted (nothing should change)
+    local baseClassName = URL:getClassName()
+    local obj2 = ObjArray:newInstance(baseClassName) assert(obj2, "Failed obtaining "..baseClassName)
+    local url1 = URL:newInstance("someHost")
+    local objLocator1 = ObjLocator:newInstance("someHost", "someClass", "someRef")
+
+    obj2[1] = url1
+    obj2[2] = objLocator1
+    obj2:transformObjectTables()
+    expectedNElements = 2
+    assert(table.getn(obj2) == expectedNElements, " # elements(="..table.getn(obj2)..") not the same as expected(="..expectedNElements..")")
+    assert(obj2[1]:isEqual(url1), "obj2 1 in array(="..textutils.serialise(obj2[1], compact)..") not the same as expected(="..textutils.serialise(url1, compact)..")")
+    assert(obj2[2]:isEqual(objLocator1), "obj2 2 in array(="..textutils.serialise(obj2[2], compact)..") not the same as expected(="..textutils.serialise(objLocator1, compact)..")")
+    obj2[1] = nil
+    obj2[2] = nil
 
     -- cleanup test
 end
