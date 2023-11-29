@@ -383,7 +383,7 @@ function Chest:provideItemsTo_AOSrv(...)
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -392,7 +392,7 @@ function Chest:provideItemsTo_AOSrv(...)
     -- check if ItemDepot is a Turtle
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local depotTurtleId = -1
-    if ObjHost.GetClassName(itemDepotLocator) == Turtle:getClassName() and not itemDepotLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
+    if itemDepotLocator:getObjClassName() == Turtle:getClassName() and not itemDepotLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
         local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining Turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
         depotTurtleId = turtleObj:getWorkerId()
     end
