@@ -457,7 +457,7 @@ local function UpdateStatusScreen()
 
 		-- write!
 		ScreenWriteLine(db.workerScreen, "")
-		ScreenWriteLine(db.workerScreen, deadMessage..data.kind.." "..id..":")
+		ScreenWriteLine(db.workerScreen, deadMessage..(data.kind or "unknown kind").." "..id..":")
 		ScreenWriteLine(db.workerScreen, "fuel: "..data.fuelLevel)
 		ScreenWriteLine(db.workerScreen, "label: "..(data.label or "unknown"))
 	end
