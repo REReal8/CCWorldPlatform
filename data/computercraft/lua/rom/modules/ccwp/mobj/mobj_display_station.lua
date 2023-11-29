@@ -604,20 +604,6 @@ function DisplayStation.SetStatus(group, message, subline, details)
 		message		= statusUpdate})
 end
 
-function DisplayStation.UpdateAssignments()
---[[
-    -- update function right aways if we are a dispay station
-	if db.iAmDispayStation then UpdateAssignment() end
-
-    -- send the info by messasge to every display station around the world
-	coreevent.SendMessage({
-		channel		= db.loggerChannel,
-		protocol	= db.protocol,
-		subject		= "assignment update",
-		message		= {}})
-]]
-end
-
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___
