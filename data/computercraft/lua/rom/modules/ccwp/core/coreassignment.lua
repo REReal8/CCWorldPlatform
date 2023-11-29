@@ -132,6 +132,7 @@ function coreassignment.Run()
     enterprise_employment:saveObject(workerObj)
 
     -- infinite loop
+    local toldAboutIdleAlready = false
     while coresystem.IsRunning() do
         -- get Worker
         workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
@@ -165,12 +166,21 @@ function coreassignment.Run()
             if nextAssignment then
                 -- do the assignment
                 DoAssignment(workerLocator, nextAssignment)
+
+                -- need to tell them again
+                toldAboutIdleAlready = false
             else
                 -- apparently no assignment for me now
 
                 -- update status
-                DispayStation = require "mobj_display_station"
-                DispayStation.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
+                if not toldAboutIdleAlready then
+                    -- new, go and tell them!
+                    DispayStation = require "mobj_display_station"
+                    DispayStation.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
+
+                    -- good boy
+                    toldAboutIdleAlready = true
+                end
             end
         end
 
