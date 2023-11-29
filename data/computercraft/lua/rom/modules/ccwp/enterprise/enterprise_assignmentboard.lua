@@ -25,6 +25,8 @@ local Location = require "obj_location"
 
 local role_energizer = require "role_energizer"
 
+local DisplayStation
+
 local db = {
     dhtRoot         = "enterprise_assignmentboard",
     dhtList         = "assignmentList",
@@ -136,6 +138,10 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
+
+    -- update display station
+    DisplayStation = DisplayStation or require "mobj_display_station"
+    DisplayStation.UpdateAssignments()
 
     -- end
     return true -- note: this implies scheduling the assignment was succesfull, it will be executed once it is pickedup by a Turtle
@@ -330,6 +336,10 @@ function enterprise_assignmentboard.TakeAssignment(assignmentId) -- ToDo: make t
         coredht.SaveData("staffed", db.dhtRoot, db.dhtList, assignmentId, "status")
 
         corelog.WriteToAssignmentLog("Taken", assignmentId)
+
+        -- update display station
+        DisplayStation = DisplayStation or require "mobj_display_station"
+        DisplayStation.UpdateAssignments()
     end
 end
 
@@ -337,6 +347,10 @@ function enterprise_assignmentboard.EndAssignment(assignmentId) -- ToDo: make th
     -- easy
     coredht.SaveData(nil, db.dhtRoot, db.dhtList, assignmentId)
     corelog.WriteToAssignmentLog("Ended", assignmentId)
+
+    -- update display station
+    DisplayStation = DisplayStation or require "mobj_display_station"
+    DisplayStation.UpdateAssignments()
 end
 
 function enterprise_assignmentboard.Reset()
@@ -367,6 +381,10 @@ function enterprise_assignmentboard.EndAssignments()
         -- check status and startTime
         enterprise_assignmentboard.EndAssignment(assignmentId)
     end
+
+    -- update display station
+    DisplayStation = DisplayStation or require "mobj_display_station"
+    DisplayStation.UpdateAssignments()
 end
 
 function enterprise_assignmentboard.DHTReadySetup()
