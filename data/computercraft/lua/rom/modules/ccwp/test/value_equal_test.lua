@@ -54,7 +54,7 @@ local function anActualTest(expectedValue, value, valueName, indent, logOk)
 
     -- check expectedValue type
     if Class.IsInstanceOf(expectedValue, IObj) then
-        assert(value:isEqual(expectedValue), indent..testContextStr.." not equal to expected value "..textutils.serialise(expectedValue))
+        assert(value:isEqual(expectedValue), indent..testContextStr.." not equal to expected IObj value "..textutils.serialise(expectedValue, compact))
     elseif type(expectedValue) == "table" then
         assert(type(value) == "table", indent..testContextStr.." not equal to expected type table")
         for key, expTblValue in pairs(expectedValue) do
@@ -69,7 +69,7 @@ local function anActualTest(expectedValue, value, valueName, indent, logOk)
         end
         -- ToDo: consider testing for additional keys in value (see also ObjBase)
     else
-        assert(value == expectedValue, indent..testContextStr.." not equal to expected value "..textutils.serialise(expectedValue))
+        assert(value == expectedValue, indent..testContextStr.." not equal to expected value "..textutils.serialise(expectedValue, compact))
     end
 end
 

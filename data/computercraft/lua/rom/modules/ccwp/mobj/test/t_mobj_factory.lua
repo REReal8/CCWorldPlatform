@@ -3,7 +3,6 @@ local T_Factory = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local Callback = require "obj_callback"
 local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
@@ -18,7 +17,6 @@ local Factory = require "mobj_factory"
 local enterprise_employment = require "enterprise_employment"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_manufacturing = require "enterprise_manufacturing"
-local enterprise_shop = require "enterprise_shop"
 
 local TestArrayTest = require "test_array_test"
 local FieldTest = require "field_test"
@@ -372,7 +370,7 @@ function T_Factory.T_getAvailableInputLocator()
 
     -- test
     local locator = obj:getAvailableInputLocator()
-    assert(locator:isEqual(inputLocator0), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator0, compact)..")")
+    assert(locator and locator:isEqual(inputLocator0), "gotten getAvailableInputLocator(="..textutils.serialise(locator or "nil", compact)..") not the same as expected(="..textutils.serialise(inputLocator0, compact)..")")
 
     -- cleanup test
 end
