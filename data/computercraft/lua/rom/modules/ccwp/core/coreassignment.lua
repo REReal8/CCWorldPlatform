@@ -55,6 +55,7 @@ local function DoEventSendHeartbeat(subject, envelope)
         fuelLevel       = 0,
         selectedSlot    = 0,
         label           = os.getComputerLabel(),
+        me              = os.getComputerID(),
     }
 
     -- only available for turtles
