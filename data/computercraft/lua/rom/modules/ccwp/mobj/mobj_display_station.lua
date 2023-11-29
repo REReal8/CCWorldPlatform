@@ -60,7 +60,7 @@ local db = {
 
     -- screen holders
     loggingScreen       = {},
-    workerScreen        = {textScale=2},
+    workerScreen        = {textScale=2, maxLines=20},
     projectScreen       = {},
     assignmentScreen    = {},
     inventoryScreen     = {},
@@ -69,6 +69,9 @@ local db = {
     -- what screen is on which monitor?
     leftMonitorScreen   = nil,  -- can't be set here
     rightMonitorScreen  = nil,  -- can't be set here
+
+    -- about myself
+    iAmDispayStation    = false,
 }
 
 -- set initial values
@@ -374,12 +377,11 @@ end
 --
 
 local function ScreenToMonitor(screen, monitor)
-
     -- right monitor has bigger text size
     monitor.setTextScale(screen.textScale or db.textScale)
 
     -- loop all lines
-    for i=1, db.maxLines do
+    for i=1, (screen.maxLines or db.maxLines) do
 
         -- do the line
         monitor.setCursorPos(1, i)
@@ -388,16 +390,21 @@ local function ScreenToMonitor(screen, monitor)
     end
 end
 
+local function ClearScreen(screen)
+    -- loop all lines, make them empty
+    for i=1, db.maxLines do screen[i] = "" end
+end
+
 local function ScreenScroll(screen)
     -- check input, do nothing without a table
     if type(screen) ~= "table" then return screen end
 
     -- remove the first element, move the other lines
     -- table.remove(screen, 1) -- this should be faster, but does not work...
-    for i=1, db.maxLines - 1 do screen[i] = screen[i + 1] end
+    for i=1, (screen.maxLines or db.maxLines) - 1 do screen[i] = screen[i + 1] end
 
     -- last line should be empty now
-    screen[db.maxLines] = ""
+    screen[(screen.maxLines or db.maxLines)] = ""
 
     -- done
     return screen
@@ -409,34 +416,7 @@ local function ScreenWriteLine(screen, line)
     ScreenScroll(screen)
 
     -- add the new line to the bottom
-    screen[db.maxLines] = line
-end
-
-local function MonitorWriteLine(message, monitor)
-	local onderaan	= true
-	local x, y		= monitor.getCursorPos()
-	local w, h		= monitor.getSize()
-
-
-	if not onderaan and y < h then
-		-- where do we start?
-
-		-- write the line
-		monitor.write(message)
-
-		-- ready for the next line
-		monitor.setCursorPos(1, y + 1)
-
-	else
-		-- scroll the existing stuff up
-		monitor.scroll(1)
-
-		-- set the cursus back at the start of the line
-		monitor.setCursorPos(1,h)
-
-		-- write the message
-		monitor.write(message)
-	end
+    screen[(screen.maxLines or db.maxLines)] = line
 end
 
 local function SetMonitorPurpose(side, purpose)
@@ -450,6 +430,59 @@ local function UpdateMonitors()
     ScreenToMonitor(db.leftMonitorScreen,   db.monitorLeft)
     ScreenToMonitor(db.rightMonitorScreen,  db.monitorRight)
 end
+
+local function UpdateStatusScreen()
+    -- clear the screen
+    ClearScreen(db.workerScreen)
+
+	-- here we go, loop all known workers
+	for id, data in pairs(db.statusInfo) do
+
+		-- check for dead mates
+		local deadMessage		= "DEAD "
+		if os.clock() - data.heartbeat < (db.heartbeatTimer / 20) or id == os.getComputerID() then deadMessage = "" end
+
+        -- making stuff nicer
+        if data.fuelLevel == 0 and data.kind == "turtle" then data.fuelLevel = "empty" end
+        if data.fuelLevel == 0 and data.kind ~= "turtle" then data.fuelLevel = "n/a"   end
+        if data.kind == "" then data.kind = "unknown" end
+
+		-- write!
+		ScreenWriteLine(db.workerScreen, "")
+		ScreenWriteLine(db.workerScreen, deadMessage..data.kind.." "..id..":")
+		ScreenWriteLine(db.workerScreen, "fuel: "..data.fuelLevel)
+		ScreenWriteLine(db.workerScreen, "label: "..(data.label or "unknown"))
+	end
+
+    -- update shit
+    UpdateMonitors()
+end
+
+local function UpdateStatus(statusData)
+
+    -- make sure the status data is valid
+    if type(statusData) == "table" then
+        -- test input, replace with default if needed
+        if not statusData.me						then return end
+        if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
+        if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
+        if type(statusData.group)	  ~= "string"	then statusData.group		= "" end
+        if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
+        if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
+        if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
+
+        -- store the info in our var
+        if type(db.statusInfo[statusData.me]) ~= "table" then db.statusInfo[statusData.me] = {} end
+        db.statusInfo[statusData.me].kind				= statusData.kind
+        db.statusInfo[statusData.me].fuelLevel			= statusData.fuelLevel
+        db.statusInfo[statusData.me].heartbeat			= os.clock()
+        db.statusInfo[statusData.me][statusData.group]	= statusData
+    end
+
+    -- time to update the screen
+    UpdateStatusScreen()
+end
+
 --                _     _ _
 --               | |   | (_)
 --    _ __  _   _| |__ | |_  ___
@@ -474,7 +507,7 @@ function DisplayStation.SetStatus(group, message, subline, details)
 	if pocket   then kind = "pocket" end
 	if commands then kind = "command computer" end
 
-	-- get us and our fuel level
+	-- get our fuel level
 	local fuelLevel = 0
 	if turtle then fuelLevel = turtle.getFuelLevel() end
 
@@ -489,84 +522,16 @@ function DisplayStation.SetStatus(group, message, subline, details)
 		details		= details
 	}
 
-	enterprise_employment = enterprise_employment or require "enterprise_employment"
-	local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("DisplayStation.SetStatus: Failed obtaining current workerLocator") return false end
-    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("DisplayStation.SetStatus: Failed obtaining Worker "..workerLocator:getURI()) return false end
+    -- update function right aways if we are a dispay station
+	if db.iAmDispayStation then UpdateStatus(statusUpdate) end
 
-	-- send to the logger (unless that's us)
-	if workerObj:getClassName() == "DisplayStation" then
-
-		-- update the status
-		DisplayStation.UpdateStatus(statusUpdate)
-	end
-
-	-- not us, send the info
+	-- send the info by messasge to every display station around the world
 	coreevent.SendMessage({
 		channel		= db.loggerChannel,
 		protocol	= db.protocol,
 		subject		= "status update",
 		message		= statusUpdate})
 end
-
-function DisplayStation.UpdateStatus(statusData, monitor)
-
-    -- be useless
-    if true then return end
-
-	-- which do we use?
-	monitor = monitor or db.monitorRight
-
-	-- make sure the status data is valid
-	if type(statusData) == "table"				    then
-		if not statusData.me						then return end
-		if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
-		if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
-		if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
-		if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
-		if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
-		if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
-
-		-- nicer
-		if statusData.fuelLevel == 0 then
-			if statusData.kind == "turtle"	then statusData.fuelLevel	= "empty"
-											else statusData.fuelLevel	= "n/a"
-			end
-		end
-
-		-- remember the status (and forget the previous status)
-		if type(db.statusInfo[statusData.me]) ~= "table" then db.statusInfo[statusData.me] = {} end
-		db.statusInfo[statusData.me].kind				= statusData.kind
-		db.statusInfo[statusData.me].fuelLevel			= statusData.fuelLevel
-		db.statusInfo[statusData.me].heartbeat			= os.clock()
-		db.statusInfo[statusData.me][statusData.group]	= statusData
-	end
-
-	-- now, show this to the monitor
-	monitor.clear()
-
-	-- maybe set cursor to be sure
-	monitor.setCursorPos(1, 1)
-
-	-- here we go
-	for id, data in pairs(db.statusInfo) do
-
-		local projectStatus		= data.project or {}
-		local assignmentStatus	= data.assignment or {}
-
-		-- check for dead mates
-		local deadMessage		= "DEAD "
-		if os.clock() - data.heartbeat < (db.heartbeatTimer / 20) or id == os.getComputerID() then deadMessage = "" end
-
-		-- write!
-		MonitorWriteLine("", monitor)
-		MonitorWriteLine(deadMessage..(data.kind or "unknown").." "..id..", fuel: "..data.fuelLevel, monitor)
-		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor)
-		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor)
-		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor)
-	end
-end
-
-
 
 --                         _
 --                        | |
@@ -584,7 +549,7 @@ end
 
 local function DoEventStatusUpdate(subject, envelope)
 	-- do the status update
-	DisplayStation.UpdateStatus(envelope.message)
+	UpdateStatus(envelope.message)
 end
 
 local function DoEventHeartbeatTimer()
@@ -595,7 +560,7 @@ local function DoEventHeartbeatTimer()
 	coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer")
 
 	-- update the status (weird here)
-	DisplayStation.UpdateStatus()
+	UpdateStatus()
 end
 
 local function ProcessLoggingCallback(message)
@@ -615,11 +580,12 @@ coreevent.EventReadyFunction(function () corelog.SetLoggerFunction(ProcessLoggin
 local function ProcessReceiveHeartbeat(subject, envelope)
 	-- remember this one is alive
 	if type(db.statusInfo[envelope.from]) ~= "table" then db.statusInfo[envelope.from] = {} end
-	db.statusInfo[envelope.from].heartbeat = os.clock()
-	db.statusInfo[envelope.from].fuelLevel = envelope.message.fuelLevel
+	db.statusInfo[envelope.from].heartbeat  = os.clock()
+	db.statusInfo[envelope.from].fuelLevel  = envelope.message.fuelLevel
+	db.statusInfo[envelope.from].label      = envelope.message.label
 
-	-- update the status
-	DisplayStation.UpdateStatus()
+    -- time to update the screen
+    UpdateStatusScreen()
 end
 
 --    _______          __        _
@@ -663,10 +629,6 @@ function DisplayStation:activate()
 		db.monitorLeft.setCursorBlink(false)
 		db.monitorRight.setCursorBlink(false)
 
-		-- start the left one at the bottom
-		local w, h = db.monitorLeft.getSize()
-		db.monitorLeft.setCursorPos(1,h)
-
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
 
@@ -682,8 +644,9 @@ function DisplayStation:activate()
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
 		-- show who's boss!
-		corelog.WriteToLog("--- starting up monitor ---")
-		DisplayStation.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
+        db.iAmDispayStation = true
+		corelog.WriteToLog("--- starting up as display station ---")
+--		DisplayStation.SetStatus("project", "I am the display station", "Just ignore me", "Have a nice day")
     end
 
     -- set active
@@ -753,19 +716,8 @@ function DisplayStation:getWorkerResume()
     }
 end
 
-local function DisplayStationMenu(t, searchString)
-    --
-    local displayStation = t.displayStation -- note a way to pass the concrete DisplayStation instance to this function if you think you need it
-end
-
-function DisplayStation.MenuSetPurpose(tab)
-
-    -- just do it
-    SetMonitorPurpose(tab.side, tab.purpose)
-
-    -- always happy
---    return true
-end
+-- used in the menu
+local function MenuSetPurpose(tab) SetMonitorPurpose(tab.side, tab.purpose) end
 
 -- ToDo: this is the hook to put the menu of the DisplayStation
 function DisplayStation:getMainUIMenu()
@@ -788,36 +740,25 @@ function DisplayStation:getMainUIMenu()
         clear   = true,
         intro   = "Choose what you want to see on the screens!",
         option  = {
-            {key = "w", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.loggingScreen     }},
-            {key = "e", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.workerScreen      }},
-            {key = "r", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.projectScreen     }},
-            {key = "t", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.assignmentScreen  }},
-            {key = "y", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.inventoryScreen   }},
-            {key = "u", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose=db.mobjScreen        }},
-            {key = "i", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="left",  purpose={}                   }},
-            {key = "q", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
-            {key = "s", desc = "Logging",          	    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.loggingScreen     }},
-            {key = "d", desc = "Worker overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.workerScreen      }},
-            {key = "f", desc = "Projects",              func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.projectScreen     }},
-            {key = "g", desc = "Assignments",          	func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.assignmentScreen  }},
-            {key = "h", desc = "Inventory on stock",    func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.inventoryScreen   }},
-            {key = "j", desc = "mobj's overview",       func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose=db.mobjScreen        }},
-            {key = "k", desc = "blank",                 func = DisplayStation.MenuSetPurpose,	param = {side="right", purpose={}                   }},
---            {key = "l", desc = "Quit",                  func = coresystem.DoQuit,		        param = {}},
+            {key = "w", desc = "Logging",          	    func = MenuSetPurpose,	    param = {side="left",  purpose=db.loggingScreen     }},
+            {key = "e", desc = "Worker overview",       func = MenuSetPurpose,	    param = {side="left",  purpose=db.workerScreen      }},
+            {key = "r", desc = "Projects",              func = MenuSetPurpose,	    param = {side="left",  purpose=db.projectScreen     }},
+            {key = "t", desc = "Assignments",          	func = MenuSetPurpose,	    param = {side="left",  purpose=db.assignmentScreen  }},
+            {key = "y", desc = "Inventory on stock",    func = MenuSetPurpose,	    param = {side="left",  purpose=db.inventoryScreen   }},
+            {key = "u", desc = "mobj's overview",       func = MenuSetPurpose,	    param = {side="left",  purpose=db.mobjScreen        }},
+            {key = "i", desc = "blank",                 func = MenuSetPurpose,	    param = {side="left",  purpose={}                   }},
+            {key = "q", desc = "Quit",                  func = coresystem.DoQuit,	param = {}},
+            {key = "s", desc = "Logging",          	    func = MenuSetPurpose,	    param = {side="right", purpose=db.loggingScreen     }},
+            {key = "d", desc = "Worker overview",       func = MenuSetPurpose,	    param = {side="right", purpose=db.workerScreen      }},
+            {key = "f", desc = "Projects",              func = MenuSetPurpose,	    param = {side="right", purpose=db.projectScreen     }},
+            {key = "g", desc = "Assignments",          	func = MenuSetPurpose,	    param = {side="right", purpose=db.assignmentScreen  }},
+            {key = "h", desc = "Inventory on stock",    func = MenuSetPurpose,	    param = {side="right", purpose=db.inventoryScreen   }},
+            {key = "j", desc = "mobj's overview",       func = MenuSetPurpose,	    param = {side="right", purpose=db.mobjScreen        }},
+            {key = "k", desc = "blank",                 func = MenuSetPurpose,	    param = {side="right", purpose={}                   }},
+--            {key = "l", desc = "Quit",                  func = coresystem.DoQuit,	  param = {}},
         },
         question	= "Make your choice",
     }
-
---[[
-    -- end
-    return {
-        clear       = true,
-        func	    = DisplayStationMenu,
-        intro       = "Guido: implement the specific DisplayStation menu as you would like it to be here\n",
-        param	    = { displayStation = self },
-        question    = nil
-    }
-]]
 end
 
 -- ToDo: consider adding assigment filter criteria if you want the DisplayStation to only take specific assignments.
