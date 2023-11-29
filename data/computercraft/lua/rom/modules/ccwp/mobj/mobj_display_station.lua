@@ -435,8 +435,16 @@ local function UpdateStatusScreen()
     -- clear the screen
     ClearScreen(db.workerScreen)
 
+    -- sort the keys?
+    local allKeys = {}
+    for id, _ in pairs(db.statusInfo) do table.insert(allKeys, id) end
+    table.sort(allKeys)
+
 	-- here we go, loop all known workers
-	for id, data in pairs(db.statusInfo) do
+	for _, id in ipairs(allKeys) do
+
+        -- get the data
+        data = db.statusInfo[id]
 
 		-- check for dead mates
 		local deadMessage		= "DEAD "
