@@ -74,10 +74,6 @@ local db = {
     iAmDispayStation    = false,
 }
 
--- set initial values
-db.leftMonitorScreen  = db.loggingScreen
-db.rightMonitorScreen = db.workerScreen
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
@@ -420,9 +416,39 @@ local function ScreenWriteLine(screen, line)
 end
 
 local function SetMonitorPurpose(side, purpose)
-    -- which side
-    if side == "left"  then db.leftMonitorScreen  = purpose ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft)  end
-    if side == "right" then db.rightMonitorScreen = purpose ScreenToMonitor(db.rightMonitorScreen, db.monitorRight) end
+    -- get purpose as text also
+    local purposeText = "logging"
+    if purpose == db.workerScreen       then purposeText = "worker"     end
+    if purpose == db.projectScreen      then purposeText = "project"    end
+    if purpose == db.assignmentScreen   then purposeText = "assignment" end
+    if purpose == db.inventoryScreen    then purposeText = "inventory"  end
+    if purpose == db.mobjScreen         then purposeText = "mobj"       end
+
+    -- left side?
+    if side == "left"  then
+        -- set the value
+        db.leftMonitorScreen  = purpose
+
+        -- update the monitor
+        ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft)
+
+        -- set setting (test)
+        settings.set(db.protocol..':'..'left', purposeText)
+        settings.save()
+    end
+
+    -- right side?
+    if side == "right" then
+        -- set the value
+        db.rightMonitorScreen = purpose
+
+        -- update the monitor
+        ScreenToMonitor(db.rightMonitorScreen, db.monitorRight)
+
+        -- set setting (test)
+        settings.set(db.protocol..':'..'right', purposeText)
+        settings.save()
+    end
 end
 
 local function UpdateMonitors()
@@ -636,6 +662,20 @@ function DisplayStation:activate()
 		-- no blinking!
 		db.monitorLeft.setCursorBlink(false)
 		db.monitorRight.setCursorBlink(false)
+
+        -- create lookup table
+        local lookupTab     = {
+            logging     = db.loggingScreen,
+            worker      = db.workerScreen,
+            project     = db.projectScreen,
+            assignment  = db.assignmentScreen,
+            inventory   = db.inventoryScreen,
+            mobj        = db.mobjScreen,
+        }
+
+        -- set the monitor purpose from settings
+        db.leftMonitorScreen  = lookupTab[ settings.get(db.protocol..':'..'left',  "logging") ]
+        db.rightMonitorScreen = lookupTab[ settings.get(db.protocol..':'..'right', "worker")  ]
 
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
