@@ -546,6 +546,14 @@ local function UpdateAssignment()
     UpdateMonitors()
 end
 
+local function AssignmentBoardTrigger()
+    -- keeping track of what's happening
+    corelog.WriteToLog("DisplayStation.AssignmentBoardTrigger() -- kicked off")
+
+    -- simple
+    UpdateAssignment()
+end
+
 --                _     _ _
 --               | |   | (_)
 --    _ __  _   _| |__ | |_  ___
@@ -597,6 +605,7 @@ function DisplayStation.SetStatus(group, message, subline, details)
 end
 
 function DisplayStation.UpdateAssignments()
+--[[
     -- update function right aways if we are a dispay station
 	if db.iAmDispayStation then UpdateAssignment() end
 
@@ -606,6 +615,7 @@ function DisplayStation.UpdateAssignments()
 		protocol	= db.protocol,
 		subject		= "assignment update",
 		message		= {}})
+]]
 end
 
 --                         _
@@ -630,9 +640,6 @@ end
 local function DoEventAssignmentUpdate(subject, envelope)
 	-- do the status update
 	UpdateAssignment()
-
-    -- debugging
-    corelog.WriteToLog("DoEventAssignmentUpdate")
 end
 
 local function DoEventHeartbeatTimer()
@@ -738,8 +745,11 @@ function DisplayStation:activate()
         -- setup heartbeat hook
         coreassignment.SetHeartbeatFunction(ProcessReceiveHeartbeat)
 
-        -- set up heartbeat timer
+        -- setup heartbeat timer
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
+
+        -- setup dht trigger
+        coredht.RegisterTrigger(AssignmentBoardTrigger, 'enterprise_assignmentboard', 'assignmentList')
 
 		-- show who's boss!
         db.iAmDispayStation = true
