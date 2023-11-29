@@ -547,10 +547,7 @@ local function UpdateAssignment()
 end
 
 local function AssignmentBoardTrigger()
-    -- keeping track of what's happening
-    corelog.WriteToLog("DisplayStation.AssignmentBoardTrigger() -- kicked off")
-
-    -- simple
+    -- simple, pass through
     UpdateAssignment()
 end
 
