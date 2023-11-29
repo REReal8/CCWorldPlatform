@@ -26,7 +26,7 @@ local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 local coresystem        = require "coresystem"
 local coreassignment    = require "coreassignment"
 local coreevent         = require "coreevent"
-local coredisplay       = require "coredisplay"
+-- local coredisplay       = require "coredisplay"
 local corelog           = require "corelog"
 
 local InputChecker      = require "input_checker"
