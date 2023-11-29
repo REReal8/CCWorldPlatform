@@ -448,7 +448,7 @@ end
 --   | |
 --   |_|
 
-function DisplayStation.SetMonitorPurpose(side, purpose)
+local function SetMonitorPurpose(side, purpose)
     -- which side
     if side == "left"  then db.leftMonitorScreen  = purpose ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft) end
     if side == "right" then db.rightMonitorScreen = purpose ScreenToMonitor(db.rightMonitorScreen, db.monitorRight) end
@@ -757,7 +757,7 @@ end
 function DisplayStation.MenuSetPurpose(tab)
 
     -- just do it
-    DisplayStation.SetMonitorPurpose(tab.side, tab.purpose)
+    SetMonitorPurpose(tab.side, tab.purpose)
 
     -- always happy
 --    return true
