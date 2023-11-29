@@ -3,6 +3,7 @@ local t_employment = {}
 local corelog = require "corelog"
 
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local enterprise_employment = require "enterprise_employment"
 local enterprise_energy = require "enterprise_energy"
@@ -374,9 +375,9 @@ end
 function t_employment.T_IRegistry_All()
     -- prepare test
     local thingName = "Worker"
-    local workerLocator1 = enterprise_employment:getResourceLocator(enterprise_employment.GetObjectPath("AWorkerClass", "worker1")) assert(workerLocator1, "Failed obtaining workerLocator1")
+    local workerLocator1 = ObjLocator:newInstance(testClassName, "AWorkerClass", "worker1") assert(workerLocator1, "Failed obtaining workerLocator1")
     local workerId2 = 222222
-    local workerLocator2 = enterprise_employment:getResourceLocator(enterprise_employment.GetObjectPath("AWorkerClass", "worker2")) assert(workerLocator2, "Failed obtaining workerLocator2")
+    local workerLocator2 = ObjLocator:newInstance(testClassName, "AWorkerClass", "worker2") assert(workerLocator2, "Failed obtaining workerLocator2")
 
     -- test
     T_IRegistry.pt_all(testClassName, enterprise_employment, workerId0, workerLocator1, workerId2, workerLocator2, thingName)
