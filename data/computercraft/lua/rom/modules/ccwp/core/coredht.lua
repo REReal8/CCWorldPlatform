@@ -130,14 +130,11 @@ local function SaveDataToDB(data, ...)
     -- check the triggers
     for _, trigger in ipairs(dbTriggers) do
 
-        -- check the keys (keep in mind both arrays are most likely of different size)
+        -- check if the keys are the same (keep in mind both arrays are most likely of different size)
         local goingStrong = true
-        for i = 1, math.min(#listOfNodes, #trigger.path) do
-            -- check for equal
-            goingStrong = goingStrong and (listOfNodes[i] == trigger.path[i])
-        end
+        for i = 1, math.min(#listOfNodes, #trigger.path) do goingStrong = goingStrong and (listOfNodes[i] == trigger.path[i]) end
 
-        -- were are here, let's kick the trigger function!
+        -- were are here, let's kick the trigger function if we are still going strong
         if goingStrong then trigger.func() end
     end
 
@@ -393,6 +390,7 @@ function coredht.EditDHTDisplay(t, userInput)
                 -- start the screen to edit the value
                 intro    = "Type the new value of this key. Use quotes for strings!!"
                 options  = nil
+---@diagnostic disable-next-line: cast-local-type
                 question = nil
             end
         end
