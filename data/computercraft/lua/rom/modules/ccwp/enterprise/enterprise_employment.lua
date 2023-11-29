@@ -19,6 +19,7 @@ local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
 local ObjTable = require "obj_table"
 local URL = require "obj_url"
@@ -721,29 +722,6 @@ end
 --                             | |                                    | |             __/ |
 --                             |_|                                    |_|            |___/
 
-local function GetTurtleLocator(turtleIdStr)
-    --[[
-        This method provides the locator of a turtle in the enterprise based on a 'turtleIdStr'.
-
-        Return value:
-            turtleLocator           - (URL) locating the turtle
-
-        Parameters:
-            turtleIdStr             + (string) id of the turtle
-    --]]
-
-    -- get resourcePath
-    local objectPath = ObjHost.GetObjectPath(Turtle:getClassName(), turtleIdStr)
-    if not objectPath then corelog.Error("enterprise_employment.GetTurtleLocator: Failed obtaining objectPath") return nil end
-
-    -- get objectLocator
-    local turtleLocator = enterprise_employment:getResourceLocator(objectPath)
-    if not turtleLocator then corelog.Error("enterprise_employment.GetTurtleLocator: Failed obtaining turtleLocator") return nil end
-
-    -- end
-    return turtleLocator
-end
-
 function enterprise_employment.GetAnyTurtleLocator()
     --[[
         This method provides a locator for any turtle (in the enterprise). The locator provided will be subsituted to the current
@@ -755,8 +733,10 @@ function enterprise_employment.GetAnyTurtleLocator()
         Parameters:
     --]]
 
+    local objLocator = ObjLocator:newInstance(enterprise_employment:getHostName(), Turtle:getClassName(), "any")
+
     -- end
-    return GetTurtleLocator("any")
+    return objLocator
 end
 
 function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
