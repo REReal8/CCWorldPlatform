@@ -736,7 +736,7 @@ function enterprise_employment.GetAnyTurtleLocator()
     local objLocator = ObjLocator:newInstance(enterprise_employment:getHostName(), Turtle:getClassName(), "any")
 
     -- end
-    return objLocator
+    return URL:newFromURI(objLocator:getURI())
 end
 
 function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
