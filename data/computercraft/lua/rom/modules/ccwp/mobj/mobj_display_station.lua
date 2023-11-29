@@ -4,6 +4,7 @@ local ObjBase = require "obj_base"
 local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
+local coredht = require "coredht"
 local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 --[[
@@ -517,6 +518,34 @@ local function UpdateStatus(statusData)
     UpdateStatusScreen()
 end
 
+local function UpdateAssignment()
+    -- get the data
+    local assignmentList = coredht.GetData("enterprise_assignmentboard", 'assignmentList')
+    if type(assignmentList) ~= "table" then return end
+
+    -- sort the keys?
+    local allKeys = {}
+    for id, _ in pairs(assignmentList) do table.insert(allKeys, id) end
+    table.sort(allKeys)
+
+    -- setup the screen
+    ClearScreen(db.assignmentScreen)
+
+    -- loop the table
+    for _, assignmentId in ipairs(allKeys) do
+
+        -- da assignment
+        local assignment = assignmentList[ assignmentId ]
+
+		ScreenWriteLine(db.assignmentScreen, "")
+		ScreenWriteLine(db.assignmentScreen, assignmentId..": "..assignment.status)
+		ScreenWriteLine(db.assignmentScreen, assignment.taskCall._moduleName.."."..assignment.taskCall._methodName.."()")
+    end
+
+    -- show us!
+    UpdateMonitors()
+end
+
 --                _     _ _
 --               | |   | (_)
 --    _ __  _   _| |__ | |_  ___
@@ -567,6 +596,18 @@ function DisplayStation.SetStatus(group, message, subline, details)
 		message		= statusUpdate})
 end
 
+function DisplayStation.UpdateAssignments()
+    -- update function right aways if we are a dispay station
+	if db.iAmDispayStation then UpdateAssignment() end
+
+    -- send the info by messasge to every display station around the world
+	coreevent.SendMessage({
+		channel		= db.loggerChannel,
+		protocol	= db.protocol,
+		subject		= "assignment update",
+		message		= {}})
+end
+
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___
@@ -584,6 +625,14 @@ end
 local function DoEventStatusUpdate(subject, envelope)
 	-- do the status update
 	UpdateStatus(envelope.message)
+end
+
+local function DoEventAssignmentUpdate(subject, envelope)
+	-- do the status update
+	UpdateAssignment()
+
+    -- debugging
+    corelog.WriteToLog("DoEventAssignmentUpdate")
 end
 
 local function DoEventHeartbeatTimer()
@@ -683,6 +732,7 @@ function DisplayStation:activate()
 		-- listen to our events
 		coreevent.AddEventListener(DoEventWriteToLog,       db.protocol, "write to log")
 		coreevent.AddEventListener(DoEventStatusUpdate,     db.protocol, "status update")
+		coreevent.AddEventListener(DoEventAssignmentUpdate, db.protocol, "assignment update")
 		coreevent.AddEventListener(DoEventHeartbeatTimer,   db.protocol, "heartbeat timer")
 
         -- setup heartbeat hook
