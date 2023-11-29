@@ -15,6 +15,7 @@ local InputChecker
 
 local db                = { _version = 0 }
 local dbHistory         = { _next = 1, _max = 30}
+local dbTriggers        = {}
 local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false
@@ -89,7 +90,6 @@ local function SaveDataToDB(data, ...)
     -- history bijwerken
     dbHistory[ dbHistory["_next"] ] = { data = data, listOfNodes = listOfNodes, version = db._version }
     dbHistory[ "_next" ]            = dbHistory[ "_next" ] % dbHistory[ "_max" ] + 1
---    coreutils.WriteToFile("/log/dht_history.lua", dbHistory, "overwrite")   -- temporary
 
     -- check for all data
     if #listOfNodes == 0 then
@@ -125,6 +125,20 @@ local function SaveDataToDB(data, ...)
 
         -- add to the work queue
         coretask.AddWork(SaveDBToFile)
+    end
+
+    -- check the triggers
+    for _, trigger in ipairs(dbTriggers) do
+
+        -- check the keys (keep in mind both arrays are most likely of different size)
+        local goingStrong = true
+        for i = 1, math.min(#listOfNodes, #trigger.path) do
+            -- check for equal
+            goingStrong = goingStrong and (listOfNodes[i] == trigger.path[i])
+        end
+
+        -- were are here, let's kick the trigger function!
+        if goingStrong then trigger.func() end
     end
 
     -- return the data itself
@@ -300,6 +314,15 @@ function coredht.SaveData(data, ...)
     -- save the node in the data
     return SaveDataToDB(data, table.unpack(arg))
 end
+
+function coredht.RegisterTrigger(func, ...)
+    -- just insert it into the list of triggers
+    table.insert(dbTriggers, {
+        func = func,
+        path = {table.unpack(arg)}
+    })
+end
+
 
 --        _ _           _
 --       | (_)         | |
