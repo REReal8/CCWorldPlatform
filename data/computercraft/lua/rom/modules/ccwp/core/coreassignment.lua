@@ -52,15 +52,16 @@ local function DoEventShutdown(subject, envelope) coreassignment.ShutdownWhenIdl
 local function DoEventSendHeartbeat(subject, envelope)
     -- local vars
     local bonusInformation = {
-        fuelLevel    = 0,
-        selectedSlot = 0,
+        fuelLevel       = 0,
+        selectedSlot    = 0,
+        label           = os.getComputerLabel(),
     }
 
     -- only available for turtles
-	if turtle then bonusInformation = {
-            fuelLevel    = turtle.getFuelLevel(),
-            selectedSlot = turtle.getSelectedSlot(),
-    } end
+	if turtle then
+        bonusInformation.fuelLevel    = turtle.getFuelLevel()
+        bonusInformation.selectedSlot = turtle.getSelectedSlot()
+    end
 
 	-- easy reply since we have a heartbeat
 	coreevent.ReplyToMessage(envelope, "receive heartbeat", bonusInformation)
