@@ -539,6 +539,40 @@ local function UpdateAssignment()
     UpdateMonitors()
 end
 
+local function UpdateInventory()
+    local chests = coredht.GetData("enterprise_storage", "objects", "class=Chest")
+    if type(chests) ~= "table" then return end
+
+    -- loop the table
+    local inventory = {}
+    for _, chest in pairs(chests) do
+
+        -- loop the inventory
+        for _, item in pairs(chest._inventory._slotTable) do inventory[ item.name ] = (inventory[ item.name ] or 0) + item.count end
+    end
+
+    -- sort the keys?
+    local allKeys = {}
+    for itemName, _ in pairs(inventory) do table.insert(allKeys, itemName) end
+    table.sort(allKeys)
+
+    -- setup the screen
+    ClearScreen(db.inventoryScreen)
+
+    -- loop the table
+    for _, itemName in ipairs(allKeys) do
+
+        -- da project
+        local itemCount = inventory[ itemName ]
+
+        -- to the screen
+		ScreenWriteLine(db.inventoryScreen, itemName..": "..itemCount)
+    end
+
+    -- show us!
+    UpdateMonitors()
+end
+
 local function ProjectsTrigger()
     -- simple, pass through
     UpdateProjects()
@@ -547,6 +581,11 @@ end
 local function AssignmentboardTrigger()
     -- simple, pass through
     UpdateAssignment()
+end
+
+local function InventoryTrigger()
+    -- simple, pass through
+    UpdateInventory()
 end
 
 local function SetMonitorPurpose(side, purpose)
@@ -754,6 +793,7 @@ function DisplayStation:activate()
         -- just update, not sure if need but who cares
         UpdateProjects()
         UpdateAssignment()
+        UpdateInventory()
 
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
@@ -771,8 +811,9 @@ function DisplayStation:activate()
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
         -- setup dht trigger
-        coredht.RegisterTrigger(AssignmentboardTrigger, 'enterprise_assignmentboard', 'assignmentList')
-        coredht.RegisterTrigger(ProjectsTrigger, "enterprise_projects")
+        coredht.RegisterTrigger(ProjectsTrigger,        "enterprise_projects")
+        coredht.RegisterTrigger(AssignmentboardTrigger, "enterprise_assignmentboard", "assignmentList")
+        coredht.RegisterTrigger(InventoryTrigger,       "enterprise_storage", "objects", "class=Chest")
 
 		-- show who's boss!
         db.iAmDispayStation = true
