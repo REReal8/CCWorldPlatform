@@ -416,42 +416,6 @@ local function ScreenWriteLine(screen, line)
     screen[(screen.maxLines or db.maxLines)] = line
 end
 
-local function SetMonitorPurpose(side, purpose)
-    -- get purpose as text also
-    local purposeText = "logging"
-    if purpose == db.workerScreen       then purposeText = "worker"     end
-    if purpose == db.projectScreen      then purposeText = "project"    end
-    if purpose == db.assignmentScreen   then purposeText = "assignment" end
-    if purpose == db.inventoryScreen    then purposeText = "inventory"  end
-    if purpose == db.mobjScreen         then purposeText = "mobj"       end
-
-    -- left side?
-    if side == "left"  then
-        -- set the value
-        db.leftMonitorScreen  = purpose
-
-        -- update the monitor
-        ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft)
-
-        -- set setting (test)
-        settings.set(db.protocol..':'..'left', purposeText)
-        settings.save()
-    end
-
-    -- right side?
-    if side == "right" then
-        -- set the value
-        db.rightMonitorScreen = purpose
-
-        -- update the monitor
-        ScreenToMonitor(db.rightMonitorScreen, db.monitorRight)
-
-        -- set setting (test)
-        settings.set(db.protocol..':'..'right', purposeText)
-        settings.save()
-    end
-end
-
 local function UpdateMonitors()
     -- update the screen
     ScreenToMonitor(db.leftMonitorScreen,   db.monitorLeft)
@@ -518,9 +482,38 @@ local function UpdateStatus(statusData)
     UpdateStatusScreen()
 end
 
+local function UpdateProjects()
+    local projects = coredht.GetData("enterprise_projects")
+    if type(projects) ~= "table" then return end
+
+    -- sort the keys?
+    local allKeys = {}
+    for id, _ in pairs(projects) do table.insert(allKeys, id) end
+    table.sort(allKeys)
+
+    -- setup the screen
+    ClearScreen(db.projectScreen)
+
+    -- loop the table
+    for _, projectId in ipairs(allKeys) do
+
+        -- da project
+        local project = projects[ projectId ]
+
+        -- to the screen
+        ScreenWriteLine(db.projectScreen, "")
+		ScreenWriteLine(db.projectScreen, projectId..": "..project.projectMeta.title)
+		ScreenWriteLine(db.projectScreen, project.projectMeta.description)
+        ScreenWriteLine(db.projectScreen, "currentStep: "..project.currentStep)
+    end
+
+    -- show us!
+    UpdateMonitors()
+end
+
 local function UpdateAssignment()
     -- get the data
-    local assignmentList = coredht.GetData("enterprise_assignmentboard", 'assignmentList')
+    local assignmentList = coredht.GetData("enterprise_assignmentboard", "assignmentList")
     if type(assignmentList) ~= "table" then return end
 
     -- sort the keys?
@@ -546,10 +539,52 @@ local function UpdateAssignment()
     UpdateMonitors()
 end
 
-local function AssignmentBoardTrigger()
+local function ProjectsTrigger()
+    -- simple, pass through
+    UpdateProjects()
+end
+
+local function AssignmentboardTrigger()
     -- simple, pass through
     UpdateAssignment()
 end
+
+local function SetMonitorPurpose(side, purpose)
+    -- get purpose as text also
+    local purposeText = "logging"
+    if purpose == db.workerScreen       then purposeText = "worker"     end
+    if purpose == db.projectScreen      then purposeText = "project"    UpdateProjects()    end
+    if purpose == db.assignmentScreen   then purposeText = "assignment" UpdateAssignment()  end
+    if purpose == db.inventoryScreen    then purposeText = "inventory"  end
+    if purpose == db.mobjScreen         then purposeText = "mobj"       end
+
+    -- left side?
+    if side == "left"  then
+        -- set the value
+        db.leftMonitorScreen  = purpose
+
+        -- update the monitor
+        ScreenToMonitor(db.leftMonitorScreen,  db.monitorLeft)
+
+        -- set setting (test)
+        settings.set(db.protocol..':'..'left', purposeText)
+        settings.save()
+    end
+
+    -- right side?
+    if side == "right" then
+        -- set the value
+        db.rightMonitorScreen = purpose
+
+        -- update the monitor
+        ScreenToMonitor(db.rightMonitorScreen, db.monitorRight)
+
+        -- set setting (test)
+        settings.set(db.protocol..':'..'right', purposeText)
+        settings.save()
+    end
+end
+
 
 --                _     _ _
 --               | |   | (_)
@@ -716,6 +751,10 @@ function DisplayStation:activate()
         db.leftMonitorScreen  = lookupTab[ settings.get(db.protocol..':'..'left',  "logging") ]
         db.rightMonitorScreen = lookupTab[ settings.get(db.protocol..':'..'right', "worker")  ]
 
+        -- just update, not sure if need but who cares
+        UpdateProjects()
+        UpdateAssignment()
+
 		-- listen to the logger port
 		coreevent.OpenChannel(db.loggerChannel, db.protocol)
 
@@ -732,7 +771,8 @@ function DisplayStation:activate()
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
         -- setup dht trigger
-        coredht.RegisterTrigger(AssignmentBoardTrigger, 'enterprise_assignmentboard', 'assignmentList')
+        coredht.RegisterTrigger(AssignmentboardTrigger, 'enterprise_assignmentboard', 'assignmentList')
+        coredht.RegisterTrigger(ProjectsTrigger, "enterprise_projects")
 
 		-- show who's boss!
         db.iAmDispayStation = true
