@@ -63,7 +63,7 @@ local db = {
     loggingScreen       = {},
     workerScreen        = {textScale=2, maxLines=20},
     projectScreen       = {},
-    assignmentScreen    = {},
+    assignmentScreen    = {textScale=2, maxLines=20},
     inventoryScreen     = {},
     mobjScreen          = {},
 
@@ -532,7 +532,8 @@ local function UpdateAssignment()
 
 		ScreenWriteLine(db.assignmentScreen, "")
 		ScreenWriteLine(db.assignmentScreen, assignmentId..": "..assignment.status)
-		ScreenWriteLine(db.assignmentScreen, assignment.taskCall._moduleName.."."..assignment.taskCall._methodName.."()")
+		ScreenWriteLine(db.assignmentScreen, assignment.taskCall._moduleName..".")
+		ScreenWriteLine(db.assignmentScreen, assignment.taskCall._methodName.."()")
     end
 
     -- show us!
