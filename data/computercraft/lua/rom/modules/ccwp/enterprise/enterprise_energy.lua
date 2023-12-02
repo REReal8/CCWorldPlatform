@@ -89,12 +89,12 @@ local function Refuel_ASrv(...)
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }, description = "Getting fuel for turtle "..workerId},
+            }, description = "Getting fuel for Turtle "..workerId},
             -- refuel turtle
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "refuelMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "refuelTaskCall" },
-            }, description = "Refuelling turtle "..workerId},
+            }, description = "Refuelling Turtle "..workerId},
         },
         returnData  = {
         }
@@ -114,7 +114,7 @@ local function Refuel_ASrv(...)
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,
         projectData = projectData,
-        projectMeta = { title = "Refuel", description = "this turtle needs more fuel" },
+        projectMeta = { title = "Turtle "..workerId.." needs more fuel. Helping out...", description = "We help it refuel with "..textutils.serialise(fuelItems, {compact = true}).."" },
     }
 
     -- start project
