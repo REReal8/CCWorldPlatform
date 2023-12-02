@@ -494,6 +494,9 @@ local function UpdateProjects()
     -- setup the screen
     ClearScreen(db.projectScreen)
 
+    -- handy when screen is empty
+    ScreenWriteLine(db.projectScreen, ">>> Hieronder alle projecten <<<")
+
     -- loop the table
     for _, projectId in ipairs(allKeys) do
 
@@ -523,6 +526,9 @@ local function UpdateAssignment()
 
     -- setup the screen
     ClearScreen(db.assignmentScreen)
+
+    -- handy when screen is empty
+    ScreenWriteLine(db.assignmentScreen, ">>> Hieronder alle assignments <<<")
 
     -- loop the table
     for _, assignmentId in ipairs(allKeys) do
@@ -559,6 +565,9 @@ local function UpdateInventory()
 
     -- setup the screen
     ClearScreen(db.inventoryScreen)
+
+    -- handy when screen is empty
+    ScreenWriteLine(db.inventoryScreen, ">>> Hieronder alle inventory <<<")
 
     -- loop the table
     for _, itemName in ipairs(allKeys) do
