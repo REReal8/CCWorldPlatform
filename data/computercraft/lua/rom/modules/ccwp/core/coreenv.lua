@@ -3,7 +3,52 @@ local coreenv = {}
 
 -- ToDo: add proper module description
 --[[
+[2-12-2023 13:20] Rutger van der Eijk: Dus coreenv is bedoelt voor "environment" settings"? maar dan onze eigen implementatie die synced over workers heen?
+[2-12-2023 13:21] : yes
+[2-12-2023 13:21] : env settings die voor het systeem gelden, niet voor 1 worker
+[2-12-2023 13:21] : en waarvan het een goed idee kan zijn om ze runtime te wijzigen
+[2-12-2023 13:22] : (dus geen protocol naam en zo)
+[2-12-2023 13:22] Rutger van der Eijk: Ok. Dus dat idee waar je het eerder al over had.
+[2-12-2023 13:22] : yes
+[2-12-2023 13:22] Rutger van der Eijk: Nice.
+[2-12-2023 13:23] Rutger van der Eijk: En waar/ hoe wordt deze data opgeslagen?
+[2-12-2023 13:23] : er moet dus nog een scherm bij zodat via een userinterface wijzigingen gemaakt kunnen worden
+[2-12-2023 13:23] : memory & /db/env.lua
+[2-12-2023 13:23] Rutger van der Eijk: Oh, dat is helemaal cool. Dus dan kunnen we het runtime aanpassen zonder reboots enzo?
+[2-12-2023 13:24] : (coreenv werkt voordat dht werkt)
+[2-12-2023 13:24] : ja, zonder reboots aanpassen vanaf je pocket computer 😊
+[2-12-2023 13:24] Rutger van der Eijk: nice
+[2-12-2023 13:24] : zonder reload
+[2-12-2023 13:25] Rutger van der Eijk: En leading is wat er in env.lua staat?
+
+En deze worden dus gesynced
+[2-12-2023 13:25] : memory is leading, backup wordt naar disk geschreven
+[2-12-2023 13:25] : Bij wijziging wordt een berichtje rond gestuurd
+[2-12-2023 13:25] : zo vindt sync plaats
+[2-12-2023 13:25] Rutger van der Eijk: Check.
+
+En bij opstarten wordt disk ingelezen neem ik aan?
+[2-12-2023 13:26] : yes
+[2-12-2023 13:26] : goed dat je het noemt, register moet dan niet overschrijven, even aanpassen
+[2-12-2023 13:27] Rutger van der Eijk: Leuk idee.
+
+Ik zie nu nog even geen andere toepassing als bulkMode. Maar kan mij voorstellen dat we die nog verzinnen.
+[2-12-2023 13:30] : je kan overwegen het energie level van de wereld hier onder te brengen
+[2-12-2023 13:30] : of zoals eerder voorgesteld, bos omhakken max 1x1 (spaart tijd)
+[2-12-2023 13:31] Rutger van der Eijk: Zou je bovenaan coreenv kort kunnen beschrijven waar deze core module voor bedoelt is. Dus het stukje
+
+
     This module ...
+
+
+?
+
+Dus met eigenlijk wat je hier boven uitlegt.
+
+Dan kunnen we (ik 😉) de bedoeling (zoals het onderscheid met instantie specifieke settings) makkelijk terug vinden.
+[2-12-2023 13:31] : disk io heeft ook wel een optie, bufferen of direct wegschrijven
+[2-12-2023 13:31] Rutger van der Eijk: Die kan idd nuttig zijn.
+
 --]]
 
 -- imports
@@ -232,13 +277,12 @@ end
 --               | |             __/ |
 --               |_|            |___/
 
---[[
 function coreenv.EditEnvDisplay(t, userInput)
     -- import display
     local coredisplay = require "coredisplay"
-
+--[[
     -- did we get user input?
-    if t.editValue and userInput ~= "e" then
+    if false and t.editValue and userInput ~= "e" then
 
         -- process the new value
         local f, err = load("return "..userInput)
@@ -264,8 +308,8 @@ function coreenv.EditEnvDisplay(t, userInput)
     end
 
     -- which keys are present in the subroot?
-    local intro     = "Available keys in the dht"
-    local options   = {{key = "x", desc = "back", func = coredht.EditDHTDisplay, param = {keyList=keyList, removeKey=true}}}
+    local intro     = "Available options:"
+    local options   = {{key = "x", desc = "back", func = coreenv.EditEnvDisplay, param = {keyList=keyList, removeKey=true}}}
     local question  = "Make your choice"
 
     -- loop subroot (if it's a table)
@@ -306,14 +350,13 @@ function coreenv.EditEnvDisplay(t, userInput)
         question = question,
 
         -- only for edit value screen
-        func = coredht.EditDHTDisplay,
+        func = coreenv.EditEnvDisplay,
         param = t
     })
-
+]]
     -- done!
     return true
 end
-]]
 
 -- return da class
 return coreenv
