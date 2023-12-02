@@ -114,6 +114,9 @@ local function Registered(protocol, name, kind, default)
     -- check the kind, must be a known kind
     if not db.kinds[kind] then return false end
 
+    -- maybe registered before, then ignore
+    if type(db.env[protocol]) == "table" and type(db.env[protocol][name]) == "table" then return false end
+
     -- safety
     if type(db.env[protocol]) ~= "table" then db.env[protocol] = {} end
 
