@@ -197,29 +197,6 @@ function ObjHost:saveObj_SSrv(...)
     }
 end
 
-local function GetObjectsPath(...)
-    -- get & check input from description
-    local checkSuccess, className = InputChecker.Check([[
-        This method provides the objectsPath of objects in the ObjHost with class className.
-
-        Return value:
-            objectsPath             - (string) locating the objects within the ObjHost
-
-        Parameters:
-            className               + (string) with the name of the class of the object
-    --]], ...)
-    if not checkSuccess then corelog.Error("ObjHost.GetObjectsPath: Invalid input") return nil end
-
-    -- check className not empty
-    if className == "" then corelog.Error("ObjHost.GetObjectsPath: classname is empty") return nil end
-
-    -- determince objectsPath
-    local objectsPath = "/objects/class="..className
-
-    -- end
-    return objectsPath
-end
-
 function ObjHost:getObjects(...)
     -- get & check input from description
     local checkSuccess, className = InputChecker.Check([[
@@ -233,12 +210,8 @@ function ObjHost:getObjects(...)
     --]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getObjects: Invalid input") return nil end
 
-    -- get objectsPath
-    local objectsPath = GetObjectsPath(className)
-    if not objectsPath then corelog.Error("ObjHost:getObjects: Failed obtaining objectsPath") return nil end
-
     -- get objectsLocator
-    local objectsLocator = self:getResourceLocator(objectsPath)
+    local objectsLocator = ObjLocator:newInstance(self:getHostName(), className)
 
     -- get objects
     local objects = self:getResource(objectsLocator)
