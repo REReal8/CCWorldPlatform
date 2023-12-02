@@ -423,7 +423,7 @@ function UserStation:reset()
     -- nothing to do for now
 
     -- save UserStation
-    -- local objLocator = enterprise_employment:saveObject(self) if not objLocator then corelog.Error("UserStation:reset: Failed saving UserStation") return nil end
+    -- local objLocator = enterprise_employment:saveObj(self) if not objLocator then corelog.Error("UserStation:reset: Failed saving UserStation") return nil end
 
     -- check input Chest (still) exist
     local inputLocator = self:getInputLocator()

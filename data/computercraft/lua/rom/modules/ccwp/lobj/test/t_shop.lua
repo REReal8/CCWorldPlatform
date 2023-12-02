@@ -227,7 +227,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local testObject = TestObj:newInstance("field1", 4)
     local testObjHost = T_ObjHost.CreateTestObj()
     moduleRegistry:register(testObjHost:getHostName(), testObjHost)
-    local nonItemSupplierLocator = testObjHost:saveObject(testObject)
+    local nonItemSupplierLocator = testObjHost:saveObj(testObject)
 
     -- test IItemSupplier
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator })
@@ -277,7 +277,7 @@ function T_Shop.T_delistAllItemSuppliers()
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
 
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_storage:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObj(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 2, "Shop "..obj:getId().." does not have 2 ItemSupplier's")
@@ -304,17 +304,17 @@ function T_Shop.T_bestItemSupplier()
     local ingredientsItemSupplierLocator = lobjLocator
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
-    local itemDepotLocator = enterprise_storage:saveObject(chest)
+    local itemDepotLocator = enterprise_storage:saveObj(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
     chest = T_Chest.CreateTestObj(nil, closeLocation) assert(chest, "Failed obtaining Chest")
-    local closeItemSupplierLocator = enterprise_storage:saveObject(chest)
+    local closeItemSupplierLocator = enterprise_storage:saveObj(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(Location.FarX(), 1, 0)
     chest = T_Chest.CreateTestObj(nil, farLocation) assert(chest, "Failed obtaining Chest")
-    local farItemSupplierLocator = enterprise_storage:saveObject(chest)
+    local farItemSupplierLocator = enterprise_storage:saveObj(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local bestItemSupplierLocator = obj:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, farItemSupplierLocator, closeItemSupplierLocator)
@@ -414,7 +414,7 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     local ingredientsItemSupplierLocator = lobjLocator
     local nTrees = 1
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
+    local forestLocator = enterprise_forestry:saveObj(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local provideItems = {
@@ -442,7 +442,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
     local lobjLocator = LObjLocator:newInstance(testHostName, obj)
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
+    local forestLocator = enterprise_forestry:saveObj(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     -- tests

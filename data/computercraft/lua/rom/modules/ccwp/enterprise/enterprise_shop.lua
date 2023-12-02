@@ -75,7 +75,7 @@ function enterprise_shop:getShop()
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it
-        local objLocator = self:saveObject(shop)
+        local objLocator = self:saveObj(shop)
         if not objLocator then corelog.Error("enterprise_shop:getShop: Failed saving Shop") return nil end
     else
         -- check exactly 1 Shop

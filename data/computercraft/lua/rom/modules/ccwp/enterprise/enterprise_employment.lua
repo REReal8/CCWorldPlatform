@@ -157,7 +157,7 @@ local function GetContainer(employmentHost, containerClassName, refName)
 
         -- (re)set container
         local container = containerClass:newInstance(URL:getClassName())
-        employmentHost:saveObject(container, refName)
+        employmentHost:saveObj(container, refName)
 
         -- retrieve again
         containerTable = employmentHost:getResource(containerLocator)
@@ -174,7 +174,7 @@ end
 
 local function SaveContainer(employmentHost, container, refName)
     -- save container
-    local containerLocator = employmentHost:saveObject(container, refName)
+    local containerLocator = employmentHost:saveObj(container, refName)
 
     -- end
     return containerLocator
@@ -750,7 +750,7 @@ function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
         turtleObj:setFuelPriorityKey(priorityKey)
-        local turtleLocator = self:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
+        local turtleLocator = self:saveObj(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
@@ -796,7 +796,7 @@ function enterprise_employment.Fuel_Callback(...)
 
     -- release priority key condition
     turtleObj:setFuelPriorityKey("")
-    turtleLocator = enterprise_employment:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment.Fuel_Callback: failed saving turtle") return {success = false} end
+    turtleLocator = enterprise_employment:saveObj(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment.Fuel_Callback: failed saving turtle") return {success = false} end
 
     -- end
     return {success = true}

@@ -68,7 +68,7 @@ function t_projects.T_StartProject_ASrv()
     local hostName = "TestHost"
     local host = ObjHost:newInstance(hostName)
     moduleRegistry:register(hostName, host)
-    local objLocator = host:saveObject(testObj)
+    local objLocator = host:saveObj(testObj)
 
     local projectDef = {
         steps   = {

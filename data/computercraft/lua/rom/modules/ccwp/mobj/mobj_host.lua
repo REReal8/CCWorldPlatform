@@ -166,7 +166,7 @@ function MObjHost:hostMObj_SSrv(...)
     if not mobj then corelog.Error("MObjHost:hostMObj_SSrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return {success = false} end
 
     -- save the MObj
-    local mobjLocator = self:saveObject(mobj)
+    local mobjLocator = self:saveObj(mobj)
     if not mobjLocator then corelog.Error("MObjHost:hostMObj_SSrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return {success = false} end
 
     -- log
@@ -214,7 +214,7 @@ function MObjHost:upgradeMObj_SSrv(...)
     if not success then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed upgrading "..mobjLocator:getURI().." from upgradeParameters(="..textutils.serialise(upgradeParameters)..")") return {success = false} end
 
     -- save the MObj
-    mobjLocator = self:saveObject(mobj)
+    mobjLocator = self:saveObj(mobj)
     if not mobjLocator then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed saving "..textutils.serialise(mobj)..")") return {success = false} end
 
     -- end

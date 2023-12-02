@@ -26,7 +26,7 @@ function T_ObjHost.T_All()
     T_ObjHost.T_new()
 
     -- ObjHost
-    T_ObjHost.T_saveObject()
+    T_ObjHost.T_saveObj()
     T_ObjHost.T_getObject()
     T_ObjHost.T_getNumberOfObjects()
     T_ObjHost.T_deleteObjects()
@@ -133,37 +133,37 @@ end
 local testObj = TestObj:newInstance("field1", 4)
 local testObjClassName = "TestObj"
 
-function T_ObjHost.T_saveObject()
+function T_ObjHost.T_saveObj()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":saveObject tests")
+    corelog.WriteToLog("* "..testClassName..":saveObj tests")
     local objRef = "someRef"
     local objId = coreutils.NewId()
     local testLObj = LObjTest:newInstance(objId, "field1")
     local testLObjClassName = "LObjTest"
 
     -- test with supplying objRef (Obj)
-    local objLocator = objHost1:saveObject(testObj, objRef)
+    local objLocator = objHost1:saveObj(testObj, objRef)
     local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName.."/id="..objRef)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test without supplying objRef (Obj)
-    objLocator = objHost1:saveObject(testObj)
+    objLocator = objHost1:saveObj(testObj)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test with supplying objRef (LObj)
-    objLocator = objHost1:saveObject(testLObj, objRef)
+    objLocator = objHost1:saveObj(testLObj, objRef)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/id="..objRef)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test without supplying objRef (LObj)
-    objLocator = objHost1:saveObject(testLObj)
+    objLocator = objHost1:saveObj(testLObj)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/id="..testLObj:getId())
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
@@ -175,7 +175,7 @@ end
 function T_ObjHost.T_getObject()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getObject tests")
-    local objLocator = objHost1:saveObject(testObj, testObjClassName)
+    local objLocator = objHost1:saveObj(testObj, testObjClassName)
 
     -- test get object
     local object = objHost1:getObject(objLocator)
@@ -193,7 +193,7 @@ function T_ObjHost.T_getNumberOfObjects()
     local objectId = coreutils.NewId()
 
     -- test
-    local objLocator = objHost1:saveObject(testObj, testObjClassName, objectId) -- add an extra object
+    local objLocator = objHost1:saveObj(testObj, testObjClassName, objectId) -- add an extra object
     local nObjects = objHost1:getNumberOfObjects(testObjClassName)
     local expectedNObjects = originalNObjects + 1
     assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
@@ -232,7 +232,7 @@ function T_ObjHost.T_GetObject()
     moduleRegistry:register(hostName1, objHost1)
 
     -- test get object hosted by objHost1
-    local objLocator = objHost1:saveObject(testObj, testObjClassName)
+    local objLocator = objHost1:saveObj(testObj, testObjClassName)
     local object = ObjHost.GetObject(objLocator)
     assert(object and object:isEqual(testObj), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 

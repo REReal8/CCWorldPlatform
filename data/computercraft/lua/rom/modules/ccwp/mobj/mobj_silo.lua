@@ -924,7 +924,7 @@ end
 
 function Silo:update()
     -- one host at this time NOT WORKING
---    enterprise_storage:saveObject(self)
+--    enterprise_storage:saveObj(self)
 end
 
 --[[

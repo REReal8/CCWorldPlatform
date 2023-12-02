@@ -322,7 +322,7 @@ function Turtle:reset()
 
     -- save
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local objLocator = enterprise_employment:saveObject(self)
+    local objLocator = enterprise_employment:saveObj(self)
     if not objLocator then corelog.Error("Turtle:reset: Failed saving Turtle") return nil end
 end
 
@@ -341,7 +341,7 @@ function Turtle:getWorkerLocation()
 
             -- save change in host
             enterprise_employment = enterprise_employment or require "enterprise_employment"
-            enterprise_employment:saveObject(self)
+            enterprise_employment:saveObj(self)
         end
     end
 

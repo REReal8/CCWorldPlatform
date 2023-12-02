@@ -129,7 +129,7 @@ function coreassignment.Run()
     -- activate Worker
     local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
     workerObj:activate()
-    enterprise_employment:saveObject(workerObj)
+    enterprise_employment:saveObj(workerObj)
 
     -- infinite loop
     local toldAboutIdleAlready = false

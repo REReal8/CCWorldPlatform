@@ -110,7 +110,7 @@ function WIPAdministrator:getWIPQueue(...)
 
         -- save
         enterprise_administration = enterprise_administration or require "enterprise_administration"
-        local objLocator = enterprise_administration:saveObject(self)
+        local objLocator = enterprise_administration:saveObj(self)
         if not objLocator then corelog.Error("WIPAdministrator:getWIPQueue: Failed saving WIPAdministrator") return false end
     end
 
@@ -143,7 +143,7 @@ function WIPAdministrator:removeWIPQueue(...)
 
     -- save
     enterprise_administration = enterprise_administration or require "enterprise_administration"
-    local objLocator = enterprise_administration:saveObject(self)
+    local objLocator = enterprise_administration:saveObj(self)
     if not objLocator then corelog.Error("WIPAdministrator:getWIPQueue: Failed saving WIPAdministrator") return false end
 
     -- end
@@ -196,7 +196,7 @@ function WIPAdministrator:administerWorkStarted(...)
 
     -- save
     enterprise_administration = enterprise_administration or require "enterprise_administration"
-    local objLocator = enterprise_administration:saveObject(self)
+    local objLocator = enterprise_administration:saveObj(self)
     if not objLocator then corelog.Error("WIPAdministrator:administerWorkStarted: Failed saving WIPAdministrator") return false end
 
     -- end
@@ -239,7 +239,7 @@ function WIPAdministrator:administerWorkCompleted(...)
 
     -- save
     enterprise_administration = enterprise_administration or require "enterprise_administration"
-    local objLocator = enterprise_administration:saveObject(self)
+    local objLocator = enterprise_administration:saveObj(self)
     if not objLocator then corelog.Error("WIPAdministrator:administerWorkCompleted: Failed saving WIPAdministrator") return false end
 
     -- end
@@ -312,7 +312,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
 
         -- save
         enterprise_administration = enterprise_administration or require "enterprise_administration"
-        local objLocator = enterprise_administration:saveObject(self)
+        local objLocator = enterprise_administration:saveObj(self)
         if not objLocator then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Failed saving WIPAdministrator") return false end
     end
 

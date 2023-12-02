@@ -138,9 +138,9 @@ function ObjHost:getObj_SSrv(...)
     }
 end
 
-function ObjHost:saveObject(...)
+function ObjHost:saveObj(...)
     -- get & check input from description
-    local checkSuccess, object, objRef = InputChecker.Check([[
+    local checkSuccess, obj, objRef = InputChecker.Check([[
         This method saves an Obj in the ObjHost.
 
         If an objRef argument is supplied that Obj reference is used.
@@ -150,21 +150,21 @@ function ObjHost:saveObject(...)
             objLocator              - (ObjLocator) locating the object
 
         Parameters:
-            object                  + (table) the object
+            obj                     + (table) the Obj
             objRef                  + (string, "") with a Obj reference (e.g. the id of an LObj)
     ]], ...)
-    if not checkSuccess then corelog.Error("ObjHost:saveObject: Invalid input") return nil end
-    if not Class.IsInstanceOf(object, IObj) then corelog.Error("ObjHost:saveObject: object is not an IObj") return nil end
+    if not checkSuccess then corelog.Error("ObjHost:saveObj: Invalid input") return nil end
+    if not Class.IsInstanceOf(obj, IObj) then corelog.Error("ObjHost:saveObj: object is not an IObj") return nil end
 
     -- determine objLocator
-    if objRef == "" and Class.IsInstanceOf(object, ILObj) then
-        objRef = object:getId()
+    if objRef == "" and Class.IsInstanceOf(obj, ILObj) then
+        objRef = obj:getId()
     end
-    local objLocator = ObjLocator:newInstance(self:getHostName(), object:getClassName(), objRef)
+    local objLocator = ObjLocator:newInstance(self:getHostName(), obj:getClassName(), objRef)
 
     -- save resource
-    local savedResource = self.SaveResource(object, objLocator)
-    if not savedResource then corelog.Error("ObjHost:saveObject: Failed saving Obj located by "..objLocator:getURI()) return nil end
+    local savedResource = self.SaveResource(obj, objLocator)
+    if not savedResource then corelog.Error("ObjHost:saveObj: Failed saving Obj located by "..objLocator:getURI()) return nil end
 
     -- end
     return objLocator
@@ -187,7 +187,7 @@ function ObjHost:saveObj_SSrv(...)
     if not checkSuccess then corelog.Error("ObjHost:saveObj_SSrv: Invalid input") return {success = false} end
 
     -- save object
-    local objLocator = self:saveObject(obj)
+    local objLocator = self:saveObj(obj)
     if not objLocator then corelog.Error("ObjHost:saveObj_SSrv: Failed saving Obj "..textutils.serialise(obj)) return {success = false} end
 
     -- end
