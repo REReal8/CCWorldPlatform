@@ -172,14 +172,6 @@ local function GetContainer(employmentHost, containerClassName, refName)
     return container
 end
 
-local function SaveContainer(employmentHost, container, refName)
-    -- save container
-    local containerLocator = employmentHost:saveObj(container, refName)
-
-    -- end
-    return containerLocator
-end
-
 function enterprise_employment:getRegistered(...)
     -- get & check input from description
     local checkSuccess, workerId = InputChecker.Check([[
@@ -234,7 +226,7 @@ function enterprise_employment:register(...)
     workerLocators[workerId] = theWorkerLocator
 
     -- save workerLocators
-    local workerLocatorsLocator = SaveContainer(self, workerLocators, "workerLocators")
+    local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
     if not workerLocatorsLocator then corelog.Error("enterprise_employment:register: Failed saving workerLocators") return false end
 
     -- end
@@ -293,7 +285,7 @@ function enterprise_employment:delist(...)
             workerLocators[registeredWorkedId] = nil
 
             -- save workerLocators
-            local workerLocatorsLocator = SaveContainer(self, workerLocators, "workerLocators")
+            local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
             if not workerLocatorsLocator then corelog.Error("enterprise_employment:delist: Failed saving workerLocators") return false end
 
             -- found and delisted it!
@@ -424,7 +416,7 @@ function enterprise_employment:getAndRemoveBirthCertificate(fatherId)
             table.remove(birthCertificates, iCerticate)
 
             -- save birthCertificates
-            local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "birthCertificates")
+            local newWorkerLocatorsLocator = self:saveObj(birthCertificates, "birthCertificates")
             if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthCertificate: Failed saving birthCertificates") return false end
 
             -- end
@@ -468,7 +460,7 @@ function enterprise_employment:registerBirthCertificate_SOSrv(...)
     table.insert(birthCertificates, birthCertificate)
 
     -- save birthCertificates
-    local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "birthCertificates")
+    local newWorkerLocatorsLocator = self:saveObj(birthCertificates, "birthCertificates")
     if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Failed saving birthCertificates") return {success = false} end
 
     -- end
@@ -492,7 +484,7 @@ function enterprise_employment:deleteWorkers()
         workerLocators[workerKey] = nil
     end
     -- save workerLocators
-    local workerLocatorsLocator = SaveContainer(self, workerLocators, "workerLocators")
+    local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
     if not workerLocatorsLocator then corelog.Error("enterprise_employment:deleteWorkers: Failed saving workerLocators") return false end
 
     -- release remaining Worker's that where apparently not registered
