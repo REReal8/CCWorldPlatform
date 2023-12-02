@@ -435,7 +435,7 @@ local function UpdateStatusScreen()
 	for _, id in ipairs(allKeys) do
 
         -- get the data
-        data = db.statusInfo[id]
+        local data = db.statusInfo[id]
 
 		-- check for dead mates
 		local deadMessage		= "DEAD "
