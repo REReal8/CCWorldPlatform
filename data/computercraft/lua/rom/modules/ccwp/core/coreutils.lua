@@ -44,6 +44,7 @@ end
 function coreutils.Run()
 	-- need this import
 	local coresystem	= require "coresystem"
+	local coreevent		= require "coreevent"
 
 	-- work forever
 	while coresystem.IsRunning() do
@@ -60,8 +61,14 @@ function coreutils.Run()
 			-- do the file operation
 			coreutils.WriteToFileNow(fsWork.filename, fsWork.message, fsWork.writemode)
 		else
+			-- create an dummy event so we will never wait longer for an event then 20 ticks
+			local id = coreevent.CreateTimeEvent(20, "dummy")
+
 			-- wait for any event, ignore result
 			os.pullEvent()
+
+			-- in case we have an other event
+			coreevent.CancelTimeEvent(id)
 		end
 	end
 end
