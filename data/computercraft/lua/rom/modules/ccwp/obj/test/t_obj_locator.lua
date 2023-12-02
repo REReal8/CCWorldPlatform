@@ -121,19 +121,6 @@ function T_ObjLocator.T_new()
     -- cleanup test
 end
 
-function T_ObjLocator.T_newInstanceFromObj()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":newInstanceFromObj() tests")
-    local locatedObj0 = TestObj:newInstance("field1", 4)
-
-    -- test full
-    local obj = ObjLocator:newInstanceFromObj(hostName0, locatedObj0, objRef1, query0)
-    local test = T_ObjLocator.CreateInitialisedTest(hostName0, objClassName0, objRef1, query0)
-    test:test(obj, testObjName, "", logOk)
-
-    -- cleanup test
-end
-
 function T_ObjLocator.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." base getter tests")

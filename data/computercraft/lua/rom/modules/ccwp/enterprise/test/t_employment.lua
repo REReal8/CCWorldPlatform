@@ -118,12 +118,12 @@ function t_employment.T_getObject()
     -- prepare test
     corelog.WriteToLog("* enterprise_employment:getObject() tests")
     local testObject = TestObj:newInstance("field1", 4)
-    local objectLocator = enterprise_employment:saveObject(testObject)
+    local objLocator = enterprise_employment:saveObj(testObject)
     local currentTurtleLocator = t_employment.GetCurrentTurtleLocator()
     local currentTurtle = enterprise_employment:getObject(currentTurtleLocator)
 
     -- test normal object works (similair to T_Host.T_getObject())
-    local object = enterprise_employment:getObject(objectLocator) assert(object, "t_employment.T_getObject: Failed obtaining object")
+    local object = enterprise_employment:getObject(objLocator) assert(object, "t_employment.T_getObject: Failed obtaining object")
     assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test "any turtle" provides current turtle
@@ -132,8 +132,8 @@ function t_employment.T_getObject()
     assert(object:isEqual(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
 
     -- cleanup test
-    enterprise_employment:deleteResource(objectLocator)
-    assert(not enterprise_employment:getResource(objectLocator), "resource not deleted")
+    enterprise_employment:deleteResource(objLocator)
+    assert(not enterprise_employment:getResource(objLocator), "resource not deleted")
 end
 
 --    __  __  ____  _     _ _    _           _
@@ -406,7 +406,7 @@ function t_employment.T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
+    local forestLocator = enterprise_forestry:saveObj(forest)
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location = turtleObj:getWorkerLocation()

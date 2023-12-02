@@ -340,7 +340,7 @@ function T_Turtle.T_provideItemsTo_AOSrv_ToChest()
     local provideItems = { ["minecraft:birch_log"] = 5, }
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocationChest) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = enterprise_storage:saveObject(obj2)
+    local itemDepotLocator = enterprise_storage:saveObj(obj2)
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
 

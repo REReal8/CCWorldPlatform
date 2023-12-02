@@ -41,7 +41,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     local factoryLocaton1 = Location:newInstance(0, 0, 1, 0, 1)
     local forestLocation = factoryLocaton1:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
+    local forestLocator = enterprise_forestry:saveObj(forest)
 
     local factoryConstructParameters = {
         level           = 0,
@@ -74,7 +74,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     -- test L2
     forest:setLevel(level0)
-    forestLocator = enterprise_forestry:saveObject(forest)
+    forestLocator = enterprise_forestry:saveObj(forest)
     level = level2
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator, factoryLocator = factoryLocator1})
@@ -87,7 +87,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- test L3
     forest:setLevel(level2)
     forest:setNTrees(3*6)
-    forestLocator = enterprise_forestry:saveObject(forest)
+    forestLocator = enterprise_forestry:saveObj(forest)
     factoryConstructParameters = {
         level           = 0,
 
@@ -114,7 +114,7 @@ function t_energy.T_GetRefuelAmount_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetRefuelAmount_Att() tests")
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
-    local forestLocator = enterprise_forestry:saveObject(forest)
+    local forestLocator = enterprise_forestry:saveObj(forest)
 
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")

@@ -269,7 +269,7 @@ function Shop:delistAllItemSuppliers()
 
     -- save Shop
     enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObject(self)
+    local objLocator = enterprise_shop:saveObj(self)
     if not objLocator then corelog.Error("Shop:delistAllItemSuppliers: Failed saving Shop") return {success = false} end
 end
 
@@ -310,7 +310,7 @@ function Shop:registerItemSupplier_SOSrv(...)
 
     -- save Shop
     enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObject(self)
+    local objLocator = enterprise_shop:saveObj(self)
     if not objLocator then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
 
     -- end
@@ -350,7 +350,7 @@ function Shop:delistItemSupplier_SOSrv(...)
 
             -- save Shop
             enterprise_shop = require "enterprise_shop"
-            local objLocator = enterprise_shop:saveObject(self)
+            local objLocator = enterprise_shop:saveObj(self)
             if not objLocator then corelog.Error("Shop:delistItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
             break
         end

@@ -327,7 +327,7 @@ function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
         { name = "minecraft:dirt", count = 20 },
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_storage:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObj(chest)
     local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
@@ -353,7 +353,7 @@ function T_Silo.T_can_ProvideItems_QOSrv()
         { name = "minecraft:dirt", count = 20 },
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
-    local chestLocator = enterprise_storage:saveObject(chest)
+    local chestLocator = enterprise_storage:saveObj(chest)
     local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
@@ -412,7 +412,7 @@ function T_Silo.T_integrityCheck_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:integrityCheck_AOSrv() tests")
     local obj = Silo:construct({baseLocation=baseLocation0, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
-    local siloLocator = testHost:saveObject(obj)
+    local siloLocator = testHost:saveObj(obj)
 
     -- test
     obj:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())

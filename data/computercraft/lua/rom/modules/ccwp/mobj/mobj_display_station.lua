@@ -872,7 +872,7 @@ function DisplayStation:reset()
 
     -- save
     -- enterprise_employment = enterprise_employment or require "enterprise_employment"
-    -- local objLocator = enterprise_employment:saveObject(self)
+    -- local objLocator = enterprise_employment:saveObj(self)
     -- if not objLocator then corelog.Error("DisplayStation:reset: Failed saving DisplayStation") return nil end
 end
 

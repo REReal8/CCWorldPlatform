@@ -250,7 +250,7 @@ function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
     local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
-    local chestLocator = testHost:saveObject(obj)
+    local chestLocator = testHost:saveObj(obj)
 
     local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
         ["chestLocator"] = chestLocator,
@@ -324,7 +324,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = testHost:saveObject(obj2)
+    local itemDepotLocator = testHost:saveObj(obj2)
     t_employment = t_employment or require "test.t_employment"
     local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(ingredientsItemSupplierLocator, "Failed obtaining ingredientsItemSupplierLocator")
     local wasteItemDepotLocator = ingredientsItemSupplierLocator:copy()
@@ -342,7 +342,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     local obj2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 6, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
-    local itemDepotLocator = testHost:saveObject(obj2)
+    local itemDepotLocator = testHost:saveObj(obj2)
     local destinationItemDepotLocation = obj2:getBaseLocation()
 
     -- test

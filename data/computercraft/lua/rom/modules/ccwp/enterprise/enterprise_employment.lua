@@ -141,20 +141,23 @@ end
 --      \  /\  / (_) | |  |   <  __/ |
 --       \/  \/ \___/|_|  |_|\_\___|_|
 
-local function GetContainer(employmentHost, className, refName)
+local function GetContainer(employmentHost, containerClassName, refName)
     -- get containerLocator
-    local containerPath = ObjHost.GetObjectPath(className, refName)
-    local containerLocator = employmentHost:getResourceLocator(containerPath)
+    local containerLocator = ObjLocator:newInstance(employmentHost:getClassName(), containerClassName, refName)
     if not containerLocator then corelog.Error("enterprise_employment.GetContainer: Failed obtaining containerLocator") return nil end
 
     -- get container
     local containerTable = employmentHost:getResource(containerLocator)
     if not containerTable then
-        corelog.WriteToLog("enterprise_employment.GetContainer: Creating new "..className.." "..refName)
+        corelog.WriteToLog("enterprise_employment.GetContainer: Creating new "..containerClassName.." "..refName)
+
+        -- get containerClass
+        local containerClass = objectFactory:getClass(containerClassName)
+        if not containerClass then corelog.Error("enterprise_employment.GetContainer: Class "..containerClassName.." not found in objectFactory") return nil end
 
         -- (re)set container
-        local container = ObjTable:newInstance(URL:getClassName())
-        employmentHost:saveResource(container, containerPath)
+        local container = containerClass:newInstance(URL:getClassName())
+        employmentHost:saveObj(container, refName)
 
         -- retrieve again
         containerTable = employmentHost:getResource(containerLocator)
@@ -162,22 +165,11 @@ local function GetContainer(employmentHost, className, refName)
     end
 
     -- convert to container
-    local container = objectFactory:create(className, containerTable)
-    if not container then corelog.Error("enterprise_employment.GetContainer: failed converting containerTable(="..textutils.serialise(containerTable)..") to "..className.." object for containerLocator="..containerLocator:getURI()) return nil end
+    local container = objectFactory:create(containerClassName, containerTable)
+    if not container then corelog.Error("enterprise_employment.GetContainer: failed converting containerTable(="..textutils.serialise(containerTable)..") to "..containerClassName.." object for containerLocator="..containerLocator:getURI()) return nil end
 
     -- end
     return container
-end
-
-local function SaveContainer(employmentHost, container, className, refName)
-    -- get containerLocator
-    local containerPath = ObjHost.GetObjectPath(className, refName)
-
-    -- save container
-    local containerLocator = employmentHost:saveResource(container, containerPath)
-
-    -- end
-    return containerLocator
 end
 
 function enterprise_employment:getRegistered(...)
@@ -234,7 +226,7 @@ function enterprise_employment:register(...)
     workerLocators[workerId] = theWorkerLocator
 
     -- save workerLocators
-    local workerLocatorsLocator = SaveContainer(self, workerLocators, "ObjTable", "workerLocators")
+    local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
     if not workerLocatorsLocator then corelog.Error("enterprise_employment:register: Failed saving workerLocators") return false end
 
     -- end
@@ -293,7 +285,7 @@ function enterprise_employment:delist(...)
             workerLocators[registeredWorkedId] = nil
 
             -- save workerLocators
-            local workerLocatorsLocator = SaveContainer(self, workerLocators, "ObjTable", "workerLocators")
+            local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
             if not workerLocatorsLocator then corelog.Error("enterprise_employment:delist: Failed saving workerLocators") return false end
 
             -- found and delisted it!
@@ -424,7 +416,7 @@ function enterprise_employment:getAndRemoveBirthCertificate(fatherId)
             table.remove(birthCertificates, iCerticate)
 
             -- save birthCertificates
-            local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "ObjArray", "birthCertificates")
+            local newWorkerLocatorsLocator = self:saveObj(birthCertificates, "birthCertificates")
             if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:getAndRemoveBirthCertificate: Failed saving birthCertificates") return false end
 
             -- end
@@ -468,7 +460,7 @@ function enterprise_employment:registerBirthCertificate_SOSrv(...)
     table.insert(birthCertificates, birthCertificate)
 
     -- save birthCertificates
-    local newWorkerLocatorsLocator = SaveContainer(self, birthCertificates, "ObjArray", "birthCertificates")
+    local newWorkerLocatorsLocator = self:saveObj(birthCertificates, "birthCertificates")
     if not newWorkerLocatorsLocator then corelog.Error("enterprise_employment:registerBirthCertificate_SOSrv: Failed saving birthCertificates") return {success = false} end
 
     -- end
@@ -492,7 +484,7 @@ function enterprise_employment:deleteWorkers()
         workerLocators[workerKey] = nil
     end
     -- save workerLocators
-    local workerLocatorsLocator = SaveContainer(self, workerLocators, "ObjTable", "workerLocators")
+    local workerLocatorsLocator = self:saveObj(workerLocators, "workerLocators")
     if not workerLocatorsLocator then corelog.Error("enterprise_employment:deleteWorkers: Failed saving workerLocators") return false end
 
     -- release remaining Worker's that where apparently not registered
@@ -750,7 +742,7 @@ function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
         turtleObj:setFuelPriorityKey(priorityKey)
-        local turtleLocator = self:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
+        local turtleLocator = self:saveObj(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
@@ -796,7 +788,7 @@ function enterprise_employment.Fuel_Callback(...)
 
     -- release priority key condition
     turtleObj:setFuelPriorityKey("")
-    turtleLocator = enterprise_employment:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment.Fuel_Callback: failed saving turtle") return {success = false} end
+    turtleLocator = enterprise_employment:saveObj(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment.Fuel_Callback: failed saving turtle") return {success = false} end
 
     -- end
     return {success = true}

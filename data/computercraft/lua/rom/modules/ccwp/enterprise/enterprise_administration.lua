@@ -97,7 +97,7 @@ function enterprise_administration:createNewWIPAdministrator()
     local administrator = WIPAdministrator:newInstance(ObjTable:newInstance("WIPQueue"))
 
     -- save it
-    local objLocator = self:saveObject(administrator)
+    local objLocator = self:saveObj(administrator)
     if not objLocator then corelog.Error("enterprise_administration:createNewWIPAdministrator: Failed saving WIPAdministrator") return nil end
 
     -- end
