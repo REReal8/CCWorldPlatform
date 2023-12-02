@@ -60,7 +60,7 @@ local function SaveDBToFile()
 --    end
 
     -- save the db table to a file (this may take some time with larger dht's)
-    coreutils.WriteToFile(filename, db, "overwrite")
+    coreutils.WriteToFileNow(filename, db, "overwrite")
     local fileAttributes = fs.attributes(filename)
     fileTime = fileAttributes.modified
 
