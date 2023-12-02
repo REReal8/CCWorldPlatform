@@ -82,7 +82,7 @@ function core.Run()
 		coresystem.setStatus("running")
 
     	-- run some functions in parallel
-    	parallel.waitForAll(coreevent.Run, coretask.Run, coreassignment.Run, coredisplay.Run)
+    	parallel.waitForAll(coreevent.Run, coretask.Run, coreutils.Run, coreassignment.Run, coredisplay.Run)
 
         -- no longer running, we're done
 		coresystem.setStatus("ready")

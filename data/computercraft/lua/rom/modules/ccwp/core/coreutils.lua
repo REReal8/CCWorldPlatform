@@ -7,12 +7,73 @@ local coreutils = {}
 --]]
 
 local corelog
+local coreenv		= require "coreenv"
 
 local db	= {
 	dbFilename  	= "/db/coreutils.lua",
 	protocol		= "coreutils",
-    serial			= 0,                                -- for unique id's
+    serial			= 0,                    -- for unique id's
 }
+
+local fsQueue		= {}					-- queue for async write to file
+
+--                                               _ _         _           __ _ _
+--                                              (_) |       | |         / _(_) |
+--     __ _ ___ _   _ _ __   ___  __      ___ __ _| |_ ___  | |_ ___   | |_ _| | ___
+--    / _` / __| | | | '_ \ / __| \ \ /\ / / '__| | __/ _ \ | __/ _ \  |  _| | |/ _ \
+--   | (_| \__ \ |_| | | | | (__   \ V  V /| |  | | ||  __/ | || (_) | | | | | |  __/
+--    \__,_|___/\__, |_| |_|\___|   \_/\_/ |_|  |_|\__\___|  \__\___/  |_| |_|_|\___|
+--               __/ |
+--              |___/
+
+local function AddToAsyncQueue(fsWorkId, filename, message, writemode)
+	-- make sure we have a queueId
+	fsWorkId = fsWorkId or coreutils.NewId()
+
+	-- add to the queue  or  replace item in queue
+	fsQueue[fsWorkId] = {
+		filename	= filename,
+		message		= message,
+		writemode	= writemode,
+	}
+
+	-- just add dummy event, you never know
+	os.queueEvent("dummy")
+end
+
+function coreutils.Run()
+	-- need this import
+	local coresystem	= require "coresystem"
+
+	-- work forever
+	while coresystem.IsRunning() do
+
+		-- get random item from the queue
+		local fsWorkId, fsWork = next(fsQueue)
+
+		-- got nothing? Then wait
+		if fsWorkId ~= nil then
+
+			-- forget this work item
+			fsQueue[fsWorkId] = nil
+
+			-- do the file operation
+			coreutils.WriteToFileNow(fsWork.filename, fsWork.message, fsWork.writemode)
+		else
+			-- wait for any event, ignore result
+			os.pullEvent()
+		end
+	end
+end
+
+--                _     _ _
+--               | |   | (_)
+--    _ __  _   _| |__ | |_  ___
+--   | '_ \| | | | '_ \| | |/ __|
+--   | |_) | |_| | |_) | | | (__
+--   | .__/ \__,_|_.__/|_|_|\___|
+--   | |
+--   |_|
 
 -- laatste serial uit de file lezen?
 function coreutils.Init()
@@ -30,11 +91,8 @@ end
 
 -- niet nodig voor utils
 function coreutils.Setup()
-	-- start sending messages when we are ready to receive them too
-end
-
-function EventReadySetup()
-	-- startup, read from disk or get data from peers? Why not both!
+	-- set env
+	coreenv.RegisterVariable(db.protocol, "write to file async", "boolean", true)
 end
 
 -- generates a new id
@@ -93,8 +151,22 @@ function coreutils.ReadTableFromFile(filename)
 	return {}
 end
 
-function coreutils.WriteToFile(filename, message, writemode)
-	local mode	= "a"
+function coreutils.WriteToFile(filename, message, writemode, fsWorkId)
+	-- in async mode?
+	if coreenv.GetVariable(db.protocol, "write to file async") then
+		-- pepare id
+		fsWorkId = fsWorkId or coreutils.NewId
+
+		--  queue this one
+		AddToAsyncQueue(fsWorkId, filename, message, writemode)
+	else
+		-- write it now
+		coreutils.WriteToFileNow(filename, message, writemode)
+	end
+end
+
+function coreutils.WriteToFileNow(filename, message, writemode)
+		local mode	= "a"
 
 	-- check writemode
 	if writemode == "overwrite" then mode = "w" end
@@ -186,13 +258,5 @@ end
 
 -- ToDo: consider adding method to check for nested tables (to be able to catch the annoying errors)
 
---                         _
---                        | |
---     _____   _____ _ __ | |_ ___
---    / _ \ \ / / _ \ '_ \| __/ __|
---   |  __/\ V /  __/ | | | |_\__ \
---    \___| \_/ \___|_| |_|\__|___/
---
---
 
 return coreutils
