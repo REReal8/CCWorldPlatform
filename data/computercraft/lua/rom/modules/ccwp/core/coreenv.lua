@@ -335,6 +335,9 @@ function coreenv.EditEnvDisplay(t, userInput)
 
             -- set the value
             Set(t.protocol, t.name, t.value)
+
+            -- feedback to the user
+            coredisplay.UpdateToDisplay(t.protocol.."."..t.name.." is now "..tostring(db.env[t.protocol][t.name].value))
         end
     end
 
