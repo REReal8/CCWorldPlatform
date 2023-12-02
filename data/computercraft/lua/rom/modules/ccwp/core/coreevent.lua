@@ -22,7 +22,7 @@ local db = {
 	toSend			= {},		-- list of messages that still need to be send because the modem was down
 	toBulkSend		= {},		-- list of messages that still need to be send because of bulk sending
 	toProcess		= {},		-- list of messages from a bulk message that still needs processsing
-	bulkMode		= true,		-- send messages in bulk per tick, not one by one
+--	bulkMode		= true,		-- send messages in bulk per tick, not one by one
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
 	publicChannel	= 65535,
@@ -167,7 +167,7 @@ function coreevent.SendMessage(t)
 		if not currentChannel then currentChannel = to[i] end
 
 		-- are we sending in bulk mode?
-		if db.bulkMode and not (protocol == db.protocol or subject == "bulk message") then
+		if coreenv.GetVariable(db.protocol, "bulkMode") and not (protocol == db.protocol or subject == "bulk message") then
 
 			-- we need an array table to insert, make sure there is one
 			if type(db.toBulkSend[currentChannel]) ~= "table" then db.toBulkSend[currentChannel] = {} end
@@ -456,7 +456,7 @@ end
 
 local function SendBulkMessages()
 	-- only when working in bulk mode
-	if db.bulkMode == false then return end
+	if coreenv.GetVariable(db.protocol, "bulkMode") == false then return end
 
 	-- send the bulk messages
 	for channel, data in pairs(db.toBulkSend) do
