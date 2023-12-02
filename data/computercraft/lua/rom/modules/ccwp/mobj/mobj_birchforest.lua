@@ -905,7 +905,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             local projectServiceData = {
                 projectDef  = projectDef,
                 projectData = projectData,
-                projectMeta = { title = "Harvesting BirchForest", description = "The most usefull task in the world", wipId = self:getWIPId() },
+                projectMeta = { title = "Harvesting BirchForest. The most usefull task in the world.", description = "We provide "..itemCount.." "..itemName.."'s", wipId = self:getWIPId() },
             }
 
             -- start project

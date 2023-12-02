@@ -523,7 +523,7 @@ function Shop:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "The shop will provide", description = "Wait and see" },
+        projectMeta = { title = "The shop will provide. Wait and see...", description = "We provide "..textutils.serialise(provideItems, {compact = true}).."" },
     }
 
     -- start project
