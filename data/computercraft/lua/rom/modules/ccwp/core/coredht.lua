@@ -20,7 +20,7 @@ local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false
 local filename          = "/db/dht.lua"
-local fileTime          = 0
+local fileTime          = 0                 -- for automatic detection of file change by user editing
 local logfile           = "/log/dht.txt"
 local protocol          = "core:dht"
 
