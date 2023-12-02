@@ -794,7 +794,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
         if not localItemLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemLocator (type="..type(localItemLocator)..")") return Callback.ErrorCall(callback) end
 
         -- get localItemSupplier
-        local localItemSupplier = ObjHost.GetObject(localItemLocator)
+        local localItemSupplier = ObjHost.GetObj(localItemLocator)
         -- ToDo: investigate this odd situation that we use the knowledge here that we know that the localItemLocator is both an ItemDepot and an ItemSupplier...
         if not localItemSupplier or not Class.IsInstanceOf(localItemSupplier, IItemSupplier) then corelog.Error("BirchForest:provideItemsTo_AOSrv: Failed obtaining an IItemSupplier from localItemLocator "..localItemLocator:getURI()) return Callback.ErrorCall(callback) end
 
@@ -812,7 +812,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
         else
             -- get # available input (i.e. available from norm) saplings
             local normSaplings = self:getSaplingHarvestNorm_Att()
-            local localSaplingsSupplier = ObjHost.GetObject(localSaplingsLocator)
+            local localSaplingsSupplier = ObjHost.GetObj(localSaplingsLocator)
             if type(localSaplingsSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: localSaplingsSupplier "..localSaplingsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
             local inputSaplings = { ["minecraft:birch_sapling"] = normSaplings }
             if not localSaplingsSupplier:can_ProvideItems_QOSrv({ provideItems = inputSaplings }).success then
@@ -972,7 +972,7 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get location
@@ -1012,7 +1012,7 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
         local fuelNeed_Rounds = nRounds * fuelPerRound
 
         -- get localItemDepot
-        local localItemDepot = ObjHost.GetObject(localItemLocator)
+        local localItemDepot = ObjHost.GetObj(localItemLocator)
         if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemLocator "..localItemLocator:getURI()) return {success = false} end
 
         -- get location

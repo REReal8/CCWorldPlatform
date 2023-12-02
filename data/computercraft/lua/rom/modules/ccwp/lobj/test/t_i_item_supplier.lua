@@ -31,7 +31,7 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideI
     assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
-    local obj = ObjHost.GetObject(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
+    local obj = ObjHost.GetObj(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)

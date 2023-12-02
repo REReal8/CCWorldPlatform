@@ -32,7 +32,7 @@ function T_ObjHost.T_All()
     T_ObjHost.T_deleteObjects()
 
     -- class methods
-    T_ObjHost.T_GetObject()
+    T_ObjHost.T_GetObj()
 end
 
 local testClassName = "ObjHost"
@@ -226,20 +226,20 @@ end
 --
 --
 
-function T_ObjHost.T_GetObject()
+function T_ObjHost.T_GetObj()
     -- prepare test
-    corelog.WriteToLog("* ObjHost.GetObject(...) tests")
+    corelog.WriteToLog("* ObjHost.GetObj(...) tests")
     moduleRegistry:register(hostName1, objHost1)
 
-    -- test get object hosted by objHost1
+    -- test get Obj hosted by objHost1
     local objLocator = objHost1:saveObj(testObj, testObjClassName)
-    local object = ObjHost.GetObject(objLocator)
-    assert(object and object:isEqual(testObj), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
+    local obj = ObjHost.GetObj(objLocator)
+    assert(obj and obj:isEqual(testObj), "obj(="..textutils.serialise(obj, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- test get objHost1 from itself
     local hostLocator = objHost1:getHostLocator()
-    object = ObjHost.GetObject(hostLocator)
-    assert(object and object:isEqual(objHost1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
+    obj = ObjHost.GetObj(hostLocator)
+    assert(obj and obj:isEqual(objHost1), "object(="..textutils.serialise(obj, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- cleanup test
     objHost1:deleteResource(objLocator)

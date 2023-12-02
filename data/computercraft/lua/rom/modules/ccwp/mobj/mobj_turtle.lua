@@ -456,7 +456,7 @@ function Turtle:provideItemsTo_AOSrv(...)
     local turtleItemsLocator = LObjLocator:newInstance(defaultHostName, self, provideItems)
 
     -- get ItemDepot
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    local itemDepot = ObjHost.GetObj(itemDepotLocator)
     if type(itemDepot) ~= "table" then corelog.Error("Turtle:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- store items from this turtle to ItemDepot
@@ -511,7 +511,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from itemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations
@@ -589,7 +589,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     if enterprise_employment:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
-        local sourceTurtleObj = ObjHost.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
+        local sourceTurtleObj = ObjHost.GetObj(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
         local sourceTurtleId = sourceTurtleObj:getWorkerId()
         local currentTurtleId = self:getWorkerId()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items(="..textutils.serialise(storeItems, {compact = true})..") from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
@@ -616,7 +616,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
 
         -- get source ItemSupplier
         local itemSupplierLocator = itemsLocator:baseCopy()
-        local itemSupplier = ObjHost.GetObject(itemSupplierLocator)
+        local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
         if type(itemSupplier) ~= "table" then corelog.Error("Turtle:storeItemsFrom_AOSrv:ItemDepot "..itemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle

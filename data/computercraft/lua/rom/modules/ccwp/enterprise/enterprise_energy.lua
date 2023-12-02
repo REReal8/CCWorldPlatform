@@ -71,7 +71,7 @@ local function Refuel_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project service data
-    local turtleObj = ObjHost.GetObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtle "..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = ObjHost.GetObj(turtleLocator) if not turtleObj then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtle "..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
     local workerId = turtleObj:getWorkerId()
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator

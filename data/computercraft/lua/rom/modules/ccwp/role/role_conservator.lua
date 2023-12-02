@@ -491,7 +491,7 @@ function role_conservator.CheckOutputChest(...)
         -- store the items in the default dump site
         enterprise_dump = enterprise_dump or require "enterprise_dump"
         local dumpLocator = enterprise_dump.GetDumpLocator()
-        local dumpObject  = ObjHost.GetObject(dumpLocator)
+        local dumpObject  = ObjHost.GetObj(dumpLocator)
 
         -- ask the dump to store our items
         if dumpObject == nil then return end

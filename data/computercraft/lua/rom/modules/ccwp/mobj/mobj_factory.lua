@@ -726,7 +726,7 @@ function Factory:getFuelNeed_Production_Att(...)
     if level == 2 then
          -- get local input Chest
         local inputChestLocator = self:getAvailableInputLocator()
-        local inputChest = ObjHost.GetObject(inputChestLocator)
+        local inputChest = ObjHost.GetObj(inputChestLocator)
         if not inputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No inputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
         inputLocation = inputChest:getBaseLocation()
     end
@@ -736,7 +736,7 @@ function Factory:getFuelNeed_Production_Att(...)
     if level == 2 then
         -- get local output Chest
         local outputChestLocator = self:getAvailableOutputLocator()
-        local outputChest = ObjHost.GetObject(outputChestLocator)
+        local outputChest = ObjHost.GetObj(outputChestLocator)
         if not outputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No outputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
         outputLocation = outputChest:getBaseLocation()
     end
@@ -968,14 +968,14 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get location
     local destinationLocation = destinationItemDepot:getItemDepotLocation()
 
     -- get ingredientsItemSupplier
-    local ingredientsItemSupplier = ObjHost.GetObject(ingredientsItemSupplierLocator)
+    local ingredientsItemSupplier = ObjHost.GetObj(ingredientsItemSupplierLocator)
     if type(ingredientsItemSupplier) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: ingredientsItemSupplier "..ingredientsItemSupplierLocator:getURI().." not found.") return {success = false} end
 
     -- loop on items
@@ -1014,7 +1014,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         -- get localItemDepot
         local localItemDepotLocator = self:getAvailableOutputLocator()
         if not localItemDepotLocator then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining localItemDepotLocator (type="..type(localItemDepotLocator)..")") return {success = false} end
-        local localItemDepot = ObjHost.GetObject(localItemDepotLocator)
+        local localItemDepot = ObjHost.GetObj(localItemDepotLocator)
         if not localItemDepot or not Class.IsInstanceOf(localItemDepot, IItemDepot) then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from localItemDepotLocator "..localItemDepotLocator:getURI()) return {success = false} end
 
         -- get location
@@ -1202,7 +1202,7 @@ function Factory.CraftItem_ASrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Craft_MetaData(craftData)
-    local turtleObj = ObjHost.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
     metaData.needWorkerId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
@@ -1253,7 +1253,7 @@ function Factory.SmeltItem_ASrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Smelt_MetaData(smeltData)
-    local turtleObj = ObjHost.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
     metaData.needWorkerId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 

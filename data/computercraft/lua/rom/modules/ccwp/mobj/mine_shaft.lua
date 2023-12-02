@@ -603,7 +603,7 @@ function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
     local fuelNeed_Mining = self:getMaxDepth() -- note: we return the maximum fuelNeed for mining this MineShaft, it could be less (and it could also be we don't find the items)
 
     -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("MineShaft:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations

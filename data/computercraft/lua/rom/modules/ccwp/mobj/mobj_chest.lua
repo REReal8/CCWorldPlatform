@@ -393,7 +393,7 @@ function Chest:provideItemsTo_AOSrv(...)
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local depotTurtleId = -1
     if itemDepotLocator:getObjClassName() == Turtle:getClassName() and not itemDepotLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
-        local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining Turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
+        local turtleObj = ObjHost.GetObj(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining Turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
         depotTurtleId = turtleObj:getWorkerId()
     end
 
@@ -498,7 +498,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations

@@ -427,14 +427,14 @@ function UserStation:reset()
 
     -- check input Chest (still) exist
     local inputLocator = self:getInputLocator()
-    local inputChest = ObjHost.GetObject(inputLocator)
+    local inputChest = ObjHost.GetObj(inputLocator)
     if type(inputChest) ~= "table" then
         corelog.Warning("UserStation:reset: inputChest "..inputLocator:getURI().." not found.")
     end
 
     -- check output Chest (still) exist
     local outputLocator = self:getOutputLocator()
-    local outputChest = ObjHost.GetObject(outputLocator)
+    local outputChest = ObjHost.GetObj(outputLocator)
     if type(outputChest) ~= "table" then
         corelog.Warning("UserStation:reset: outputChest "..outputLocator:getURI().." not found.")
     end

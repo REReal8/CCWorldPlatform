@@ -89,7 +89,7 @@ function enterprise_dump.ListItemDepot_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot_SSrv: Invalid input") return {succes = false} end
 
     -- check if the URL is an item depot
-    local itemDepot = ObjHost.GetObject(itemDepotLocator)
+    local itemDepot = ObjHost.GetObj(itemDepotLocator)
 
     -- do some checks
     if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator invalid")           return {succes = false} end

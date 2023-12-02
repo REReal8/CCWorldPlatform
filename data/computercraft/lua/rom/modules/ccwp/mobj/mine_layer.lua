@@ -423,7 +423,7 @@ function MineLayer:provideItemsTo_AOSrv(...)
 
     -- check cacheItemsLocator (Chest) can provide the requested items
     local cacheItemsLocator = self:getCacheItemsLocator()
-    local cacheItemsSupplier = ObjHost.GetObject(cacheItemsLocator)
+    local cacheItemsSupplier = ObjHost.GetObj(cacheItemsLocator)
     if not cacheItemsSupplier or not Class.IsInstanceOf(cacheItemsSupplier, IItemSupplier) then corelog.Error("MineLayer:provideItemsTo_AOSrv: Failed obtaining an IItemSupplier from cacheItemsLocator "..cacheItemsLocator:getURI()) return Callback.ErrorCall(callback) end
     if cacheItemsSupplier:can_ProvideItems_QOSrv({ provideItems = provideItems, }).success then
         -- provide items from cacheItemsSupplier to requested ItemDepot
@@ -588,7 +588,7 @@ function MineLayer:needsTo_ProvideItemsTo_SOSrv(...)
     -- ToDo: take # rounds into account!
 
     -- get destinationItemDepot
-    local destinationItemDepot = ObjHost.GetObject(destinationItemDepotLocator)
+    local destinationItemDepot = ObjHost.GetObj(destinationItemDepotLocator)
     if not destinationItemDepot or not Class.IsInstanceOf(destinationItemDepot, IItemDepot) then corelog.Error("MineLayer:needsTo_ProvideItemsTo_SOSrv: Failed obtaining an IItemDepot from destinationItemDepotLocator "..destinationItemDepotLocator:getURI()) return {success = false} end
 
     -- get locations

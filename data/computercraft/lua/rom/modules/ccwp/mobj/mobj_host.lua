@@ -204,7 +204,7 @@ function MObjHost:upgradeMObj_SSrv(...)
     corelog.WriteToLog(">Upgrading "..mobjLocator:getURI().." with "..textutils.serialise(upgradeParameters, {compact = true}))
 
     -- get MObj
-    local mobj = ObjHost.GetObject(mobjLocator)
+    local mobj = ObjHost.GetObj(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, ILObj) then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed obtaining an ILObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
     if not mobj.upgrade then corelog.Error("MObjHost:upgradeMObj_SSrv: LObj "..mobjLocator:getURI().." does not have upgrade method (yet)") return {success = false} end
     -- ToDo: consider if we want to make upgrade a mandatory method of ILObj
@@ -248,7 +248,7 @@ function MObjHost:extendAndUpgradeMObj_ASrv(...)
     if not checkSuccess then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get MObj
-    local mobj = ObjHost.GetObject(mobjLocator)
+    local mobj = ObjHost.GetObj(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
     if not mobj.getExtendBlueprint then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: MObj "..mobjLocator:getURI().." does not have getExtendBlueprint method (yet)") return {success = false} end
     -- ToDo: consider if we want to make getExtendBlueprint a mandatory method of IMObj
@@ -324,7 +324,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
     if not checkSuccess then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get MObj
-    local mobj = ObjHost.GetObject(mobjLocator)
+    local mobj = ObjHost.GetObj(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
@@ -399,7 +399,7 @@ function MObjHost:releaseMObj_SSrv(...)
     corelog.WriteToLog(">Releasing "..mobjLocator:getURI())
 
     -- get MObj
-    local mobj = ObjHost.GetObject(mobjLocator)
+    local mobj = ObjHost.GetObj(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, ILObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaining an ILObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj

@@ -288,33 +288,33 @@ end
 --   \__ \ || (_| | |_| | (__
 --   |___/\__\__,_|\__|_|\___|
 
-function ObjHost.GetObject(...)
+function ObjHost.GetObj(...)
     -- get & check input from description
-    local checkSuccess, objectLocator = InputChecker.Check([[
-        This method retrieves an object from a ObjHost using a locator (that was once provided by a ObjHost).
+    local checkSuccess, objLocator = InputChecker.Check([[
+        This method retrieves an Obj from a ObjHost using a objLocator.
 
-        The method first retrieves the ObjHost corresponding to the locator. If the locator locates the ObjHost itself it returns the ObjHost.
-        Otherwise it will retrieve the object from the ObjHost with the getObj method of the ObjHost.
+        The method first retrieves the ObjHost corresponding to the objLocator. If the objLocator locates the ObjHost itself it returns the ObjHost.
+        Otherwise it will retrieve the Obj from the ObjHost with the getObj method of the ObjHost.
 
         Return value:
             object                  - (?) object obtained from the ObjHost
 
         Parameters:
-            objectLocator           + (URL) locator of the object within the ObjHost
+            objLocator              + (URL) locator of the Obj within the ObjHost
     ]], ...)
-    if not checkSuccess then corelog.Error("ObjHost.GetObject: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("ObjHost.GetObj: Invalid input") return nil end
 
     -- get ObjHost
-    local host = Host.GetHost(objectLocator:getHost()) if not host then corelog.Error("ObjHost.GetObject: ObjHost of "..objectLocator:getURI().." not found") return nil end
+    local host = Host.GetHost(objLocator:getHost()) if not host then corelog.Error("ObjHost.GetObj: ObjHost of "..objLocator:getURI().." not found") return nil end
 
     -- check the ObjHost itself is wanted
-    if objectLocator:isEqual(host:getHostLocator()) then
+    if objLocator:isEqual(host:getHostLocator()) then
         return host
     end
 
     -- get obj from ObjHost
-    local obj = host:getObj(objectLocator)
-    if not obj then corelog.Error("ObjHost.GetObject: Failed getting object for objectLocator="..objectLocator:getURI()) return nil end
+    local obj = host:getObj(objLocator)
+    if not obj then corelog.Error("ObjHost.GetObj: Failed getting object for objectLocator="..objLocator:getURI()) return nil end
 
     -- end
     return obj

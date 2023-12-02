@@ -27,7 +27,7 @@ function T_IItemDepot.pt_storeItemsFrom_AOSrv(className, objLocator, itemSupplie
     assert(type(logOk) == "boolean", "no valid logOk provided")
     corelog.WriteToLog("* "..className..":storeItemsFrom_AOSrv() test ("..textutils.serialize(storeItems, compact).." from "..itemSupplierLocator:getURI()..")")
 
-    local obj = ObjHost.GetObject(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
+    local obj = ObjHost.GetObj(objLocator) assert(obj, "Failed obtaining "..className.." from objLocator "..objLocator:getURI())
 
     local itemsLocator = itemSupplierLocator:copy()
     itemsLocator:setQuery(storeItems)

@@ -551,7 +551,7 @@ function Silo:can_ProvideItems_QOSrv(...)
     -- version 0.2, only intersted if 1 Chest can fully deliver (no partial deliveries yet)
     for i, chestLocator in ipairs(self._storageChests) do
         -- get the Chest
-        local chest     = ObjHost.GetObject(chestLocator)
+        local chest     = ObjHost.GetObj(chestLocator)
 
         -- valid opbject?
         if chest then
@@ -1003,7 +1003,7 @@ function Silo:integrityCheck_AOSrv(...)
 end
 
 function Silo:GetChestInventory(chestLocator)
-    local chest = ObjHost.GetObject(chestLocator)
+    local chest = ObjHost.GetObj(chestLocator)
     if chest then corelog.WriteToLog("Getting Chest inventory") return chest:getInventory() end
 end
 

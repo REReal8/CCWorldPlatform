@@ -192,7 +192,7 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
     end
 
     -- get needs 1
-    local itemSupplier1 = ObjHost.GetObject(itemSupplierLocator1)
+    local itemSupplier1 = ObjHost.GetObj(itemSupplierLocator1)
     if type(itemSupplier1) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier1 "..itemSupplierLocator1:getURI().." not found.") return nil end
     local serviceResults1 = itemSupplier1:needsTo_ProvideItemsTo_SOSrv({
         provideItems                    = item,
@@ -202,7 +202,7 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
     if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator1(="..itemSupplierLocator1:getURI()..")") return nil end
 
     -- get needs 2
-    local itemSupplier2 = ObjHost.GetObject(itemSupplierLocator2)
+    local itemSupplier2 = ObjHost.GetObj(itemSupplierLocator2)
     if type(itemSupplier2) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier2 "..itemSupplierLocator2:getURI().." not found.") return nil end
     local serviceResults2 = itemSupplier2:needsTo_ProvideItemsTo_SOSrv({
         provideItems                    = item,
@@ -243,7 +243,7 @@ function Shop:getCanProvideItemSuppliers(item)
     local canProvideItemSupplierLocators = {}
     for i, itemSupplierLocator in ipairs(self._itemSuppliersLocators) do
         -- get ItemSupplier
-        local itemSupplier = ObjHost.GetObject(itemSupplierLocator)
+        local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
         if type(itemSupplier) ~= "table" then corelog.Error("Shop:getCanProvideItemSuppliers: ItemSupplier "..itemSupplierLocator:getURI().." not found.") return canProvideItemSupplierLocators end
 
         -- check ItemSupplier can provide items
@@ -300,7 +300,7 @@ function Shop:registerItemSupplier_SOSrv(...)
     if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
 
     -- get ItemSupplier
-    local itemSupplier = ObjHost.GetObject(itemSupplierLocator)
+    local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
     if not itemSupplier then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed obtaining an object from itemSupplierLocator "..itemSupplierLocator:getURI()) return {success = false} end
     if not Class.IsInstanceOf(itemSupplier, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: Obtained object from locator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
 
@@ -605,7 +605,7 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
             if not bestItemSupplierLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
             -- get provide needs
-            local bestItemSupplier = ObjHost.GetObject(bestItemSupplierLocator)
+            local bestItemSupplier = ObjHost.GetObj(bestItemSupplierLocator)
             if type(bestItemSupplier) ~= "table" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: bestItemSupplier "..bestItemSupplierLocator:getURI().." not found.") return {success = false} end
             local serviceResults = bestItemSupplier:needsTo_ProvideItemsTo_SOSrv({
                 provideItems                    = item,

@@ -503,7 +503,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         -- get Obj
-        local obj = ObjHost.GetObject(objLocator)
+        local obj = ObjHost.GetObj(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return false end
 
         --
@@ -561,7 +561,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         -- get Obj
-        local obj = ObjHost.GetObject(objLocator)
+        local obj = ObjHost.GetObj(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return false end
 
         -- do service, keep the results
@@ -590,7 +590,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         -- get Obj
-        local obj = ObjHost.GetObject(objLocator)
+        local obj = ObjHost.GetObj(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return false end
 
         -- get method
