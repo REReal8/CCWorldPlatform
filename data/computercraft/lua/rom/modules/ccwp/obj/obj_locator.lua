@@ -46,30 +46,6 @@ function ObjLocator:_init(...)
     URL._init(self, hostName, objPath, query, port)
 end
 
-function ObjLocator:newInstanceFromObj(...)
-    -- get & check input from description
-    local checkSuccess, hostName, obj, objRef, query = InputChecker.Check([[
-        Initialise a ObjLocator.
-
-        Parameters:
-            hostName                + (string) with hostName of the Host
-            obj                     + (?) with IObj
-            objRef                  + (string, "") with a Obj reference (e.g. the id of the LObj)
-            query                   + (table, {}) of key-value pairs with (item) query segments
-    ]], ...)
-    if not checkSuccess then corelog.Error("ObjLocator:newInstanceFromObj: Invalid input") return nil end
-    if not Class.IsInstanceOf(obj, IObj) then corelog.Error("ObjLocator:newInstanceFromObj: obj is not an IObj") return nil end
-
-    -- determine objClassName
-    local objClassName = obj:getClassName()
-
-    -- initialisation
-    local instance = ObjLocator:newInstance(hostName, objClassName, objRef, query)
-
-    -- end
-    return instance
-end
-
 local classNamePattern = "%/class=([%w]+)"
 function ObjLocator:getObjClassName()
     -- get objClassName from path
