@@ -211,17 +211,9 @@ function Host:saveResource(...)
     local resourceLocator = self:getResourceLocator(resourcePath)
     if not resourceLocator then corelog.Error("Host:saveResource: Failed obtaining resourceLocator for Resource "..resourcePath) return nil end
 
-    -- get URL components
-    local hostURI = resourceLocator:getHostURI()
-    local portURI = resourceLocator:getPortURI()
-    local pathSegments = resourceLocator:pathSegments()
-
-    -- save Resource to dht using URL components
-    local savedResource = nil
-    if portURI == ""    then savedResource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
-                        else savedResource = coredht.SaveData(resource, hostURI, portURI, table.unpack(pathSegments))
-    end
-    if not savedResource then corelog.Error("Host:saveResource: Failed saving Resource Resource "..resourceLocator:getURI()) return nil end
+    -- save the Resource
+    local savedResource = Host.SaveResource(resource, resourceLocator)
+    if not savedResource then corelog.Error("Host:saveResource: Failed saving Resource located by "..resourceLocator:getURI()) return nil end
 
     -- end
     return resourceLocator
@@ -287,6 +279,35 @@ function Host.GetHost(...)
 
     -- end
     return host
+end
+
+function Host.SaveResource(...)
+    -- get & check input from description
+    local checkSuccess, resource, resourceLocator = InputChecker.Check([[
+        This method saves a Resource to a Host using a uniform resource locator (URL).
+
+        Return value:
+            resourceLocator         - (URL) locating the Resource
+
+        Parameters:
+            resource                + (table) representing the Resource
+            resourceLocator         + (URL) locating the Resource within a Host
+    ]], ...)
+    if not checkSuccess then corelog.Error("Host.SaveResource: Invalid input") return nil end
+
+    -- get URL components
+    local hostURI = resourceLocator:getHostURI()
+    local portURI = resourceLocator:getPortURI()
+    local pathSegments = resourceLocator:pathSegments()
+
+    -- save Resource to dht using URL components
+    local savedResource = nil
+    if portURI == ""    then savedResource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
+                        else savedResource = coredht.SaveData(resource, hostURI, portURI, table.unpack(pathSegments))
+    end
+
+    -- end
+    return savedResource
 end
 
 return Host
