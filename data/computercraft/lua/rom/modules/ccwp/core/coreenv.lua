@@ -1,7 +1,6 @@
 -- define module
 local coreenv = {}
 
--- ToDo: add proper module description
 --[[
     Deze module is bedoelt voor "environment" settings, die voor het hele systeem gelden (dus niet 1 worker). Het gebruik
     is naar verwachting vooral om verschillende manieren van werken te gebruiken zonder reload / reboot. Voorbeelden:
@@ -13,7 +12,6 @@ local coreenv = {}
 
     Het gaat om instellingen die niet veel wijzigen natuurlijk, niet gebruiken voor de inhoud van een kist of zo.
     Ook niet gebruiken voor instellingen van 1 specifieke worker (zoals welke monitor wat weer geeft)
-
 --]]
 
 -- imports
@@ -248,80 +246,98 @@ end
 function coreenv.EditEnvDisplay(t, userInput)
     -- import display
     local coredisplay = require "coredisplay"
---[[
-    -- did we get user input?
-    if false and t.editValue and userInput ~= "e" then
 
-        -- process the new value
-        local f, err = load("return "..userInput)
-        if f ~= nil and not err then coredht.SaveData(f(), unpack(t.keyList)) end
+    -- select protocol
+    if not t.protocol then
+        local options   = {{key = "x", desc = "back", func = function () return true end}}
 
-        -- back to usefull screen
-        t.editValue = false
-    end
-
-    -- usefull
-    local keyList   = t.keyList or {}
-    local subRoot   = db
-
-    -- add a new key if present
-    if t.newKey ~= nil  then table.insert(keyList, t.newKey) end
-    if t.removeKey      then if #keyList == 0 then return true else table.remove(keyList) end end
-
-    -- find the subRoot
-    for i, key in ipairs(keyList) do
-
-        -- check and change subroot if oke
-        if subRoot[key] ~= nil then subRoot = subRoot[key] else corelog.WriteToLog("coredht.EditDHTDisplay(): Invalid key: "..tostring(key)) end
-    end
-
-    -- which keys are present in the subroot?
-    local intro     = "Available options:"
-    local options   = {{key = "x", desc = "back", func = coreenv.EditEnvDisplay, param = {keyList=keyList, removeKey=true}}}
-    local question  = "Make your choice"
-
-    -- loop subroot (if it's a table)
-    local lastChar = 97
-    if type(subRoot) == "table" then
-        for key, _ in pairs(subRoot) do
+        -- loop subroot (if it's a table)
+        local lastChar = 97
+        for protocol, _ in pairs(db.env) do
 
             -- insert option
-            table.insert(options, {key = string.char(lastChar), desc = key, func = coredht.EditDHTDisplay, param = {keyList = keyList, newKey = key }})
+            table.insert(options, {key=string.char(lastChar), desc=protocol, func=coreenv.EditEnvDisplay, param={protocol=protocol}})
 
             -- update
             lastChar = lastChar + 1
         end
-    else
 
-        -- single value, show option for editing?
-        if not t.editValue then
-            -- different intro and allow editing
-            intro = "The value : '"..tostring(subRoot).."'"
-            table.insert(options, {key = "e", desc = "edit value", func = coredht.EditDHTDisplay, param = {keyList = keyList, editValue = true }})
-        else
-            -- we are editing, show screen for user input
-            if userInput == "e" then
-                -- start the screen to edit the value
-                intro    = "Type the new value of this key. Use quotes for strings!!"
-                options  = nil
----@diagnostic disable-next-line: cast-local-type
-                question = nil
-            end
+        -- create the next screen
+        coredisplay.NextScreen({
+            clear       = true,
+            intro       = "Choose a protocol:",
+            option      = options,
+            question    = "Make your choice",
+        })
+
+        -- done?
+        return true
+    end
+
+    -- select a name
+    if t.protocol and not t.name then
+        local options   = {{key = "x", desc = "back", func = function () return true end}}
+
+        -- loop subroot (if it's a table)
+        local lastChar = 97
+        for name, _ in pairs(db.env[t.protocol]) do
+
+            -- insert option
+            table.insert(options, {key=string.char(lastChar), desc=name, func=coreenv.EditEnvDisplay, param={protocol=t.protocol, name=name}})
+
+            -- update
+            lastChar = lastChar + 1
+        end
+
+        -- create the next screen
+        coredisplay.NextScreen({
+            clear       = true,
+            intro       = "Choose a variable withing "..t.protocol..":",
+            option      = options,
+            question    = "Make your choice",
+        })
+
+        -- done?
+        return true
+    end
+
+    -- get the env
+    local daEnv = db.env[t.protocol][t.name]
+
+    -- give value selector if protocol and name have been choosen
+    if t.protocol and t.name and t.value == nil then
+
+        -- what's the kind?
+        if daEnv.kind == "boolean" then
+
+            -- let's just assume we have a boolean, others come later
+            coredisplay.NextScreen({
+                clear       = true,
+                intro       = t.protocol.."."..t.name.."\nCurrent value: "..tostring(daEnv.value).."\nChoose a new value: ",
+                option      = {
+                    {key = "t", desc = "true",  func = coreenv.EditEnvDisplay, param={protocol=t.protocol, name=t.name, value=true}},
+                    {key = "f", desc = "false", func = coreenv.EditEnvDisplay, param={protocol=t.protocol, name=t.name, value=false}},
+                    {key = "x", desc = "back",  func = function () return true end},
+                },
+                question    = "Make your choice",
+            })
+
+            -- done?
+            return true
         end
     end
 
-    -- create the next screen
-    coredisplay.NextScreen({
-        clear = true,
-        intro = intro,
-        option = options,
-        question = question,
+    -- guess we will set the value
+    if t.protocol and t.name and t.value ~= nil then
 
-        -- only for edit value screen
-        func = coreenv.EditEnvDisplay,
-        param = t
-    })
-]]
+        -- what's the kind?
+        if daEnv.kind == "boolean" then
+
+            -- set the value
+            Set(t.protocol, t.name, t.value)
+        end
+    end
+
     -- done!
     return true
 end
