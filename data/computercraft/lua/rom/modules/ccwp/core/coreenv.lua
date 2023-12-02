@@ -6,11 +6,12 @@ local coreenv = {}
     This module ...
 --]]
 
-local coreevent = require "coreevent"
-local corelog   = require "corelog"
-local coreutils = require "coreutils"
-local coretask  = require "coretask"
+-- imports
+local coreevent
+local corelog
+local coreutils
 
+-- local data
 local db        = {
     env                 = {},
     writeToFileQueued   = false,
@@ -142,6 +143,12 @@ end
 
 -- initializes the dht
 function coreenv.Init()
+
+    -- do the actual import
+    coreevent = require "coreevent"
+    corelog   = require "corelog"
+    coreutils = require "coreutils"
+
 	-- read database from disk
 	db.env = coreutils.ReadTableFromFile(db.filename)
 
@@ -157,7 +164,7 @@ function coreenv.Setup()
 	coreevent.AddEventListener(DoEventSet,          db.protocol, "set")
 end
 
-function RegisterVariable(protocol, name, kind, default)
+function coreenv.RegisterVariable(protocol, name, kind, default)
     -- do the registration
     local success = Registered(protocol, name, kind, default)
 
@@ -178,7 +185,7 @@ function RegisterVariable(protocol, name, kind, default)
     end
 end
 
-function GetVariable(protocol, name)
+function coreenv.GetVariable(protocol, name)
     -- loop it up
     if type(db.env[protocol]) == "table" and type(db.env[protocol][name]) == "table" then return db.env[protocol][name].value end
 
@@ -186,7 +193,7 @@ function GetVariable(protocol, name)
     return nil
 end
 
-function SetVariable(protocol, name, value)
+function coreenv.SetVariable(protocol, name, value)
     -- just set it in case it has been registered before
     value = Set(protocol, name, value)
 
