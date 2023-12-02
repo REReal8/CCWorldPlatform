@@ -10,6 +10,7 @@ local coresystem = require "coresystem"
 local coreevent = require "coreevent"
 local corelog = require "corelog"
 local coredisplay = require "coredisplay"
+local coreenv = require "coreenv"
 local coredht = require "coredht"
 local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
@@ -35,6 +36,7 @@ function core.Init()
 	-- init other stuff
 	coredht.Init()
 	coredisplay.Init()
+	coreenv.Init()
 	coreevent.Init()
 	coreassignment.Init()
 	coremove.Init()
@@ -54,6 +56,7 @@ function core.Setup()
 	-- run all setup functions
 	coredht.Setup()
 	coredisplay.Setup()
+	coreenv.Setup()
 	coreevent.Setup()
 	coreinventory.Setup()
 	coreassignment.Setup()
