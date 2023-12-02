@@ -127,7 +127,7 @@ function coreassignment.Run()
     local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
 
     -- activate Worker
-    local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+    local workerObj = enterprise_employment:getObj(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
     workerObj:activate()
     enterprise_employment:saveObj(workerObj)
 
@@ -135,8 +135,8 @@ function coreassignment.Run()
     local toldAboutIdleAlready = false
     while coresystem.IsRunning() do
         -- get Worker
-        workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
-        -- note: we getObject every loop as it might have changed
+        workerObj = enterprise_employment:getObj(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+        -- note: we getObj every loop as it might have changed
 
         -- only take work when active
         if workerObj:isActive() then

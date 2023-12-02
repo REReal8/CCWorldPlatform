@@ -108,7 +108,7 @@ function role_forester.HarvestForest_Task(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- equip diamond_pickaxe

@@ -301,7 +301,7 @@ end
 function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
     local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
-    local lobj = testHost:getObject(objLocator) assert(lobj, "Failed obtaining "..testClassName.." from objLocator "..objLocator:getURI())
+    local lobj = testHost:getObj(objLocator) assert(lobj, "Failed obtaining "..testClassName.." from objLocator "..objLocator:getURI())
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "integrityCheck_AOSrv", {
     })
     assert(serviceResults, "no serviceResults returned")

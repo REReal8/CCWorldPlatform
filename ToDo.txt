@@ -82,7 +82,7 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
 
 -  enterprise_employment Turtle improvements
    -  resolving anyTurtleLocator
-      -  currently resolved by an override of getObject() in enterprise_employment
+      -  currently resolved by an override of getObj() in enterprise_employment
       -  problems with current design:
          -  we now fix a Turtle to specific work to early
          -  which Turtle should be selected? (we now either take the current Turtle, or (in case of a none Turtle Worker) take the first Turtle in the list)
@@ -92,7 +92,7 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
             -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
             -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
             -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
-         -  (better) somehow prevent the need to do this in getObject, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
+         -  (better) somehow prevent the need to do this in getObj, ideally having a Turtle decide itself that it will take a "any Turtle" task somewhere in the assigment mechanism
 
 -  mine v2: Mine consisting of MineShaft (from surface level to underground) and MineLayers (underground)
    -  MineLayer:needsTo_ProvideItemsTo: take # expected squares into account
@@ -109,7 +109,7 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
       RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
       RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
    R  introduce ObjHost class extending Host class                                                                      (....)
-      R  by splitting of all Object related code (from Host:getObject and further)                                      (done)
+      R  by splitting of all Object related code (from Host:getObj and further)                                      (done)
       R  it can host any IObj                                                                                           (....)
    R  Split off ILObj interface from IMObj                                                                              (done)
       -  with methods

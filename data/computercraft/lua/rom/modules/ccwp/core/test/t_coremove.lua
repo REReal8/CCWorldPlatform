@@ -20,7 +20,7 @@ end
 function t_coremove.T_GoBase()
     -- get current Turtle
     local currentTurtleLocator = t_employment.GetCurrentTurtleLocator()
-    local currentTurtle = enterprise_employment:getObject(currentTurtleLocator) assert(currentTurtle, "Failed obtaining currentTurtle")
+    local currentTurtle = enterprise_employment:getObj(currentTurtleLocator) assert(currentTurtle, "Failed obtaining currentTurtle")
 
     -- move to baseLocation
     local baseLocation = currentTurtle:getBaseLocation()

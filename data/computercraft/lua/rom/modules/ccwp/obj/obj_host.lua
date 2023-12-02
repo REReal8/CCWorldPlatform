@@ -82,30 +82,30 @@ end
 --               _/ |
 --              |__/
 
-function ObjHost:getObject(...)
+function ObjHost:getObj(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
         This method retrieves an Obj from the ObjHost using a locator (that was once provided by the ObjHost).
 
         Return value:
-            object                  - (?) object obtained from the ObjHost
+            obj                     - (?) Obj obtained from the ObjHost
 
         Parameters:
             objLocator              + (ObjLocator) locator of the Obj within the ObjHost
     ]], ...)
-    if not checkSuccess then corelog.Error("ObjHost:getObject: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("ObjHost:getObj: Invalid input") return nil end
 
     -- get className
     local className = objLocator:getObjClassName()
-    if type(className) ~= "string" then corelog.Error("ObjHost:getObject: failed obtaining className from objLocator="..objLocator:getURI()) return nil end
+    if type(className) ~= "string" then corelog.Error("ObjHost:getObj: failed obtaining className from objLocator="..objLocator:getURI()) return nil end
 
     -- get raw Resource
     local resourceTable = self:getResource(objLocator)
-    if type(resourceTable) ~= "table" then corelog.Error("ObjHost:getObject: failed obtaining resourceTable from objLocator="..objLocator:getURI()) return nil end
+    if type(resourceTable) ~= "table" then corelog.Error("ObjHost:getObj: failed obtaining resourceTable from objLocator="..objLocator:getURI()) return nil end
 
     -- convert to Obj
     local obj = objectFactory:create(className, resourceTable)
-    if not obj then corelog.Error("ObjHost:getObject: failed converting resourceTable(="..textutils.serialise(resourceTable)..") to "..className.." Obj for objLocator="..objLocator:getURI()) return nil end
+    if not obj then corelog.Error("ObjHost:getObj: failed converting resourceTable(="..textutils.serialise(resourceTable)..") to "..className.." Obj for objLocator="..objLocator:getURI()) return nil end
 
     -- end
     return obj
@@ -128,7 +128,7 @@ function ObjHost:getObj_SSrv(...)
     if not checkSuccess then corelog.Error("ObjHost:getObj_SSrv: Invalid input") return {success = false} end
 
     -- save object
-    local obj = self:getObject(objLocator)
+    local obj = self:getObj(objLocator)
     if not obj then corelog.Error("ObjHost:getObj_SSrv: Failed obtaining from objLocator="..objLocator:getURI()) return {success = false} end
 
     -- end
@@ -294,7 +294,7 @@ function ObjHost.GetObject(...)
         This method retrieves an object from a ObjHost using a locator (that was once provided by a ObjHost).
 
         The method first retrieves the ObjHost corresponding to the locator. If the locator locates the ObjHost itself it returns the ObjHost.
-        Otherwise it will retrieve the object from the ObjHost with the getObject method of the ObjHost.
+        Otherwise it will retrieve the object from the ObjHost with the getObj method of the ObjHost.
 
         Return value:
             object                  - (?) object obtained from the ObjHost
@@ -312,12 +312,12 @@ function ObjHost.GetObject(...)
         return host
     end
 
-    -- get object from ObjHost
-    local object = host:getObject(objectLocator)
-    if not object then corelog.Error("ObjHost.GetObject: Failed getting object for objectLocator="..objectLocator:getURI()) return nil end
+    -- get obj from ObjHost
+    local obj = host:getObj(objectLocator)
+    if not obj then corelog.Error("ObjHost.GetObject: Failed getting object for objectLocator="..objectLocator:getURI()) return nil end
 
     -- end
-    return object
+    return obj
 end
 
 return ObjHost

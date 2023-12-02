@@ -265,7 +265,7 @@ function T_Chest.updateChestRecord_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
     local chestLocator = callbackData["chestLocator"]
-    local updatedChest = testHost:getObject(chestLocator)
+    local updatedChest = testHost:getObj(chestLocator)
     assert (updatedChest, "Chest not saved")
 
     -- cleanup test

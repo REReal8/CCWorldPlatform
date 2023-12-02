@@ -297,7 +297,7 @@ function T_MineLayer.T_needsTo_ProvideItemsTo_SOSrv()
 
     t_employment = t_employment or require "test.t_employment"
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
-    local turtleObj = enterprise_employment:getObject(itemDepotLocator) assert(turtleObj, "Failed obtaining turtleObj")
+    local turtleObj = enterprise_employment:getObj(itemDepotLocator) assert(turtleObj, "Failed obtaining turtleObj")
     local destinationLocation = turtleObj:getItemDepotLocation()
 
     -- test

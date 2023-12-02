@@ -91,7 +91,7 @@ function role_interactor.TurnOnWorker_Task(...)
 
     -- get Turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_interactor.TurnOnWorker_Task: Failed obtaining Turtle "..turtleLocator:getURI().." to turn a Worker on") return {success = false} end
 
     -- turn Worker on

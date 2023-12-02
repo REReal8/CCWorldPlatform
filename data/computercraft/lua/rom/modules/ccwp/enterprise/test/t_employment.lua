@@ -24,7 +24,7 @@ local T_DisplayStation = require "test.t_mobj_display_station"
 
 function t_employment.T_All()
     -- ObjHost
-    t_employment.T_getObject()
+    t_employment.T_getObj()
 
     -- MObjHost
     t_employment.T_hostMObj_SSrv_Turtle()
@@ -114,21 +114,21 @@ local compact = { compact = true }
 --               _/ |
 --              |__/
 
-function t_employment.T_getObject()
+function t_employment.T_getObj()
     -- prepare test
-    corelog.WriteToLog("* enterprise_employment:getObject() tests")
+    corelog.WriteToLog("* enterprise_employment:getObj() tests")
     local testObject = TestObj:newInstance("field1", 4)
     local objLocator = enterprise_employment:saveObj(testObject)
     local currentTurtleLocator = t_employment.GetCurrentTurtleLocator()
-    local currentTurtle = enterprise_employment:getObject(currentTurtleLocator)
+    local currentTurtle = enterprise_employment:getObj(currentTurtleLocator)
 
-    -- test normal object works (similair to T_Host.T_getObject())
-    local object = enterprise_employment:getObject(objLocator) assert(object, "t_employment.T_getObject: Failed obtaining object")
+    -- test normal object works (similair to T_Host.T_getObj())
+    local object = enterprise_employment:getObj(objLocator) assert(object, "t_employment.T_getObj: Failed obtaining Obj")
     assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test "any turtle" provides current turtle
     local getAnyTurtleLocator = enterprise_employment.GetAnyTurtleLocator()
-    object = enterprise_employment:getObject(getAnyTurtleLocator) assert(object, "t_employment.T_getObject: Failed obtaining object")
+    object = enterprise_employment:getObj(getAnyTurtleLocator) assert(object, "t_employment.T_getObj: Failed obtaining Obj")
     assert(object:isEqual(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
 
     -- cleanup test

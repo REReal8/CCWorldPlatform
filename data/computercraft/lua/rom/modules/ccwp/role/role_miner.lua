@@ -81,7 +81,7 @@ function role_miner.MineShaft_Task(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_miner.MineShaft_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items
@@ -222,7 +222,7 @@ function role_miner.MineLayer_Task(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_miner.MineLayer_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items

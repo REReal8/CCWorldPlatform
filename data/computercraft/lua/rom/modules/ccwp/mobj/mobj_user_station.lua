@@ -494,7 +494,7 @@ local function UserStationMenuOrder(t, amount)
 
         -- get Shop
         local shopLocator = enterprise_shop.GetShopLocator() -- ToDo: get this somehow into UserStation
-        local shop = enterprise_shop:getObject(shopLocator)
+        local shop = enterprise_shop:getObj(shopLocator)
         if not shop then coredisplay.UpdateToDisplay("No Shop!", 2) return false end
 
         -- make master happy

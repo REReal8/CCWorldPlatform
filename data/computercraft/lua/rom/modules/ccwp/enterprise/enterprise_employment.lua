@@ -93,7 +93,7 @@ local function GetATurtle(employmentHost)
         if not currentTurtleLocator then corelog.Warning("enterprise_employment.GetATurtle: workerLocator for (current) Turtle "..workerId.." not found") return nil end
 
         -- get turtleObj
-        turtleObj = ObjHost.getObject(employmentHost, currentTurtleLocator) -- note base class ObjHost provides the object
+        turtleObj = ObjHost.getObj(employmentHost, currentTurtleLocator) -- note base class ObjHost provides the object
     else
         -- select first Turtle
         local _, turtleObjTable = next(turtles) -- first Turtle
@@ -105,21 +105,21 @@ local function GetATurtle(employmentHost)
     return turtleObj
 end
 
-function enterprise_employment:getObject(...)
+function enterprise_employment:getObj(...)
     -- get & check input from description
-    local checkSuccess, objectLocator = InputChecker.Check([[
-        This method retrieves an object from the ObjHost using a URL (that was once provided by the ObjHost).
+    local checkSuccess, objLocator = InputChecker.Check([[
+        This method retrieves an Obj from the ObjHost using a URL (that was once provided by the ObjHost).
 
         Return value:
-            object                  - (?) object obtained from the ObjHost
+            obj                     - (Obj) Obj obtained from the ObjHost
 
         Parameters:
-            objectLocator           + (URL) locator of the object within the ObjHost
+            objectLocator           + (URL) locator of the Obj within the ObjHost
     ]], ...)
-    if not checkSuccess then corelog.Error("enterprise_employment:getObject: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("enterprise_employment:getObj: Invalid input") return nil end
 
     -- check for "any turtle"
-    if objectLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
+    if objLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
         -- ToDo: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
 
         -- get a Turtle
@@ -131,7 +131,7 @@ function enterprise_employment:getObject(...)
     end
 
     -- have base class ObjHost provide the object
-    return ObjHost.getObject(self, objectLocator)
+    return ObjHost.getObj(self, objLocator)
 end
 
 --   __          __        _
@@ -784,7 +784,7 @@ function enterprise_employment.Fuel_Callback(...)
     if serviceResults.success == false then corelog.Error("enterprise_employment.Fuel_Callback: Refuel of turtle "..turtleLocator:getURI().." failed") return {success = false} end
 
     -- get Turtle
-    local turtleObj = enterprise_employment:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_employment.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
+    local turtleObj = enterprise_employment:getObj(turtleLocator) if not turtleObj then corelog.Error("enterprise_employment.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
 
     -- release priority key condition
     turtleObj:setFuelPriorityKey("")

@@ -240,7 +240,7 @@ function role_alchemist.Craft_Task(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- equip crafting_table
@@ -460,7 +460,7 @@ function role_alchemist.Pickup_Task(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current Turtle") return {success = false} end
 
     -- remember input items

@@ -39,7 +39,7 @@ function role_settler.InitialiseCoordinates_MetaData(...)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local turtleObj = enterprise_employment:getObject(turtleLocator)
+    local turtleObj = enterprise_employment:getObj(turtleLocator)
     if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
     local location = turtleObj:getWorkerLocation() --> use the current location for proper bootstrapping
 

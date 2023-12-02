@@ -355,7 +355,7 @@ function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     t_employment = t_employment or require "test.t_employment"
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
-    local obj = testHost:getObject(objLocator) assert(obj, "Failed obtaining obj")
+    local obj = testHost:getObj(objLocator) assert(obj, "Failed obtaining obj")
     local itemTable = obj:getInventoryAsItemTable()
 
     local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
@@ -380,7 +380,7 @@ function T_Turtle.T_can_ProvideItems_QOSrv()
     -- prepare test
     t_employment = t_employment or require "test.t_employment"
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
-    local obj = testHost:getObject(objLocator) assert(obj, "Failed obtaining obj")
+    local obj = testHost:getObj(objLocator) assert(obj, "Failed obtaining obj")
     local itemTable = obj:getInventoryAsItemTable()
 
     -- tests

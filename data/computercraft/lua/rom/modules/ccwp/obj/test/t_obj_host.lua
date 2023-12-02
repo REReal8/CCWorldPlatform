@@ -27,7 +27,7 @@ function T_ObjHost.T_All()
 
     -- ObjHost
     T_ObjHost.T_saveObj()
-    T_ObjHost.T_getObject()
+    T_ObjHost.T_getObj()
     T_ObjHost.T_getNumberOfObjects()
     T_ObjHost.T_deleteObjects()
 
@@ -172,13 +172,13 @@ function T_ObjHost.T_saveObj()
     -- cleanup test
 end
 
-function T_ObjHost.T_getObject()
+function T_ObjHost.T_getObj()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getObject tests")
+    corelog.WriteToLog("* "..testClassName..":getObj tests")
     local objLocator = objHost1:saveObj(testObj, testObjClassName)
 
     -- test get object
-    local object = objHost1:getObject(objLocator)
+    local object = objHost1:getObj(objLocator)
     assert(object:isEqual(testObj), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- cleanup test

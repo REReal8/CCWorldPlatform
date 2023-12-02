@@ -153,7 +153,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
 
     -- check: mobj saved
-    local mobj = mobjHost:getObject(mobjLocator)
+    local mobj = mobjHost:getObj(mobjLocator)
     assert(mobj, className.." not in host")
 
     -- check: mobj constructed (i.e. fields initialised as expected)
@@ -195,7 +195,7 @@ function T_MObjHost.pt_buildAndHostMObj_ASrv(mobjHost, className, constructParam
 
     -- check: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
     local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
-    local mobj = mobjHost:getObject(mobjLocator)
+    local mobj = mobjHost:getObj(mobjLocator)
     assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
 
     -- check: build blueprint build
@@ -235,7 +235,7 @@ function T_MObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters
     assert(serviceResults and serviceResults.success, "failed upgrading "..mobjLocator:getURI())
 
     -- check: mobj saved
-    local mobj = mobjHost:getObject(mobjLocator)
+    local mobj = mobjHost:getObj(mobjLocator)
     assert(mobj, mobjLocator:getURI().." not in host")
 
     -- check: mobj upgraded (i.e. fields values as expected)
@@ -277,7 +277,7 @@ function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeP
     -- ToDo: add mock test
 
     -- check: mobj upgraded (i.e. fields values as expected)
-    local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
+    local mobj = mobjHost:getObj(mobjLocator) assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
     fieldsTest:test(mobj, objName, "", logOk)
 
     -- cleanup test

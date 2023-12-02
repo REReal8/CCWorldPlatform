@@ -178,7 +178,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         local forestLocator = parameters.forestLocator
         local forest = nil
         local enterprise_forestry = require "enterprise_forestry"
-        forest = enterprise_forestry:getObject(forestLocator)
+        forest = enterprise_forestry:getObj(forestLocator)
         if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by BirchForest
@@ -194,7 +194,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         local factoryLocator = parameters.factoryLocator
         local factory = nil
         local enterprise_manufacturing = require "enterprise_manufacturing"
-        factory = enterprise_manufacturing:getObject(factoryLocator)
+        factory = enterprise_manufacturing:getObj(factoryLocator)
         if type(factory) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: factory "..factoryLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by Factory
