@@ -30,7 +30,7 @@ function ObjLocator:_init(...)
         Parameters:
             hostName                + (string) with hostName of the Host
             objClassName            + (string) with className of the Obj
-            objRef                  + (string, "") with a Obj reference (e.g. the id of the IObj)
+            objRef                  + (string, "") with a Obj reference (e.g. the id of the LObj)
             query                   + (table, {}) of key-value pairs with (item) query segments
     ]], ...)
     if not checkSuccess then corelog.Error("ObjLocator:_init: Invalid input") return nil end
@@ -54,7 +54,7 @@ function ObjLocator:newInstanceFromObj(...)
         Parameters:
             hostName                + (string) with hostName of the Host
             obj                     + (?) with IObj
-            objRef                  + (string, "") with a Obj reference (e.g. the id of the IObj)
+            objRef                  + (string, "") with a Obj reference (e.g. the id of the LObj)
             query                   + (table, {}) of key-value pairs with (item) query segments
     ]], ...)
     if not checkSuccess then corelog.Error("ObjLocator:newInstanceFromObj: Invalid input") return nil end

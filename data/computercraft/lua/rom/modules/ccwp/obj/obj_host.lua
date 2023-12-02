@@ -14,7 +14,10 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local IObj = require "i_obj"
 local ObjLocator = require "obj_locator"
+
+local ILObj = require "i_lobj"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -137,31 +140,34 @@ end
 
 function ObjHost:saveObject(...)
     -- get & check input from description
-    local checkSuccess, object, className, objectId = InputChecker.Check([[
-        This method saves an object in the ObjHost using a className and objectId argument.
+    local checkSuccess, object, objRef = InputChecker.Check([[
+        This method saves an Obj in the ObjHost.
 
-        If the object has a getClassName() method the className argument can be set to "".
-        If the object has a getId() method the objectId argument can be set to "".
+        If an objRef argument is supplied that Obj reference is used.
+        If the objRef argument is "" and the Obj is an LObj the id of the LObj is used.
 
         Return value:
-            objectLocator           - (URL) locating the object
+            objLocator              - (ObjLocator) locating the object
 
         Parameters:
             object                  + (table) the object
-            className               + (string, "") with the name of the class of the object
-            objectId                + (string, "") with the optional id of the object
+            objRef                  + (string, "") with a Obj reference (e.g. the id of an LObj)
     ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:saveObject: Invalid input") return nil end
+    if not Class.IsInstanceOf(object, IObj) then corelog.Error("ObjHost:saveObject: object is not an IObj") return nil end
 
-    -- get objectPath
-    local objectPath = ObjHost.GetObjectPath(className, objectId, object)
-    if not objectPath then corelog.Error("ObjHost:saveObject: Failed obtaining objectPath") return nil end
+    -- determine objLocator
+    if objRef == "" and Class.IsInstanceOf(object, ILObj) then
+        objRef = object:getId()
+    end
+    local objLocator = ObjLocator:newInstance(self:getHostName(), object:getClassName(), objRef)
 
     -- save resource
-    local objectLocator = self:saveResource(object, objectPath)
+    local savedResource = self.SaveResource(object, objLocator)
+    if not savedResource then corelog.Error("ObjHost:saveObject: Failed saving Obj located by "..objLocator:getURI()) return nil end
 
     -- end
-    return objectLocator
+    return objLocator
 end
 
 function ObjHost:saveObj_SSrv(...)
@@ -238,7 +244,7 @@ function ObjHost:getObjects(...)
     local objects = self:getResource(objectsLocator)
     if not objects then
         -- (re)set objects
-        self:saveResource({}, objectsPath)
+        self.SaveResource({}, objectsLocator)
 
         -- retrieve again
         objects = self:getResource(objectsLocator)
@@ -308,66 +314,6 @@ end
 --   / __| __/ _` | __| |/ __|
 --   \__ \ || (_| | |_| | (__
 --   |___/\__\__,_|\__|_|\___|
-
-function ObjHost.GetObjectPath(...)
-    -- get & check input from description
-    local checkSuccess, className, objectId, object = InputChecker.Check([[
-        This method provides the objectPath of an object in the ObjHost with class className and id objectId.
-
-        If the object has a getClassName() method the className argument can be set to "".
-        If the object has a getId() method the objectId argument can be set to "".
-        If the object is not provided the className and objectId arguments are used
-
-        Return value:
-            resourcePath            - (string) locating the object within the ObjHost
-
-        Parameters:
-            className               + (string, "") with the name of the class of the object
-            objectId                + (string, "") with the optional id of the object
-            object                  + (table, nil) the object
-    --]], ...)
-    if not checkSuccess then corelog.Error("ObjHost.GetObjectPath: Invalid input") return nil end
-
-    -- determince resourcePath
-    local objectPath = "/objects"
-
-    -- optionally add className to resourcePath
-    if className == "" then
-        -- attempt to get className from object
-        if object.getClassName then
-            local name = object:getClassName()
-            if type(name) == "string" then
-                className = name
-            else
-                corelog.Warning("ObjHost.GetObjectPath: object:getClassName() did not return(type="..type(name)..") a string")
-            end
-        else
-            corelog.Warning("ObjHost.GetObjectPath: object:getClassName() does not exist. Also not provided. => couldn't determine className")
-        end
-    end
-    if className ~= "" then
-        objectPath = objectPath.."/class="..className
-    end
-
-    -- optionally add objectId to resourcePath
-    if objectId == "" then
-        -- attempt to get objectId from object
-        if object.getId then
-            local id = object:getId()
-            if type(id) == "string" then
-                objectId = id
-            else
-                corelog.Warning("ObjHost.GetObjectPath: object:getId() did not return(type="..type(id)..") a string")
-            end
-        end
-    end
-    if objectId ~= "" then
-        objectPath = objectPath.."/id="..objectId
-    end
-
-    -- end
-    return objectPath
-end
 
 function ObjHost.GetObject(...)
     -- get & check input from description

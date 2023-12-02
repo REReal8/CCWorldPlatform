@@ -287,7 +287,7 @@ function Host.SaveResource(...)
         This method saves a Resource to a Host using a uniform resource locator (URL).
 
         Return value:
-            resourceLocator         - (URL) locating the Resource
+            savedResource           - (table) representing the saved Resource
 
         Parameters:
             resource                + (table) representing the Resource

@@ -12,6 +12,8 @@ local ObjHost = require "obj_host"
 
 local TestObj = require "test.obj_test"
 
+local LObjTest = require "test.lobj_test"
+
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
@@ -128,41 +130,44 @@ end
 --               _/ |
 --              |__/
 
-local testObject = TestObj:newInstance("field1", 4)
-local className = "TestObj"
+local testObj = TestObj:newInstance("field1", 4)
+local testObjClassName = "TestObj"
 
 function T_ObjHost.T_saveObject()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":saveObject tests")
-    local objectId = coreutils.NewId()
+    local objRef = "someRef"
+    local objId = coreutils.NewId()
+    local testLObj = LObjTest:newInstance(objId, "field1")
+    local testLObjClassName = "LObjTest"
 
-    -- test with supplying className and id
-    local objectLocator = objHost1:saveObject(testObject, className, objectId)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-    objHost1:deleteResource(objectLocator)
-    assert(not objHost1:getResource(objectLocator), "resource not deleted")
+    -- test with supplying objRef (Obj)
+    local objLocator = objHost1:saveObject(testObj, objRef)
+    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName.."/id="..objRef)
+    assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    objHost1:deleteResource(objLocator)
+    assert(not objHost1:getResource(objLocator), "resource not deleted")
 
-    -- test without supplying id
-    objectLocator = objHost1:saveObject(testObject, className)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-    objHost1:deleteResource(objectLocator)
-    assert(not objHost1:getResource(objectLocator), "resource not deleted")
+    -- test without supplying objRef (Obj)
+    objLocator = objHost1:saveObject(testObj)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName)
+    assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    objHost1:deleteResource(objLocator)
+    assert(not objHost1:getResource(objLocator), "resource not deleted")
 
-    -- test without supplying className (but object has getClassName method) and id
-    objectLocator = objHost1:saveObject(testObject)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-    objHost1:deleteResource(objectLocator)
-    assert(not objHost1:getResource(objectLocator), "resource not deleted")
+    -- test with supplying objRef (LObj)
+    objLocator = objHost1:saveObject(testLObj, objRef)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/id="..objRef)
+    assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    objHost1:deleteResource(objLocator)
+    assert(not objHost1:getResource(objLocator), "resource not deleted")
 
-    -- test without supplying className (but object has getClassName method) but with id
-    objectLocator = objHost1:saveObject(testObject, "", objectId)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-    objHost1:deleteResource(objectLocator)
-    assert(not objHost1:getResource(objectLocator), "resource not deleted")
+    -- test without supplying objRef (LObj)
+    objLocator = objHost1:saveObject(testLObj)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/id="..testLObj:getId())
+    assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    objHost1:deleteResource(objLocator)
+    assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- cleanup test
 end
@@ -170,32 +175,32 @@ end
 function T_ObjHost.T_getObject()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getObject tests")
-    local objectLocator = objHost1:saveObject(testObject, className)
+    local objLocator = objHost1:saveObject(testObj, testObjClassName)
 
     -- test get object
-    local object = objHost1:getObject(objectLocator)
-    assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    local object = objHost1:getObject(objLocator)
+    assert(object:isEqual(testObj), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- cleanup test
-    objHost1:deleteResource(objectLocator)
-    assert(not objHost1:getResource(objectLocator), "resource not deleted")
+    objHost1:deleteResource(objLocator)
+    assert(not objHost1:getResource(objLocator), "resource not deleted")
 end
 
 function T_ObjHost.T_getNumberOfObjects()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getNumberOfObjects tests")
-    local originalNObjects = objHost1:getNumberOfObjects(className)
+    local originalNObjects = objHost1:getNumberOfObjects(testObjClassName)
     local objectId = coreutils.NewId()
 
     -- test
-    local objectLocator = objHost1:saveObject(testObject, className, objectId) -- add an extra object
-    local nObjects = objHost1:getNumberOfObjects(className)
+    local objLocator = objHost1:saveObject(testObj, testObjClassName, objectId) -- add an extra object
+    local nObjects = objHost1:getNumberOfObjects(testObjClassName)
     local expectedNObjects = originalNObjects + 1
     assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
 
     -- cleanup test
-    objHost1:deleteResource(objectLocator)
-    nObjects = objHost1:getNumberOfObjects(className)
+    objHost1:deleteResource(objLocator)
+    nObjects = objHost1:getNumberOfObjects(testObjClassName)
     assert(nObjects == originalNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..originalNObjects..")")
 end
 
@@ -204,8 +209,8 @@ function T_ObjHost.T_deleteObjects()
     corelog.WriteToLog("* "..testClassName..":deleteObjects tests")
 
     -- test
-    objHost1:deleteObjects(className)
-    local nObjects = objHost1:getNumberOfObjects(className)
+    objHost1:deleteObjects(testObjClassName)
+    local nObjects = objHost1:getNumberOfObjects(testObjClassName)
     local expectedNObjects = 0
     assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
 
@@ -227,17 +232,17 @@ function T_ObjHost.T_GetObject()
     moduleRegistry:register(hostName1, objHost1)
 
     -- test get object hosted by objHost1
-    local objectLocator = objHost1:saveObject(testObject, className)
-    local object = ObjHost.GetObject(objectLocator)
-    assert(object and object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    local objLocator = objHost1:saveObject(testObj, testObjClassName)
+    local object = ObjHost.GetObject(objLocator)
+    assert(object and object:isEqual(testObj), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- test get objHost1 from itself
     local hostLocator = objHost1:getHostLocator()
     object = ObjHost.GetObject(hostLocator)
-    assert(object and object:isEqual(objHost1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    assert(object and object:isEqual(objHost1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- cleanup test
-    objHost1:deleteResource(objectLocator)
+    objHost1:deleteResource(objLocator)
     moduleRegistry:delist(hostName1)
 end
 
