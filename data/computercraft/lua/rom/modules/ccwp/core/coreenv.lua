@@ -145,9 +145,9 @@ end
 function coreenv.Init()
 
     -- do the actual import
-    coreevent = require "coreevent"
-    corelog   = require "corelog"
-    coreutils = require "coreutils"
+    coreevent = coreevent   or require "coreevent"
+    corelog   = corelog     or require "corelog"
+    coreutils = coreutils   or require "coreutils"
 
 	-- read database from disk
 	db.env = coreutils.ReadTableFromFile(db.filename)
