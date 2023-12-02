@@ -90,8 +90,15 @@ local function Set(protocol, name, value)
     -- check if tables are present
     if type(db.env[protocol]) == "table" and type(db.env[protocol][name]) == "table" then db.env[protocol][name].value = value end
 
+    -- save the shit
+    SaveEnvToFile()
+
     -- done
     return value
+end
+
+-- event ready function
+local function DoWhenEventReady()
 end
 
 --                         _
@@ -162,6 +169,9 @@ function coreenv.Setup()
 	coreevent.AddEventListener(DoEventAllData,      db.protocol, "all data")
 	coreevent.AddEventListener(DoEventRegistered,   db.protocol, "registered")
 	coreevent.AddEventListener(DoEventSet,          db.protocol, "set")
+
+    -- send all data when event is ready
+    coreevent.EventReadyFunction(DoWhenEventReady)
 end
 
 function coreenv.RegisterVariable(protocol, name, kind, default)
