@@ -54,7 +54,7 @@ end
 -- event setup
 function coreevent.Setup()
 	-- set env
-	coreenv.RegisterVariable(db.protocol, "bulkMode", "boolean", false)
+	coreenv.RegisterVariable(db.protocol, "bulkMode", "boolean", true)
 
 	-- tick timer
 	coreevent.AddEventListener(coreevent.DoEventTickTimer, db.protocol, "tick timer")
