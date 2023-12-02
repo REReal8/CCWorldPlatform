@@ -7,6 +7,7 @@ local coreevent = {}
 --]]
 
 local coresystem = require "coresystem"
+local coreenv    = require "coreenv"
 local corelog
 local coretask
 local coredisplay
@@ -52,6 +53,9 @@ end
 
 -- event setup
 function coreevent.Setup()
+	-- set env
+	coreenv.RegisterVariable(db.protocol, "bulkMode", "boolean", "true")
+
 	-- tick timer
 	coreevent.AddEventListener(coreevent.DoEventTickTimer, db.protocol, "tick timer")
 	coreevent.DoEventTickTimer(nil, nil) -- run once so the timer get's set.
