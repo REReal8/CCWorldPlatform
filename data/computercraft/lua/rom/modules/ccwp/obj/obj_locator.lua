@@ -23,7 +23,7 @@ local IObj = require "i_obj"
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local objClassNameStr = "class"
-local objRefStr = "id"
+local objRefStr = "ref"
 
 function ObjLocator:_init(...)
     -- get & check input from description
