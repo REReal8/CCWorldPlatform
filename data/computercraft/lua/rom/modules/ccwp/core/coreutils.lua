@@ -15,7 +15,11 @@ local db	= {
     serial			= 0,                    -- for unique id's
 }
 
-local fsQueue		= {}					-- queue for async write to file
+-- queue for async write to file
+local fsQueue		= {
+	first				=  0,
+	last				= -1,
+}
 
 --                                               _ _         _           __ _ _
 --                                              (_) |       | |         / _(_) |
@@ -26,12 +30,12 @@ local fsQueue		= {}					-- queue for async write to file
 --               __/ |
 --              |___/
 
-local function AddToAsyncQueue(fsWorkId, filename, message, writemode)
-	-- make sure we have a queueId
-	fsWorkId = fsWorkId or coreutils.NewId()
+local function AddToAsyncQueue(filename, message, writemode)
+	-- add to the end
+	fsQueue.last		= fsQueue.last + 1
 
-	-- add to the queue  or  replace item in queue
-	fsQueue[fsWorkId] = {
+	-- add to the queue
+	fsQueue[fsQueue.last] = {
 		filename	= filename,
 		message		= message,
 		writemode	= writemode,
@@ -49,17 +53,18 @@ function coreutils.Run()
 	-- work forever
 	while coresystem.IsRunning() do
 
-		-- get random item from the queue
-		local fsWorkId, fsWork = next(fsQueue)
+		-- anything in the list?
+		if fsQueue.first <= fsQueue.last then
 
-		-- got nothing? Then wait
-		if fsWorkId ~= nil then
-
-			-- forget this work item
-			fsQueue[fsWorkId] = nil
+			-- get the item
+			local fsWork = fsQueue[ fsQueue.first ]
 
 			-- do the file operation
 			coreutils.WriteToFileNow(fsWork.filename, fsWork.message, fsWork.writemode)
+
+			-- forget the item, reset the first
+			fsQueue[ fsQueue.first ]	= nil
+			fsQueue.first				= fsQueue.first + 1
 		else
 			-- create an dummy event so we will never wait longer for an event then 20 ticks
 			local id = coreevent.CreateTimeEvent(20, "dummy")
@@ -158,17 +163,10 @@ function coreutils.ReadTableFromFile(filename)
 	return {}
 end
 
-function coreutils.WriteToFile(filename, message, writemode, fsWorkId)
+function coreutils.WriteToFile(filename, message, writemode)
 	-- in async mode?
-	if coreenv.GetVariable(db.protocol, "write to file async") then
-		-- pepare id
-		fsWorkId = fsWorkId or coreutils.NewId
-
-		--  queue this one
-		AddToAsyncQueue(fsWorkId, filename, message, writemode)
-	else
-		-- write it now
-		coreutils.WriteToFileNow(filename, message, writemode)
+	if coreenv.GetVariable(db.protocol, "write to file async")	then AddToAsyncQueue(filename, message, writemode)
+																else coreutils.WriteToFileNow(filename, message, writemode)
 	end
 end
 
