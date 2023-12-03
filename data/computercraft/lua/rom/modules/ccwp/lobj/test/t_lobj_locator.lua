@@ -102,7 +102,7 @@ function T_LObjLocator.T_new()
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local locatedLObjClassName = locatedLObj0:getClassName()
     local objRef = locatedLObj0:getId()
-    local objPath = "/objects/class="..locatedLObjClassName.."/id="..objRef
+    local objPath = "/objects/class="..locatedLObjClassName.."/ref="..objRef
 
     -- test full
     local obj = LObjLocator:new({

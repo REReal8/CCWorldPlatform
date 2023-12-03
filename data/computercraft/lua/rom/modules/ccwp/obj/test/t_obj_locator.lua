@@ -72,8 +72,7 @@ function T_ObjLocator.CreateInitialisedTest(hostName, objClassName, objRef, quer
     -- create test
     local objPath = "/objects/class="..objClassName
     if objRef ~= "" then
-        -- ToDo: consider renaming id to ref
-        objPath = objPath.."/id="..objRef
+        objPath = objPath.."/ref="..objRef
     end
 
     local test = T_URL.CreateInitialisedTest(hostName, objPath, query, nil)
@@ -104,8 +103,7 @@ function T_ObjLocator.T_new()
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local objPath = "/objects/class="..objClassName0
     if objRef1 ~= "" then
-        -- ToDo: consider renaming id to ref
-        objPath = objPath.."/id="..objRef1
+        objPath = objPath.."/ref="..objRef1
     end
 
     -- test full

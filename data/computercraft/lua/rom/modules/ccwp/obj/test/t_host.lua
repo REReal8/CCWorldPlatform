@@ -137,7 +137,7 @@ local resource = {
     aTable      = {_x= -10, _y= 0, _z= 1, _dx=0, _dy=1},
 }
 
-local resourcePath1 = "/resource/id=10/subid=7"
+local resourcePath1 = "/resource/ref=10/subid=7"
 
 local function SameATable(aTable1, aTable2)
     if aTable1 == nil and aTable2 == nil then return true end
