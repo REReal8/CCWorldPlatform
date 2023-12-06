@@ -135,7 +135,7 @@ local function SaveDataToDB(data, ...)
         for i = 1, math.min(#listOfNodes, #trigger.path) do goingStrong = goingStrong and (listOfNodes[i] == trigger.path[i]) end
 
         -- were are here, let's kick the trigger function if we are still going strong
-        if goingStrong then trigger.func() end
+        if goingStrong then trigger.func(trigger.data) end
     end
 
     -- return the data itself
@@ -312,10 +312,14 @@ function coredht.SaveData(data, ...)
     return SaveDataToDB(data, table.unpack(arg))
 end
 
-function coredht.RegisterTrigger(func, ...)
+function coredht.RegisterTrigger(func, data,  ...)
+    -- check for double insert
+    
+
     -- just insert it into the list of triggers
     table.insert(dbTriggers, {
         func = func,
+        data = data,
         path = {table.unpack(arg)}
     })
 end

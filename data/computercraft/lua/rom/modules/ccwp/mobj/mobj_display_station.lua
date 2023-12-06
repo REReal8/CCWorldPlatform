@@ -5,6 +5,7 @@ local ILObj = require "i_lobj"
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
 local coredht = require "coredht"
+local coreutils = require "coreutils"
 local DisplayStation = Class.NewClass(ObjBase, ILObj, IMObj, IWorker)
 
 --[[
@@ -67,12 +68,16 @@ local db = {
     inventoryScreen     = {},
     mobjScreen          = {},
 
+    -- general holder of screens
+    registeredScreens   = {},
+    screenDefinitions   = {},
+
     -- what screen is on which monitor?
     leftMonitorScreen   = nil,  -- can't be set here
     rightMonitorScreen  = nil,  -- can't be set here
 
     -- about myself
-    iAmDispayStation    = false,
+    iAmDisplayStation    = false,
 }
 
 --    _       _ _   _       _ _           _   _
@@ -482,6 +487,58 @@ local function UpdateStatus(statusData)
     UpdateStatusScreen()
 end
 
+local function UpdateScreens(screenId)
+    local screenDef = db.screenDefinitions[screenId]
+
+    -- get the data from the dht
+    local allData = coredht.GetData(table.unpack(screenDef.dhtDataKeys))
+    if type(allData) ~= "table" then return end
+
+    -- sort the keys?
+    local allKeys = {}
+    for id, _ in pairs(allData) do table.insert(allKeys, id) end
+    table.sort(allKeys)
+
+    -- setup the screen
+    ClearScreen(db[screenDef.screenId])
+
+    -- handy when screen is empty
+    ScreenWriteLine(db[screenDef.screenId], screenDef.intro)
+
+    -- loop the table
+    for _, key in ipairs(allKeys) do
+
+        -- da project
+        local data = allData[ key ]
+
+        -- loop the lines
+        for _, lineDef in ipairs(screenDef.lines) do
+
+            -- get the values
+            local valueList = {}
+            for _, varDef in ipairs(lineDef.varList) do
+
+                -- walk through the data by keys
+                local dataRef   = data
+                for _, varDefItem in ipairs(varDef) do
+
+                    -- next step
+                    if type(dataRef) == "table" then dataRef = dataRef[varDefItem] end
+                end
+
+                -- add the value
+                if type(dataRef) ~= "table" then table.insert(valueList, dataRef) end
+            end
+
+            -- print the line
+            ScreenWriteLine(db[screenDef.screenId], string.format(lineDef.formatString, table.unpack(valueList)))
+        end
+    end
+
+    -- show us!
+    UpdateMonitors()
+end
+
 local function UpdateProjects()
     local screenDef = {
         screenName      = "Projects",
@@ -625,6 +682,11 @@ local function UpdateInventory()
     UpdateMonitors()
 end
 
+local function dhtTrigger(screenId)
+    -- just do the update
+    UpdateScreens(screenId)
+end
+
 local function ProjectsTrigger()
     -- simple, pass through
     UpdateProjects()
@@ -676,6 +738,15 @@ local function SetMonitorPurpose(side, purpose)
     end
 end
 
+local function SetDhtTriggers()
+
+    -- loop all definitions
+    for _, screenDef in ipairs(db.screenDefinitions) do
+
+        -- add the trigger
+        coredht.RegisterTrigger(dhtTrigger, screenDef.screenId, table.unpack(screenDef.dhtDataKeys))
+    end
+end
 
 --                _     _ _
 --               | |   | (_)
@@ -717,7 +788,7 @@ function DisplayStation.SetStatus(group, message, subline, details)
 	}
 
     -- update function right aways if we are a dispay station
-	if db.iAmDispayStation then UpdateStatus(statusUpdate) end
+	if db.iAmDisplayStation then UpdateStatus(statusUpdate) end
 
 	-- send the info by messasge to every display station around the world
 	coreevent.SendMessage({
@@ -725,6 +796,25 @@ function DisplayStation.SetStatus(group, message, subline, details)
 		protocol	= db.protocol,
 		subject		= "status update",
 		message		= statusUpdate})
+end
+
+function DisplayStation.AddScreenDefinition(screenDefinition)
+
+    -- create unique id
+    local screenId = coreutils.NewId
+    screenDefinition.screenId = screenId
+
+    -- store the data registeredScreens
+    db.screenDefinitions[screenId] = screenDefinition
+
+    -- create the screen holder, start empty
+    db.registeredScreens[screenId] = {}
+
+    -- are we the one?
+    if db.iAmDisplayStation then SetDhtTriggers() end
+
+    -- done
+    return "Thank you, I'll take it from here"
 end
 
 --                         _
@@ -863,12 +953,12 @@ function DisplayStation:activate()
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
         -- setup dht trigger
-        coredht.RegisterTrigger(ProjectsTrigger,        "enterprise_projects")
-        coredht.RegisterTrigger(AssignmentboardTrigger, "enterprise_assignmentboard", "assignmentList")
-        coredht.RegisterTrigger(InventoryTrigger,       "enterprise_storage", "objects", "class=Chest")
+        coredht.RegisterTrigger(ProjectsTrigger,        "dummy", "enterprise_projects")
+        coredht.RegisterTrigger(AssignmentboardTrigger, "dummy", "enterprise_assignmentboard", "assignmentList")
+        coredht.RegisterTrigger(InventoryTrigger,       "dummy", "enterprise_storage", "objects", "class=Chest")
 
 		-- show who's boss!
-        db.iAmDispayStation = true
+        db.iAmDisplayStation = true
 		corelog.WriteToLog("--- starting up as display station ---")
 --		DisplayStation.SetStatus("project", "I am the display station", "Just ignore me", "Have a nice day")
     end
