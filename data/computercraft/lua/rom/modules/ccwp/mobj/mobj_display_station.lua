@@ -530,24 +530,26 @@ local function UpdateProjects()
 
         -- loop the lines
         for _, lineDef in ipairs(screenDef.lines) do
+
             -- get the values
             local valueList = {}
             for _, varDef in ipairs(lineDef.varList) do
+
+                -- walk through the data by keys
                 local dataRef   = data
-                for _, varDefItem in ipairs(varDef) do if type(dataRef) == "table" then dataRef = dataRef[varDefItem] end end
-                -- this is our data, just don't add tables
+                for _, varDefItem in ipairs(varDef) do
+
+                    -- next step
+                    if type(dataRef) == "table" then dataRef = dataRef[varDefItem] end
+                end
+
+                -- add the value
                 if type(dataRef) ~= "table" then table.insert(valueList, dataRef) end
             end
 
             -- print the line
             ScreenWriteLine(db[screenDef.screenId], string.format(lineDef.formatString, table.unpack(valueList)))
         end
-
-        -- to the screen
---        ScreenWriteLine(db[screenDef.screenId], "")
---        ScreenWriteLine(db[screenDef.screenId], key..": "..data.projectMeta.title)
---        ScreenWriteLine(db[screenDef.screenId], data.projectMeta.description)
---        ScreenWriteLine(db[screenDef.screenId], "currentStep: "..data.currentStep)
     end
 
     -- show us!
