@@ -744,7 +744,7 @@ local function SetDhtTriggers()
     for _, screenDef in ipairs(db.screenDefinitions) do
 
         -- add the trigger
-        coredht.RegisterTrigger(dhtTrigger, screenDef.screenId, table.unpack(screenDef.dhtDataKeys))
+        coredht.RegisterTrigger(dhtTrigger, db.protocol, screenDef.screenId, table.unpack(screenDef.dhtDataKeys))
     end
 end
 
@@ -953,9 +953,9 @@ function DisplayStation:activate()
 	    coreevent.CreateTimeEvent(db.heartbeatTimer,        db.protocol, "heartbeat timer")
 
         -- setup dht trigger
-        coredht.RegisterTrigger(ProjectsTrigger,        "dummy", "enterprise_projects")
-        coredht.RegisterTrigger(AssignmentboardTrigger, "dummy", "enterprise_assignmentboard", "assignmentList")
-        coredht.RegisterTrigger(InventoryTrigger,       "dummy", "enterprise_storage", "objects", "class=Chest")
+        coredht.RegisterTrigger(ProjectsTrigger,        db.protocol, "dummy", "enterprise_projects")
+        coredht.RegisterTrigger(AssignmentboardTrigger, db.protocol, "dummy", "enterprise_assignmentboard", "assignmentList")
+        coredht.RegisterTrigger(InventoryTrigger,       db.protocol, "dummy", "enterprise_storage", "objects", "class=Chest")
 
 		-- show who's boss!
         db.iAmDisplayStation = true

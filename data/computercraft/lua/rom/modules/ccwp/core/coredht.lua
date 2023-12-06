@@ -312,13 +312,18 @@ function coredht.SaveData(data, ...)
     return SaveDataToDB(data, table.unpack(arg))
 end
 
-function coredht.RegisterTrigger(func, data,  ...)
+function coredht.RegisterTrigger(func, prot, data,  ...)
     -- check for double insert
-    
+    for _, triggerDef in ipairs(dbTriggers) do
+
+        -- known trigger? just don't add this one then
+        if triggerDef.prot == prot and triggerDef.data == data then return end
+    end
 
     -- just insert it into the list of triggers
     table.insert(dbTriggers, {
         func = func,
+        prot = prot,
         data = data,
         path = {table.unpack(arg)}
     })
