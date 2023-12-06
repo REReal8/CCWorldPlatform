@@ -483,31 +483,71 @@ local function UpdateStatus(statusData)
 end
 
 local function UpdateProjects()
-    local projects = coredht.GetData("enterprise_projects")
-    if type(projects) ~= "table" then return end
+    local screenDef = {
+        screenName      = "Projects",
+        screenId        = "projectScreen",
+        dhtDataKeys     = {"enterprise_projects"},
+        intro           = ">>> Hieronder alle projecten <<<",
+        lines           = {
+            {
+                formatString    = "",
+                varList         = {},
+            },
+            {
+                formatString    = "%s: %s",
+                varList         = {{"projectId"}, {"projectMeta", "title"}},
+            },
+            {
+                formatString    = "%s",
+                varList         = {{"projectMeta", "description"}},
+            },
+            {
+                formatString    = "currentStep: %s",
+                varList         = {{"currentStep"}},
+            },
+        }
+    }
+
+    local allData = coredht.GetData(table.unpack(screenDef.dhtDataKeys))
+    if type(allData) ~= "table" then return end
 
     -- sort the keys?
     local allKeys = {}
-    for id, _ in pairs(projects) do table.insert(allKeys, id) end
+    for id, _ in pairs(allData) do table.insert(allKeys, id) end
     table.sort(allKeys)
 
     -- setup the screen
-    ClearScreen(db.projectScreen)
+    ClearScreen(db[screenDef.screenId])
 
     -- handy when screen is empty
-    ScreenWriteLine(db.projectScreen, ">>> Hieronder alle projecten <<<")
+    ScreenWriteLine(db[screenDef.screenId], screenDef.intro)
 
     -- loop the table
-    for _, projectId in ipairs(allKeys) do
+    for _, key in ipairs(allKeys) do
 
         -- da project
-        local project = projects[ projectId ]
+        local data = allData[ key ]
+
+        -- loop the lines
+        for _, lineDef in ipairs(screenDef.lines) do
+            -- get the values
+            local valueList = {}
+            for _, varDef in ipairs(lineDef.varList) do
+                local dataRef   = data
+                for _, varDefItem in ipairs(varDef) do if type(dataRef) == "table" then dataRef = dataRef[varDefItem] end end
+                -- this is our data, just don't add tables
+                if type(dataRef) ~= "table" then table.insert(valueList, dataRef) end
+            end
+
+            -- print the line
+            ScreenWriteLine(db[screenDef.screenId], string.format(lineDef.formatString, table.unpack(valueList)))
+        end
 
         -- to the screen
-        ScreenWriteLine(db.projectScreen, "")
-		ScreenWriteLine(db.projectScreen, projectId..": "..project.projectMeta.title)
-		ScreenWriteLine(db.projectScreen, project.projectMeta.description)
-        ScreenWriteLine(db.projectScreen, "currentStep: "..project.currentStep)
+--        ScreenWriteLine(db[screenDef.screenId], "")
+--        ScreenWriteLine(db[screenDef.screenId], key..": "..data.projectMeta.title)
+--        ScreenWriteLine(db[screenDef.screenId], data.projectMeta.description)
+--        ScreenWriteLine(db[screenDef.screenId], "currentStep: "..data.currentStep)
     end
 
     -- show us!
