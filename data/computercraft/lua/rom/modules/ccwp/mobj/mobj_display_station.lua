@@ -808,7 +808,11 @@ function DisplayStation.AddScreenDefinition(screenDefinition)
     db.screenDefinitions[screenId] = screenDefinition
 
     -- create the screen holder, start empty
-    db.registeredScreens[screenId] = {}
+    db.registeredScreens[screenId] = {
+        screenName  = screenDefinition.screenName,
+        screenId    = screenId,
+        screen      = {},
+    }
 
     -- are we the one?
     if db.iAmDisplayStation then SetDhtTriggers() end
