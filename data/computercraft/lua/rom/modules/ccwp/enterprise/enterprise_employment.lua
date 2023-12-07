@@ -114,7 +114,7 @@ function enterprise_employment:getObj(...)
             obj                     - (Obj) Obj obtained from the ObjHost
 
         Parameters:
-            objectLocator           + (URL) locator of the Obj within the ObjHost
+            objectLocator           + (ObjLocator) locator of the Obj within the ObjHost
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:getObj: Invalid input") return nil end
 
@@ -729,6 +729,7 @@ function enterprise_employment.GetAnyTurtleLocator()
 
     -- end
     return URL:newFromURI(objLocator:getURI())
+    -- ToDo: investigate further why it is needed to convert the result back to a URL.
 end
 
 function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
