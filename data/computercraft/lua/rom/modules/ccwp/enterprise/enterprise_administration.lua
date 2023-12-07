@@ -78,7 +78,7 @@ function enterprise_administration:getWIPAdministratorLocator()
         This function returns the WIPAdministrator locator.
 
         Return value:
-            administratorLocator              - (URL) locating the WIPAdministrator
+            administratorLocator              - (ObjLocator) locating the WIPAdministrator
     --]]
 
     -- get WIPAdministrator
