@@ -239,7 +239,7 @@ function T_ObjHost.T_GetObj()
     -- test get objHost1 from itself
     local hostLocator = objHost1:getHostLocator()
     obj = ObjHost.GetObj(hostLocator)
-    assert(obj and obj:isEqual(objHost1), "object(="..textutils.serialise(obj, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
+    assert(obj and obj:isEqual(objHost1), "obj(="..textutils.serialise(obj, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
     -- cleanup test
     objHost1:deleteResource(objLocator)

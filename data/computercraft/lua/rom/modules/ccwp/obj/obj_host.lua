@@ -163,8 +163,8 @@ function ObjHost:saveObj(...)
     local objLocator = ObjLocator:newInstance(self:getHostName(), obj:getClassName(), objRef)
 
     -- save resource
-    local savedResource = self.SaveResource(obj, objLocator)
-    if not savedResource then corelog.Error("ObjHost:saveObj: Failed saving Obj located by "..objLocator:getURI()) return nil end
+    objLocator = self:saveResource(obj, objLocator)
+    if not objLocator then corelog.Error("ObjHost:saveObj: Failed saving Obj located by "..objLocator:getURI()) return nil end
 
     -- end
     return objLocator
@@ -217,11 +217,12 @@ function ObjHost:getObjects(...)
     local objects = self:getResource(objectsLocator)
     if not objects then
         -- (re)set objects
-        self.SaveResource({}, objectsLocator)
+        objectsLocator = self:saveResource({}, objectsLocator)
+        if not objectsLocator then corelog.Error("ObjHost:getObjects: Failed initialising "..className.."'s located by "..objectsLocator:getURI()) return nil end
 
         -- retrieve again
         objects = self:getResource(objectsLocator)
-        if not objects then corelog.Error("ObjHost:getObjects: Failed (re)setting objects") return nil end
+        if not objects then corelog.Error("ObjHost:getObjects: Failed (re)setting "..className.."'s") return nil end
     end
 
     -- end
@@ -291,9 +292,9 @@ end
 function ObjHost.GetObj(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
-        This method retrieves an Obj from a ObjHost using a objLocator.
+        This method retrieves an Obj from a ObjHost using a ObjLocator.
 
-        The method first retrieves the ObjHost corresponding to the objLocator. If the objLocator locates the ObjHost itself it returns the ObjHost.
+        The method first retrieves the ObjHost corresponding to the ObjLocator. If the ObjLocator locates the ObjHost itself it returns the ObjHost.
         Otherwise it will retrieve the Obj from the ObjHost with the getObj method of the ObjHost.
 
         Return value:

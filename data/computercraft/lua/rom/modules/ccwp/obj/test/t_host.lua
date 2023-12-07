@@ -194,7 +194,7 @@ function T_Host.T_get_save_delete_Resource()
     assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
 
     -- test save
-    resourceLocator = host1:saveResource(resource, resourcePath1)
+    resourceLocator = host1:saveResource(resource, resourceLocator)
     local expectedLocator = URL:newInstance()
     expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
