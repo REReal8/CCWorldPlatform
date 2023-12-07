@@ -28,7 +28,6 @@ function T_Host.T_All()
     -- specific
     T_Host.T_getHostLocator()
     T_Host.T_isLocatorFromHost()
-    T_Host.T_getResourceLocator()
     T_Host.T_get_save_delete_Resource()
 
     -- class methods
@@ -185,24 +184,10 @@ function T_Host.T_isLocatorFromHost()
     -- cleanup test
 end
 
-function T_Host.T_getResourceLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getResourceLocator(...) tests")
-
-    -- test
-    local resourceLocator = host1:getResourceLocator(resourcePath1)
-    local expectedLocator = URL:newInstance()
-    expectedLocator:setHost(hostName1)
-    expectedLocator:setPath(resourcePath1)
-    assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
-
-    -- cleanup test
-end
-
 function T_Host.T_get_save_delete_Resource()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getResource, saveResource, deleteResource tests")
-    local resourceLocator = host1:getResourceLocator(resourcePath1)
+    local resourceLocator = URL:newInstance(hostName1, resourcePath1)
 
     -- test getResource (not yet present)
     local resourceGotten = host1:getResource(resourceLocator)
@@ -213,7 +198,7 @@ function T_Host.T_get_save_delete_Resource()
     local expectedLocator = URL:newInstance()
     expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
-    assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(resourceLocator:isEqual(expectedLocator), "resourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test getResource (now present)
     resourceGotten = host1:getResource(resourceLocator)

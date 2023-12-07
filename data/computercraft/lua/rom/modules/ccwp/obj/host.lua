@@ -133,27 +133,6 @@ function Host:isLocatorFromHost(...)
     end
 end
 
-function Host:getResourceLocator(...)
-    -- get & check input from description
-    local checkSuccess, resourcePath = InputChecker.Check([[
-        This method provides the resourceLocator of a Resource based on a resourcePath.
-
-        Return value:
-            resourceLocator         - (URL) locating the Resource
-
-        Parameters:
-            resourcePath            + (string) locating the Resource within the Host
-    --]], ...)
-    if not checkSuccess then corelog.Error("Host:getResourceLocator: Invalid input") return nil end
-
-    -- construct resourceLocator
-    local resourceLocator = self:getHostLocator()
-    resourceLocator:setPath(resourcePath)
-
-    -- end
-    return resourceLocator
-end
-
 function Host:getResource(...)
     -- get & check input from description
     local checkSuccess, resourceLocator = InputChecker.Check([[
@@ -207,9 +186,10 @@ function Host:saveResource(...)
     ]], ...)
     if not checkSuccess then corelog.Error("Host:saveResource: Invalid input") return nil end
 
-    -- get resourceLocator
-    local resourceLocator = self:getResourceLocator(resourcePath)
+    -- construct resourceLocator
+    local resourceLocator = self:getHostLocator()
     if not resourceLocator then corelog.Error("Host:saveResource: Failed obtaining resourceLocator for Resource "..resourcePath) return nil end
+    resourceLocator:setPath(resourcePath)
 
     -- save the Resource
     local savedResource = Host.SaveResource(resource, resourceLocator)
