@@ -85,7 +85,7 @@ end
 function ObjHost:getObj(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
-        This method retrieves an Obj from the ObjHost using a locator (that was once provided by the ObjHost).
+        This method retrieves an Obj from the ObjHost using a ObjLocator.
 
         Return value:
             obj                     - (?) Obj obtained from the ObjHost
@@ -114,7 +114,7 @@ end
 function ObjHost:getObj_SSrv(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
-        This sync service saves an Obj in the ObjHost.
+        This sync service retrieves an Obj from the ObjHost using a ObjLocator.
 
         Return value:
                                 - (table)
@@ -123,7 +123,7 @@ function ObjHost:getObj_SSrv(...)
 
         Parameters:
             serviceData         - (table) data for this service
-                objLocator      + (URL) locator of the Obj within the ObjHost
+                objLocator      + (ObjLocator) locator of the Obj within the ObjHost
     ]], ...)
     if not checkSuccess then corelog.Error("ObjHost:getObj_SSrv: Invalid input") return {success = false} end
 
@@ -178,7 +178,7 @@ function ObjHost:saveObj_SSrv(...)
         Return value:
                                 - (table)
                 success         - (boolean) whether the service executed successfully
-                objLocator      - (URL) locating the object
+                objLocator      - (ObjLocator) locating the object
 
         Parameters:
             serviceData         - (table) data for this service
@@ -292,9 +292,9 @@ end
 function ObjHost.GetObj(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
-        This method retrieves an Obj from a ObjHost using a ObjLocator.
+        This method retrieves an Obj from a ObjHost using using a uniform resource locator (URL).
 
-        The method first retrieves the ObjHost corresponding to the ObjLocator. If the ObjLocator locates the ObjHost itself it returns the ObjHost.
+        The method first retrieves the ObjHost corresponding to the URL. If the URL locates the ObjHost itself it returns the ObjHost.
         Otherwise it will retrieve the Obj from the ObjHost with the getObj method of the ObjHost.
 
         Return value:
