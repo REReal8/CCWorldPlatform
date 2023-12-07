@@ -175,7 +175,7 @@ end
 function T_ObjHost.T_getObj()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getObj tests")
-    local objLocator = objHost1:saveObj(testObj, testObjClassName)
+    local objLocator = objHost1:saveObj(testObj)
 
     -- test get object
     local object = objHost1:getObj(objLocator)
@@ -193,7 +193,7 @@ function T_ObjHost.T_getNumberOfObjects()
     local objectId = coreutils.NewId()
 
     -- test
-    local objLocator = objHost1:saveObj(testObj, testObjClassName, objectId) -- add an extra object
+    local objLocator = objHost1:saveObj(testObj, objectId) -- add an extra object
     local nObjects = objHost1:getNumberOfObjects(testObjClassName)
     local expectedNObjects = originalNObjects + 1
     assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
@@ -232,7 +232,7 @@ function T_ObjHost.T_GetObj()
     moduleRegistry:register(hostName1, objHost1)
 
     -- test get Obj hosted by objHost1
-    local objLocator = objHost1:saveObj(testObj, testObjClassName)
+    local objLocator = objHost1:saveObj(testObj)
     local obj = ObjHost.GetObj(objLocator)
     assert(obj and obj:isEqual(testObj), "obj(="..textutils.serialise(obj, compact)..") not the same as expected(="..textutils.serialise(testObj, compact)..")")
 
