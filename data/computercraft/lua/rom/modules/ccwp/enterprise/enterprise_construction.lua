@@ -45,8 +45,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 blueprint                       + (table) blueprint to build
                     layerList                   - (table) layer to build
                     escapeSequence              - (table) escapeSequence of blueprint
-                materialsItemSupplierLocator    + (URL) locating the host of the building materials
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                materialsItemSupplierLocator    + (ObjLocator) locating the host of the building materials
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -136,8 +136,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 buildDirection                  + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects           + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 layer                           + (LayerRectangle) layer to build
-                materialsItemSupplierLocator    + (URL) locating the host of the building materials
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                materialsItemSupplierLocator    + (ObjLocator) locating the host of the building materials
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
