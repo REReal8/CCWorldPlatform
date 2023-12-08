@@ -127,9 +127,14 @@ function T_ObjLocator.T_Getters()
     -- test
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getObjClassName", objClassName0),
+--        MethodResultEqualTest:newInstance("getObjClass", TestObj), -- ToDo:
         MethodResultEqualTest:newInstance("getObjRef", objRef1)
     )
     test:test(obj, testObjName, "", logOk)
+
+    -- test getObjClass seperate because std tests try serialise expectedResult but that fails because it has functions...
+    local objClass = obj:getObjClass()
+    assert(objClass == TestObj, "objClass not of type "..objClassName0)
 
     -- cleanup test
 end

@@ -12,6 +12,8 @@ local ObjLocator = Class.NewClass(URL)
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -49,12 +51,21 @@ end
 
 local classNamePattern = "%/"..objClassNameStr.."=([%w]+)"
 function ObjLocator:getObjClassName()
-    -- get objClassName from path
+    -- determine objClassName from path
     local objClassName = self:getPath():match(classNamePattern)
     if not objClassName then corelog.Warning("ObjLocator:getObjClassName: no objClassName in path of "..self:getURI()) return nil end
 
     -- end
     return objClassName
+end
+
+function ObjLocator:getObjClass()
+    -- determine objClass
+    local objClassName = self:getObjClassName()
+    local objClass = objectFactory:getClass(objClassName)
+
+    -- end
+    return objClass
 end
 
 local objRefPattern = "%/"..objRefStr.."=([%w:]+)"
