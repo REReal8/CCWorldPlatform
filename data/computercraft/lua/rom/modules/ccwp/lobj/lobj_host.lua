@@ -6,7 +6,7 @@ local LObjHost = Class.NewClass(ObjHost)
 --[[
     The LObjHost is a ObjHost that hosts LObj's and provides additional services on and with these LObj's.
 
-    This class typically is used as a base class for enterprise classes without physical objects.
+    This class typically is used as a base class for enterprise classes dealing with LObj's.
 --]]
 
 local corelog = require "corelog"
