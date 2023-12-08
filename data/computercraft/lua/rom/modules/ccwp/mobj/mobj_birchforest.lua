@@ -165,7 +165,7 @@ function BirchForest:construct(...)
     local checkSuccess, level, baseLocation, nTrees = InputChecker.Check([[
         This method constructs a BirchForest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also ensures all child MObj's the BirchForest spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+        It also ensures all child MObj's the BirchForest spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
         The constructed BirchForest is not yet saved in the MObjHost.
 
@@ -198,13 +198,13 @@ function BirchForest:construct(...)
         localSaplingsLocator = enterprise_employment.GetAnyTurtleLocator()
     elseif level == 2 then
         -- localLogsLocator
-        localLogsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        localLogsLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 1, 0):getRelativeLocationRight(),
             accessDirection = "front",
         }}).mobjLocator
 
         -- localSaplingsLocator
-        localSaplingsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        localSaplingsLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
@@ -254,7 +254,7 @@ function BirchForest:upgrade(...)
     local baseLocation = self:getBaseLocation()
     if level < 2 and upgradedLevel == 2 then
         -- localLogsLocator
-        local localLogsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local localLogsLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 1, 0):getRelativeLocationRight(),
             accessDirection = "front",
         }}).mobjLocator
@@ -262,7 +262,7 @@ function BirchForest:upgrade(...)
         self._localLogsLocator = localLogsLocator
 
         -- localSaplingsLocator
-        local localSaplingsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local localSaplingsLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
@@ -278,7 +278,7 @@ function BirchForest:destruct()
     --[[
         This method destructs a BirchForest instance.
 
-        It also ensures all child MObj's the BirchForest is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+        It also ensures all child MObj's the BirchForest is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
         The BirchForest is not yet deleted from the MObjHost.
 
@@ -293,7 +293,7 @@ function BirchForest:destruct()
     local localLogsLocator = self:getLocalLogsLocator()
     local hostName = localLogsLocator:getHost()
     if hostName == enterprise_storage:getHostName() then
-        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = localLogsLocator })
+        local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = localLogsLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("BirchForest:destruct(): failed releasing localLogsLocator "..localLogsLocator:getURI()) destructSuccess = false end
     end
 
@@ -301,7 +301,7 @@ function BirchForest:destruct()
     local localSaplingsLocator = self:getLocalSaplingsLocator()
     hostName = localSaplingsLocator:getHost()
     if hostName == enterprise_storage:getHostName() then
-        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator })
+        local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = localSaplingsLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("BirchForest:destruct(): failed releasing localSaplingsLocator "..localSaplingsLocator:getURI()) destructSuccess = false end
     end
 

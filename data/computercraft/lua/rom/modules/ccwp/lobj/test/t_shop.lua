@@ -353,7 +353,7 @@ end
 function T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
     local objLocator = enterprise_shop.GetShopLocator()
---    testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+--    testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = {
         ["minecraft:furnace"]   = 1,
         ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
@@ -368,7 +368,7 @@ function T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
---    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+--    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Shop.T_provideItemsTo_AOSrv_Charcoal_ToTurtle()

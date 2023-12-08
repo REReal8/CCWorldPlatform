@@ -369,7 +369,7 @@ function enterprise_employment:getCurrentWorkerLocator()
         end
 
         -- host Worker
-        local workerLocator = self:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator
+        local workerLocator = self:hostLObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator
         if not workerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed hosting new Worker "..workerId) return nil end
 
         -- set location
@@ -476,7 +476,7 @@ function enterprise_employment:deleteWorkers()
     -- release Worker and remove locator
     for workerKey, workerLocator in workerLocators:objs() do
         -- release Worker
-        enterprise_employment:releaseMObj_SSrv({ mobjLocator = workerLocator})
+        enterprise_employment:releaseLObj_SSrv({ mobjLocator = workerLocator})
 
         -- remove locator
         workerLocators[workerKey] = nil

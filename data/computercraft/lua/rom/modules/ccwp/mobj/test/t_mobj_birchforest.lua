@@ -227,8 +227,8 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local localLogsLocator1 = enterprise_storage:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator1 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator1 = enterprise_storage:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator1 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator1 = enterprise_storage:hostLObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator1 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator1 = enterprise_storage:hostLObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation1:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator1 then corelog.Error("failed registering Chest") return end
 
     -- test
     obj:setLevel(level2)
@@ -244,7 +244,7 @@ function T_BirchForest.T_Setters()
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
-    return enterprise_storage:releaseMObj_SSrv({ mobjLocator = localLogsLocator1 }) and enterprise_storage:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator1 })
+    return enterprise_storage:releaseLObj_SSrv({ mobjLocator = localLogsLocator1 }) and enterprise_storage:releaseLObj_SSrv({ mobjLocator = localSaplingsLocator1 })
 end
 
 --    _____ ____  _     _
@@ -438,7 +438,7 @@ end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = { ["minecraft:birch_log"] = 10 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -450,12 +450,12 @@ function T_BirchForest.T_provideItemsTo_AOSrv_Log_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local provideItems = { ["minecraft:birch_sapling"] = 1 }
 
@@ -468,7 +468,7 @@ function T_BirchForest.T_provideItemsTo_AOSrv_Sapling_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()

@@ -169,7 +169,7 @@ function Factory:construct(...)
     local checkSuccess, level, baseLocation = InputChecker.Check([[
         This method constructs a Factory instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also ensures all child MObj's the Factory spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+        It also ensures all child MObj's the Factory spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
         The constructed Factory is not yet saved in the MObjHost.
 
@@ -216,14 +216,14 @@ function Factory:construct(...)
         table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
     elseif level == 2 then
         -- inputLocators
-        local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
         table.insert(inputLocators, inputChestLocator)
 
         -- outputLocators
-        local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local outputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -269,7 +269,7 @@ function Factory:upgrade(...)
     if level == 1 and upgradeLevel == 2 then
         -- inputLocators
         table.remove(inputLocators, 1) -- remove previous level
-        local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -277,7 +277,7 @@ function Factory:upgrade(...)
 
         -- outputLocators
         table.remove(outputLocators, 1) -- remove previous level
-        local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        local outputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
             accessDirection = "top",
         }}).mobjLocator
@@ -301,7 +301,7 @@ function Factory:destruct()
     --[[
         This method destructs a Factory instance.
 
-        It also ensures all child MObj's the Factory is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+        It also ensures all child MObj's the Factory is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
         The Factory is not yet deleted from the MObjHost.
 
@@ -316,7 +316,7 @@ function Factory:destruct()
     for i, mobjLocator in ipairs(self._inputLocators) do
         local hostName = mobjLocator:getHost()
         if hostName == enterprise_storage:getHostName() then
-            local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = mobjLocator })
             if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._inputLocators[i] = nil
@@ -326,7 +326,7 @@ function Factory:destruct()
     for i, mobjLocator in ipairs(self._outputLocators) do
         local hostName = mobjLocator:getHost()
         if hostName == enterprise_storage:getHostName() then
-            local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = mobjLocator })
             if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._outputLocators[i] = nil

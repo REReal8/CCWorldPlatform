@@ -19,9 +19,9 @@ local T_MObjHost = require "test.t_mobj_host"
 
 function t_forestry.T_All()
     -- LObjHost
-    t_forestry.T_hostMObj_SSrv_BirchForest()
-    t_forestry.T_upgradeMObj_SSrv_BirchForest()
-    t_forestry.T_releaseMObj_SSrv_BirchForest()
+    t_forestry.T_hostLObj_SSrv_BirchForest()
+    t_forestry.T_upgradeLObj_SSrv_BirchForest()
+    t_forestry.T_releaseLObj_SSrv_BirchForest()
 end
 
 function t_forestry.T_AllPhysical()
@@ -110,18 +110,18 @@ local upgradeParametersTo_L2T4 = {
 
 -- ** BirchForest **
 
-function t_forestry.T_hostMObj_SSrv_BirchForest()
+function t_forestry.T_hostLObj_SSrv_BirchForest()
     -- prepare test
     local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, fieldsTest0, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_forestry.T_upgradeMObj_SSrv_BirchForest()
+function t_forestry.T_upgradeLObj_SSrv_BirchForest()
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance(ObjLocator:getClassName()),
@@ -134,17 +134,17 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     -- test
-    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeLObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_forestry.T_releaseMObj_SSrv_BirchForest()
+function t_forestry.T_releaseLObj_SSrv_BirchForest()
     -- prepare test
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

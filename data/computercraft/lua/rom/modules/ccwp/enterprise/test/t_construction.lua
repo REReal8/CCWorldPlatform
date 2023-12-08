@@ -112,7 +112,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
             -- cleanup
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseLObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
         },

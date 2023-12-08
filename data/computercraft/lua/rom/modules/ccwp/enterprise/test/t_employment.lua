@@ -28,14 +28,14 @@ function t_employment.T_All()
     t_employment.T_getObj()
 
     -- LObjHost
-    t_employment.T_hostMObj_SSrv_Turtle()
-    t_employment.T_releaseMObj_SSrv_Turtle()
+    t_employment.T_hostLObj_SSrv_Turtle()
+    t_employment.T_releaseLObj_SSrv_Turtle()
 
-    t_employment.T_hostMObj_SSrv_UtilStation()
-    t_employment.T_releaseMObj_SSrv_UtilStation()
+    t_employment.T_hostLObj_SSrv_UtilStation()
+    t_employment.T_releaseLObj_SSrv_UtilStation()
 
-    t_employment.T_hostMObj_SSrv_DisplayStation()
-    t_employment.T_releaseMObj_SSrv_DisplayStation()
+    t_employment.T_hostLObj_SSrv_DisplayStation()
+    t_employment.T_releaseLObj_SSrv_DisplayStation()
 
     -- Worker
     t_employment.T_IRegistry_All()
@@ -148,23 +148,23 @@ end
 
 -- ** Turtle **
 
-function t_employment.T_hostMObj_SSrv_Turtle()
+function t_employment.T_hostLObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
     local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, baseLocation0, workerLocation0, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_employment.T_releaseMObj_SSrv_Turtle()
+function t_employment.T_releaseLObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -172,7 +172,7 @@ end
 
 -- ** UserStation **
 
-function t_employment.T_hostMObj_SSrv_UtilStation()
+function t_employment.T_hostLObj_SSrv_UtilStation()
     -- prepare test
     local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance(ObjLocator:getClassName())
@@ -184,17 +184,17 @@ function t_employment.T_hostMObj_SSrv_UtilStation()
     local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_employment.T_releaseMObj_SSrv_UtilStation()
+function t_employment.T_releaseLObj_SSrv_UtilStation()
     -- prepare test
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -202,22 +202,22 @@ end
 
 -- ** DisplayStation **
 
-function t_employment.T_hostMObj_SSrv_DisplayStation()
+function t_employment.T_hostLObj_SSrv_DisplayStation()
     -- prepare test
     local fieldsTest = T_DisplayStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_DisplayStation0)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_employment.T_releaseMObj_SSrv_DisplayStation()
+function t_employment.T_releaseLObj_SSrv_DisplayStation()
     -- prepare test
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -433,7 +433,7 @@ function t_employment.T_GetFuelLevels_Att()
         baseLocation    = location,
     }
 
-    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local result = enterprise_manufacturing:hostLObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
     local factoryLocator = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
@@ -452,7 +452,7 @@ function t_employment.T_GetFuelLevels_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
+    result = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end

@@ -432,12 +432,12 @@ function T_Factory.T_getFuelNeed_Production_Att()
 
     -- prepare test L2
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
-    local inputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation0:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
     local inputLocators2 = ObjArray:newInstance(ObjLocator:getClassName(), { inputChestLocator, })
-    local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local outputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation0:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
@@ -450,8 +450,8 @@ function T_Factory.T_getFuelNeed_Production_Att()
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-    enterprise_storage:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
-    enterprise_storage:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
+    enterprise_storage:releaseLObj_SSrv({ mobjLocator = inputChestLocator })
+    enterprise_storage:releaseLObj_SSrv({ mobjLocator = outputChestLocator })
 end
 
 --    _____ _____ _                  _____                   _ _
@@ -478,7 +478,7 @@ end
 
 function T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local provideItems = { ["minecraft:birch_planks"] = 11 }
 
@@ -491,12 +491,12 @@ function T_Factory.T_provideItemsTo_AOSrv_Craft_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters2 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local provideItems = { ["minecraft:charcoal"] = 1 }
 
@@ -509,7 +509,7 @@ function T_Factory.T_provideItemsTo_AOSrv_Smelt_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Factory.T_needsTo_ProvideItemsTo_SOSrv()

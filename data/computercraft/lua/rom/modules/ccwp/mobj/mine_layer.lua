@@ -138,7 +138,7 @@ function MineLayer:construct(...)
     if not checkSuccess then corelog.Error("MineLayer:construct: Invalid input") return nil end
 
     -- cacheItemsLocator
-    local cacheItemsLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local cacheItemsLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(-1, 2, 0),
         accessDirection = "back",
     }}).mobjLocator
@@ -186,7 +186,7 @@ function MineLayer:destruct()
     -- cacheItemsLocator
     local destructSuccess = true
     local cacheItemsLocator = self:getCacheItemsLocator()
-    local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = cacheItemsLocator })
+    local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = cacheItemsLocator })
     if not releaseResult or not releaseResult.success then corelog.Warning("MineLayer:destruct(): failed releasing cacheItemsLocator "..cacheItemsLocator:getURI()) destructSuccess = false end
 
     -- end

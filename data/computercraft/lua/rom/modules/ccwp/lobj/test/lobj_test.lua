@@ -98,7 +98,7 @@ function LObjTest:construct(...)
     local checkSuccess, field1Value = InputChecker.Check([[
         This method constructs a LObjTest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also ensures all child MObj's the LObjTest spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+        It also ensures all child MObj's the LObjTest spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
         The constructed LObjTest is not yet saved in the MObjHost.
 
@@ -149,7 +149,7 @@ function LObjTest:destruct()
     --[[
         This method destructs a LObjTest instance.
 
-        It also ensures all child MObj's the LObjTest is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+        It also ensures all child MObj's the LObjTest is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
         The LObjTest is not yet deleted from the MObjHost.
 

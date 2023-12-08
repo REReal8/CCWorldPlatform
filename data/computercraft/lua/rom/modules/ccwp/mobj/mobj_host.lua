@@ -113,7 +113,7 @@ function MObjHost:buildAndHostMObj_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building "..className},
             -- host MObj
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
             }, description = "Hosting "..className},
@@ -190,7 +190,7 @@ function MObjHost:extendAndUpgradeMObj_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             -- upgrade MObj
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeLObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParameters" },
             }},
@@ -270,7 +270,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             -- release MObj
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseLObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             }},
         },

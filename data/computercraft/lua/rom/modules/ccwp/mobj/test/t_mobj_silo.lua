@@ -299,7 +299,7 @@ end
 
 function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local lobj = testHost:getObj(objLocator) assert(lobj, "Failed obtaining "..testClassName.." from objLocator "..objLocator:getURI())
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(lobj, "integrityCheck_AOSrv", {
     })
@@ -317,7 +317,7 @@ function T_Silo.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
@@ -386,7 +386,7 @@ end
 
 function T_Silo.T_storeItemsFrom_AOSrv_MultipleItems_FromTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     t_employment = t_employment or require "test.t_employment"
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(itemSupplierLocator, "Failed obtaining itemSupplierLocator")
@@ -397,7 +397,7 @@ function T_Silo.T_storeItemsFrom_AOSrv_MultipleItems_FromTurtle()
     T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 --     _____ _ _
@@ -417,7 +417,7 @@ function T_Silo.T_integrityCheck_AOSrv()
     obj:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = siloLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = siloLocator})
 end
 
 -- ToDo: rename to something with integrityCheck (production code, i.e. not release it again like the above test)

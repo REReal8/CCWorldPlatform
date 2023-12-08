@@ -119,7 +119,7 @@ function UserStation:construct(...)
     local checkSuccess, workerId, baseLocation = InputChecker.Check([[
         This method constructs a UserStation instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also ensures all child MObj's the UserStation spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+        It also ensures all child MObj's the UserStation spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
         The constructed UserStation is not yet saved in the MObjHost.
 
@@ -134,11 +134,11 @@ function UserStation:construct(...)
     if not checkSuccess then corelog.Error("UserStation:construct: Invalid input") return nil end
 
     -- determine UserStation fields
-    local inputLocator = enterprise_storage:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local inputLocator = enterprise_storage:hostLObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(4, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
-    local outputLocator = enterprise_storage:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local outputLocator = enterprise_storage:hostLObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(2, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
@@ -154,7 +154,7 @@ function UserStation:destruct()
     --[[
         This method destructs a UserStation instance.
 
-        It also ensures all child MObj's the UserStation is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+        It also ensures all child MObj's the UserStation is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
         The UserStation is not yet deleted from the MObjHost.
 
@@ -169,14 +169,14 @@ function UserStation:destruct()
 
     -- input locator
     if self._inputLocator:getHost() == enterprise_storage:getHostName() then
-        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = self._inputLocator })
+        local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = self._inputLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("UserStation:destruct(): failed releasing input locator "..self._inputLocator:getURI()) destructSuccess = false end
     end
     self._inputLocator = nil
 
     -- output locator
     if self._outputLocator:getHost() == enterprise_storage:getHostName() then
-        local releaseResult = enterprise_storage:releaseMObj_SSrv({ mobjLocator = self._outputLocator })
+        local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = self._outputLocator })
         if not releaseResult or not releaseResult.success then corelog.Warning("UserStation:destruct(): failed releasing output locator "..self._outputLocator:getURI()) destructSuccess = false end
     end
     self._outputLocator = nil
@@ -448,7 +448,7 @@ function UserStation:reset()
         }
         corelog.Warning("UserStation:reset: => recovering UserStation "..self:getId().." by rehosting it")
         enterprise_employment = enterprise_employment or require "enterprise_employment"
-        enterprise_employment:hostMObj_SSrv({
+        enterprise_employment:hostLObj_SSrv({
             className           = self:getClassName(),
             constructParameters = constructParameters,
         })

@@ -299,7 +299,7 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
 
     local provideItems = { ["minecraft:birch_log"] = 5, }
@@ -313,12 +313,12 @@ function T_Chest.T_provideItemsTo_AOSrv_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local provideItems = { ["minecraft:birch_log"] = 5, }
     --note: We do not have to set the Chest Inventory content here. We just assume the test Chest is present and has the items. FetchItemsFromChestIntoTurtle_Task will make sure the inventory is obtained.
@@ -333,7 +333,7 @@ function T_Chest.T_provideItemsTo_AOSrv_ToChest()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
     testHost:deleteResource(itemDepotLocator)
 end
 
@@ -390,7 +390,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_FromTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     t_employment = t_employment or require "test.t_employment"
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator() assert(itemSupplierLocator, "Failed obtaining itemSupplierLocator")
@@ -401,15 +401,15 @@ function T_Chest.T_storeItemsFrom_AOSrv_FromTurtle()
     T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local itemSupplierConstructParameters = { baseLocation = baseLocation0:getRelativeLocation(0, 6, 0), accessDirection = accessDirection0, }
-    local itemSupplierLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local itemSupplierLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local storeItems = { ["minecraft:birch_log"] = 5, }
 
@@ -417,8 +417,8 @@ function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = itemSupplierLocator})
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = itemSupplierLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 return T_Chest

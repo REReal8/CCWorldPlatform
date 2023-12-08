@@ -24,11 +24,11 @@ function t_storage.T_All()
     -- IObj
 
     -- LObjHost
-    t_storage.T_hostMObj_SSrv_Chest()
-    t_storage.T_releaseMObj_SSrv_Chest()
+    t_storage.T_hostLObj_SSrv_Chest()
+    t_storage.T_releaseLObj_SSrv_Chest()
 
-    t_storage.T_hostMObj_SSrv_Silo()
-    t_storage.T_releaseMObj_SSrv_Silo()
+    t_storage.T_hostLObj_SSrv_Silo()
+    t_storage.T_releaseLObj_SSrv_Silo()
 end
 
 function t_storage.T_AllPhysical()
@@ -112,7 +112,7 @@ function t_storage.GetHostAndUpdateChestProjectDef()
     return {
         steps = {
             -- host Chest
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "className"          , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "constructParameters", sourceStep = 0, sourceKeyDef = "constructParameters" },
             }},
@@ -126,24 +126,24 @@ function t_storage.GetHostAndUpdateChestProjectDef()
     }
 end
 
-function t_storage.T_hostMObj_SSrv_Chest()
+function t_storage.T_hostLObj_SSrv_Chest()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
     local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation_Chest0, accessDirection0, inventory1)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_storage.T_releaseMObj_SSrv_Chest()
+function t_storage.T_releaseLObj_SSrv_Chest()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -151,7 +151,7 @@ end
 
 -- ** Silo **
 
-function t_storage.T_hostMObj_SSrv_Silo()
+function t_storage.T_hostLObj_SSrv_Silo()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
     local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
@@ -167,18 +167,18 @@ function t_storage.T_hostMObj_SSrv_Silo()
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation_Silo0, entryLocation_Silo0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_storage.T_releaseMObj_SSrv_Silo()
+function t_storage.T_releaseLObj_SSrv_Silo()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

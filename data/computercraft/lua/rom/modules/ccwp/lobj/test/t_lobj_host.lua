@@ -29,9 +29,9 @@ function T_LObjHost.T_All()
     T_LObjHost.T_IObj_All()
 
     -- LObjHost
-    T_LObjHost.T_hostMObj_SSrv_TestMObj()
-    T_LObjHost.T_upgradeMObj_SSrv_TestMObj()
-    T_LObjHost.T_releaseMObj_SSrv_TestMObj()
+    T_LObjHost.T_hostLObj_SSrv_TestMObj()
+    T_LObjHost.T_upgradeLObj_SSrv_TestMObj()
+    T_LObjHost.T_releaseLObj_SSrv_TestMObj()
 end
 
 local testClassName = "LObjHost"
@@ -116,7 +116,7 @@ end
 --                    |__/
 
 -- parameterised service tests
-function T_LObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, objName, fieldsTest, logOk)
+function T_LObjHost.pt_hostLObj_SSrv(mobjHost, className, constructParameters, objName, fieldsTest, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no valid mobjHost provided")
     assert(type(className) == "string", "no valid className provided")
@@ -124,10 +124,10 @@ function T_LObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(type(objName) == "string", "no valid objName provided")
     assert(type(fieldsTest) == "table", "no valid fieldsTest provided")
     assert(type(logOk) == "boolean", "no valid logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests (of "..objName..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostLObj_SSrv() tests (of "..objName..")")
 
     -- test
-    local serviceResults = mobjHost:hostMObj_SSrv({
+    local serviceResults = mobjHost:hostLObj_SSrv({
         className           = className,
         constructParameters = constructParameters,
     })
@@ -158,7 +158,7 @@ function T_LObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     return serviceResults
 end
 
-function T_LObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters, upgradeParameters, objName, fieldsTest, logOk)
+function T_LObjHost.pt_upgradeLObj_SSrv(mobjHost, className, constructParameters, upgradeParameters, objName, fieldsTest, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no valid mobjHost provided")
     assert(type(className) == "string", "no valid className provided")
@@ -167,16 +167,16 @@ function T_LObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters
     assert(type(logOk) == "boolean", "no valid logOk provided")
     assert(type(objName) == "string", "no valid objName provided")
     assert(type(fieldsTest) == "table", "no valid fieldsTest provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeMObj_SSrv() tests (of "..objName..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeLObj_SSrv() tests (of "..objName..")")
 
-    local serviceResults = mobjHost:hostMObj_SSrv({
+    local serviceResults = mobjHost:hostLObj_SSrv({
         className           = className,
         constructParameters = constructParameters,
     }) assert(serviceResults, "failed hosting "..className)
     local mobjLocator = serviceResults.mobjLocator
 
     -- test
-    serviceResults = mobjHost:upgradeMObj_SSrv({
+    serviceResults = mobjHost:upgradeLObj_SSrv({
         mobjLocator         = mobjLocator,
         upgradeParameters   = upgradeParameters,
     })
@@ -200,23 +200,23 @@ function T_LObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters
     return serviceResults
 end
 
-function T_LObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, objName, logOk)
+function T_LObjHost.pt_releaseLObj_SSrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no valid mobjHost provided")
     assert(type(className) == "string", "no valid className provided")
     assert(type(constructParameters) == "table", "no valid constructParameters provided")
     assert(type(objName) == "string", "no valid objName provided")
     assert(type(logOk) == "boolean", "no valid logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests (of "..objName..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseLObj_SSrv() tests (of "..objName..")")
 
-    local serviceResults = mobjHost:hostMObj_SSrv({
+    local serviceResults = mobjHost:hostLObj_SSrv({
         className           = className,
         constructParameters = constructParameters,
     }) assert(serviceResults, "failed hosting "..className)
     local mobjLocator = serviceResults.mobjLocator
 
     -- test
-    serviceResults = mobjHost:releaseMObj_SSrv({
+    serviceResults = mobjHost:releaseLObj_SSrv({
         mobjLocator         = mobjLocator,
     })
 
@@ -249,36 +249,36 @@ local upgradeParameters2 = {
     field1 = field1_2
 }
 
-function T_LObjHost.T_hostMObj_SSrv_TestMObj()
+function T_LObjHost.T_hostLObj_SSrv_TestMObj()
     -- prepare test
     local constructFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_1)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, testLObjName, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, testLObjName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function T_LObjHost.T_upgradeMObj_SSrv_TestMObj()
+function T_LObjHost.T_upgradeLObj_SSrv_TestMObj()
     -- prepare test
     moduleRegistry:register(test_lobjHostName0, test_lobjHost0)
     local upgradeFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_2)
 
     -- test
-    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, upgradeParameters2, testLObjName, upgradeFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeLObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, upgradeParameters2, testLObjName, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
     moduleRegistry:delist(test_lobjHostName0)
 end
 
-function T_LObjHost.T_releaseMObj_SSrv_TestMObj()
+function T_LObjHost.T_releaseLObj_SSrv_TestMObj()
     -- prepare test
     moduleRegistry:register(test_lobjHostName0, test_lobjHost0)
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, testLObjName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(test_lobjHost0, testLObjClassName, constructParameters1, testLObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

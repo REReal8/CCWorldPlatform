@@ -48,7 +48,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
         baseLocation    = factoryLocaton1:copy(),
     }
-    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local result = enterprise_manufacturing:hostLObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
     local factoryLocator1 = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
@@ -82,7 +82,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     expectedFuelNeed = 36 + 48 + 0 + 5
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
-    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
+    result = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
 
     -- test L3
     forest:setLevel(level2)
@@ -93,7 +93,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
         baseLocation    = forestLocation:getRelativeLocation(12, 0, 0),
     }
-    result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    result = enterprise_manufacturing:hostLObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
     local factoryLocator2 = result.mobjLocator
     level = level3
 
@@ -105,7 +105,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator2}) assert(result, "Failed releasing Factory")
+    result = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = factoryLocator2}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end
@@ -124,7 +124,7 @@ function t_energy.T_GetRefuelAmount_Att()
 
         baseLocation    = turtleLocation:copy(),
     }
-    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local result = enterprise_manufacturing:hostLObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
     local factoryLocator1 = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
@@ -163,7 +163,7 @@ function t_energy.T_GetRefuelAmount_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
+    result = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end

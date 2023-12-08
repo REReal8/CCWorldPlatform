@@ -429,7 +429,7 @@ function T_Turtle.T_storeItemsFrom_AOSrv_FromChest()
     local objLocator = t_employment.GetCurrentTurtleLocator() assert(objLocator, "Failed obtaining objLocator")
 
     local itemSupplierConstructParameters = { baseLocation = baseLocationChest:copy(), accessDirection = "top", }
-    local itemSupplierLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local itemSupplierLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = itemSupplierConstructParameters }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
 
     local storeItems = { ["minecraft:birch_log"] = 5, }
 
@@ -437,7 +437,7 @@ function T_Turtle.T_storeItemsFrom_AOSrv_FromChest()
     T_IItemDepot.pt_storeItemsFrom_AOSrv(testClassName, objLocator, itemSupplierLocator, storeItems, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = itemSupplierLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = itemSupplierLocator})
 end
 
 return T_Turtle

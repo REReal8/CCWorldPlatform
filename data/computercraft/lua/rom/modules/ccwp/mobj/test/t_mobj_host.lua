@@ -144,7 +144,7 @@ function T_MObjHost.pt_buildAndHostMObj_ASrv(mobjHost, className, constructParam
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    -- check: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
+    -- check: mobj hosted on MObjHost (full check done in pt_hostLObj_SSrv)
     local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
     local mobj = mobjHost:getObj(mobjLocator)
     assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())

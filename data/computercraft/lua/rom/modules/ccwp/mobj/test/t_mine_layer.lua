@@ -273,7 +273,7 @@ end
 
 function T_MineLayer.T_provideItemsTo_AOSrv_cobblestone_ToTurtle()
     -- prepare test
-    local objLocator = testHost:hostMObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
+    local objLocator = testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters0 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = { ["minecraft:cobblestone"] = 9 }
 
     t_employment = t_employment or require "test.t_employment"
@@ -285,7 +285,7 @@ function T_MineLayer.T_provideItemsTo_AOSrv_cobblestone_ToTurtle()
     T_IItemSupplier.pt_provideItemsTo_AOSrv(testClassName, objLocator, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, logOk)
 
     -- cleanup test
-    testHost:releaseMObj_SSrv({ mobjLocator = objLocator})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
 end
 
 function T_MineLayer.T_needsTo_ProvideItemsTo_SOSrv()

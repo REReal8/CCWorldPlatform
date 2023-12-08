@@ -410,7 +410,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     local projectDef = {
         steps   = {
             -- host and register BirchForest
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters" },
             }, description = "Hosting BirchForest"},
@@ -418,7 +418,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
                 { keyDef = "itemSupplierLocator"            , sourceStep = 1, sourceKeyDef = "mobjLocator" },
             }},
             -- host and register Factory
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters" },
             }, description = "Hosting Factory"},
@@ -426,7 +426,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
                 { keyDef = "itemSupplierLocator"            , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- host and register MineShaft
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "mineHostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "mineHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "mineClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "mineConstructParameters" },
             }, description = "Hosting MineShaft"},
@@ -434,7 +434,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
                 { keyDef = "itemSupplierLocator"            , sourceStep = 5, sourceKeyDef = "mobjLocator" },
             }},
             -- host and register Silo
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostLObj_SSrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
             }, description = "Hosting Silo"},

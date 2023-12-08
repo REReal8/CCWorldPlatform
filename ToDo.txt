@@ -124,14 +124,15 @@ GR DisplayStation                                                               
       -  now used to easily construct (L)ObjLocator from LObj
       -  usefull might be the getObjId method
 
--  consider introducing LObjHost class extending ObjHost
-   -  it can host any ILObj
-   -  by splitting of from MObjHost
-      -  hostMObj_SSrv
-      -  releaseMObj_SSrv
-   -  MObjHost extends LObjHost
+R  introduce LObjHost class extending ObjHost                                                                           (....)
+   R  it can host any ILObj                                                                                             (done)
+   R  by splitting of from MObjHost + renaming them                                                                     (done)
+      R  hostMObj_SSrv                                                                                                  (done)
+      R  releaseMObj_SSrv                                                                                               (done)
+   R  MObjHost extends LObjHost                                                                                         (done)
+   R  adapt and test all tests                                                                                          (....)
 
--  consider if ILObj/LObjHost should have upgrade/upgradeMObj_SSrv methods or leave it optional
+-  consider if ILObj/LObjHost should have upgrade/upgradeLObj_SSrv methods or leave it optional
 
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
@@ -297,7 +298,7 @@ GR DisplayStation                                                               
       -  construct method's currently in IMObj
          -  adopt/ change to the above "new" method approach, i.e.
             -  it should not take a table with the parameters + the parameters itself (also change MObjHost to reflect this change)
-            -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
+            -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via LObjHost:hostLObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
       -  Reimplement ObjectFactory based on these developments
 

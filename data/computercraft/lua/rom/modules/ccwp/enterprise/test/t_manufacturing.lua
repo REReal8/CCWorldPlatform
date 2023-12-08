@@ -22,9 +22,9 @@ local T_MObjHost = require "test.t_mobj_host"
 
 function t_manufacturing.T_All()
     -- LObjHost
-    t_manufacturing.T_hostMObj_SSrv_Factory()
-    t_manufacturing.T_upgradeMObj_SSrv_Factory()
-    t_manufacturing.T_releaseMObj_SSrv_Factory()
+    t_manufacturing.T_hostLObj_SSrv_Factory()
+    t_manufacturing.T_upgradeLObj_SSrv_Factory()
+    t_manufacturing.T_releaseLObj_SSrv_Factory()
 end
 
 function t_manufacturing.T_AllPhysical()
@@ -111,35 +111,35 @@ local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTe
 
 -- ** Factory **
 
-function t_manufacturing.T_hostMObj_SSrv_Factory()
+function t_manufacturing.T_hostLObj_SSrv_Factory()
     -- prepare test
     local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
     local constructFieldsTest = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
 
     -- test
-    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_manufacturing.T_upgradeMObj_SSrv_Factory()
+function t_manufacturing.T_upgradeLObj_SSrv_Factory()
     -- prepare test
     local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
     -- test
-    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeLObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_manufacturing.T_releaseMObj_SSrv_Factory()
+function t_manufacturing.T_releaseLObj_SSrv_Factory()
     -- prepare test
 
     -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    local serviceResults = T_LObjHost.pt_releaseLObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

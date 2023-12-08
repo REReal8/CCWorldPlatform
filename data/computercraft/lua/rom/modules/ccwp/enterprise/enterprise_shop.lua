@@ -71,7 +71,7 @@ function enterprise_shop:getShop()
     if nShops == 0 then
         -- the Shop is not there yet => create it
         shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(ObjLocator:getClassName()))
-        -- ToDo: use hostMObj_SSrv to construct Shop
+        -- ToDo: use hostLObj_SSrv to construct Shop
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it
