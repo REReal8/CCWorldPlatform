@@ -29,9 +29,9 @@ function T_LObjHost.T_All()
     T_LObjHost.T_IObj_All()
 
     -- LObjHost
-    T_LObjHost.T_hostLObj_SSrv_TestMObj()
-    T_LObjHost.T_upgradeLObj_SSrv_TestMObj()
-    T_LObjHost.T_releaseLObj_SSrv_TestMObj()
+    T_LObjHost.T_hostLObj_SSrv_LObjTest()
+    T_LObjHost.T_upgradeLObj_SSrv_LObjTest()
+    T_LObjHost.T_releaseLObj_SSrv_LObjTest()
 end
 
 local testClassName = "LObjHost"
@@ -115,7 +115,8 @@ end
 --                     _/ |
 --                    |__/
 
--- parameterised service tests
+-- ** parameterised service tests **
+
 function T_LObjHost.pt_hostLObj_SSrv(mobjHost, className, constructParameters, objName, fieldsTest, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no valid mobjHost provided")
@@ -237,7 +238,8 @@ function T_LObjHost.pt_releaseLObj_SSrv(mobjHost, className, constructParameters
     return serviceResults
 end
 
--- test LObjHost with LObjTest
+-- ** LObjTest **
+
 local testLObjClassName = "LObjTest"
 local testLObjName = "lobjTest"
 local field1_1 = "field1 1"
@@ -249,7 +251,7 @@ local upgradeParameters2 = {
     field1 = field1_2
 }
 
-function T_LObjHost.T_hostLObj_SSrv_TestMObj()
+function T_LObjHost.T_hostLObj_SSrv_LObjTest()
     -- prepare test
     local constructFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_1)
 
@@ -260,7 +262,7 @@ function T_LObjHost.T_hostLObj_SSrv_TestMObj()
     -- cleanup test
 end
 
-function T_LObjHost.T_upgradeLObj_SSrv_TestMObj()
+function T_LObjHost.T_upgradeLObj_SSrv_LObjTest()
     -- prepare test
     moduleRegistry:register(test_lobjHostName0, test_lobjHost0)
     local upgradeFieldsTest = T_LObjTest.CreateInitialisedTest(nil, field1_2)
@@ -273,7 +275,7 @@ function T_LObjHost.T_upgradeLObj_SSrv_TestMObj()
     moduleRegistry:delist(test_lobjHostName0)
 end
 
-function T_LObjHost.T_releaseLObj_SSrv_TestMObj()
+function T_LObjHost.T_releaseLObj_SSrv_LObjTest()
     -- prepare test
     moduleRegistry:register(test_lobjHostName0, test_lobjHost0)
 

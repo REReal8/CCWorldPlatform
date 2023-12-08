@@ -35,9 +35,9 @@ function T_MObjHost.T_AllPhysical()
     -- IObj
 
     -- MObjHost
-    local mobjLocator = T_MObjHost.T_buildAndHostMObj_ASrv_TestMObj()
-    T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
-    T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
+    local mobjLocator = T_MObjHost.T_buildAndHostMObj_ASrv_MObjTest()
+    T_MObjHost.T_extendAndUpgradeMObj_ASrv_MObjTest(mobjLocator)
+    T_MObjHost.T_dismantleAndReleaseMObj_ASrv_MObjTest(mobjLocator)
 end
 
 local testClassName = "MObjHost"
@@ -121,7 +121,8 @@ end
 --                      _/ |
 --                     |__/
 
--- parameterised service tests
+-- ** parameterised service tests **
+
 function T_MObjHost.pt_buildAndHostMObj_ASrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no valid mobjHost provided")
@@ -229,7 +230,8 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     return serviceResults
 end
 
--- test MObjHost with MObjTest
+-- ** MObjTest **
+
 local testMObjClassName = "MObjTest"
 local testMObjName = "mobjTest"
 local baseLocation0 = Location:newInstance(-12, 0, 1, 0, 1)
@@ -243,9 +245,9 @@ local upgradeParameters2 = {
     field1 = field1_2
 }
 
-local mobjLocator_TestMObj = nil
+local mobjLocator_MObjTest = nil
 
-function T_MObjHost.T_buildAndHostMObj_ASrv_TestMObj()
+function T_MObjHost.T_buildAndHostMObj_ASrv_MObjTest()
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
@@ -255,21 +257,21 @@ function T_MObjHost.T_buildAndHostMObj_ASrv_TestMObj()
 
     -- cleanup test
     moduleRegistry:delist(test_mobjHostName1)
-    mobjLocator_TestMObj = serviceResults.mobjLocator
+    mobjLocator_MObjTest = serviceResults.mobjLocator
 
     -- return mobjLocator
     return serviceResults.mobjLocator
 end
 
-function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
+function T_MObjHost.T_extendAndUpgradeMObj_ASrv_MObjTest(mobjLocator)
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
     local upgradeFieldsTest = T_MObjTest.CreateInitialisedTest(nil, baseLocation0, field1_2)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator
-        assert(mobjLocator_TestMObj, "no mobjLocator to operate on")
-        mobjLocator = mobjLocator_TestMObj
+        assert(mobjLocator_MObjTest, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_MObjTest
     end
 
     -- test
@@ -280,14 +282,14 @@ function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     moduleRegistry:delist(test_mobjHostName1)
 end
 
-function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
+function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_MObjTest(mobjLocator)
     -- prepare test
     moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator
-        assert(mobjLocator_TestMObj, "no mobjLocator to operate on")
-        mobjLocator = mobjLocator_TestMObj
+        assert(mobjLocator_MObjTest, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_MObjTest
     end
 
     -- test
@@ -295,7 +297,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    mobjLocator_TestMObj = nil
+    mobjLocator_MObjTest = nil
     moduleRegistry:delist(test_mobjHostName1)
 end
 
