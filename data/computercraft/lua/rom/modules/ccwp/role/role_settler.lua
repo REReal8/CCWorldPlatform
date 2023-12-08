@@ -9,7 +9,6 @@ local role_settler = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
-local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
 
@@ -33,7 +32,7 @@ function role_settler.InitialiseCoordinates_MetaData(...)
         Parameters:
             taskData                    - (table) data about the task
                 startLocation           - (Location) locaton where the task should start
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Invalid input") return {success = false} end
 

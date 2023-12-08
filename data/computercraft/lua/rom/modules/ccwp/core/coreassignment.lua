@@ -212,7 +212,7 @@ function DoAssignment(...)
         Return value:
 
         Parameters:
-            workerLocator               + (URL) locating the Worker
+            workerLocator               + (ObjLocator) locating the Worker
             assignment                  - (table) location of first tree of the forest
                 assignmentId            + (string) with id of the assignment
                 taskCall                + (TaskCall) with the task to call

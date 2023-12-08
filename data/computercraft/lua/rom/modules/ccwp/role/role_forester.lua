@@ -87,9 +87,9 @@ function role_forester.HarvestForest_Task(...)
         Return value:
             task result                     - (table)
                 success                     - (boolean) whether the task was succesfull
-                turtleOutputLogsLocator     - (URL) locating the logs that where harvested (in the turtle)
-                turtleOutputSaplingsLocator - (URL) locating the saplings that where harvested (in the turtle)
-                turtleWasteItemsLocator     - (URL) locating waste items collected (in the turtle) during harvesting
+                turtleOutputLogsLocator     - (ObjLocator) locating the logs that where harvested (in the turtle)
+                turtleOutputSaplingsLocator - (ObjLocator) locating the saplings that where harvested (in the turtle)
+                turtleWasteItemsLocator     - (ObjLocator) locating waste items collected (in the turtle) during harvesting
 
         Parameters:
             taskData                        - (table) data about the task
@@ -97,7 +97,7 @@ function role_forester.HarvestForest_Task(...)
                 firstTreeLocation           + (table) location of first tree of the forest
                 nTrees                      + (number) the number of trees in (the y direction of) the forest
                 waitForFirstTree            + (boolean) if harvesting should wait for the first tree
-                workerLocator               + (URL) locating the Turtle
+                workerLocator               + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_forester.HarvestForest_Task: Invalid input") return {success = false} end
 

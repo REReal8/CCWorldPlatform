@@ -18,7 +18,6 @@ local ItemTable = require "obj_item_table"
 
 local ObjHost = require "obj_host"
 
-local enterprise_storage = require "enterprise_storage"
 local enterprise_dump
 
 --    _______        _                   __  __      _        _____        _
@@ -227,7 +226,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
                                         - (table)
                 success                 - (boolean) whether the items were successfully fetched
                 inventory               - (Inventory) the Inventory of the Chest (after the items have been removed)
-                turtleOutputItemsLocator- (URL) locating the items that where fetched (into a turtle)
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where fetched (into a turtle)
 
         Parameters:
             taskData                    - (table) data about the task
@@ -235,7 +234,7 @@ function role_conservator.FetchItemsFromChestIntoTurtle_Task(...)
                 location                + (Location) location of the Chest
                 accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 itemsQuery              + (table) which items to be fetched
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
@@ -442,7 +441,7 @@ function role_conservator.CheckOutputChest(...)
         Return value:
 
         Parameters:
-            outputLocator               + (URL) locating output Chest
+            outputLocator               + (ObjLocator) locating output Chest
     ]], ...)
     if not checkSuccess then corelog.Error("role_conservator.CheckOutputChest: Invalid input") return {success = false} end
 

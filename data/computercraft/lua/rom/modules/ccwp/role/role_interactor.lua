@@ -71,13 +71,13 @@ function role_interactor.TurnOnWorker_Task(...)
         Return value:
             task result                     - (table)
                 success                     - (boolean) whether the task was succesfull
-                workerLocator               - (URL) locating the Worker that was turned on
+                workerLocator               - (ObjLocator) locating the Worker that was turned on
 
         Parameters:
             serviceData                     - (table) data about this service
                 workerLocation              + (Location) location of the Worker to turn on
                 accessDirection             + (string) whether to access Worker from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-                workerLocator               + (URL) locating the Turtle that is doing the task
+                workerLocator               + (ObjLocator) locating the Turtle that is doing the task
     ]], ...)
     if not checkSuccess then corelog.Error("role_interactor.TurnOnWorker_Task: Invalid input") return {success = false} end
 

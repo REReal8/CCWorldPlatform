@@ -18,11 +18,13 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
+
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local ObjTable = require "obj_table"
 local ObjHost = require "obj_host"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -172,8 +174,8 @@ function Silo:construct(...)
     local entryLocation = baseLocation:getRelativeLocation(3, 3, 0)
     local dropLocation = 0
     local pickupLocation = 0
-    local topChests = ObjArray:newInstance("URL")
-    local storageChests = ObjArray:newInstance("URL")
+    local topChests = ObjArray:newInstance(ObjLocator:getClassName())
+    local storageChests = ObjArray:newInstance(ObjLocator:getClassName())
 
     -- log
 --    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))

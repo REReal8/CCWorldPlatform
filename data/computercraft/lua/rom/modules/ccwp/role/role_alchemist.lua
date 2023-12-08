@@ -217,8 +217,8 @@ function role_alchemist.Craft_Task(...)
         Return value:
                                         - (table)
                 success                 - (boolean) whether the task executed succesfull
-                turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
-                turtleWasteItemsLocator - (URL) locating waste items produced during production
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
 
         Parameters:
             taskData                    - (table) data about the crafting task
@@ -227,7 +227,7 @@ function role_alchemist.Craft_Task(...)
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
 
@@ -442,15 +442,15 @@ function role_alchemist.Pickup_Task(...)
         Return value:
                                         - (table)
                 success                 - (boolean) whether the task executed succesfull
-                turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
-                turtleWasteItemsLocator - (URL) locating waste items produced during production
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
 
         Parameters:
             taskData                    - (table) data about the task
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
 

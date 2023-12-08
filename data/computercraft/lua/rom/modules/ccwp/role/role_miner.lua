@@ -63,8 +63,8 @@ function role_miner.MineShaft_Task(...)
             task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
                 endDepth                - (number) with mining ending depth within the MineShaft
-                turtleOutputItemsLocator- (URL) locating the provideItems that where gathered (in the turtle)
-                turtleWasteItemsLocator - (URL) locating waste items collected (in the turtle) during gathering
+                turtleOutputItemsLocator- (ObjLocator) locating the provideItems that where gathered (in the turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items collected (in the turtle) during gathering
 
         Parameters:
             taskData                    - (table) data about the task
@@ -75,7 +75,7 @@ function role_miner.MineShaft_Task(...)
                 provideItems            + (ItemTable) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to mine
                 escape                  + (boolean) whether Turtle should escape from the MineShaft after it's operation
 
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_miner.MineShaft_Task: Invalid input") return {success = false} end
 
@@ -205,8 +205,8 @@ function role_miner.MineLayer_Task(...)
             task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
                 endHalfRib              - (number) with mining ending depth within the MineLayer
-                turtleOutputItemsLocator- (URL) locating the provideItems that where gathered (in the turtle)
-                turtleWasteItemsLocator - (URL) locating waste items collected (in the turtle) during gathering
+                turtleOutputItemsLocator- (ObjLocator) locating the provideItems that where gathered (in the turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items collected (in the turtle) during gathering
 
         Parameters:
             taskData                    - (table) data about the task
@@ -216,7 +216,7 @@ function role_miner.MineLayer_Task(...)
                 provideItems            + (ItemTable) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to mine
                 escape                  + (boolean) whether Turtle should escape from the MineLayer after it's operation
 
-                workerLocator           + (URL) locating the Turtle
+                workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_miner.MineLayer_Task: Invalid input") return {success = false} end
 
