@@ -108,7 +108,7 @@ function InputChecker.Check(description, ...)
                     else
                         -- check argument not yet instance of typeTypeClass
                         local typeTypeClass = objectFactory:getClass(typeType)
-                        if not Class.IsInstanceOf(argument, typeTypeClass) then
+                        if not Class.IsInstanceOf(argument, typeTypeClass) then -- note: check to allow derived types
                             local object = objectFactory:create(typeType, argument)
                             if object then
                                 argument = object

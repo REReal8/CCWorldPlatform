@@ -7,11 +7,6 @@ local enterprise_storage = Class.NewClass(MObjHost)
     The enterprise_storage is a MObjHost. It hosts storage MObj's (e.g. Chest, Silo).
 --]]
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
