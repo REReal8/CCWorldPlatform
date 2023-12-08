@@ -15,6 +15,7 @@ function library.T_All()
 
     local T_MObjTest = require "test.t_mobj_test"
     local t_mobj_host = require "test.t_mobj_host"
+
     local T_BirchForest = require "test.t_mobj_birchforest"
     local T_Chest = require "test.t_mobj_chest"
     local T_DisplayStation = require "test.t_mobj_display_station"
@@ -29,6 +30,7 @@ function library.T_All()
     -- library tests
     T_MObjTest.T_All()
     t_mobj_host.T_All()
+
     T_BirchForest.T_All()
     T_Chest.T_All()
     T_DisplayStation.T_All()

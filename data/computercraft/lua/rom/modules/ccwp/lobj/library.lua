@@ -14,12 +14,14 @@ function library.T_All()
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
     local T_LObjTest = require "test.t_lobj_test"
+    local t_lobj_host = require "test.t_lobj_host"
 
     local T_LObjLocator = require "test.t_lobj_locator"
     local T_Shop = require "test.t_shop"
 
     -- library tests
     T_LObjTest.T_All()
+    t_lobj_host.T_All()
 
     T_LObjLocator.T_All()
     T_Shop.T_All()
@@ -31,6 +33,7 @@ local function ExecuteLibraryTest(t)
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_LObjLibrary"}},
 
         {key = "2", desc = "LObjTest",          func = ExecuteLibraryTest, param = {filename = "T_LObjTest"}},
+        {key = "h", desc = "LObjHost",          func = ExecuteLibraryTest, param = {filename = "T_LObjHost"}},
 
         {key = "l", desc = "LObjLocator",		func = ExecuteLibraryTest, param = {filename = "T_LObjLocator"}},
 
@@ -45,6 +48,7 @@ function library.Setup()
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
     objectFactory:registerClass("LObjTest",     require "test.lobj_test")
+    objectFactory:registerClass("LObjHost",     require "lobj_host")
 
     objectFactory:registerClass("LObjLocator",  require "lobj_locator")
     objectFactory:registerClass("Shop",         require "shop")
@@ -52,6 +56,7 @@ function library.Setup()
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterModule("lobj_host") -- ToDo: beetje dubbel op met ook in ObjectFactory...
     moduleRegistry:requireAndRegisterModule("IItemSupplier", "i_item_supplier")
     moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
 
@@ -59,6 +64,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_LObjLibrary", libraryName..".library")
 
     moduleRegistry:requireAndRegisterModule("T_LObjTest", "test.t_lobj_test")
+    moduleRegistry:requireAndRegisterModule("T_LObjHost", "test.t_lobj_host")
 
     moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
     moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
