@@ -99,6 +99,17 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
+-  Factory improvements
+   -  remove static method style code (remaining from before it was a mobj)
+   -  ensure no longer need to register it as a module in the mobj library
+   -  split into CraftSpot & SmeltSpot MObj's
+
+-  ensure enterprise_shop implement LObjHost
+   -  upgrade into an LObjHost
+   -  use new LObjHost methods instead of current equivalent
+   -  use generalised test functions
+   -  rename enterprise_shop to better name: e.g. enterprise_govern
+
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
    -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
@@ -121,11 +132,6 @@ GR DisplayStation                                                               
 -  mine v2: Mine consisting of MineShaft (from surface level to underground) and MineLayers (underground)
    -  MineLayer:needsTo_ProvideItemsTo: take # expected squares into account
 
--  Factory improvements
-   -  remove static method style code (remaining from before it was a mobj)
-   -  ensure no longer need to register it as a module in the mobj library
-   -  split into CraftSpot & SmeltSpot MObj's
-
 -  Consider if LObjLocator is wanted (it has already been made)
    -  do we want LObjLocator (that has been made) or de we want to merge it into ObjLocator?
       -  now used to easily construct (L)ObjLocator from LObj
@@ -134,12 +140,6 @@ GR DisplayStation                                                               
 -  consider if ILObj/LObjHost should have upgrade/upgradeLObj_SSrv methods or leave it optional
 
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
-
--  ensure enterprise_shop implement LObjHost
-   -  upgrade into an LObjHost
-   -  use new LObjHost methods instead of current equivalent
-   -  use generalised test functions
-   -  rename enterprise_shop to better name: e.g. enterprise_govern
 
 -  ItemSupplierGroup & ItemDepotGroup
    -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
