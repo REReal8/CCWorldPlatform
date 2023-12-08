@@ -23,6 +23,33 @@ R  implement MineLayer                                                          
 
 R  Shop: implement ILObj                                                                                                (done)
 
+R  introduce ObjLocator class extending URL class representing a locator of an IObj                                     (done)
+   R  with methods                                                                                                      (done)
+      R  getObjClassName   (note: not getClassName as that is already reserved to identify the ObjLocator class itself) (done)
+      R  getObjClass                                                                                                    (done)
+      R  getObjRef                                                                                                      (done)
+   R  work with ObjLocator's instead of URL's                                                                           (done)
+      R  ObjHost                                                                                                        (done)
+      R  MObjHost                                                                                                       (done)
+      R  other places <hope I've had them all>                                                                          (done)
+
+R  hosting/ releasing, building/ dismantling v2.0                                                                       (done)
+   RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
+      RG Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
+      RG Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
+      RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
+      RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
+   R  introduce ObjHost class extending Host class                                                                      (done)
+      R  by splitting of all Object related code (from Host:getObj and further)                                         (done)
+      R  it can host any IObj                                                                                           (done)
+   R  Split off ILObj interface from IMObj                                                                              (done)
+      R  with methods                                                                                                   (done)
+         -  getId
+         -  construct
+         -  destruct
+      R  (note: an LObj is assumed to also be an IObj)                                                                  (done)
+
+
 ToDo List
 ---------
 --[[
@@ -65,16 +92,6 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
-R  introduce ObjLocator class extending URL class representing a locator of an IObj                                     (....)
-   R  with methods                                                                                                      (....)
-      R  getObjClassName   (note: not getClassName as that is already reserved to identify the ObjLocator class itself) (done)
-      -  getId             (note: optional; only if class is an ILObj)
-   -  work with ObjLocator's instead of URL's
-      -  LObjHost
-      -  ObjHost                                                                                                        (done)
-      -  MObjHost
-      -  ...
-
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
    -  creating a new Turtle: make sure it can get (provided) fuel, and maybe a pickaxe and a crafting station
@@ -102,29 +119,19 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
    -  ensure no longer need to register it as a module in the mobj library
    -  split into CraftSpot & SmeltSpot MObj's
 
--  hosting/ releasing, building/ dismantling v2.0
-   RG There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:        (done)
-      RG Shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in Shop as enterprise_shop) seems incorrect.
-      RG Shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
-      RG the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
-      RG introduce some intermediate abstraction between IObj and IMObj: ILObj , i.e. a intangible/ logical Obj
-   R  introduce ObjHost class extending Host class                                                                      (....)
-      R  by splitting of all Object related code (from Host:getObj and further)                                      (done)
-      R  it can host any IObj                                                                                           (....)
-   R  Split off ILObj interface from IMObj                                                                              (done)
-      -  with methods
-         -  getId
-         -  construct
-         -  upgrade (optional?)
-         -  destruct
-      -  (note: an LObj is assumed to also be an IObj)
-   -  introduce LObjHost class extending ObjHost
-      -  it can host any ILObj
-      -  by splitting of from MObjHost
-         -  hostMObj_SSrv
-         -  upgradeMObj_SSrv
-         -  releaseMObj_SSrv
+-  Consider if LObjLocator is wanted (it has already been made)
+   -  do we want LObjLocator (that has been made) or de we want to merge it into ObjLocator?
+      -  now used to easily construct (L)ObjLocator from LObj
+      -  usefull might be the getObjId method
+
+-  consider introducing LObjHost class extending ObjHost
+   -  it can host any ILObj
+   -  by splitting of from MObjHost
+      -  hostMObj_SSrv
+      -  releaseMObj_SSrv
    -  MObjHost extends LObjHost
+
+-  consider if ILObj/LObjHost should have upgrade/upgradeMObj_SSrv methods or leave it optional
 
 -  consider renaming (I)MObj to (I)PObj where P stands for Physical
 
