@@ -70,8 +70,8 @@ R  introduce ObjLocator class extending URL class representing a locator of an I
       R  getObjClassName   (note: not getClassName as that is already reserved to identify the ObjLocator class itself) (done)
       -  getId             (note: optional; only if class is an ILObj)
    -  work with ObjLocator's instead of URL's
-      -  ObjHost
       -  LObjHost
+      -  ObjHost                                                                                                        (done)
       -  MObjHost
       -  ...
 
