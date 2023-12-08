@@ -299,10 +299,9 @@ function Shop:registerItemSupplier_SOSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
 
-    -- get ItemSupplier
-    local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
-    if not itemSupplier then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed obtaining an object from itemSupplierLocator "..itemSupplierLocator:getURI()) return {success = false} end
-    if not Class.IsInstanceOf(itemSupplier, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: Obtained object from locator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
+    -- check ItemSupplier
+    local objClass = itemSupplierLocator:getObjClass()
+    if not Class.IsInstanceOf(objClass, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: objClass of ObjLocator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
 
     -- register the ItemSupplier
     corelog.WriteToLog(">Registering ItemSupplier "..itemSupplierLocator:getURI().." at Shop "..self:getId()..".")

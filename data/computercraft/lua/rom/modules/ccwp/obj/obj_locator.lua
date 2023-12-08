@@ -53,7 +53,7 @@ local classNamePattern = "%/"..objClassNameStr.."=([%w]+)"
 function ObjLocator:getObjClassName()
     -- determine objClassName from path
     local objClassName = self:getPath():match(classNamePattern)
-    if not objClassName then corelog.Warning("ObjLocator:getObjClassName: no objClassName in path of "..self:getURI()) return nil end
+    if not objClassName then corelog.Warning("ObjLocator:getObjClassName: no objClassName in path of "..self:getURI()) end
 
     -- end
     return objClassName
@@ -63,6 +63,7 @@ function ObjLocator:getObjClass()
     -- determine objClass
     local objClassName = self:getObjClassName()
     local objClass = objectFactory:getClass(objClassName)
+    if not objClass then corelog.Warning("ObjLocator:getObjClass: objClass of ObjLocator "..self:getURI().." not found in objectFactory") end
 
     -- end
     return objClass

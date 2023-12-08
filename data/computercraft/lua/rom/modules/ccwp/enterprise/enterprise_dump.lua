@@ -88,12 +88,9 @@ function enterprise_dump.ListItemDepot_SSrv(...)
                 mode                + (string, "append") append or overwrite the last known depot in the dump]], ...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot_SSrv: Invalid input") return {succes = false} end
 
-    -- check if the ObjLocator is an item depot
-    local itemDepot = ObjHost.GetObj(itemDepotLocator)
-
-    -- do some checks
-    if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator invalid")           return {succes = false} end
-    if not Class.IsInstanceOf(itemDepot, IItemDepot)    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator not an IItemDepot") return {succes = false} end
+    -- check ItemDepot
+    local objClass = itemDepotLocator:getObjClass()
+    if not Class.IsInstanceOf(objClass, IItemDepot) then corelog.Error("enterprise_dump.ListItemDepot_SSrv: objClass of ObjLocator "..itemDepotLocator:getURI().." is not an IItemDepot") return {success = false} end
 
     -- do the works
     ListItemDepot(itemDepotLocator, mode)
