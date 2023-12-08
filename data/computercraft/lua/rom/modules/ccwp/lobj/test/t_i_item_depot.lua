@@ -4,7 +4,7 @@ local corelog = require "corelog"
 
 local MethodExecutor = require "method_executor"
 
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
 
 local compact = { compact = true }
@@ -45,7 +45,7 @@ function T_IItemDepot.pt_storeItemsFrom_AOSrv(className, objLocator, itemSupplie
     assert(serviceResults.success, "failed executing service")
 
     -- check: items stored in destinationItemsLocator
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local destinationItemsLocator = ObjLocator:new(serviceResults.destinationItemsLocator)
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test

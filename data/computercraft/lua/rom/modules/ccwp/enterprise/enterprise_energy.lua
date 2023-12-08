@@ -61,10 +61,10 @@ local function Refuel_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleLocator                   + (URL) locator of the turtle
+                turtleLocator                   + (ObjLocator) locator of the turtle
                 fuelItems                       + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     --]], ...)
@@ -135,10 +135,10 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleLocator                   + (URL) locator of the turtle
+                turtleLocator                   + (ObjLocator) locator of the turtle
                 fuelAmount                      + (number) fuel amount to provide to turtle
-                ingredientsItemSupplierLocator  + (URL) locating where the fuel ingredients can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where the fuel ingredients can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     --]], ...)
@@ -281,8 +281,8 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 enterpriseLevel         + (number) with enterprise level
-                forestLocator           + (URL, nil) locating the BirchForest intended for raw fuel materials
-                factoryLocator          + (URL, nil) locating the Factory intended for producing fuel items
+                forestLocator           + (ObjLocator, nil) locating the BirchForest intended for raw fuel materials
+                factoryLocator          + (ObjLocator, nil) locating the Factory intended for producing fuel items
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
 

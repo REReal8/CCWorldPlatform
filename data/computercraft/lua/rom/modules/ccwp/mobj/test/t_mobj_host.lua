@@ -9,7 +9,7 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local MethodExecutor = require "method_executor"
 local ObjBase = require "obj_base"
 
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local Location = require "obj_location"
 local ObjHost = require "obj_host"
 
@@ -150,7 +150,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
 
     -- check: mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
-    assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
+    assert(Class.IsInstanceOf(mobjLocator, ObjLocator), "incorrect mobjLocator returned")
 
     -- check: mobj saved
     local mobj = mobjHost:getObj(mobjLocator)

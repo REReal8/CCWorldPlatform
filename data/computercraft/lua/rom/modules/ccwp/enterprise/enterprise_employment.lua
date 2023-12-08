@@ -624,8 +624,8 @@ function enterprise_employment:buildAndHostMObj_ASrv(...)
             serviceData                         - (table) data about this service
                 className                       + (string, "") with the name of the class of the Worker
                 constructParameters             + (table) parameters for constructing the Worker
-                materialsItemSupplierLocator    + (URL) locating the host for building materials
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                materialsItemSupplierLocator    + (ObjLocator) locating the host for building materials
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -773,7 +773,7 @@ function enterprise_employment.Fuel_Callback(...)
 
         Parameters:
             callbackData            - (table) callbackData
-                turtleLocator       + (URL) locator of the turtle
+                turtleLocator       + (ObjLocator) locator of the turtle
             serviceResults          + (table) result of service that calls back
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment.Fuel_Callback: Invalid input") return {success = false} end

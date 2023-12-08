@@ -4,7 +4,7 @@ local corelog = require "corelog"
 
 local MethodExecutor = require "method_executor"
 
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
 
 local MethodResultEqualTest = require "method_result_equal_test"
@@ -49,7 +49,7 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv(className, objLocator, provideI
     assert(serviceResults.success, "failed executing service")
 
     -- check: items provided to destinationItemsLocator
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local destinationItemsLocator = ObjLocator:new(serviceResults.destinationItemsLocator)
     assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test

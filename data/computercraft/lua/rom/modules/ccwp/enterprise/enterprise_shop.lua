@@ -13,7 +13,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local ObjArray = require "obj_array"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 
 local LObjLocator = require "lobj_locator"
 local Shop = require "shop"
@@ -70,7 +70,7 @@ function enterprise_shop:getShop()
     local nShops = self:getNumberOfObjects("Shop")
     if nShops == 0 then
         -- the Shop is not there yet => create it
-        shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(URL:getClassName()))
+        shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(ObjLocator:getClassName()))
         -- ToDo: use hostMObj_SSrv to construct Shop
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
@@ -101,7 +101,7 @@ function enterprise_shop.GetShopLocator()
         This function returns the Shop locator.
 
         Return value:
-            shopLocator             - (URL) locating the Shop
+            shopLocator             - (ObjLocator) locating the Shop
     --]]
 
     -- get Shop

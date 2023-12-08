@@ -38,15 +38,15 @@ function IItemDepot:storeItemsFrom_AOSrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
-                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                destinationItemsLocator - (ObjLocator) stating the final ItemDepot and the items that where stored
+                                            (upon service succes the "base" component of this ObjLocator should be equal to itemDepotLocator
                                             and the "query" should be equal to the "query" component of the itemsLocator)
 
         Parameters:
             serviceData                 - (table) data about the service
-                itemsLocator            + (URL) locating the items to store
-                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                            (the "query" component of the URL specifies the items)
+                itemsLocator            + (ObjLocator) locating the items to store
+                                            (the "base" component of the ObjLocator specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the ObjLocator specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], ...)
@@ -69,9 +69,9 @@ function IItemDepot:can_StoreItems_QOSrv(...)
 
         Parameters:
             serviceData             - (table) data to the query
-                itemsLocator        + (URL) locating the items that need to be stored
-                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
-                                        (the "query" component of the URL specifies the items to query for)
+                itemsLocator        + (ObjLocator) locating the items that need to be stored
+                                        (the "base" component of the ObjLocator specifies the ItemDepot to store the items in)
+                                        (the "query" component of the ObjLocator specifies the items to query for)
     --]], ...)
     if not checkSuccess then corelog.Error("IItemDepot:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
@@ -93,9 +93,9 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
 
         Parameters:
             serviceData                         - (table) data to the query
-                itemsLocator                    + (URL) locating the items to store
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
+                itemsLocator                    + (ObjLocator) locating the items to store
+                                                    (the "base" component of the ObjLocator specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the ObjLocator specifies the items)
     --]], ...)
     if not checkSuccess then corelog.Error("IItemDepot:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 

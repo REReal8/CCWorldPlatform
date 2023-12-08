@@ -26,7 +26,7 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjArray = require "obj_array"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
@@ -121,7 +121,7 @@ function Shop:construct(...)
 
     -- determine Shop fields
     local id = coreutils.NewId()
-    local itemSuppliersLocators = ObjArray:newInstance(URL:getClassName())
+    local itemSuppliersLocators = ObjArray:newInstance(ObjLocator:getClassName())
 
     -- construct new Shop
     local obj = Shop:newInstance(id, itemSuppliersLocators)
@@ -172,15 +172,15 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
         This function returns the best ItemSupplier of two ItemSupplier's for a specific item.
 
         Return value:
-            itemSupplierLocator                 - (URL) locating the best ItemSupplier of the items
+            itemSupplierLocator                 - (ObjLocator) locating the best ItemSupplier of the items
 
         Parameters:
             serviceData                         - (table) data to the query
                 item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-                itemSupplierLocator1            + (URL) locating the 1st ItemSupplier
-                itemSupplierLocator2            + (URL) locating the 2nd ItemSupplier
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
+                itemSupplierLocator1            + (ObjLocator) locating the 1st ItemSupplier
+                itemSupplierLocator2            + (ObjLocator) locating the 2nd ItemSupplier
     --]]
 
     -- check input
@@ -294,7 +294,7 @@ function Shop:registerItemSupplier_SOSrv(...)
 
         Parameters:
             serviceData             - (table) data for the service
-                itemSupplierLocator + (URL) locating the ItemSupplier
+                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
                 suppressWarning     + (boolean, false) if Warning should be suppressed
     --]], ...)
     if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
@@ -332,7 +332,7 @@ function Shop:delistItemSupplier_SOSrv(...)
 
         Parameters:
             serviceData             - (table) data for the service
-                itemSupplierLocator + (URL) locating the ItemSupplier
+                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
     ]], ...)
     if not checkSuccess then corelog.Error("Shop:delistItemSupplier_SOSrv: Invalid input") return {success = false} end
 
@@ -372,13 +372,13 @@ function Shop:getBestItemSupplierLocator_SOSrv(...)
         Return value:
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                bestItemSupplierLocator         - (URL) locating the best ItemSupplier of the items
+                bestItemSupplierLocator         - (ObjLocator) locating the best ItemSupplier of the items
 
         Parameters:
             serviceData                         - (table) data for the service
                 item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
 
@@ -422,16 +422,16 @@ function Shop:provideItemsTo_AOSrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                     the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where possible ingredients needed to provide can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -500,7 +500,7 @@ function Shop:provideItemsTo_AOSrv(...)
     projectData.assignmentsPriorityKey = assignmentsPriorityKey
     projectData.shop = self:copy() -- ToDo: consider providing locator at some point, to allow for things to change while performing async project
 
-    -- add combining URL's
+    -- add combining ObjLocator's
     local returnData = {}
     if iStep > 0 then
         iStep = iStep + 1
@@ -580,8 +580,8 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
         Parameters:
             serviceData                         - (table) data to the query
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 

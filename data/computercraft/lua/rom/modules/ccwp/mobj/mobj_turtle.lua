@@ -435,14 +435,14 @@ function Turtle:provideItemsTo_AOSrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                     the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -505,8 +505,8 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
         Parameters:
             serviceData                         - (table) data to the query
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (ObjLocator, nil) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
@@ -568,15 +568,15 @@ function Turtle:storeItemsFrom_AOSrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
-                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                destinationItemsLocator - (ObjLocator) stating the final ItemDepot and the items that where stored
+                                            (upon service succes the "base" component of this ObjLocator should be equal to itemDepotLocator
                                             and the "query" should be equal to the "query" component of the itemsLocator)
 
         Parameters:
             serviceData                 - (table) data about the service
-                itemsLocator            + (URL) locating the items to store
-                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                            (the "query" component of the URL specifies the items)
+                itemsLocator            + (ObjLocator) locating the items to store
+                                            (the "base" component of the ObjLocator specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the ObjLocator specifies the items)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], ...)
@@ -643,9 +643,9 @@ function Turtle:can_StoreItems_QOSrv(...)
 
         Parameters:
             serviceData             - (table) data to the query
-                itemsLocator        + (URL) locating the items that need to be stored
-                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
-                                        (the "query" component of the URL specifies the items to query for)
+                itemsLocator        + (ObjLocator) locating the items that need to be stored
+                                        (the "base" component of the ObjLocator specifies the ItemDepot to store the items in)
+                                        (the "query" component of the ObjLocator specifies the items to query for)
     --]], ...)
     if not checkSuccess then corelog.Error("Turtle:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
@@ -666,9 +666,9 @@ function Turtle:needsTo_StoreItemsFrom_SOSrv(...)
 
         Parameters:
             serviceData                         - (table) data to the query
-                itemsLocator                    + (URL) locating the items to store
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
+                itemsLocator                    + (ObjLocator) locating the items to store
+                                                    (the "base" component of the ObjLocator specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the ObjLocator specifies the items)
     --]], ...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 

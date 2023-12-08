@@ -7,9 +7,7 @@ local IItemSupplier = require "i_item_supplier"
 local IItemDepot = require "i_item_depot"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
-local Callback = require "obj_callback"
 local Location = require "obj_location"
-local URL = require "obj_url"
 
 local Turtle = require "mobj_turtle"
 

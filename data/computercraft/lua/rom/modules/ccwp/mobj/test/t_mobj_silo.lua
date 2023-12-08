@@ -12,12 +12,11 @@ local IItemDepot = require "i_item_depot"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local Inventory = require "obj_inventory"
 
 local Silo = require "mobj_silo"
 
-local enterprise_storage = require "enterprise_storage"
 local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
@@ -77,8 +76,8 @@ local baseLocation0  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation0 = baseLocation0:getRelativeLocation(3, 3, 0)
 local dropLocation0 = 0
 local pickupLocation0 = 0
-local topChests0 = ObjArray:newInstance(URL:getClassName()) assert(topChests0, "Failed obtaining ObjArray")
-local storageChests0 = ObjArray:newInstance(URL:getClassName()) assert(storageChests0, "Failed obtaining ObjArray")
+local topChests0 = ObjArray:newInstance(ObjLocator:getClassName()) assert(topChests0, "Failed obtaining ObjArray")
+local storageChests0 = ObjArray:newInstance(ObjLocator:getClassName()) assert(storageChests0, "Failed obtaining ObjArray")
 local nTopChests0 = 2
 local nLayers0 = 2
 
@@ -213,12 +212,12 @@ function T_Silo.T_ILObj_All()
     -- prepare test
     local topChestsDestructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local storageChestsDestructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local destructFieldsTest = TestArrayTest:newInstance(
@@ -230,12 +229,12 @@ function T_Silo.T_ILObj_All()
     local pickupLocation = 2
     local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nTopChests0)
     ))
     local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
     ))
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation0, entryLocation0, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
@@ -328,7 +327,7 @@ function T_Silo.T_needsTo_ProvideItemsTo_SOSrv()
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
     local chestLocator = enterprise_storage:saveObj(chest)
-    local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
+    local topChests = ObjArray:newInstance(ObjLocator:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
     local obj = T_Silo.CreateTestObj(nil, nil, nil, nil, nil, nil, topChests) assert(obj, "Failed obtaining "..testClassName)
@@ -354,7 +353,7 @@ function T_Silo.T_can_ProvideItems_QOSrv()
     })
     local chest = T_Chest.CreateTestObj(nil, nil, nil, inventory) assert(chest, "Failed obtaining Chest")
     local chestLocator = enterprise_storage:saveObj(chest)
-    local topChests = ObjArray:newInstance(URL:getClassName()) assert(topChests, "Failed obtaining topChests")
+    local topChests = ObjArray:newInstance(ObjLocator:getClassName()) assert(topChests, "Failed obtaining topChests")
     table.insert(topChests, chestLocator) -- note: fake Chest with specific items
 
     local obj = T_Silo.CreateTestObj(nil, nil, nil, nil, nil, nil, topChests) assert(obj, "Failed obtaining "..testClassName)

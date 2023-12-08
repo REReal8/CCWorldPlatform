@@ -4,7 +4,7 @@ local corelog = require "corelog"
 
 local Callback = require "obj_callback"
 local Location = require "obj_location"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local Inventory = require "obj_inventory"
 
 local TestArrayTest = require "test_array_test"
@@ -189,12 +189,12 @@ function t_storage.T_hostMObj_SSrv_Silo()
     enterprise_storage = enterprise_storage or require "enterprise_storage"
     local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nTopChests0)
     ))
     local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
     ))
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation_Silo0, entryLocation_Silo0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)

@@ -443,16 +443,16 @@ function MineShaft:provideItemsTo_AOSrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                     the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where possible ingredients needed to provide can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -594,8 +594,8 @@ function MineShaft:needsTo_ProvideItemsTo_SOSrv(...)
         Parameters:
             serviceData                         - (table) data to the query
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (ObjLocator, nil) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("MineShaft:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 

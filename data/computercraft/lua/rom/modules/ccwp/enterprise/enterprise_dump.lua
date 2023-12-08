@@ -11,7 +11,7 @@ local corelog       = require "corelog"
 local Class         = require "class"
 local ObjHost       = require "obj_host"
 local InputChecker  = require "input_checker"
-local URL           = require "obj_url"
+local ObjLocator    = require "obj_locator"
 
 -- interfaces
 local IItemDepot = require "i_item_depot"
@@ -47,8 +47,8 @@ function enterprise_dump.GetDumpLocator()
     -- get the data
     local dumpData = LoadData()
 
-    -- the requested URL, create from table
-    local depotLocator = URL:new(dumpData[#dumpData])
+    -- the requested ObjLocator, create from table
+    local depotLocator = ObjLocator:new(dumpData[#dumpData])
 
     -- we return
     return depotLocator
@@ -84,11 +84,11 @@ function enterprise_dump.ListItemDepot_SSrv(...)
 
         Parameters:
             serviceData             - (table) data for the service
-                itemDepotLocator    + (URL) the depot locator to add to the dump
+                itemDepotLocator    + (ObjLocator) the depot locator to add to the dump
                 mode                + (string, "append") append or overwrite the last known depot in the dump]], ...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot_SSrv: Invalid input") return {succes = false} end
 
-    -- check if the URL is an item depot
+    -- check if the ObjLocator is an item depot
     local itemDepot = ObjHost.GetObj(itemDepotLocator)
 
     -- do some checks
@@ -111,7 +111,7 @@ function enterprise_dump.DelistItemDepot(itemDepotLocator)
     -- check if this one is in our list
     for i, loc in ipairs(dumpData) do
 
-        -- check if both URL's are the same
+        -- check if both ObjLocator's are the same
 
     end
 

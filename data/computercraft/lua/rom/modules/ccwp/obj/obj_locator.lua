@@ -13,8 +13,6 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local IObj = require "i_obj"
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __

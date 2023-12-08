@@ -7,6 +7,7 @@ local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local MineLayer = require "mine_layer"
 
@@ -199,7 +200,7 @@ function T_MineLayer.T_ILObj_All()
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
     local cacheItemsLocatorTest1 = FieldTest:newInstance("_cacheItemsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
 

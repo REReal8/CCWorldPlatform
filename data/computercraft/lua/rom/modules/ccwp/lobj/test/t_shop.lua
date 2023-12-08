@@ -10,7 +10,7 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local Location = require "obj_location"
 
 local LObjLocator = require "lobj_locator"
@@ -76,7 +76,7 @@ local testHostName = "enterprise_shop"
 
 local logOk = false
 
-local itemSuppliersLocators0 = ObjArray:newInstance(URL:getClassName())
+local itemSuppliersLocators0 = ObjArray:newInstance(ObjLocator:getClassName())
 
 local constructParameters0 = {
 }

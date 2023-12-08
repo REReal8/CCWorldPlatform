@@ -6,7 +6,7 @@ local LObjLocator = Class.NewClass(ObjLocator)
 --[[
     This module implements the class LObjLocator.
 
-    A LObjLocator is a URL that locates an LObj.
+    A LObjLocator is a ObjLocator that locates an LObj.
 --]]
 
 local corelog = require "corelog"

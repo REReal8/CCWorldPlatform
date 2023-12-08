@@ -793,16 +793,16 @@ function Factory:provideItemsTo_AOSrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                     the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where possible ingredients needed to provide can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -962,8 +962,8 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         Parameters:
             serviceData                         - (table) data to the query
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL, nil) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator, nil) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
@@ -1048,15 +1048,15 @@ function Factory.ProduceItem_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                localOutputItemsLocator - (URL) locating the items that where produced
-                                            (upon service succes the "host" component of this URL should be equal to localOutputLocator, and
+                localOutputItemsLocator - (ObjLocator) locating the items that where produced
+                                            (upon service succes the "host" component of this ObjLocator should be equal to localOutputLocator, and
                                             the "query" should be equal to the "query" component of the localInputItemLocator)
-                wasteItemsLocator       - (URL) locating waste items produced during production
+                wasteItemsLocator       - (ObjLocator) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
-                localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
-                localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
+                localInputItemsLocator  + (ObjLocator) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
+                localOutputLocator      + (ObjLocator) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
                 productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
@@ -1176,12 +1176,12 @@ function Factory.CraftItem_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
-                turtleWasteItemsLocator - (URL) locating waste items produced during production
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
+                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
                 productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
@@ -1230,7 +1230,7 @@ function Factory.SmeltItem_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
+                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
                 productionSpot          + (ProductionSpot) production spot
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) smelting recipe
@@ -1277,8 +1277,8 @@ function Factory.Pickup_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (URL) locating the items that where pickedup (in a turtle)
-                turtleWasteItemsLocator - (URL) locating waste items produced during production
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where pickedup (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service

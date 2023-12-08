@@ -56,7 +56,7 @@ function MineLayer:_init(...)
             id                      + (string) id of the MineLayer
             baseLocation            + (Location) base location of the MineLayer
             currentHalfRib          + (number) with current halfRib of the MineLayer
-            cacheItemsLocator       + (URL) locating the cache ItemSupplier of mined items
+            cacheItemsLocator       + (ObjLocator) locating the cache ItemSupplier of mined items
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:_init: Invalid input") return nil end
 
@@ -79,7 +79,7 @@ function MineLayer:new(...)
                 _id                     - (string) id of the MineLayer
                 _baseLocation           - (Location) base location of the MineLayer
                 _currentHalfRib         - (number) with current halfRib of the MineLayer
-                _cacheItemsLocator      - (URL) locating the cache ItemSupplier of mined items
+                _cacheItemsLocator      - (ObjLocator) locating the cache ItemSupplier of mined items
     ]], ...)
     if not checkSuccess then corelog.Error("MineLayer:new: Invalid input") return nil end
 
@@ -406,16 +406,16 @@ function MineLayer:provideItemsTo_AOSrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                     the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where possible ingredients needed to provide can be retrieved
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -578,8 +578,8 @@ function MineLayer:needsTo_ProvideItemsTo_SOSrv(...)
         Parameters:
             serviceData                         - (table) data to the query
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (ObjLocator, nil) locating where ingredients can be retrieved
     --]], ...)
     if not checkSuccess then corelog.Error("MineLayer:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
