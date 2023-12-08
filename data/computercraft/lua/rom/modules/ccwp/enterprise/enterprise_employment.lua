@@ -21,8 +21,6 @@ local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
-local ObjTable = require "obj_table"
-local URL = require "obj_url"
 local Location  = require "obj_location"
 
 local LObjLocator = require "lobj_locator"
@@ -108,7 +106,7 @@ end
 function enterprise_employment:getObj(...)
     -- get & check input from description
     local checkSuccess, objLocator = InputChecker.Check([[
-        This method retrieves an Obj from the ObjHost using a URL (that was once provided by the ObjHost).
+        This method retrieves an Obj from the ObjHost using a ObjLocator.
 
         Return value:
             obj                     - (Obj) Obj obtained from the ObjHost
@@ -156,7 +154,7 @@ local function GetContainer(employmentHost, containerClassName, refName)
         if not containerClass then corelog.Error("enterprise_employment.GetContainer: Class "..containerClassName.." not found in objectFactory") return nil end
 
         -- (re)set container
-        local container = containerClass:newInstance(URL:getClassName())
+        local container = containerClass:newInstance(ObjLocator:getClassName())
         employmentHost:saveObj(container, refName)
 
         -- retrieve again
@@ -178,7 +176,7 @@ function enterprise_employment:getRegistered(...)
         This method provides the locator of a Worker 'workerId'.
 
         Return value:
-            workerLocator       - (URL) locating the Worker
+            workerLocator       - (ObjLocator) locating the Worker
 
         Parameters:
             workerId            + (number) workerId of the Worker
@@ -213,7 +211,7 @@ function enterprise_employment:register(...)
 
         Parameters:
             workerId                + (number) workerId of the Worker
-            workerLocator           + (URL) locating the Worker
+            workerLocator           + (ObjLocator) locating the Worker
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_employment:register: Invalid input") return false end
 
@@ -302,7 +300,7 @@ function enterprise_employment:getCurrentWorkerLocator()
         This method provides the locator of the current Worker (in enterprise_employment).
 
         Return value:
-            workerLocator       - (URL) locating the current Worker
+            workerLocator       - (ObjLocator) locating the current Worker
 
         Parameters:
     --]]
@@ -399,7 +397,7 @@ function enterprise_employment:getAndRemoveBirthCertificate(fatherId)
         This method provides the birthCertificate of Worker created by other Worker 'fatherId'.
 
         Return value:
-            workerLocator       - (URL) locating the current Worker
+            workerLocator       - (ObjLocator) locating the current Worker
 
         Parameters:
             fatherId            + (number) workerId of the father
@@ -620,7 +618,7 @@ function enterprise_employment:buildAndHostMObj_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the build and hosted Worker
+                mobjLocator                     - (ObjLocator) locating the build and hosted Worker
 
         Parameters:
             serviceData                         - (table) data about this service
@@ -720,7 +718,7 @@ function enterprise_employment.GetAnyTurtleLocator()
         turtle once it is to be used.
 
         Return value:
-            turtleLocator       - (URL) locating any turtle
+            turtleLocator       - (ObjLocator) locating any turtle
 
         Parameters:
     --]]
@@ -728,8 +726,7 @@ function enterprise_employment.GetAnyTurtleLocator()
     local objLocator = ObjLocator:newInstance(enterprise_employment:getHostName(), Turtle:getClassName(), "any")
 
     -- end
-    return URL:newFromURI(objLocator:getURI())
-    -- ToDo: investigate further why it is needed to convert the result back to a URL.
+    return objLocator
 end
 
 function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)

@@ -41,7 +41,7 @@ local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -186,8 +186,8 @@ function Factory:construct(...)
     -- determine Factory fields
     local id = coreutils.NewId()
     local productionSpotClassName = "ProductionSpot"
-    local inputLocators = ObjArray:newInstance(URL:getClassName())
-    local outputLocators = ObjArray:newInstance(URL:getClassName())
+    local inputLocators = ObjArray:newInstance(ObjLocator:getClassName())
+    local outputLocators = ObjArray:newInstance(ObjLocator:getClassName())
     local craftingSpots = ObjArray:newInstance(productionSpotClassName)
     local smeltingSpots = ObjArray:newInstance(productionSpotClassName)
     if level == 0 then

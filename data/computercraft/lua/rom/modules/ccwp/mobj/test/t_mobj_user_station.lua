@@ -6,6 +6,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local UserStation = require "mobj_user_station"
 
@@ -174,10 +175,10 @@ function T_UserStation.T_ILObj_All()
     local destructFieldsTest = TestArrayTest:newInstance(
     )
     local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
+        ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
     local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
+        ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
     local fieldsTest0 = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation0, inputLocatorTest, outputLocatorTest)
 

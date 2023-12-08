@@ -19,7 +19,7 @@ local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 
 local ObjTable = require "obj_table"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
@@ -54,8 +54,8 @@ function BirchForest:_init(...)
             level                   + (number) level of the BirchForest
             baseLocation            + (Location) base location of the BirchForest
             nTrees                  + (number) # trees in the BirchForest
-            localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a Chest)
-            localSaplingsLocator    + (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
+            localLogsLocator        + (ObjLocator) locating the local ItemSupplier of logs (e.g. a Chest)
+            localSaplingsLocator    + (ObjLocator) locating the local ItemSupplier of saplings (e.g. a Chest)
     ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:_init: Invalid input") return nil end
 
@@ -81,8 +81,8 @@ function BirchForest:new(...)
                 _level                  - (number) level of the BirchForest
                 _baseLocation           - (Location) base location of the BirchForest
                 _nTrees                 - (number) # trees in the BirchForest
-                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a Chest)
-                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a Chest)
+                _localLogsLocator       - (ObjLocator) locating the local ItemSupplier of logs (e.g. a Chest)
+                _localSaplingsLocator   - (ObjLocator) locating the local ItemSupplier of saplings (e.g. a Chest)
     ]], ...)
     if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return nil end
 
@@ -122,7 +122,7 @@ end
 
 function BirchForest:setLocalLogsLocator(localLocator)
     -- check input
-    if not Class.IsInstanceOf(localLocator, URL) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not Class.IsInstanceOf(localLocator, ObjLocator) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localLogsLocator = localLocator
 end
@@ -133,7 +133,7 @@ end
 
 function BirchForest:setLocalSaplingsLocator(localLocator)
     -- check input
-    if not Class.IsInstanceOf(localLocator, URL) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not Class.IsInstanceOf(localLocator, ObjLocator) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localSaplingsLocator = localLocator
 end

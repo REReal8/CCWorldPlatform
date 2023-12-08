@@ -3,7 +3,7 @@ local t_manufacturing = {}
 local ObjArray = require "obj_array"
 
 local Location = require "obj_location"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 
 local ProductionSpot = require "mobj_production_spot"
 
@@ -57,10 +57,10 @@ local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
 local baseLocation2 = baseLocation1:copy()
 
 local inputLocator0 = enterprise_employment.GetAnyTurtleLocator()
-local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
+local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLocator0, })
 
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
-local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
+local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
 local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
@@ -90,12 +90,12 @@ local upgradeParametersTo2 = {
 
 local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
     ValueTypeTest:newInstance("ObjArray"),
-    MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+    MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
     MethodResultEqualTest:newInstance("nObjs", 1)
 ))
 local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
     ValueTypeTest:newInstance("ObjArray"),
-    MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+    MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
     MethodResultEqualTest:newInstance("nObjs", 1)
 ))
 

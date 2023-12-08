@@ -233,10 +233,10 @@ end
 function t_employment.T_hostMObj_SSrv_UtilStation()
     -- prepare test
     local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
+        ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
     local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL")
+        ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
 
     local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
@@ -460,7 +460,7 @@ function t_employment.GetCurrentTurtleLocator()
         This method provides the locator of the current turtle (in enterprise_employment).
 
         Return value:
-            turtleLocator       - (URL) locating the current turtle
+            turtleLocator       - (ObjLocator) locating the current turtle
 
         Parameters:
     --]]
@@ -468,7 +468,7 @@ function t_employment.GetCurrentTurtleLocator()
     -- check turtle
     assert(turtle, "Current computer(ID="..os.getComputerID()..") not a Turtle")
 
-    -- construct URL
+    -- construct ObjLocator
     local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator()
 
     -- end

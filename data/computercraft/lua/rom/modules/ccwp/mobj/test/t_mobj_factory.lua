@@ -9,7 +9,7 @@ local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 
 local Location = require "obj_location"
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
 
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
@@ -86,10 +86,10 @@ local level2 = 2
 local baseLocation0 = Location:newInstance(12, 0, 1, 0, 1)
 
 local inputLocator0 = enterprise_employment.GetAnyTurtleLocator()
-local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
+local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLocator0, })
 
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
-local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
+local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
 local craftingSpot0 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(0, 0, 0), true)
 local productionSpotClassName = "ProductionSpot"
@@ -261,12 +261,12 @@ function T_Factory.T_ILObj_All()
     -- prepare tests
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local storageChestsDestructTest = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local destructFieldsTest = TestArrayTest:newInstance(
@@ -282,12 +282,12 @@ function T_Factory.T_ILObj_All()
 
     local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
     local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
     local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation0, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
@@ -436,12 +436,12 @@ function T_Factory.T_getFuelNeed_Production_Att()
         baseLocation    = baseLocation0:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
-    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
+    local inputLocators2 = ObjArray:newInstance(ObjLocator:getClassName(), { inputChestLocator, })
     local outputChestLocator = enterprise_storage:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation0:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
-    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
+    local outputLocators2 = ObjArray:newInstance(ObjLocator:getClassName(), { outputChestLocator, })
     local objL2 = T_Factory.CreateTestObj(nil, level2, baseLocation0, inputLocators2, outputLocators2) assert(objL2, "Failed obtaining "..testClassName)
 
     -- test L2
@@ -574,14 +574,14 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not produce without available inputLocator
     -- ToDo: improve by changing the availability of the inputLocator
-    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
+    local inputLocators2 = ObjArray:newInstance(ObjLocator:getClassName(), { })
     obj._inputLocators = inputLocators2
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._inputLocators = inputLocators0
 
     -- test can not produce without available outputLocator
     -- ToDo: improve by changing the availability of the _outputLocators
-    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
+    local outputLocators2 = ObjArray:newInstance(ObjLocator:getClassName(), { })
     obj._outputLocators = outputLocators2
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._outputLocators = outputLocators0

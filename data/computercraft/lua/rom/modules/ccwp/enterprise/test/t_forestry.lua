@@ -2,6 +2,7 @@ local t_forestry = {}
 local corelog = require "corelog"
 
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local enterprise_employment = require "enterprise_employment"
 local enterprise_forestry = require "enterprise_forestry"
@@ -178,11 +179,11 @@ end
 function t_forestry.T_upgradeMObj_SSrv_BirchForest()
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
@@ -214,11 +215,11 @@ end
 function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local upgradeFieldsTest = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)

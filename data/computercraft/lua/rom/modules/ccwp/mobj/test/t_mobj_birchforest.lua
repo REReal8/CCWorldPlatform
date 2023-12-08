@@ -7,6 +7,7 @@ local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local BirchForest = require "mobj_birchforest"
 
@@ -281,11 +282,11 @@ function T_BirchForest.T_ILObj_All()
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
     local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("URL"),
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
         MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
     ))
 

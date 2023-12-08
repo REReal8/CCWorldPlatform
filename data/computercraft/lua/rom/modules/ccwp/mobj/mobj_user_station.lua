@@ -51,8 +51,8 @@ function UserStation:_init(...)
             workerId                + (number) workerId of the UserStation
             isActive                + (boolean) whether the UserStation is active
             baseLocation            + (Location) base location of the UserStation
-            inputLocator            + (URL) input Chest of the UserStation (where items will be picked up from)
-            outputLocator           + (URL) output Chest of the UserStation (where items will be delivered)
+            inputLocator            + (ObjLocator) input Chest of the UserStation (where items will be picked up from)
+            outputLocator           + (ObjLocator) output Chest of the UserStation (where items will be delivered)
     ]], ...)
     if not checkSuccess then corelog.Error("UserStation:_init: Invalid input") return nil end
 
@@ -76,8 +76,8 @@ function UserStation:new(...)
                 _workerId               - (number) workerId of the UserStation
                 _isActive               - (boolean, false) whether the UserStation is active
                 _baseLocation           - (Location) location of the UserStation
-                _inputLocator           - (URL) input Chest of the UserStation
-                _outputLocator          - (URL) output Chest of the UserStation
+                _inputLocator           - (ObjLocator) input Chest of the UserStation
+                _outputLocator          - (ObjLocator) output Chest of the UserStation
     ]], ...)
     if not checkSuccess then corelog.Error("UserStation:new: Invalid input") return nil end
 
