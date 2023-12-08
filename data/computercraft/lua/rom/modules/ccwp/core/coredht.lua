@@ -118,6 +118,16 @@ local function SaveDataToDB(data, ...)
         ldb[listOfNodes[#listOfNodes]] = dataCopy
     end
 
+    -- detect werid situation
+    if coretask.QueueLength() == 0 and writeToFileQueued then
+
+        -- debug
+        corelog.WriteToLog("coredht.SaveDataToDB(): writeToFileQueued but nothing in the queue")
+
+        -- guess not queued
+        writeToFileQueued = false
+    end
+
     -- save the db table to a file
     if not writeToFileQueued then
         -- now it is in the queue
