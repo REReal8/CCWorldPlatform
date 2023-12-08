@@ -37,6 +37,7 @@ function ObjTable:_init(...)
     -- initialisation
     ObjBase._init(self)
     self._objClassName  = objClassName
+    local objClass = objectFactory:getClass(objClassName)
     for key, obj in pairs(objsTable) do
         if key == "_objClassName" then
             corelog.Warning("ObjTable:_init: key of object in objsTable is not allowed to be reserved key _objClassName => skipped")
@@ -44,7 +45,7 @@ function ObjTable:_init(...)
             if not Class.IsInstanceOf(obj, IObj) then
                 corelog.Warning("ObjTable:_init: obj not an IObj => skipped")
             else
-                if obj:getClassName() ~= objClassName then
+                if not Class.IsInstanceOf(obj, objClass) then
                     corelog.Warning("ObjTable:_init: obj type(="..obj:getClassName()..") not "..objClassName.." => skipped")
                 else
                     self[key] = obj
@@ -207,8 +208,8 @@ function ObjTable:transformObjectTables(suppressWarning)
         local obj = nil
         if objectTableClassName then
             -- check Obj of correct type
-            if objClassName == objectTableClassName then
-                obj = objectTable -- already an object of type 'class'
+            if Class.IsInstanceOf(objectTable, objClass) then
+                obj = objectTable -- already an object of (at least) type 'objClass'
             else
                 if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): objectTable class (="..objectTableClassName..") different from objClassName(="..objClassName..")") end
             end
