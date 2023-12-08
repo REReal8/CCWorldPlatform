@@ -6,9 +6,9 @@ local coretask = {}
     This module ...
 --]]
 
-local corelog = require "corelog"
-local coresystem = require "coresystem"
-local coreevent = require "coreevent"
+local corelog		= require "corelog"
+local coresystem	= require "coresystem"
+local coreevent		= require "coreevent"
 
 -- object / function references
 local work		        = {first = 0, last = -1}	-- list of known work items (as queue)
@@ -21,6 +21,7 @@ end
 function coretask.Setup()
 end
 
+-- deze functie werkt nergens gebruikt, werkt ook niet naar mijn verwachting
 function coretask.TaskComplete(taskId)
 	if type(taskId) == "number" then
 		return taskId < work.first
@@ -150,6 +151,10 @@ function NextWorkComplete()
     -- remove item from the list
     work[work.first]	= nil
     work.first			= work.first + 1
+end
+
+function coretask.QueueLength()
+	return 1 + work.last - work.first
 end
 
 return coretask
