@@ -8,6 +8,7 @@ local InputChecker = {}
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
@@ -105,12 +106,16 @@ function InputChecker.Check(description, ...)
                     if type(argument) ~= "table" then
                         correctArgumentType = false
                     else
-                        local object = objectFactory:create(typeType, argument)
-                        if object then
-                            argument = object
-                            argumentChanged = true
-                        else
-                            correctArgumentType = false
+                        -- check argument not yet instance of typeTypeClass
+                        local typeTypeClass = objectFactory:getClass(typeType)
+                        if not Class.IsInstanceOf(argument, typeTypeClass) then
+                            local object = objectFactory:create(typeType, argument)
+                            if object then
+                                argument = object
+                                argumentChanged = true
+                            else
+                                correctArgumentType = false
+                            end
                         end
                     end
                 end
