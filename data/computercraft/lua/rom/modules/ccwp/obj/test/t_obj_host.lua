@@ -6,7 +6,8 @@ local corelog = require "corelog"
 local IObj = require "i_obj"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
-local URL = require "obj_url"
+local ObjLocator = require "obj_locator"
+
 local ObjBase = require "obj_base"
 local ObjHost = require "obj_host"
 
@@ -143,28 +144,28 @@ function T_ObjHost.T_saveObj()
 
     -- test with supplying objRef (Obj)
     local objLocator = objHost1:saveObj(testObj, objRef)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName.."/ref="..objRef)
+    local expectedLocator = ObjLocator:newInstance(hostName1, testObjClassName, objRef)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test without supplying objRef (Obj)
     objLocator = objHost1:saveObj(testObj)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testObjClassName)
+    expectedLocator = ObjLocator:newInstance(hostName1, testObjClassName)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test with supplying objRef (LObj)
     objLocator = objHost1:saveObj(testLObj, objRef)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/ref="..objRef)
+    expectedLocator = ObjLocator:newInstance(hostName1, testLObjClassName, objRef)
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")
 
     -- test without supplying objRef (LObj)
     objLocator = objHost1:saveObj(testLObj)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..testLObjClassName.."/ref="..testLObj:getId())
+    expectedLocator = ObjLocator:newInstance(hostName1, testLObjClassName, testLObj:getId())
     assert(objLocator:isEqual(expectedLocator), "objLocator(="..objLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     objHost1:deleteResource(objLocator)
     assert(not objHost1:getResource(objLocator), "resource not deleted")

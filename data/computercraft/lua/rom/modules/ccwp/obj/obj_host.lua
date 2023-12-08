@@ -163,8 +163,8 @@ function ObjHost:saveObj(...)
     local objLocator = ObjLocator:newInstance(self:getHostName(), obj:getClassName(), objRef)
 
     -- save resource
-    objLocator = self:saveResource(obj, objLocator)
-    if not objLocator then corelog.Error("ObjHost:saveObj: Failed saving Obj located by "..objLocator:getURI()) return nil end
+    local resourceLocator = self:saveResource(obj, objLocator)
+    if not resourceLocator then corelog.Error("ObjHost:saveObj: Failed saving Obj located by "..objLocator:getURI()) return nil end
 
     -- end
     return objLocator
