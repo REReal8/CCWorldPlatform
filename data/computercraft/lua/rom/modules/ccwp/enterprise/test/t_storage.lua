@@ -14,6 +14,7 @@ local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Chest = require "test.t_mobj_chest"
 local T_Silo = require "test.t_mobj_silo"
+local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 local enterprise_projects = require "enterprise_projects"
@@ -22,7 +23,7 @@ local enterprise_storage
 function t_storage.T_All()
     -- IObj
 
-    -- MObjHost
+    -- LObjHost
     t_storage.T_hostMObj_SSrv_Chest()
     t_storage.T_releaseMObj_SSrv_Chest()
 
@@ -72,14 +73,14 @@ local constructParameters_Silo0 = {
 
 local logOk = false
 
---    __  __  ____  _     _ _    _           _
---   |  \/  |/ __ \| |   (_) |  | |         | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
---                      _/ |
---                     |__/
+--    _      ____  _     _ _    _           _
+--   | |    / __ \| |   (_) |  | |         | |
+--   | |   | |  | | |__  _| |__| | ___  ___| |_
+--   | |   | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |___| |__| | |_) | | |  | | (_) \__ \ |_
+--   |______\____/|_.__/| |_|  |_|\___/|___/\__|
+--                     _/ |
+--                    |__/
 
 -- ** Chest **
 
@@ -131,11 +132,68 @@ function t_storage.T_hostMObj_SSrv_Chest()
     local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation_Chest0, accessDirection0, inventory1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
+
+function t_storage.T_releaseMObj_SSrv_Chest()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+
+    -- test
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+-- ** Silo **
+
+function t_storage.T_hostMObj_SSrv_Silo()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
+        MethodResultEqualTest:newInstance("nObjs", nTopChests0)
+    ))
+    local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
+        MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
+    ))
+    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation_Silo0, entryLocation_Silo0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)
+
+    -- test
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, constructFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_storage.T_releaseMObj_SSrv_Silo()
+    -- prepare test
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+
+    -- test
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
+--                      _/ |
+--                     |__/
+
+-- ** Chest **
 
 local mobjLocator_Chest = nil
 
@@ -152,17 +210,6 @@ function t_storage.T_buildAndHostMObj_ASrv_Chest()
 
     -- return mobjLocator
     return serviceResults.mobjLocator
-end
-
-function t_storage.T_releaseMObj_SSrv_Chest()
-    -- prepare test
-    enterprise_storage = enterprise_storage or require "enterprise_storage"
-
-    -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testChestClassName, constructParameters_Chest0, testChestName, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
 end
 
 function t_storage.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
@@ -184,28 +231,6 @@ end
 
 -- ** Silo **
 
-function t_storage.T_hostMObj_SSrv_Silo()
-    -- prepare test
-    enterprise_storage = enterprise_storage or require "enterprise_storage"
-    local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
-        MethodResultEqualTest:newInstance("nObjs", nTopChests0)
-    ))
-    local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
-        MethodResultEqualTest:newInstance("nObjs", nLayers0*4)
-    ))
-    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation_Silo0, entryLocation_Silo0, dropLocation0, pickupLocation0, topChestsConstructTest, storageChestsConstructTest)
-
-    -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, constructFieldsTest, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
-end
-
 local mobjLocator_Silo = nil
 
 function t_storage.T_buildAndHostMObj_ASrv_Silo()
@@ -221,17 +246,6 @@ function t_storage.T_buildAndHostMObj_ASrv_Silo()
 
     -- return mobjLocator
     return serviceResults.mobjLocator
-end
-
-function t_storage.T_releaseMObj_SSrv_Silo()
-    -- prepare test
-    enterprise_storage = enterprise_storage or require "enterprise_storage"
-
-    -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testSiloClassName, constructParameters_Silo0, testSiloName, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
 end
 
 function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)

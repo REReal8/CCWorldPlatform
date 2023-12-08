@@ -12,6 +12,7 @@ local enterprise_gathering = require "enterprise_gathering"
 
 local T_MineShaft = require "test.t_mine_shaft"
 local T_MineLayer = require "test.t_mine_layer"
+local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_gathering.T_All()
@@ -82,7 +83,7 @@ function t_gathering.T_hostMObj_SSrv_MineShaft()
     local constructFieldsTest = T_MineShaft.CreateInitialisedTest(nil, baseLocation_MineShaft0, currentDepth0, maxDepth0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, testMineShaftName0, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, testMineShaftName0, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -109,7 +110,7 @@ function t_gathering.T_upgradeMObj_SSrv_MineShaft()
     local upgradeFieldsTest = T_MineShaft.CreateInitialisedTest(nil, baseLocation_MineShaft0, currentDepth0, maxDepth1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, upgradeParameters_MineShaft0, testMineShaftName0, upgradeFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, upgradeParameters_MineShaft0, testMineShaftName0, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -136,7 +137,7 @@ function t_gathering.T_releaseMObj_SSrv_MineShaft()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, testMineShaftName0, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_gathering, testMineShaftClassName, constructParameters_MineShaft0, testMineShaftName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -187,7 +188,7 @@ function t_gathering.T_hostMObj_SSrv_MineLayer()
     local constructFieldsTest = T_MineLayer.CreateInitialisedTest(nil, baseLocation_MineLayer0, currentHalfRib0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, testMineLayerName0, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, testMineLayerName0, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -214,7 +215,7 @@ function t_gathering.T_upgradeMObj_SSrv_MineLayer()
     local upgradeFieldsTest = T_MineLayer.CreateInitialisedTest(nil, baseLocation_MineLayer0, currentHalfRib0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, upgradeParameters_MineLayer0, testMineLayerName0, upgradeFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, upgradeParameters_MineLayer0, testMineLayerName0, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -241,7 +242,7 @@ function t_gathering.T_releaseMObj_SSrv_MineLayer()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, testMineLayerName0, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_gathering, testMineLayerClassName, constructParameters_MineLayer0, testMineLayerName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

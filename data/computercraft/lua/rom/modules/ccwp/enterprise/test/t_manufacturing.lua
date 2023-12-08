@@ -17,6 +17,7 @@ local ValueTypeTest = require "value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Factory = require "test.t_mobj_factory"
+local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_manufacturing.T_All()
@@ -115,7 +116,7 @@ function t_manufacturing.T_hostMObj_SSrv_Factory()
     local constructFieldsTest = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -170,7 +171,7 @@ function t_manufacturing.T_upgradeMObj_SSrv_Factory()
     local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -197,7 +198,7 @@ function t_manufacturing.T_releaseMObj_SSrv_Factory()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

@@ -14,6 +14,7 @@ local ValueTypeTest = require "value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
+local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_forestry.T_All()
@@ -112,7 +113,7 @@ function t_forestry.T_hostMObj_SSrv_BirchForest()
     local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, fieldsTest0, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -189,7 +190,7 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -241,7 +242,7 @@ function t_forestry.T_releaseMObj_SSrv_BirchForest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

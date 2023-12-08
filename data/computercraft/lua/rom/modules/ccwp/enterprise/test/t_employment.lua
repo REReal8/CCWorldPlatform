@@ -16,6 +16,7 @@ local ValueTypeTest = require "value_type_test"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
+local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
@@ -179,7 +180,7 @@ function t_employment.T_hostMObj_SSrv_Turtle()
     local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, baseLocation0, workerLocation0, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -206,7 +207,7 @@ function t_employment.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -242,7 +243,7 @@ function t_employment.T_hostMObj_SSrv_UtilStation()
     local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -270,7 +271,7 @@ function t_employment.T_releaseMObj_SSrv_UtilStation()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -299,7 +300,7 @@ function t_employment.T_hostMObj_SSrv_DisplayStation()
     local fieldsTest = T_DisplayStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_DisplayStation0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, fieldsTest, logOk)
+    local serviceResults = T_LObjHost.pt_hostMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, fieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -343,7 +344,7 @@ function t_employment.T_releaseMObj_SSrv_DisplayStation()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_employment, testDisplayStationClassName, constructParameters_DisplayStation0, testDisplayStationName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
