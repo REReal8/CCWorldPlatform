@@ -21,7 +21,7 @@ local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_manufacturing.T_All()
-    -- MObjHost
+    -- LObjHost
     t_manufacturing.T_hostMObj_SSrv_Factory()
     t_manufacturing.T_upgradeMObj_SSrv_Factory()
     t_manufacturing.T_releaseMObj_SSrv_Factory()
@@ -100,14 +100,16 @@ local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTe
     MethodResultEqualTest:newInstance("nObjs", 1)
 ))
 
---    __  __  ____  _     _ _    _           _
---   |  \/  |/ __ \| |   (_) |  | |         | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
---                      _/ |
---                     |__/
+--    _      ____  _     _ _    _           _
+--   | |    / __ \| |   (_) |  | |         | |
+--   | |   | |  | | |__  _| |__| | ___  ___| |_
+--   | |   | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |___| |__| | |_) | | |  | | (_) \__ \ |_
+--   |______\____/|_.__/| |_|  |_|\___/|___/\__|
+--                     _/ |
+--                    |__/
+
+-- ** Factory **
 
 function t_manufacturing.T_hostMObj_SSrv_Factory()
     -- prepare test
@@ -121,6 +123,38 @@ function t_manufacturing.T_hostMObj_SSrv_Factory()
 
     -- cleanup test
 end
+
+function t_manufacturing.T_upgradeMObj_SSrv_Factory()
+    -- prepare test
+    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+
+    -- test
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_manufacturing.T_releaseMObj_SSrv_Factory()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
+--                      _/ |
+--                     |__/
+
+-- ** Factory **
 
 local mobjLocator_Factory = nil
 
@@ -166,17 +200,6 @@ function t_manufacturing.T_buildAndHostMObj_ASrv_Factory2()
     return serviceResults.mobjLocator
 end
 
-function t_manufacturing.T_upgradeMObj_SSrv_Factory()
-    -- prepare test
-    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
-
-    -- test
-    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
-end
-
 function t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
     -- prepare test
     local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
@@ -189,16 +212,6 @@ function t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
 
     -- test
     local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_manufacturing, mobjLocator, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
-end
-
-function t_manufacturing.T_releaseMObj_SSrv_Factory()
-    -- prepare test
-
-    -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

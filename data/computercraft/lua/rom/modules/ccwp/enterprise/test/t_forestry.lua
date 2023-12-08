@@ -18,7 +18,7 @@ local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_forestry.T_All()
-    -- MObjHost
+    -- LObjHost
     t_forestry.T_hostMObj_SSrv_BirchForest()
     t_forestry.T_upgradeMObj_SSrv_BirchForest()
     t_forestry.T_releaseMObj_SSrv_BirchForest()
@@ -99,14 +99,16 @@ local upgradeParametersTo_L2T4 = {
     nTrees          = nTrees4,
 }
 
---    __  __  ____  _     _ _    _           _
---   |  \/  |/ __ \| |   (_) |  | |         | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
---                      _/ |
---                     |__/
+--    _      ____  _     _ _    _           _
+--   | |    / __ \| |   (_) |  | |         | |
+--   | |   | |  | | |__  _| |__| | ___  ___| |_
+--   | |   | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |___| |__| | |_) | | |  | | (_) \__ \ |_
+--   |______\____/|_.__/| |_|  |_|\___/|___/\__|
+--                     _/ |
+--                    |__/
+
+-- ** BirchForest **
 
 function t_forestry.T_hostMObj_SSrv_BirchForest()
     -- prepare test
@@ -118,6 +120,46 @@ function t_forestry.T_hostMObj_SSrv_BirchForest()
 
     -- cleanup test
 end
+
+function t_forestry.T_upgradeMObj_SSrv_BirchForest()
+    -- prepare test
+    local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
+    ))
+    local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance(ObjLocator:getClassName()),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
+    ))
+    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
+
+    -- test
+    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_forestry.T_releaseMObj_SSrv_BirchForest()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
+--                      _/ |
+--                     |__/
+
+-- ** BirchForest **
 
 local mobjLocator_BirchForest = nil
 
@@ -177,25 +219,6 @@ function t_forestry.T_buildAndHostMObj_ASrv_BirchForest_L2T2()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_upgradeMObj_SSrv_BirchForest()
-    -- prepare test
-    local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance(ObjLocator:getClassName()),
-        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
-    ))
-    local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
-        ValueTypeTest:newInstance(ObjLocator:getClassName()),
-        MethodResultEqualTest:newInstance("getHost", "enterprise_storage")
-    ))
-    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
-
-    -- test
-    local serviceResults = T_LObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
-end
-
 function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L0T1(mobjLocator)
     -- prepare test
     local upgradeFieldsTest = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
@@ -233,16 +256,6 @@ function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
 
     -- test
     local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_forestry, mobjLocator, upgradeParametersTo_L2T4, mobjLocator:getURI(), upgradeFieldsTest, logOk)
-    assert(serviceResults, "no serviceResults returned")
-
-    -- cleanup test
-end
-
-function t_forestry.T_releaseMObj_SSrv_BirchForest()
-    -- prepare test
-
-    -- test
-    local serviceResults = T_LObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
