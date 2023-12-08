@@ -38,10 +38,10 @@ local testClassName = "Host"
 local testObjName = "host"
 local logOk = false
 
-local hostName1 = "TestHost"
+local hostName0 = "TestHost"
 local hostName2 = "TestHost2"
 
-local host1 = Host:newInstance(hostName1)
+local host0 = Host:newInstance(hostName0)
 
 local compact = { compact = true }
 
@@ -54,7 +54,7 @@ local compact = { compact = true }
 
 function T_Host.CreateTestObj(hostName)
     -- check input
-    hostName = hostName1 or hostName
+    hostName = hostName0 or hostName
 
     -- create testObj
     local testObj = Host:newInstance(hostName)
@@ -80,8 +80,8 @@ function T_Host.T__init()
     corelog.WriteToLog("* "..testClassName..":_init() tests")
 
     -- test
-    local obj = T_Host.CreateTestObj(hostName1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Host.CreateInitialisedTest(hostName1)
+    local obj = T_Host.CreateTestObj(hostName0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Host.CreateInitialisedTest(hostName0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -93,9 +93,9 @@ function T_Host.T_new()
 
     -- test full
     local obj = Host:new({
-        _hostName   = hostName1,
+        _hostName   = hostName0,
     })
-    local test = T_Host.CreateInitialisedTest(hostName1)
+    local test = T_Host.CreateInitialisedTest(hostName0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -157,9 +157,8 @@ function T_Host.T_getHostLocator()
     corelog.WriteToLog("* "..testClassName..":getHostLocator() tests")
 
     -- test
-    local hostLocator = host1:getHostLocator()
-    local expectedLocator = URL:newInstance()
-    expectedLocator:setHost(hostName1)
+    local hostLocator = host0:getHostLocator()
+    local expectedLocator = URL:newInstance(hostName0)
     assert(hostLocator:isEqual(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
@@ -168,10 +167,10 @@ end
 function T_Host.T_isLocatorFromHost()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":isLocatorFromHost() tests")
-    local hostLocator = host1:getHostLocator()
+    local hostLocator = host0:getHostLocator()
 
     -- test
-    local isFromHost = host1:isLocatorFromHost(hostLocator)
+    local isFromHost = host0:isLocatorFromHost(hostLocator)
     local expectedIsFromHost = true
     assert(isFromHost == expectedIsFromHost, "gotten isLocatorFromHost(="..tostring(isFromHost)..") not the same as expected(="..tostring(expectedIsFromHost)..")")
 
@@ -187,29 +186,29 @@ end
 function T_Host.T_get_save_delete_Resource()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getResource, saveResource, deleteResource tests")
-    local resourceLocator = URL:newInstance(hostName1, resourcePath1)
+    local resourceLocator = URL:newInstance(hostName0, resourcePath1)
 
     -- test getResource (not yet present)
-    local resourceGotten = host1:getResource(resourceLocator)
+    local resourceGotten = host0:getResource(resourceLocator)
     assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
 
     -- test save
-    resourceLocator = host1:saveResource(resource, resourceLocator)
+    resourceLocator = host0:saveResource(resource, resourceLocator)
     local expectedLocator = URL:newInstance()
-    expectedLocator:setHost(hostName1)
+    expectedLocator:setHost(hostName0)
     expectedLocator:setPath(resourcePath1)
     assert(resourceLocator:isEqual(expectedLocator), "resourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test getResource (now present)
-    resourceGotten = host1:getResource(resourceLocator)
+    resourceGotten = host0:getResource(resourceLocator)
     assert(SameResource(resource, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not the same as expected(="..textutils.serialize(resource, compact)..")")
 
     -- test delete
-    local deleteSuccess = host1:deleteResource(resourceLocator)
+    local deleteSuccess = host0:deleteResource(resourceLocator)
     assert(deleteSuccess, "delete not succesfull")
 
     -- test getResource (no longer present)
-    resourceGotten = host1:getResource(resourceLocator)
+    resourceGotten = host0:getResource(resourceLocator)
     assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
 
     -- cleanup test
@@ -227,18 +226,18 @@ end
 function T_Host.T_GetHost()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..".GetHost(...) tests")
-    local module = moduleRegistry:getRegistered(hostName1)
-    assert(not module, "a module with name="..hostName1.." already registered")
+    local module = moduleRegistry:getRegistered(hostName0)
+    assert(not module, "a module with name="..hostName0.." already registered")
 
     -- test not registered Host
-    local obj = Host.GetHost(hostName1, true)
-    assert(not obj, "unexpectedly got a Host with hostName="..hostName1)
+    local obj = Host.GetHost(hostName0, true)
+    assert(not obj, "unexpectedly got a Host with hostName="..hostName0)
 
     -- test registered Host
-    moduleRegistry:register(hostName1, host1)
-    obj = Host.GetHost(hostName1)
-    assert(obj, "Host with hostName="..hostName1.." not gotten")
-    moduleRegistry:delist(hostName1)
+    moduleRegistry:register(hostName0, host0)
+    obj = Host.GetHost(hostName0)
+    assert(obj, "Host with hostName="..hostName0.." not gotten")
+    moduleRegistry:delist(hostName0)
 
     -- test other registered object
     local otherTestObj = TestObj:newInstance("field1", 4)
