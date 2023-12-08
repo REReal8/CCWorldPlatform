@@ -11,13 +11,13 @@ local LayerRectangle = require "obj_layer_rectangle"
 local role_builder = require "role_builder"
 
 function t_builder.T_All()
-    -- role_builder methods
+    -- role_builder
     t_builder.T_BuildLayer_MetaData()
     t_builder.T_BuildBlueprint_MetaData()
 end
 
 function t_builder.T_AllPhysical()
-    -- role_builder methods
+    -- role_builder
     t_builder.T_BuildLayer_Task_Down()
     t_builder.T_BuildLayer_Task_Up()
     t_builder.T_BuildLayer_Task_Front()

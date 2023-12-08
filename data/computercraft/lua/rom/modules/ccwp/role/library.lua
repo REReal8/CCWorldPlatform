@@ -16,11 +16,30 @@ function library.T_All()
     local t_alchemist = require "test.t_alchemist"
     local t_builder = require "test.t_builder"
     local t_forester = require "test.t_forester"
+    local t_miner = require "test.t_miner"
 
     -- library tests
     t_alchemist.T_All()
     t_builder.T_All()
     t_forester.T_All()
+    t_miner.T_All()
+end
+
+function library.T_AllPhysical()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
+
+    local t_alchemist = require "test.t_alchemist"
+    local t_builder = require "test.t_builder"
+    local t_forester = require "test.t_forester"
+    local t_miner = require "test.t_miner"
+
+    -- library tests
+    t_alchemist.T_AllPhysical()
+    t_builder.T_AllPhysical()
+    t_forester.T_AllPhysical()
+    t_miner.T_AllPhysical()
 end
 
 local function ExecuteLibraryTest(t)

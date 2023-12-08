@@ -27,6 +27,17 @@ function library.T_All()
     T_Shop.T_All()
 end
 
+function library.T_AllPhysical()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
+
+    local T_Shop = require "test.t_shop"
+
+    -- library tests
+    T_Shop.T_AllPhysical()
+end
+
 local function ExecuteLibraryTest(t)
     -- forward call with options
     local options	= {

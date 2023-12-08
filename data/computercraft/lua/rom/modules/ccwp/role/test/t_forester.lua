@@ -7,13 +7,17 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local Location = require "obj_location"
-local ItemTable = require "obj_item_table"
 
 local role_forester = require "role_forester"
 
 local t_employment
 
 function t_forester.T_All()
+    -- role_forester
+end
+
+function t_forester.T_AllPhysical()
+    -- role_forester
 end
 
 local logOk = false

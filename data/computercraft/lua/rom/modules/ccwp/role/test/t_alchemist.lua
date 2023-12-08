@@ -10,6 +10,7 @@ local role_alchemist = require "role_alchemist"
 local t_employment
 
 function t_alchemist.T_All()
+    -- role_alchemist
 end
 
 function t_alchemist.T_AllPhysical()

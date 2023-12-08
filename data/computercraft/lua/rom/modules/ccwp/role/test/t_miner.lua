@@ -10,6 +10,11 @@ local role_miner = require "role_miner"
 local t_employment
 
 function t_miner.T_All()
+    -- role_miner
+end
+
+function t_miner.T_AllPhysical()
+    -- role_miner
 end
 
 local logOk = false

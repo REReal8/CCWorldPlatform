@@ -28,6 +28,7 @@ function library.T_All()
     -- library tests
     t_test.T_All()
     t_assignmentboard.T_All()
+    -- t_colonization.T_All()
     t_employment.T_All()
     t_energy.T_All()
     t_forestry.T_All()
@@ -37,6 +38,32 @@ function library.T_All()
     t_projects.T_All()
     t_storage.T_All()
     t_shop.T_All()
+end
+
+function library.T_AllPhysical()
+    -- prepare test
+    local corelog = require "corelog"
+    corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
+
+    local t_employment = require "test.t_employment"
+    local t_forestry = require "test.t_forestry"
+    local t_gathering = require "test.t_gathering"
+    local t_manufacturing = require "test.t_manufacturing"
+    local t_storage = require "test.t_storage"
+
+    -- library tests
+    -- t_test.T_AllPhysical()
+    -- t_assignmentboard.T_AllPhysical()
+    -- t_colonization.T_AllPhysical()
+    t_employment.T_AllPhysical()
+    -- t_energy.T_AllPhysical()
+    t_forestry.T_AllPhysical()
+    t_gathering.T_AllPhysical()
+    -- t_isp.T_AllPhysical()
+    t_manufacturing.T_AllPhysical()
+    -- t_projects.T_AllPhysical()
+    t_storage.T_AllPhysical()
+    -- t_shop.T_AllPhysical()
 end
 
 local function ExecuteLibraryTest(t)
