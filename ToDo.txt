@@ -49,6 +49,13 @@ R  hosting/ releasing, building/ dismantling v2.0                               
          -  destruct
       R  (note: an LObj is assumed to also be an IObj)                                                                  (done)
 
+R  introduce LObjHost class extending ObjHost                                                                           (done)
+   R  it can host any ILObj                                                                                             (done)
+   R  by splitting of from MObjHost + renaming them                                                                     (done)
+      R  hostMObj_SSrv                                                                                                  (done)
+      R  releaseMObj_SSrv                                                                                               (done)
+   R  MObjHost extends LObjHost                                                                                         (done)
+   R  adapt and test all tests                                                                                          (done)
 
 ToDo List
 ---------
@@ -123,14 +130,6 @@ GR DisplayStation                                                               
    -  do we want LObjLocator (that has been made) or de we want to merge it into ObjLocator?
       -  now used to easily construct (L)ObjLocator from LObj
       -  usefull might be the getObjId method
-
-R  introduce LObjHost class extending ObjHost                                                                           (....)
-   R  it can host any ILObj                                                                                             (done)
-   R  by splitting of from MObjHost + renaming them                                                                     (done)
-      R  hostMObj_SSrv                                                                                                  (done)
-      R  releaseMObj_SSrv                                                                                               (done)
-   R  MObjHost extends LObjHost                                                                                         (done)
-   R  adapt and test all tests                                                                                          (....)
 
 -  consider if ILObj/LObjHost should have upgrade/upgradeLObj_SSrv methods or leave it optional
 
