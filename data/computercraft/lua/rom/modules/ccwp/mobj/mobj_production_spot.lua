@@ -243,51 +243,6 @@ function ProductionSpot:produceIngredientsNeeded(...)
     return ingredientsNeeded, productSurplus
 end
 
-function ProductionSpot:pickup_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, pickUpTime, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should pickup the results from a previous smelt step.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (ObjLocator) locating the items that where pickedup (in a turtle)
-                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                pickUpTime              + (number) the time after which the pickup should be done
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) amount of items to produce
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:pickup_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local pickupData = {
-        productItemName = productItemName,
-        productItemCount= productItemCount,
-
-        workingLocation = self:getBaseLocation():copy(),
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Pickup_MetaData(pickupData)
-    metaData.startTime = pickUpTime
-
-    -- do assignment
---    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -336,10 +291,6 @@ function ProductionSpot:produceItem_AOSrv(...)
 
         turtleInputLocator          = turtleInputLocator,
 
-        productionSpot              = self:copy(),
-        productItemName             = productItemName,
-        productItemCount            = productItemCount,
-
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
 
@@ -356,7 +307,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     -- add production steps
     local extraStep = 0
     if self:isCraftingSpot() then
-        -- craft data
+        -- craftData
         local craftData = {
             productItemName = productItemName,
             productItemCount= productItemCount,
@@ -385,7 +336,7 @@ function ProductionSpot:produceItem_AOSrv(...)
             }, description = "Crafting "..productItemCount.." "..productItemName}
         )
     else
-        -- data
+        -- smeltData
         local smeltData = {
             productItemCount= productItemCount,
             recipe          = productionRecipe,
@@ -407,23 +358,34 @@ function ProductionSpot:produceItem_AOSrv(...)
             { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }}
         )
-        extraStep = 1
         table.insert(projectSteps,
-            -- Craft_Task
+            -- Smelt_Task
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "smeltMetaData" },
                 { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "smeltTaskCall" },
-            }, description = "Crafting "..productItemCount.." "..productItemName}
+            }, description = "Smelting "..productItemCount.." "..productItemName}
         )
+
+        -- pickupData
+        local pickupData = {
+            productItemName = productItemName,
+            productItemCount= productItemCount,
+
+            workingLocation = self:getBaseLocation():copy(),
+
+            priorityKey     = assignmentsPriorityKey,
+        }
+        projectData.pickupMetaData = role_alchemist.Pickup_MetaData(pickupData)
+        projectData.pickupTaskCall = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData)
 
         -- add pickup step
         table.insert(projectSteps,
-            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "pickup_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
-                { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
-                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
-                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            -- Pickup_Task
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "pickupMetaData" },
+                { keyDef = "metaData.startTime"     , sourceStep = 3, sourceKeyDef = "smeltReadyTime" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "pickupTaskCall" },
             }, description = "Pickup "..productItemCount.." "..productItemName}
         )
 
@@ -438,7 +400,7 @@ function ProductionSpot:produceItem_AOSrv(...)
         }, description = "Storing items into "..localOutputLocator:getURI().." (local output)" }
     )
 
-    -- create project service data
+    -- create (remaining) project definition
     local projectDef = {
         steps = projectSteps,
         returnData  = {
@@ -449,7 +411,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make stuff" }, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
+        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make "..productItemCount.." "..productItemName}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
     }
 
     -- start project
