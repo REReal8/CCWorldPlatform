@@ -38,7 +38,6 @@ local coreutils = require "coreutils"
 local ObjArray = require "obj_array"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local ObjLocator = require "obj_locator"
@@ -51,13 +50,11 @@ local IItemDepot = require "i_item_depot"
 
 local ProductionSpot = require "mobj_production_spot"
 
-local role_alchemist = require "role_alchemist"
 local role_energizer = require "role_energizer"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_employment = require "enterprise_employment"
-local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing
@@ -1152,9 +1149,8 @@ function Factory.ProduceItem_ASrv(...)
     if productionSpot:isCraftingSpot() then
         -- add crafting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "CraftItem_ASrv" }, stepDataDef = {
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "craftItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
@@ -1164,9 +1160,8 @@ function Factory.ProduceItem_ASrv(...)
     else
         -- add smelting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "smeltItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
@@ -1175,9 +1170,8 @@ function Factory.ProduceItem_ASrv(...)
 
         -- add pickup step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "Pickup_ASrv" }, stepDataDef = {
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "pickup_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
                 { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
-                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
@@ -1232,152 +1226,5 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function Factory.CraftItem_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should craft items at the ProductionSpot.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
-                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          + (ProductionSpot) production spot
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) amount of items to produce
-                productionRecipe        + (table) crafting recipe
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("Factory.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local craftData = {
-        productItemName = productItemName,
-        productItemCount= productItemCount,
-
-        recipe          = productionRecipe,
-        workingLocation = productionSpot:getBaseLocation():copy(),
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Craft_MetaData(craftData)
-    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needWorkerId = turtleObj:getWorkerId()
-    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
-
-    -- do assignment
---    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
-
-function Factory.SmeltItem_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should smelt items at the ProductionSpot.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                smeltReadyTime          - (number) the time when the smelting is supposed to be ready
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          + (ProductionSpot) production spot
-                productItemCount        + (number) amount of items to produce
-                productionRecipe        + (table) smelting recipe
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("Factory.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local smeltData = {
-        productItemCount= productItemCount,
-        recipe          = productionRecipe,
-
-        workingLocation = productionSpot:getBaseLocation():copy(),
-
-        -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
-        fuelItemName    = "minecraft:birch_planks",
-        fuelItemCount   = productItemCount,
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Smelt_MetaData(smeltData)
-    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needWorkerId = turtleObj:getWorkerId()
-    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
-
-    -- do assignment
---    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
-
-function Factory.Pickup_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, pickUpTime, productionSpot, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should pickup the results from a previous smelt step.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (ObjLocator) locating the items that where pickedup (in a turtle)
-                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                pickUpTime              + (number) the time after which the pickup should be done
-                productionSpot          + (ProductionSpot) production spot
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) amount of items to produce
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("Factory.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local pickupData = {
-        productItemName = productItemName,
-        productItemCount= productItemCount,
-
-        workingLocation = productionSpot:getBaseLocation():copy(),
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Pickup_MetaData(pickupData)
-    metaData.startTime = pickUpTime
-
-    -- do assignment
---    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
 
 return Factory

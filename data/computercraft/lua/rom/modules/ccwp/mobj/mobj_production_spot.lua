@@ -17,8 +17,13 @@ local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 
+local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
+local ObjHost = require "obj_host"
+
 local role_alchemist = require "role_alchemist"
 
+local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_energy = require "enterprise_energy"
 
 --    _       _ _   _       _ _           _   _
@@ -235,5 +240,158 @@ function ProductionSpot:produceIngredientsNeeded(...)
     -- end
     return ingredientsNeeded, productSurplus
 end
+
+function ProductionSpot:craftItem_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, turtleInputItemsLocator, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async service should craft items at the ProductionSpot.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
+                productItemName         + (string) name of item to produce
+                productItemCount        + (number) amount of items to produce
+                productionRecipe        + (table) crafting recipe
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:craftItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- gather assignment data
+    local craftData = {
+        productItemName = productItemName,
+        productItemCount= productItemCount,
+
+        recipe          = productionRecipe,
+        workingLocation = self:getBaseLocation():copy(),
+
+        priorityKey     = assignmentsPriorityKey,
+    }
+    local metaData = role_alchemist.Craft_MetaData(craftData)
+    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("ProductionSpot:craftItem_AOSrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    metaData.needWorkerId = turtleObj:getWorkerId()
+    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
+
+    -- do assignment
+--    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
+    local assignmentServiceData = {
+        metaData    = metaData,
+        taskCall    = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData),
+    }
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+end
+
+function ProductionSpot:smeltItem_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, turtleInputItemsLocator, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async service should smelt items at the ProductionSpot.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                smeltReadyTime          - (number) the time when the smelting is supposed to be ready
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
+                productItemCount        + (number) amount of items to produce
+                productionRecipe        + (table) smelting recipe
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:smeltItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- gather assignment data
+    local smeltData = {
+        productItemCount= productItemCount,
+        recipe          = productionRecipe,
+
+        workingLocation = self:getBaseLocation():copy(),
+
+        -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
+        fuelItemName    = "minecraft:birch_planks",
+        fuelItemCount   = productItemCount,
+
+        priorityKey     = assignmentsPriorityKey,
+    }
+    local metaData = role_alchemist.Smelt_MetaData(smeltData)
+    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("ProductionSpot:smeltItem_AOSrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    metaData.needWorkerId = turtleObj:getWorkerId()
+    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
+
+    -- do assignment
+--    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
+    local assignmentServiceData = {
+        metaData    = metaData,
+        taskCall    = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData),
+    }
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+end
+
+function ProductionSpot:pickup_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, pickUpTime, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async service should pickup the results from a previous smelt step.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                turtleOutputItemsLocator- (ObjLocator) locating the items that where pickedup (in a turtle)
+                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                pickUpTime              + (number) the time after which the pickup should be done
+                productItemName         + (string) name of item to produce
+                productItemCount        + (number) amount of items to produce
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:pickup_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- gather assignment data
+    local pickupData = {
+        productItemName = productItemName,
+        productItemCount= productItemCount,
+
+        workingLocation = self:getBaseLocation():copy(),
+
+        priorityKey     = assignmentsPriorityKey,
+    }
+    local metaData = role_alchemist.Pickup_MetaData(pickupData)
+    metaData.startTime = pickUpTime
+
+    -- do assignment
+--    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
+    local assignmentServiceData = {
+        metaData    = metaData,
+        taskCall    = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData),
+    }
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+end
+
+--    _____ _____ _                  _____                   _ _
+--   |_   _|_   _| |                / ____|                 | (_)
+--     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
+--     | |   | | | __/ _ \ '_ ` _ \ \___ \| | | | '_ \| '_ \| | |/ _ \ '__|
+--    _| |_ _| |_| ||  __/ | | | | |____) | |_| | |_) | |_) | | |  __/ |
+--   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|
+--                                              | |   | |
+--                                              |_|   |_|
 
 return ProductionSpot
