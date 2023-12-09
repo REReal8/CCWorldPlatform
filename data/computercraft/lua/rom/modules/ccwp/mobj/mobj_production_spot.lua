@@ -23,6 +23,8 @@ local ObjHost = require "obj_host"
 
 local role_alchemist = require "role_alchemist"
 
+local enterprise_projects = require "enterprise_projects"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_energy = require "enterprise_energy"
 
@@ -393,5 +395,124 @@ end
 --   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|
 --                                              | |   | |
 --                                              |_|   |_|
+
+function ProductionSpot:produceItem_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, localInputItemsLocator, localOutputLocator, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public service produces multiple instances of a specific item in a factory site. It does so by producing
+        the requested amount of items with the supplied production method (i.e. crafting or smelting).
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                localOutputItemsLocator - (ObjLocator) locating the items that where produced
+                                            (upon service succes the "host" component of this ObjLocator should be equal to localOutputLocator, and
+                                            the "query" should be equal to the "query" component of the localInputItemLocator)
+                wasteItemsLocator       - (ObjLocator) locating waste items produced during production
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                localInputItemsLocator  + (ObjLocator) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
+                localOutputLocator      + (ObjLocator) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
+                productItemName         + (string) name of item to produce
+                productItemCount        + (number) amount of items to produce
+                productionRecipe        + (table) production recipe
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:produceItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- determine turtleInputLocator
+    local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
+
+    -- determine production steps
+    local projectSteps = {
+        -- get items into Turtle
+        -- ToDo: consider using provideItemsTo_AOSrv here...
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "turtleInputLocator" }, stepDataDef = {
+            { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
+            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+        }, description = "Getting items "..localInputItemsLocator:getURI().." (local input) into Turtle"},
+    }
+
+    -- add production steps
+    local extraStep = 0
+    if self:isCraftingSpot() then
+        -- add crafting step
+        table.insert(projectSteps,
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "craftItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
+                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }, description = "Crafting "..productItemCount.." "..productItemName}
+        )
+    else
+        -- add smelting step
+        table.insert(projectSteps,
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "smeltItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
+                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }, description = "Smelting "..productItemCount.." "..productItemName}
+        )
+
+        -- add pickup step
+        table.insert(projectSteps,
+            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "pickup_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
+                { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
+                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }, description = "Pickup "..productItemCount.." "..productItemName}
+        )
+
+        extraStep = 1
+    end
+
+    -- add remaining steps
+    table.insert(projectSteps,
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localOutputLocator" }, stepDataDef = {
+            { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
+            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+        }, description = "Storing items into "..localOutputLocator:getURI().." (local output)" }
+    )
+
+    -- create project service data
+    local projectDef = {
+        steps = projectSteps,
+        returnData  = {
+            { keyDef = "wasteItemsLocator"          , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
+            { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
+        }
+    }
+    local projectData = {
+        localInputItemsLocator      = localInputItemsLocator,
+        localOutputLocator          = localOutputLocator,
+
+        turtleInputLocator          = turtleInputLocator,
+
+        productionSpot              = self:copy(),
+        -- ToDo: use ObjLocator instead
+        productItemName             = productItemName,
+        productItemCount            = productItemCount,
+        productionRecipe            = productionRecipe,
+
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make stuff" }, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
 
 return ProductionSpot
