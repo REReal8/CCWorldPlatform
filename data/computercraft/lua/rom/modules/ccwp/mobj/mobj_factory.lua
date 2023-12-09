@@ -604,14 +604,14 @@ function Factory:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
+--    ______         _
+--   |  ____|       | |
+--   | |__ __ _  ___| |_ ___  _ __ _   _
+--   |  __/ _` |/ __| __/ _ \| '__| | | |
+--   | | | (_| | (__| || (_) | |  | |_| |
+--   |_|  \__,_|\___|\__\___/|_|   \__, |
+--                                  __/ |
+--                                 |___/
 
 function Factory:getAvailableInputLocator()
     -- find first available locator
@@ -693,13 +693,6 @@ function Factory:getAvailableProductionSpot(recipe)
     -- end
     return productionSpot, productionRecipe
 end
-
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
 
 function Factory:getFuelNeed_Production_Att(...)
     -- get & check input from description

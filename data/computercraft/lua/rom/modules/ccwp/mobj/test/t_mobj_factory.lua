@@ -51,13 +51,11 @@ function T_Factory.T_All()
     -- IMObj
     T_Factory.T_IMObj_All()
 
-    -- specific
+    -- Factory
     T_Factory.T_getAvailableInputLocator()
     T_Factory.T_getAvailableOutputLocator()
     T_Factory.T_getAvailableCraftSpot()
     T_Factory.T_getAvailableSmeltSpot()
-
-    -- service
     T_Factory.T_getFuelNeed_Production_Att()
 
     -- IItemSupplier
@@ -354,14 +352,14 @@ function T_Factory.T_IMObj_All()
     }, logOk)
 end
 
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
+--    ______         _
+--   |  ____|       | |
+--   | |__ __ _  ___| |_ ___  _ __ _   _
+--   |  __/ _` |/ __| __/ _ \| '__| | | |
+--   | | | (_| | (__| || (_) | |  | |_| |
+--   |_|  \__,_|\___|\__\___/|_|   \__, |
+--                                  __/ |
+--                                 |___/
 
 function T_Factory.T_getAvailableInputLocator()
     -- prepare test
@@ -410,13 +408,6 @@ function T_Factory.T_getAvailableSmeltSpot()
 
     -- cleanup test
 end
-
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
 
 function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test L1
