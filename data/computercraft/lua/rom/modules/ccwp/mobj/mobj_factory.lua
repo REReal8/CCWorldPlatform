@@ -185,11 +185,11 @@ function Factory:construct(...)
 
     -- determine Factory fields
     local id = coreutils.NewId()
-    local productionSpotClassName = "ProductionSpot"
+    local productionSpotId = "TBD"
     local inputLocators = ObjArray:newInstance(ObjLocator:getClassName())
     local outputLocators = ObjArray:newInstance(ObjLocator:getClassName())
-    local craftingSpots = ObjArray:newInstance(productionSpotClassName)
-    local smeltingSpots = ObjArray:newInstance(productionSpotClassName)
+    local craftingSpots = ObjArray:newInstance(ProductionSpot:getClassName())
+    local smeltingSpots = ObjArray:newInstance(ProductionSpot:getClassName())
     if level == 0 then
         -- inputLocators
         table.insert(inputLocators, enterprise_employment.GetAnyTurtleLocator())
@@ -198,7 +198,7 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(0, 0, 0), true))
+        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(0, 0, 0), true))
 
         -- smeltingSpots
         -- note: none
@@ -210,10 +210,10 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true))
+        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -4), true))
 
         -- smeltingSpots
-        table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
+        table.insert(smeltingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -3), false))
     elseif level == 2 then
         -- inputLocators
         local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
@@ -230,10 +230,10 @@ function Factory:construct(...)
         table.insert(outputLocators, outputChestLocator)
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true))
+        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -4), true))
 
         -- smeltingSpots
-        table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
+        table.insert(smeltingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -3), false))
     else
         corelog.Error("Factory:construct: Don't know how to construct a Factory of level "..level) return nil
     end

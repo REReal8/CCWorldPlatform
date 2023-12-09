@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local ProductionSpot = Class.NewClass(ObjBase)
+local ILObj = require "i_lobj"
+local ProductionSpot = Class.NewClass(ObjBase, ILObj)
 
 --[[
     The ProductionSpot mobj represents a production spot in the minecraft world and provides production services to operate on that ProductionSpot.
@@ -29,10 +30,11 @@ local enterprise_energy = require "enterprise_energy"
 
 function ProductionSpot:_init(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, isCraftingSpot = InputChecker.Check([[
+    local checkSuccess, id, baseLocation, isCraftingSpot = InputChecker.Check([[
         Initialise a ProductionSpot.
 
         Parameters:
+            id                      + (string) id of the ProductionSpot
             baseLocation            + (Location) base location of the ProductionSpot
             isCraftingSpot          + (boolean) if it is a crafting spot
     ]], ...)
@@ -40,8 +42,9 @@ function ProductionSpot:_init(...)
 
     -- initialisation
     ObjBase._init(self)
+    self._id                = id
     self._baseLocation      = baseLocation
-    self._isCraftingSpot   = isCraftingSpot
+    self._isCraftingSpot    = isCraftingSpot
 end
 
 -- ToDo: should be renamed to newFromTable at some point
@@ -52,6 +55,7 @@ function ProductionSpot:new(...)
 
         Parameters:
             o                       + (table, {}) with object fields
+                _id                 - (string, "unknown") id of the ProductionSpot
                 _baseLocation       - (Location) base location of the ProductionSpot
                 _isCraftingSpot     - (boolean) if it is a crafting spot
     ]], ...)
@@ -80,6 +84,67 @@ end
 
 function ProductionSpot:getClassName()
     return "ProductionSpot"
+end
+
+--    _____ _      ____  _     _
+--   |_   _| |    / __ \| |   (_)
+--     | | | |   | |  | | |__  _
+--     | | | |   | |  | | '_ \| |
+--    _| |_| |___| |__| | |_) | |
+--   |_____|______\____/|_.__/| |
+--                           _/ |
+--                          |__/
+
+function ProductionSpot:construct(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, isCraftingSpot = InputChecker.Check([[
+        This method constructs a ProductionSpot instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        The constructed ProductionSpot is not yet saved in the LObjHost.
+
+        Return value:
+                                        - (ProductionSpot) the constructed ProductionSpot
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the ProductionSpot
+                baseLocation            + (Location) base location of the ProductionSpot
+                isCraftingSpot          + (boolean) if it is a crafting spot
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:construct: Invalid input") return nil end
+
+    -- determine ProductionSpot fields
+    local id = coreutils.NewId()
+
+    -- construct new ProductionSpot
+    local obj = ProductionSpot:newInstance(id, baseLocation:copy(), isCraftingSpot)
+
+    -- end
+    return obj
+end
+
+function ProductionSpot:destruct()
+    --[[
+        This method destructs a ProductionSpot instance.
+
+        The ProductionSpot is not yet deleted from the MObjHost.
+
+        Return value:
+                                        - (boolean) whether the ProductionSpot was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- end
+    local destructSuccess = true
+    return destructSuccess
+end
+
+function ProductionSpot:getId()
+    return self._id
+end
+
+function ProductionSpot:getWIPId()
+    return self:getClassName().." "..self:getId()
 end
 
 --    _____ __  __  ____  _     _

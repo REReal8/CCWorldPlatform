@@ -63,12 +63,12 @@ local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLo
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
-local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
-local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
+local productionSpotId = "TBD"
+local craftingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation1:getRelativeLocation(3, 3, -4), true)
+local craftingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { craftingSpot1, })
 
-local smeltingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -3), false)
-local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
+local smeltingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation1:getRelativeLocation(3, 3, -3), false)
+local smeltingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { smeltingSpot1, })
 
 local constructParameters0 = {
     level           = level0,

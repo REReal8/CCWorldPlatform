@@ -89,15 +89,15 @@ local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLo
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
-local craftingSpot0 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(0, 0, 0), true)
-local productionSpotClassName = "ProductionSpot"
-local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
-local craftingSpot1 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(3, 3, -4), true)
-local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
+local productionSpotId = "TBD"
+local craftingSpot0 = ProductionSpot:newInstance(productionSpotId, baseLocation0:getRelativeLocation(0, 0, 0), true)
+local craftingSpots0 = ObjArray:newInstance(ProductionSpot:getClassName(), { craftingSpot0, })
+local craftingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation0:getRelativeLocation(3, 3, -4), true)
+local craftingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { craftingSpot1, })
 
-local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
-local smeltingSpot1 = ProductionSpot:newInstance(baseLocation0:getRelativeLocation(3, 3, -3), false)
-local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
+local smeltingSpots0 = ObjArray:newInstance(ProductionSpot:getClassName())
+local smeltingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation0:getRelativeLocation(3, 3, -3), false)
+local smeltingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { smeltingSpot1, })
 
 local constructParameters0 = {
     level           = level0,
@@ -548,7 +548,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not craft without available craftingSpot
     -- ToDo: improve when a spot can be marked unavailable
-    local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
+    local craftingSpots2 = ObjArray:newInstance(ProductionSpot:getClassName(), { })
     obj._craftingSpots = craftingSpots2
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:birch_planks"] = 10}, false, logOk)
     obj._craftingSpots = craftingSpots1
@@ -558,7 +558,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not smelt without available smeltingSpot
     -- ToDo: improve when a spot can be marked unavailable
-    local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
+    local smeltingSpots2 = ObjArray:newInstance(ProductionSpot:getClassName(), { })
     obj._smeltingSpots = smeltingSpots2
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:charcoal"] = 5}, false, logOk)
     obj._smeltingSpots = smeltingSpots1
