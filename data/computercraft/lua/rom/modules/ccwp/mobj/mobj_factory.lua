@@ -245,6 +245,11 @@ function Factory:construct(...)
     local outputLocators = ObjArray:newInstance(ObjLocator:getClassName())
     local craftingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
     local smeltingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
+
+    -- make sure module is loaded
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+
+    -- check the level
     if level == 0 then
         -- inputLocators
         table.insert(inputLocators, enterprise_employment.GetAnyTurtleLocator())
