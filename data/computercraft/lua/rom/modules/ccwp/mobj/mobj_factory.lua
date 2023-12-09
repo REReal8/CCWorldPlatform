@@ -46,6 +46,7 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 local ObjHost = require "obj_host"
 
+local LObjLocator = require "lobj_locator"
 local IItemDepot = require "i_item_depot"
 
 local ProductionSpot = require "mobj_production_spot"
@@ -847,6 +848,8 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
+local defaultHostName = "enterprise_manufacturing"
+
 function Factory:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -890,6 +893,8 @@ function Factory:provideItemsTo_AOSrv(...)
         if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
         local ingredientsNeeded, productSurplus = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
 
+        local productionSpotLocator = LObjLocator:newInstance(defaultHostName, productionSpot)
+
         -- retrieve site input & output locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
         local localOutputLocator = self:getAvailableOutputLocator():copy()
@@ -910,7 +915,7 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- produce items
-                { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "produceItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "produceItem_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
                     { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "productItemName"                , sourceStep = 0, sourceKeyDef = "itemName" },
@@ -942,7 +947,7 @@ function Factory:provideItemsTo_AOSrv(...)
             localInputLocator               = localInputLocator,
             localOutputLocator              = localOutputLocator,
 
-            productionSpot                  = productionSpot,
+            productionSpotLocator           = productionSpotLocator,
             itemName                        = itemName,
             itemCount                       = itemCount,
             productionRecipe                = productionRecipe,
