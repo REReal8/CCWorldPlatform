@@ -97,6 +97,10 @@ function coredisplay.Run()
 
     -- next line
     print("")
+    print("")
+    print("coredisplay.Run() stopt executing")
+    print("Have a nice day!")
+    print("")
 end
 
 -- gets or sets the next screen
@@ -251,7 +255,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
         if not f then corelog.Warning("coredisplay.ExecuteXObjTest(...): Function "..t.func.." not found in file "..t.filename) return false end
 
         -- executing the code as wordt
-        coretask.AddWork(f)
+        coretask.AddWork(f, nil, t.filename.."."..t.func.."()")
         coredisplay.UpdateToDisplay(t.filename.."."..t.func.." is queued for execution")
 
         -- stay on the testing screen when executing an command
