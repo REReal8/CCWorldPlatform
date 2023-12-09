@@ -5,8 +5,6 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local ObjLocator = require "obj_locator"
 
-local ProductionSpot = require "mobj_production_spot"
-
 local enterprise_employment = require "enterprise_employment"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
@@ -63,12 +61,18 @@ local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLo
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
-local productionSpotId = "TBD"
-local craftingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation1:getRelativeLocation(3, 3, -4), true)
-local craftingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { craftingSpot1, })
+local craftingSpotLocatorsTest0 = FieldTest:newInstance("_craftingSpotLocators", TestArrayTest:newInstance(
+    ValueTypeTest:newInstance("ObjArray"),
+    MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
+    MethodResultEqualTest:newInstance("nObjs", 1)
+))
 
-local smeltingSpot1 = ProductionSpot:newInstance(productionSpotId, baseLocation1:getRelativeLocation(3, 3, -3), false)
-local smeltingSpots1 = ObjArray:newInstance(ProductionSpot:getClassName(), { smeltingSpot1, })
+local smeltingSpotLocatorsTest1 = FieldTest:newInstance("_smeltingSpotLocators", TestArrayTest:newInstance(
+    ValueTypeTest:newInstance("ObjArray"),
+    MethodResultEqualTest:newInstance("getObjClassName", ObjLocator:getClassName()),
+    MethodResultEqualTest:newInstance("nObjs", 1)
+))
+
 
 local constructParameters0 = {
     level           = level0,
@@ -115,7 +119,7 @@ function t_manufacturing.T_hostLObj_SSrv_Factory()
     -- prepare test
     local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local constructFieldsTest = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
+    local constructFieldsTest = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpotLocatorsTest0, smeltingSpotLocatorsTest1)
 
     -- test
     local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
@@ -126,7 +130,7 @@ end
 
 function t_manufacturing.T_upgradeLObj_SSrv_Factory()
     -- prepare test
-    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpotLocatorsTest0, smeltingSpotLocatorsTest1)
 
     -- test
     local serviceResults = T_LObjHost.pt_upgradeLObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
@@ -202,7 +206,7 @@ end
 
 function t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
     -- prepare test
-    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpotLocatorsTest0, smeltingSpotLocatorsTest1)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator

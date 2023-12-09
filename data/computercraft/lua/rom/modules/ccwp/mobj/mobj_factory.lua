@@ -71,7 +71,7 @@ local enterprise_manufacturing
 
 function Factory:_init(...)
     -- get & check input from description
-    local checkSuccess, id, level, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots = InputChecker.Check([[
+    local checkSuccess, id, level, baseLocation, inputLocators, outputLocators, craftingSpotLocators, smeltingSpotLocators = InputChecker.Check([[
         Initialise a Factory.
 
         Parameters:
@@ -80,20 +80,20 @@ function Factory:_init(...)
             baseLocation            + (Location) base location of the Factory
             inputLocators           + (ObjArray) with input locators
             outputLocators          + (ObjArray) with output locators
-            craftingSpots           + (ObjArray) with crafting spots
-            smeltingSpots           + (ObjArray) with smelting spots
+            craftingSpotLocators    + (ObjArray) with crafting spot locators
+            smeltingSpotLocators    + (ObjArray) with smelting spot locators
     ]], ...)
     if not checkSuccess then corelog.Error("Factory:_init: Invalid input") return nil end
 
     -- initialisation
     ObjBase._init(self)
-    self._id                = id
-    self._level             = level
-    self._baseLocation      = baseLocation
-    self._inputLocators     = inputLocators
-    self._outputLocators    = outputLocators
-    self._craftingSpots     = craftingSpots
-    self._smeltingSpots     = smeltingSpots
+    self._id                    = id
+    self._level                 = level
+    self._baseLocation          = baseLocation
+    self._inputLocators         = inputLocators
+    self._outputLocators        = outputLocators
+    self._craftingSpotLocators  = craftingSpotLocators
+    self._smeltingSpotLocators  = smeltingSpotLocators
 end
 
 -- ToDo: should be renamed to newFromTable at some point
@@ -109,14 +109,72 @@ function Factory:new(...)
                 _baseLocation           - (Location) location of the Factory
                 _inputLocators          - (ObjArray) with input locators
                 _outputLocators         - (ObjArray) with output locators
-                _craftingSpots          - (ObjArray) with crafting spots
-                _smeltingSpots          - (ObjArray) with smelting spots
+                _craftingSpots          - (ObjArray, nil) with crafting spots
+                _smeltingSpots          - (ObjArray, nil) with smelting spots
+                _craftingSpotLocators   - (ObjArray, nil) with crafting spot locators
+                _smeltingSpotLocators   - (ObjArray, nil) with smelting spot locators
     ]], ...)
     if not checkSuccess then corelog.Error("Factory:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- temp conversion of previous style Factory
+    -- ToDo: remove when all! ;-) developers have updated their environment, => ready Guido?
+    -- (gewoon een probeerseltje of we in principe updates van code/ dht kunnen doen naar een nieuwe software versie)
+    local converted = false
+    if o._craftingSpots ~= nil and o._craftingSpotLocators == nil then
+        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+        corelog.Warning("Factory:new: converting _craftingSpots to _craftingSpotLocators")
+        for i, craftingSpot in ipairs(o._craftingSpots) do
+            corelog.WriteToLog("craftingSpot:")
+            corelog.WriteToLog(craftingSpot)
+
+            -- save spot
+            local id = coreutils.NewId()
+            craftingSpot._id = id
+            local spotLocator = enterprise_manufacturing:saveObj(craftingSpot)
+            corelog.WriteToLog("spotLocator:")
+            corelog.WriteToLog(spotLocator)
+
+            -- update o
+            o._craftingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
+            table.insert(o._craftingSpotLocators, spotLocator)
+
+            -- remove old
+            o._craftingSpots[i] = nil
+        end
+        o._craftingSpots = nil
+        converted = true
+    end
+    if o._smeltingSpots ~= nil and o._smeltingSpotLocators == nil then
+        corelog.Warning("Factory:new: converting _smeltingSpots to _smeltingSpotLocators")
+        for i, smeltingSpot in ipairs(o._smeltingSpots) do
+            corelog.WriteToLog("smeltingSpot:")
+            corelog.WriteToLog(smeltingSpot)
+
+            -- save spot
+            local id = coreutils.NewId()
+            smeltingSpot._id = id
+            local spotLocator = enterprise_manufacturing:saveObj(smeltingSpot)
+            corelog.WriteToLog("spotLocator:")
+            corelog.WriteToLog(spotLocator)
+
+            -- update o
+            o._smeltingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
+            table.insert(o._smeltingSpotLocators, spotLocator)
+
+            -- remove old
+            o._smeltingSpots[i] = nil
+        end
+        o._smeltingSpots = nil
+        converted = true
+    end
+    if converted then
+        corelog.Warning("Factory:new: saving converted Factory")
+        local factoryLocator = enterprise_manufacturing:saveObj(o)
+    end
 
     -- end
     return o
@@ -134,12 +192,12 @@ function Factory:getOutputLocators()
     return self._outputLocators
 end
 
-function Factory:getCraftingSpots()
-    return self._craftingSpots
+function Factory:getCraftingSpotLocators()
+    return self._craftingSpotLocators
 end
 
-function Factory:getSmeltingSpots()
-    return self._smeltingSpots
+function Factory:getSmeltingSpotLocators()
+    return self._smeltingSpotLocators
 end
 
 --    _____ ____  _     _
@@ -185,11 +243,10 @@ function Factory:construct(...)
 
     -- determine Factory fields
     local id = coreutils.NewId()
-    local productionSpotId = "TBD"
     local inputLocators = ObjArray:newInstance(ObjLocator:getClassName())
     local outputLocators = ObjArray:newInstance(ObjLocator:getClassName())
-    local craftingSpots = ObjArray:newInstance(ProductionSpot:getClassName())
-    local smeltingSpots = ObjArray:newInstance(ProductionSpot:getClassName())
+    local craftingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
+    local smeltingSpotLocators = ObjArray:newInstance(ObjLocator:getClassName())
     if level == 0 then
         -- inputLocators
         table.insert(inputLocators, enterprise_employment.GetAnyTurtleLocator())
@@ -198,7 +255,7 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(0, 0, 0), true))
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(0, 0, 0), isCraftingSpot=true}}).mobjLocator)
 
         -- smeltingSpots
         -- note: none
@@ -210,10 +267,10 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -4), true))
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4), isCraftingSpot=true}}).mobjLocator)
 
         -- smeltingSpots
-        table.insert(smeltingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -3), false))
+        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3), isCraftingSpot=false}}).mobjLocator)
     elseif level == 2 then
         -- inputLocators
         local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
@@ -230,16 +287,16 @@ function Factory:construct(...)
         table.insert(outputLocators, outputChestLocator)
 
         -- craftingSpots
-        table.insert(craftingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -4), true))
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4), isCraftingSpot=true}}).mobjLocator)
 
         -- smeltingSpots
-        table.insert(smeltingSpots, ProductionSpot:newInstance(productionSpotId, baseLocation:getRelativeLocation(3, 3, -3), false))
+        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3), isCraftingSpot=false}}).mobjLocator)
     else
         corelog.Error("Factory:construct: Don't know how to construct a Factory of level "..level) return nil
     end
 
     -- construct new Factory
-    local obj = Factory:newInstance(id, level, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpots:copy(), smeltingSpots:copy())
+    local obj = Factory:newInstance(id, level, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpotLocators:copy(), smeltingSpotLocators:copy())
 
     -- end
     return obj
@@ -313,23 +370,37 @@ function Factory:destruct()
 
     -- release inputLocators
     local destructSuccess = true
-    for i, mobjLocator in ipairs(self._inputLocators) do
-        local hostName = mobjLocator:getHost()
+    for i, inputLocator in ipairs(self._inputLocators) do
+        local hostName = inputLocator:getHost()
         if hostName == enterprise_storage:getHostName() then
-            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = mobjLocator })
-            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSuccess = false end
+            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = inputLocator })
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing inputLocator "..inputLocator:getURI()) destructSuccess = false end
         end
         self._inputLocators[i] = nil
     end
 
     -- release outputLocators
-    for i, mobjLocator in ipairs(self._outputLocators) do
-        local hostName = mobjLocator:getHost()
+    for i, outputLocator in ipairs(self._outputLocators) do
+        local hostName = outputLocator:getHost()
         if hostName == enterprise_storage:getHostName() then
-            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = mobjLocator })
-            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSuccess = false end
+            local releaseResult = enterprise_storage:releaseLObj_SSrv({ mobjLocator = outputLocator })
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing outputLocator "..outputLocator:getURI()) destructSuccess = false end
         end
         self._outputLocators[i] = nil
+    end
+
+    -- release craftingSpots
+    for i, craftingSpotLocator in ipairs(self._craftingSpotLocators) do
+        local releaseResult = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = craftingSpotLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing craftingSpotLocator "..craftingSpotLocator:getURI()) destructSuccess = false end
+        self._craftingSpotLocators[i] = nil
+    end
+
+    -- release smeltingSpots
+    for i, smeltingSpotLocator in ipairs(self._smeltingSpotLocators) do
+        local releaseResult = enterprise_manufacturing:releaseLObj_SSrv({ mobjLocator = smeltingSpotLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing smeltingSpotLocator "..smeltingSpotLocator:getURI()) destructSuccess = false end
+        self._smeltingSpotLocators[i] = nil
     end
 
     -- end
@@ -637,7 +708,11 @@ end
 
 function Factory:getAvailableCraftSpot()
     -- find first available spot
-    for i, spot in ipairs(self:getCraftingSpots()) do
+    for i, spotLocator in ipairs(self:getCraftingSpotLocators()) do
+        -- get spot
+        local spot = ObjHost.GetObj(spotLocator)
+        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+
         -- ToDo: check actual availability (make method of ProductionSpot?)
 
         -- take first
@@ -650,7 +725,11 @@ end
 
 function Factory:getAvailableSmeltSpot()
     -- find first available spot
-    for i, spot in ipairs(self:getSmeltingSpots()) do
+    for i, spotLocator in ipairs(self:getSmeltingSpotLocators()) do
+        -- get spot
+        local spot = ObjHost.GetObj(spotLocator)
+        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+
         -- ToDo: check actual availability (make method of ProductionSpot?)
 
         -- take first
