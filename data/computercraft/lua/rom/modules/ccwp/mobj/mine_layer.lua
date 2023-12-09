@@ -126,7 +126,7 @@ function MineLayer:construct(...)
     local checkSuccess, baseLocation = InputChecker.Check([[
         This method constructs a MineLayer instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed MineLayer is not yet saved in the MObjHost.
+        The constructed MineLayer is not yet saved in the LObjHost.
 
         Return value:
                                         - (MineLayer) the constructed MineLayer
@@ -157,7 +157,7 @@ function MineLayer:upgrade(...)
     local checkSuccess = InputChecker.Check([[
         This method upgrades a MineLayer instance from a table of parameters.
 
-        The upgraded MineLayer is not yet saved in the MObjHost.
+        The upgraded MineLayer is not yet saved in the LObjHost.
 
         Return value:
                                         - (boolean) whether the MineLayer was succesfully upgraded.

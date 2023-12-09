@@ -153,7 +153,7 @@ function Silo:construct(...)
 
         It also ensures all child MObj's the Silo spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed Silo is not yet saved in the MObjHost.
+        The constructed Silo is not yet saved in the LObjHost.
 
         Return value:
                                         - (Silo) the constructed Silo

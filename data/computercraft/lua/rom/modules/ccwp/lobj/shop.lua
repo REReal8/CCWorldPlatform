@@ -109,7 +109,7 @@ function Shop:construct(...)
     local checkSuccess  = InputChecker.Check([[
         This method constructs a Shop instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Shop is not yet saved in the MObjHost.
+        The constructed Shop is not yet saved in the LObjHost.
 
         Return value:
                                         - (Shop) the constructed Shop

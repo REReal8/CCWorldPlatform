@@ -121,7 +121,7 @@ function UserStation:construct(...)
 
         It also ensures all child MObj's the UserStation spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed UserStation is not yet saved in the MObjHost.
+        The constructed UserStation is not yet saved in the LObjHost.
 
         Return value:
                                         - (UserStation) the constructed UserStation

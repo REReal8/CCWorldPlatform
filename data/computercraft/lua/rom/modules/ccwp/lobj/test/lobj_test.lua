@@ -100,7 +100,7 @@ function LObjTest:construct(...)
 
         It also ensures all child MObj's the LObjTest spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed LObjTest is not yet saved in the MObjHost.
+        The constructed LObjTest is not yet saved in the LObjHost.
 
         Return value:
                                         - (LObjTest) the constructed LObjTest
@@ -126,7 +126,7 @@ function LObjTest:upgrade(...)
     local checkSuccess, field1 = InputChecker.Check([[
         This method upgrades a LObjTest instance from a table of parameters.
 
-        The upgraded LObjTest is not yet saved in the MObjHost.
+        The upgraded LObjTest is not yet saved in the LObjHost.
 
         Return value:
                                         - (boolean) whether the LObjTest was succesfully upgraded.

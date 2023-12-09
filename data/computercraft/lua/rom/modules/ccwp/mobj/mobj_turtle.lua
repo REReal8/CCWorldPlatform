@@ -130,7 +130,7 @@ function Turtle:construct(...)
     local checkSuccess, workerId, baseLocation, workerLocation = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Turtle is not yet saved in the MObjHost.
+        The constructed Turtle is not yet saved in the LObjHost.
 
         Return value:
                                         - (Turtle) the constructed Turtle

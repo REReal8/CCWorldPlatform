@@ -167,7 +167,7 @@ function BirchForest:construct(...)
 
         It also ensures all child MObj's the BirchForest spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed BirchForest is not yet saved in the MObjHost.
+        The constructed BirchForest is not yet saved in the LObjHost.
 
         Return value:
                                         - (BirchForest) the constructed BirchForest
@@ -225,7 +225,7 @@ function BirchForest:upgrade(...)
     local checkSuccess, upgradedLevel, upgradedNTrees = InputChecker.Check([[
         This method upgrades a BirchForest instance from a table of parameters.
 
-        The upgraded BirchForest is not yet saved in the MObjHost.
+        The upgraded BirchForest is not yet saved in the LObjHost.
 
         Return value:
                                         - (boolean) whether the BirchForest was succesfully upgraded.

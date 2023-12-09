@@ -126,7 +126,7 @@ function Chest:construct(...)
     local checkSuccess, baseLocation, accessDirection = InputChecker.Check([[
         This method constructs a Chest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Chest is not yet saved in the MObjHost.
+        The constructed Chest is not yet saved in the LObjHost.
 
         Return value:
                                         - (Chest) the constructed Chest

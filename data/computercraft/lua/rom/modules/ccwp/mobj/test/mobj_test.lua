@@ -90,7 +90,7 @@ function MObjTest:construct(...)
 
         It also ensures all child MObj's the MObjTest spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed MObjTest is not yet saved in the MObjHost.
+        The constructed MObjTest is not yet saved in the LObjHost.
 
         Return value:
                                         - (MObjTest) the constructed MObjTest

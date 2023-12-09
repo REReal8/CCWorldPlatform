@@ -124,7 +124,7 @@ function MineShaft:construct(...)
     local checkSuccess, baseLocation, maxDepth = InputChecker.Check([[
         This method constructs a MineShaft instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed MineShaft is not yet saved in the MObjHost.
+        The constructed MineShaft is not yet saved in the LObjHost.
 
         Return value:
                                         - (MineShaft) the constructed MineShaft
@@ -152,7 +152,7 @@ function MineShaft:upgrade(...)
     local checkSuccess, upgradedMaxDepth = InputChecker.Check([[
         This method upgrades a MineShaft instance from a table of parameters.
 
-        The upgraded MineShaft is not yet saved in the MObjHost.
+        The upgraded MineShaft is not yet saved in the LObjHost.
 
         Return value:
                                         - (boolean) whether the MineShaft was succesfully upgraded.

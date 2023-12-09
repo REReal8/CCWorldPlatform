@@ -171,7 +171,7 @@ function Factory:construct(...)
 
         It also ensures all child MObj's the Factory spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
 
-        The constructed Factory is not yet saved in the MObjHost.
+        The constructed Factory is not yet saved in the LObjHost.
 
         Return value:
                                         - (Factory) the constructed Factory
@@ -341,10 +341,6 @@ function Factory:getId()
 end
 
 function Factory:getWIPId()
-    --[[
-        Returns the unique Id of the Factory used for administering WIP.
-    ]]
-
     return self:getClassName().." "..self:getId()
 end
 

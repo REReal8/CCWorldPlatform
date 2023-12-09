@@ -156,7 +156,7 @@ function DisplayStation:construct(...)
     local checkSuccess, workerId, baseLocation = InputChecker.Check([[
         This method constructs a DisplayStation instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed DisplayStation is not yet saved in the MObjHost.
+        The constructed DisplayStation is not yet saved in the LObjHost.
 
         Return value:
                                         - (DisplayStation) the constructed DisplayStation
