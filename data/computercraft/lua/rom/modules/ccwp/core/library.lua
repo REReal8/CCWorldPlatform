@@ -50,12 +50,12 @@ local function MoveTurtle( t )
         return true
     else
         -- execute move
-            if t.direction == "Forward"		then coretask.AddWork(function () coremove.Forward()	end)
-        elseif t.direction == "Backward"	then coretask.AddWork(function () coremove.Backward()	end)
-        elseif t.direction == "Left"		then coretask.AddWork(function () coremove.Left()		end)
-        elseif t.direction == "Right"		then coretask.AddWork(function () coremove.Right()		end)
-        elseif t.direction == "Up"			then coretask.AddWork(function () coremove.Up()			end)
-        elseif t.direction == "Down"		then coretask.AddWork(function () coremove.Down()		end)
+            if t.direction == "Forward"		then coretask.AddWork(function () coremove.Forward()	end, nil, "coremove.Forward()")
+        elseif t.direction == "Backward"	then coretask.AddWork(function () coremove.Backward()	end, nil, "coremove.Backward()")
+        elseif t.direction == "Left"		then coretask.AddWork(function () coremove.Left()		end, nil, "coremove.Left()")
+        elseif t.direction == "Right"		then coretask.AddWork(function () coremove.Right()		end, nil, "coremove.Right()")
+        elseif t.direction == "Up"			then coretask.AddWork(function () coremove.Up()			end, nil, "coremove.Up()")
+        elseif t.direction == "Down"		then coretask.AddWork(function () coremove.Down()		end, nil, "coremove.Down()")
         end
 
         -- makes the previous screen stays loaded, so the human kan move the turtle again

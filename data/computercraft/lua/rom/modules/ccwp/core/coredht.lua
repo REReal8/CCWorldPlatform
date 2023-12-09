@@ -134,7 +134,7 @@ local function SaveDataToDB(data, ...)
         writeToFileQueued = true
 
         -- add to the work queue
-        coretask.AddWork(SaveDBToFile)
+        coretask.AddWork(SaveDBToFile, nil, "coredht.SaveDBToFile()")
     end
 
     -- check the triggers

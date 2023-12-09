@@ -392,7 +392,7 @@ end
 
 function UserStation.DoEventInputChestTimer(_, outputLocator)
     -- add the work, the real stuff
-    coretask.AddWork(role_conservator.CheckOutputChest, outputLocator)
+    coretask.AddWork(role_conservator.CheckOutputChest, outputLocator, "role_conservator.CheckOutputChest()")
 
     -- create new event
     coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", subject, outputLocator)

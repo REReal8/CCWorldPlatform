@@ -87,7 +87,7 @@ local function SaveDB()
 
         -- add to the work queue
         if queueWriteToFile then
-            coretask.AddWork(SaveDBToFile)
+            coretask.AddWork(SaveDBToFile, nil, "coremove.SaveDBToFile()")
         else
             SaveDBToFile()
         end
