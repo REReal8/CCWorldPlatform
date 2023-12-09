@@ -330,7 +330,7 @@ function coredht.RegisterTrigger(func, prot, data,  ...)
     for _, triggerDef in ipairs(dbTriggers) do
 
         -- known trigger? just don't add this one then
-        if triggerDef.prot == prot and triggerDef.data == data then return end
+        if triggerDef.func == func and triggerDef.prot == prot and triggerDef.data == data then return end
     end
 
     -- just insert it into the list of triggers
