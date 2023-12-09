@@ -197,6 +197,9 @@ local function DoEventAllDataTimer(subject, envelope)
 end
 
 local function DoEventSaveData(subject, envelope)
+    -- check, force a number
+    if type(db._version) ~= "number" then db._version = 0 end
+
     -- check for version differences
     if db._version ~= 0 and db._version + 1 ~= envelope.message.version then
         corelog.WriteToLog("DHT WARNING: Saving data from "..envelope.from.." with version "..envelope.message.version..". Current version is "..db._version)
@@ -305,7 +308,7 @@ function coredht.SaveData(data, ...)
     if type(db) ~= "table" or db._version == nil then corelog.WriteToLog("coredht.SaveData db var not ok. Traceback info: "..debug.traceback()) end
 
     -- update the version
-    db._version = db._version + 1
+    db._version = (db._version or 0) + 1
 
     -- send other what we are about to write (if event is ready ofcourse)
     coreevent.SendMessage({
