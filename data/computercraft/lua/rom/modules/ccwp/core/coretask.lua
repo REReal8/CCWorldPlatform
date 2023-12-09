@@ -31,26 +31,26 @@ function coretask.TaskComplete(taskId)
 end
 
 -- add something to do, and have the system triggered to get to work if idle
-function coretask.AddWork(func, data)
-    if (func) then
+function coretask.AddWork(func, data, desc)
+    if type(func) == "function" then
     	work.last		= work.last + 1
-    	work[work.last]	= {func = func, data = data}
+    	work[work.last]	= {func = func, data = data, desc = desc}
     	os.queueEvent("dummy")
 		return work.last
     else
-        corelog.WriteToLog("taskAPI.AddWork: func nil")
+        corelog.WriteToLog("taskAPI.AddWork: func not a function")
     end
 end
 
 -- add something to do right away, and have the system triggered to get to work if idle
-function AddNextWork(func, data)
-    if (func) then
+function AddNextWork(func, data, desc)
+    if type(func) == "function" then
 		work.first			= work.first - 1
-		work[work.first]	= {func = func, data = data}
+		work[work.first]	= {func = func, data = data, desc = desc}
 		os.queueEvent("dummy")
 		return work.first
     else
-        corelog.WriteToLog("taskAPI.AddNextWork: func nil")
+        corelog.WriteToLog("taskAPI.AddNextWork: func not a function")
     end
 end
 
@@ -86,7 +86,9 @@ function coretask.Run()
 			local nextWork = GetNextWork()
 
 			-- do the work
+			corelog.WriteToLog("coretask.Run(): executing "..(nextWork.desc or "unknown function"))
 			nextWork.func(nextWork.data)
+			corelog.WriteToLog("coretask.Run(): "..(nextWork.desc or "unknown function").." complete")
 
 			-- mark work as complete
 			NextWorkComplete()
