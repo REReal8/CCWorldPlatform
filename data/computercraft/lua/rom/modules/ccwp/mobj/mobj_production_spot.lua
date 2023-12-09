@@ -243,105 +243,6 @@ function ProductionSpot:produceIngredientsNeeded(...)
     return ingredientsNeeded, productSurplus
 end
 
-function ProductionSpot:craftItem_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should craft items at the ProductionSpot.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (ObjLocator) locating the items that where produced (in a turtle)
-                turtleWasteItemsLocator - (ObjLocator) locating waste items produced during production
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) amount of items to produce
-                productionRecipe        + (table) crafting recipe
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:craftItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local craftData = {
-        productItemName = productItemName,
-        productItemCount= productItemCount,
-
-        recipe          = productionRecipe,
-        workingLocation = self:getBaseLocation():copy(),
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Craft_MetaData(craftData)
-    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("ProductionSpot:craftItem_AOSrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needWorkerId = turtleObj:getWorkerId()
-    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
-
-    -- do assignment
---    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
-
-function ProductionSpot:smeltItem_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should smelt items at the ProductionSpot.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                smeltReadyTime          - (number) the time when the smelting is supposed to be ready
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                turtleInputItemsLocator + (ObjLocator) locating the production ingredients in the turtle that should do the crafting
-                productItemCount        + (number) amount of items to produce
-                productionRecipe        + (table) smelting recipe
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:smeltItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- gather assignment data
-    local smeltData = {
-        productItemCount= productItemCount,
-        recipe          = productionRecipe,
-
-        workingLocation = self:getBaseLocation():copy(),
-
-        -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
-        fuelItemName    = "minecraft:birch_planks",
-        fuelItemCount   = productItemCount,
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local metaData = role_alchemist.Smelt_MetaData(smeltData)
-    local turtleObj = ObjHost.GetObj(turtleInputItemsLocator) if not turtleObj then corelog.Error("ProductionSpot:smeltItem_AOSrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needWorkerId = turtleObj:getWorkerId()
-    -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
-
-    -- do assignment
---    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
-    local assignmentServiceData = {
-        metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData),
-    }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-end
-
 function ProductionSpot:pickup_AOSrv(...)
     -- get & check input from description
     local checkSuccess, pickUpTime, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -428,6 +329,20 @@ function ProductionSpot:produceItem_AOSrv(...)
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
 
+    -- create project data
+    local projectData = {
+        localInputItemsLocator      = localInputItemsLocator,
+        localOutputLocator          = localOutputLocator,
+
+        turtleInputLocator          = turtleInputLocator,
+
+        productionSpot              = self:copy(),
+        productItemName             = productItemName,
+        productItemCount            = productItemCount,
+
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }
+
     -- determine production steps
     local projectSteps = {
         -- get items into Turtle
@@ -441,25 +356,65 @@ function ProductionSpot:produceItem_AOSrv(...)
     -- add production steps
     local extraStep = 0
     if self:isCraftingSpot() then
-        -- add crafting step
+        -- craft data
+        local craftData = {
+            productItemName = productItemName,
+            productItemCount= productItemCount,
+
+            recipe          = productionRecipe,
+            workingLocation = self:getBaseLocation():copy(),
+
+            priorityKey     = assignmentsPriorityKey,
+        }
+        projectData.craftMetaData = role_alchemist.Craft_MetaData(craftData)
+        projectData.craftTaskCall = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData)
+
+        -- add crafting steps
         table.insert(projectSteps,
-            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "craftItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
-                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
-                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
-                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            -- obtain workerId
+            { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+            }}
+        )
+        extraStep = 1
+        table.insert(projectSteps,
+            -- Craft_Task
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "craftMetaData" },
+                { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "craftTaskCall" },
             }, description = "Crafting "..productItemCount.." "..productItemName}
         )
     else
-        -- add smelting step
+        -- data
+        local smeltData = {
+            productItemCount= productItemCount,
+            recipe          = productionRecipe,
+
+            workingLocation = self:getBaseLocation():copy(),
+
+            -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
+            fuelItemName    = "minecraft:birch_planks",
+            fuelItemCount   = productItemCount,
+
+            priorityKey     = assignmentsPriorityKey,
+        }
+        projectData.smeltMetaData = role_alchemist.Smelt_MetaData(smeltData)
+        projectData.smeltTaskCall = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData)
+
+        -- add smelting steps
         table.insert(projectSteps,
-            { stepType = "AOSrv", stepTypeDef = { className = "ProductionSpot", serviceName = "smeltItem_AOSrv", objStep = 0, objKeyDef = "productionSpot" }, stepDataDef = {
-                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
-                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }, description = "Smelting "..productItemCount.." "..productItemName}
+            -- obtain workerId
+            { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
+            }}
+        )
+        extraStep = 1
+        table.insert(projectSteps,
+            -- Craft_Task
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "smeltMetaData" },
+                { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "smeltTaskCall" },
+            }, description = "Crafting "..productItemCount.." "..productItemName}
         )
 
         -- add pickup step
@@ -472,7 +427,7 @@ function ProductionSpot:produceItem_AOSrv(...)
             }, description = "Pickup "..productItemCount.." "..productItemName}
         )
 
-        extraStep = 1
+        extraStep = 2
     end
 
     -- add remaining steps
@@ -490,20 +445,6 @@ function ProductionSpot:produceItem_AOSrv(...)
             { keyDef = "wasteItemsLocator"          , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
             { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
-    }
-    local projectData = {
-        localInputItemsLocator      = localInputItemsLocator,
-        localOutputLocator          = localOutputLocator,
-
-        turtleInputLocator          = turtleInputLocator,
-
-        productionSpot              = self:copy(),
-        -- ToDo: use ObjLocator instead
-        productItemName             = productItemName,
-        productItemCount            = productItemCount,
-        productionRecipe            = productionRecipe,
-
-        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = projectDef,
