@@ -22,7 +22,6 @@ local coreutils
 -- local data
 local db        = {
     env                 = {},
-    writeToFileQueued   = false,
     filename            = "/db/env.lua",
     protocol            = "core:env",
     kinds               = {["number"]=true, ["string"]=true, ["boolean"]=true, ["table"]=true},
@@ -66,9 +65,6 @@ local function ToTable(value)
 end
 
 local function SaveEnvToFile()
-    -- no longer in the queue since we are doing it now
-    db.writeToFileQueued = false
-
     -- save the db table to a file (this may take some time with larger dht's)
     coreutils.WriteToFile(db.filename, db.env, "overwrite")
 end
