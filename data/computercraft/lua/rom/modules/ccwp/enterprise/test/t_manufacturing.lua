@@ -73,7 +73,6 @@ local smeltingSpotLocatorsTest1 = FieldTest:newInstance("_smeltingSpotLocators",
     MethodResultEqualTest:newInstance("nObjs", 1)
 ))
 
-
 local constructParameters0 = {
     level           = level0,
 
