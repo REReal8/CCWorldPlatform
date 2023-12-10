@@ -108,8 +108,7 @@ function coretask.Run()
 			local now		= os.clock()
 
 			-- reset the work list
-			work.first	=  0
-			work.last	= -1
+			work			= {first = 0, last = -1}
 
 			-- find a function to run
 			for protocol, data in pairs(idleHandler) do
