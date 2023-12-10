@@ -86,9 +86,9 @@ function coretask.Run()
 			local nextWork = GetNextWork()
 
 			-- do the work
-			corelog.WriteToLog("coretask.Run(): executing "..(nextWork.desc or "unknown function"))
+--			corelog.WriteToLog("coretask.Run(): executing "..(nextWork.desc or "unknown function"))
 			nextWork.func(nextWork.data)
-			corelog.WriteToLog("coretask.Run(): "..(nextWork.desc or "unknown function").." complete")
+--			corelog.WriteToLog("coretask.Run(): "..(nextWork.desc or "unknown function").." complete")
 
 			-- mark work as complete
 			NextWorkComplete()
