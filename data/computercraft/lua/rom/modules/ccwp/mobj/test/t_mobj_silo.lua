@@ -423,11 +423,11 @@ end
 -- ToDo: rename to something with integrityCheck (production code, i.e. not release it again like the above test)
 function T_Silo.T_GetRandomSilo()
     local data = coredht.GetData("enterprise_storage", "objects", "class=Silo")
-    if type(data) ~= "table" then return nil end
+    if type(data) ~= "table" then print("data not a table") return nil end
     local id = next(data)
-    if not id then return nil end
+    if not id then print("no id") return nil end
     local silo = Silo:new(data[id])
-    if not silo then return nil end
+    if not silo then print("no silo") return nil end
 
     -- see what's inside
     silo:integrityCheck_AOSrv({}, Callback.GetNewDummyCallBack())

@@ -10,7 +10,7 @@ local coresystem	= require "coresystem"
 local coredht		= require "coredht"
 local corelog		= require "corelog"
 local coreutils		= require "coreutils"
-local coretask		= require "coretask"
+local coretest		= require "coretest"
 
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
@@ -255,7 +255,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
         if not f then corelog.Warning("coredisplay.ExecuteXObjTest(...): Function "..t.func.." not found in file "..t.filename) return false end
 
         -- executing the code as wordt
-        coretask.AddWork(f, nil, t.filename.."."..t.func.."()")
+        coretest.AddTest(f, nil, t.filename.."."..t.func.."()")
         coredisplay.UpdateToDisplay(t.filename.."."..t.func.." is queued for execution")
 
         -- stay on the testing screen when executing an command

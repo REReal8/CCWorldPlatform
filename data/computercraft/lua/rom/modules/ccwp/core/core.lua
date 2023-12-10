@@ -17,6 +17,7 @@ local coreassignment = require "coreassignment"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
 local coretask = require "coretask"
+local coretest = require "coretest"
 
 local db	    = {
     me				= os.getComputerID(),
@@ -41,6 +42,7 @@ function core.Init()
 	coreassignment.Init()
 	coremove.Init()
 	coretask.Init()
+	coretest.Init()
 	coreutils.Init()
 	corelog.Init()
 
@@ -62,6 +64,7 @@ function core.Setup()
 	coreassignment.Setup()
 	coremove.Setup()
 	coretask.Setup()
+	coretest.Setup()
 	coreutils.Setup()
 	corelog.Setup()
 
@@ -82,7 +85,7 @@ function core.Run()
 		coresystem.setStatus("running")
 
     	-- run some functions in parallel
-    	parallel.waitForAll(coreevent.Run, coretask.Run, coreutils.Run, coreassignment.Run, coredisplay.Run)
+    	parallel.waitForAll(coreevent.Run, coretask.Run, coretest.Run, coreutils.Run, coreassignment.Run, coredisplay.Run)
 
         -- no longer running, we're done
 		coresystem.setStatus("ready")
