@@ -85,7 +85,13 @@ function core.Run()
 		coresystem.setStatus("running")
 
     	-- run some functions in parallel
-    	parallel.waitForAll(coreevent.Run, coretask.Run, coretest.Run, coreassignment.Run, coredisplay.Run)
+    	parallel.waitForAll(
+			coreevent.Run,		-- process all event
+			coretask.Run,		-- process small task, enabling async write to file
+			coretest.Run,		-- for running test, won't interfere with rest of the systeem
+			coreassignment.Run,	-- runs assignments / the assignment board
+			coredisplay.Run		-- processes user interaction with the display
+		)
 
         -- no longer running, we're done
 		coresystem.setStatus("ready")
