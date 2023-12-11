@@ -69,6 +69,9 @@ function coretest.Run()
 			os.sleep(0.05)
 		end
 	end
+
+	-- show we are done!
+	print("coretest.Run() is complete")
 end
 
 return coretest

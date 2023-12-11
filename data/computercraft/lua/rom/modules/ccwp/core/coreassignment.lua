@@ -191,6 +191,9 @@ function coreassignment.Run()
         -- just wait a (quarter of a) second to try again
         os.sleep(0.25)
     end
+
+    -- show we are done!
+	print("coreassignment.Run() is complete")
 end
 
 function coreassignment.Reset()

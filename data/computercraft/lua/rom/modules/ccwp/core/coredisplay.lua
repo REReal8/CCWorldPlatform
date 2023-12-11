@@ -95,12 +95,8 @@ function coredisplay.Run()
         end
     end
 
-    -- next line
-    print("")
-    print("")
-    print("coredisplay.Run() stopt executing")
-    print("Have a nice day!")
-    print("")
+	-- show we are done!
+	print("coredisplay.Run() is complete")
 end
 
 -- gets or sets the next screen

@@ -452,6 +452,9 @@ function coreevent.Run()
 		    corelog.WriteToLog("WARNING: "..event.." ("..(p1 or '')..") took "..period.." seconds")
 		end
 	end
+
+	-- show we are done!
+	print("coreevent.Run() is complete")
 end
 
 local function SendBulkMessages()

@@ -137,6 +137,9 @@ function coretask.Run()
 			end
 		end
 	end
+
+	-- usefull feedback
+	print("coretask.Run() is complete")
 end
 
 -- get the next thing to do from the list, local function
