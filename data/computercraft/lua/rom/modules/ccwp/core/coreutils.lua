@@ -8,75 +8,13 @@ local coreutils = {}
 
 local corelog
 local coreenv		= require "coreenv"
+local coretask
 
 local db	= {
 	dbFilename  	= "/db/coreutils.lua",
 	protocol		= "coreutils",
     serial			= 0,                    -- for unique id's
 }
-
--- queue for async write to file
-local fsQueue		= {
-	first				=  0,
-	last				= -1,
-}
-
---                                               _ _         _           __ _ _
---                                              (_) |       | |         / _(_) |
---     __ _ ___ _   _ _ __   ___  __      ___ __ _| |_ ___  | |_ ___   | |_ _| | ___
---    / _` / __| | | | '_ \ / __| \ \ /\ / / '__| | __/ _ \ | __/ _ \  |  _| | |/ _ \
---   | (_| \__ \ |_| | | | | (__   \ V  V /| |  | | ||  __/ | || (_) | | | | | |  __/
---    \__,_|___/\__, |_| |_|\___|   \_/\_/ |_|  |_|\__\___|  \__\___/  |_| |_|_|\___|
---               __/ |
---              |___/
-
-local function AddToAsyncQueue(filename, message, writemode)
-	-- add to the end
-	fsQueue.last		= fsQueue.last + 1
-
-	-- add to the queue
-	fsQueue[fsQueue.last] = {
-		filename	= filename,
-		message		= message,
-		writemode	= writemode,
-	}
-
-	-- just add dummy event, you never know
-	os.queueEvent("dummy")
-end
-
-function coreutils.Run()
-	-- need this import
-	local coresystem	= require "coresystem"
-	local coreevent		= require "coreevent"
-
-	-- work forever
-	while coresystem.IsRunning() do
-
-		-- anything in the list?
-		if fsQueue.first <= fsQueue.last then
-
-			-- get the item
-			local fsWork = fsQueue[ fsQueue.first ]
-
-			-- do the file operation
-			coreutils.WriteToFileNow(fsWork.filename, fsWork.message, fsWork.writemode)
-
-			-- forget the item, reset the first
-			fsQueue[ fsQueue.first ]	= nil
-			fsQueue.first				= fsQueue.first + 1
-		else
-			-- create an dummy event so we will never wait longer for an event then 20 ticks
-			local id = coreevent.CreateTimeEvent(20, "dummy")
-
-			-- wait for any event, ignore result
-			os.pullEvent()
-
-			-- in case we have an other event
-			coreevent.CancelTimeEvent(id)
-		end
-	end
-end
 
 --                _     _ _
 --               | |   | (_)
@@ -164,10 +102,18 @@ function coreutils.ReadTableFromFile(filename)
 end
 
 function coreutils.WriteToFile(filename, message, writemode)
-	-- in async mode?
-	if coreenv.GetVariable(db.protocol, "write to file async")	then AddToAsyncQueue(filename, message, writemode)
+	-- make sure the module is loaded
+	coretask = coretask or require "coretask"
+
+	-- in async mode? then add to work
+	if coreenv.GetVariable(db.protocol, "write to file async")	then coretask.AddWork(coreutils.WriteToFileNowTab, {filename=filename, message=message, writemode=writemode}, "Writing to "..filename)
 																else coreutils.WriteToFileNow(filename, message, writemode)
 	end
+end
+
+function coreutils.WriteToFileNowTab(tab)
+	-- call it!
+	coreutils.WriteToFileNow(tab.filename, tab.message, tab.writemode)
 end
 
 function coreutils.WriteToFileNow(filename, message, writemode)
