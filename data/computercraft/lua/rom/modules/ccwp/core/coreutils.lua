@@ -198,7 +198,7 @@ function coreutils.CheckForRepetitions(orig, allTablesArray, duplicatTablesArray
 
 	return duplicatTablesArray
 end
-
+--[[
 -- dummy function to claim namespace until the function will be implemented
 function coreutils.NIY(msg)
 	-- Not implemented yet, do nothing special
@@ -207,7 +207,7 @@ function coreutils.NIY(msg)
 		corelog.WriteToLog('Not implemented yet: '..msg)
 	end
 end
-
+]]
 -- ToDo: consider adding method to check for nested tables (to be able to catch the annoying errors)
 
 
