@@ -57,7 +57,7 @@ function coreutils.NewId()
 	-- id is een altijd een string
 	return os.getComputerID() .. ":" .. db.serial
 end
-
+--[[
 function IdCreator(id)
 	local t	= {}
 
@@ -67,7 +67,7 @@ function IdCreator(id)
 	-- waarde voor de : is de creator
 	return t[0]
 end
-
+]]
 function IdSerial(id)
 	local t	= {}
 
