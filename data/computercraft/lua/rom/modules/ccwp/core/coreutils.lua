@@ -117,7 +117,8 @@ function coreutils.WriteToFileNowTab(tab)
 end
 
 function coreutils.WriteToFileNow(filename, message, writemode)
-		local mode	= "a"
+	-- default write mode
+	local mode	= "a"
 
 	-- check writemode
 	if writemode == "overwrite" then mode = "w" end
