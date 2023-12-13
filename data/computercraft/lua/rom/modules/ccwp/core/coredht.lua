@@ -7,9 +7,9 @@ local coredht = {}
 --]]
 
 local coreevent = require "coreevent"
-local corelog = require "corelog"
+local corelog   = require "corelog"
 local coreutils = require "coreutils"
-local coretask = require "coretask"
+local coretask  = require "coretask"
 
 local InputChecker
 
@@ -44,11 +44,6 @@ local function CoreDHTEventReadySetup()
     coreevent.CreateTimeEvent(5, protocol, "all data timer")
 end
 
-local function DoEventGetAllData(subject, envelope)
-    -- send all data back
-    coreevent.ReplyToMessage(envelope, "all data", {data = db})
-end
-
 local function SaveDBToFile()
     -- no longer in the queue since we are doing it now
     writeToFileQueued = false
@@ -77,6 +72,35 @@ local function SaveDBToFile()
     end
 end
 
+local function ResetHistory()
+    -- just reset it
+    dbHistory         = { _next = 1, _max = 30}
+end
+
+local function CheckPossibleConflict(listOfNodes, version)
+
+    -- check all known history
+    for i=0, dbHistory[ "_max" ] do
+
+        -- if a slot is not set yet, we are done!
+        if dbHistory[ i ] == nil then return false end
+
+        -- don't check against older versions, not really conflicts, just updates
+        if version <= dbHistory[ i ].version then
+
+            -- check if the keys are the same (keep in mind both arrays are most likely of different size)
+            local goingStrong = true
+            for j = 1, math.min(#listOfNodes, #dbHistory[i].listOfNodes) do goingStrong = goingStrong and (listOfNodes[j] == dbHistory[i].listOfNodes[j]) end
+
+            -- were are here, shit going on!
+            if goingStrong then return true end
+        end
+    end
+
+    -- all fine
+    return false
+end
+
 local function SaveDataToDB(data, ...)
     -- actually saves the data to the db
     local ldb = db
@@ -88,7 +112,7 @@ local function SaveDataToDB(data, ...)
     end
 
     -- history bijwerken
-    dbHistory[ dbHistory["_next"] ] = { data = data, listOfNodes = listOfNodes, version = db._version }
+    dbHistory[ dbHistory["_next"] ] = { listOfNodes = listOfNodes, version = db._version }
     dbHistory[ "_next" ]            = dbHistory[ "_next" ] % dbHistory[ "_max" ] + 1
 
     -- check for all data
@@ -118,16 +142,6 @@ local function SaveDataToDB(data, ...)
         ldb[listOfNodes[#listOfNodes]] = dataCopy
     end
 
-    -- detect werid situation
-    if coretask.QueueLength() == 0 and writeToFileQueued then
-
-        -- debug
-        corelog.WriteToLog("coredht.SaveDataToDB(): writeToFileQueued but nothing in the queue")
-
-        -- guess not queued
-        writeToFileQueued = false
-    end
-
     -- save the db table to a file
     if not writeToFileQueued then
         -- now it is in the queue
@@ -153,7 +167,7 @@ local function SaveDataToDB(data, ...)
 end
 
 local function DoDHTReady()
-    -- we zijn er klaar voor
+    -- we zijn blijkbaar klaar
     dhtReady = true
 
     -- check input box for the first time!
@@ -169,6 +183,14 @@ local function DoDHTReady()
 
     -- all functions executed, forget about them
 	dhtReadyFunctions = {}
+
+    -- fresh start
+    ResetHistory()
+end
+
+local function DoEventGetAllData(subject, envelope)
+    -- send all data back
+    coreevent.ReplyToMessage(envelope, "all data", {data = db})
 end
 
 local function DoEventAllData(subject, envelope)
@@ -201,8 +223,9 @@ local function DoEventSaveData(subject, envelope)
     if type(db._version) ~= "number" then db._version = 0 end
 
     -- check for version differences
-    if db._version ~= 0 and db._version + 1 ~= envelope.message.version then
+    if db._version ~= 0 and db._version + 1 ~= envelope.message.version and CheckPossibleConflict(envelope.message.arg, envelope.message.version) then
         corelog.WriteToLog("DHT WARNING: Saving data from "..envelope.from.." with version "..envelope.message.version..". Current version is "..db._version)
+        corelog.WriteToLog("  args are: "..textutils.serialize(envelope.message.arg))
     end
 
     -- versie bijwerken
