@@ -139,7 +139,7 @@ function coreutils.WriteToFileNow(filename, message, writemode)
 	end
 end
 
-function coreutils.UniversalTime()
+function coreutils.UniversalTime() -- note: each 'hour' on the os.time, and hence ingame UTC, scale is 50 seconds in real-life
 	return 24 * os.day() + os.time() -- https://computercraft.info/wiki/Os.time (waarde tussen 0 en 23.999)
 end
 

@@ -393,9 +393,9 @@ function role_alchemist.Smelt_Task(...)
     turtle.drop(fuelItemCount)
 
     -- determine expected completion time
-    local smeltingTime = 10 * times -- one smelting operation is sayed to take 10 seconds
+    local smeltingSeconds = 10 * times -- note: one smelting operation is sayed to take 10 real-life seconds
     local now = coreutils.UniversalTime()
-    local smeltReadyTime = now + smeltingTime
+    local smeltReadyTime = now + smeltingSeconds/50 -- note: each 'hour' on the os.time scale is 50 seconds in real-life
 
     -- end
     return {success = true, smeltReadyTime = smeltReadyTime}
