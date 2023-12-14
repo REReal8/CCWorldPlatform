@@ -868,7 +868,7 @@ function Factory:provideItemsTo_AOSrv(...)
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "produceItem_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
                     { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
-                    { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 }},
