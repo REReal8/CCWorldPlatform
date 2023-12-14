@@ -395,7 +395,7 @@ function role_alchemist.Smelt_Task(...)
     -- determine expected completion time
     local smeltingTime = 10 * times -- one smelting operation is sayed to take 10 seconds
     local now = coreutils.UniversalTime()
-    local smeltReadyTime = now + smeltingTime/50
+    local smeltReadyTime = now + smeltingTime
 
     -- end
     return {success = true, smeltReadyTime = smeltReadyTime}
