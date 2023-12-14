@@ -91,6 +91,18 @@ function ItemTable:hasNoItems()
     return true
 end
 
+function ItemTable:nEntries()
+    --[[
+        Return the number of item entries in the ItemTable.
+    ]]
+
+    local nEntries = 0
+    for itemName, itemCount in pairs(self) do nEntries = nEntries + 1 end
+
+    -- end
+    return nEntries
+end
+
 function ItemTable:add(itemName, itemCount)
     -- check parameters
     if type(itemName) ~= "string" or type(itemCount) ~= "number" then corelog.Warning("ItemTable:add(): bad parameter(s)") return end

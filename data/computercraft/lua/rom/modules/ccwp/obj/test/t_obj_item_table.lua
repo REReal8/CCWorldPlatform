@@ -16,6 +16,7 @@ function T_ItemTable.T_All()
     -- specific
     T_ItemTable.T_isEmpty()
     T_ItemTable.T_hasNoItems()
+    T_ItemTable.T_nEntries()
     T_ItemTable.T_combine()
     T_ItemTable.T_compare()
 end
@@ -108,19 +109,19 @@ function T_ItemTable.T_isEmpty()
     -- test same
     functionResult = testTable1:isEmpty()
     expectedResult = false
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten isEmpty(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable2:isEmpty()
     expectedResult = false
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten isEmpty(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable3:isEmpty()
     expectedResult = false
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten isEmpty(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable4:isEmpty()
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten isEmpty(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 end
 
 function T_ItemTable.T_hasNoItems()
@@ -130,19 +131,41 @@ function T_ItemTable.T_hasNoItems()
     -- test same
     functionResult = testTable1:hasNoItems()
     expectedResult = false
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten hasNoItems(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable2:hasNoItems()
     expectedResult = false
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten hasNoItems(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable3:hasNoItems()
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten hasNoItems(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     functionResult = testTable4:hasNoItems()
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten hasNoItems(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+function T_ItemTable.T_nEntries()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":nEntries() tests")
+
+    -- test same
+    functionResult = testTable1:nEntries()
+    expectedResult = 2
+    assert(functionResult == expectedResult, "gotten nEntries(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable2:nEntries()
+    expectedResult = 2
+    assert(functionResult == expectedResult, "gotten nEntries(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable3:nEntries()
+    expectedResult = 1
+    assert(functionResult == expectedResult, "gotten nEntries(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable4:nEntries()
+    expectedResult = 0
+    assert(functionResult == expectedResult, "gotten nEntries(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 end
 
 function T_ItemTable.T_combine()
@@ -153,17 +176,17 @@ function T_ItemTable.T_combine()
     local testTable = ItemTable.combine(testTable1, testTable3) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(testTable1)
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten combine(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     testTable = ItemTable.combine(testTable1, testTable4) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(testTable1)
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten combine(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     testTable = ItemTable.combine(testTable1, testTable2) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(ItemTable:newInstance({["minecraft:coal"] = 20, ["minecraft:torch"] = 11, ["minecraft:furnace"] = 27}))
     expectedResult = true
-    assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    assert(functionResult == expectedResult, "gotten combine(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 end
 
 function T_ItemTable.T_compare()
