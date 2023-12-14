@@ -19,14 +19,13 @@ local InputChecker = require "input_checker"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local ObjHost = require "obj_host"
 
 local role_alchemist = require "role_alchemist"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment = require "enterprise_employment"
-local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_energy = require "enterprise_energy"
+local enterprise_manufacturing
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -254,7 +253,7 @@ end
 
 function ProductionSpot:produceItem_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, productionRecipe, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -275,7 +274,6 @@ function ProductionSpot:produceItem_AOSrv(...)
                 itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
-                productionRecipe                + (table) production recipe
             callback                            + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:produceItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -283,6 +281,12 @@ function ProductionSpot:produceItem_AOSrv(...)
     -- check provideItems for 1 item type
     local nEntries = provideItems:nEntries()
     if nEntries ~= 1 then corelog.Error("ProductionSpot:produceItem_AOSrv: Not supported for "..tostring(nEntries).." provideItems entries") return Callback.ErrorCall(callback) end
+
+    -- select recipe to produce item
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+    local productItemName, v = next(provideItems)
+    local recipe = enterprise_manufacturing.GetRecipes()[ productItemName ]
+    if type(recipe) ~= "table" then corelog.Error("ProductionSpot:produceItem_AOSrv: No recipe for item "..productItemName) return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
@@ -314,7 +318,7 @@ function ProductionSpot:produceItem_AOSrv(...)
         local craftData = {
             provideItems    = provideItems:copy(),
 
-            recipe          = productionRecipe,
+            recipe          = recipe.crafting,
             workingLocation = self:getBaseLocation():copy(),
 
             priorityKey     = assignmentsPriorityKey,
@@ -344,7 +348,7 @@ function ProductionSpot:produceItem_AOSrv(...)
             -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         local smeltData = {
             provideItems    = provideItems:copy(),
-            recipe          = productionRecipe,
+            recipe          = recipe.smelting,
 
             workingLocation = self:getBaseLocation():copy(),
 

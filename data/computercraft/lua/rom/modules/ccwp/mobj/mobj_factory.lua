@@ -870,7 +870,6 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                    { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 }},
                 -- deliver items
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
@@ -899,7 +898,6 @@ function Factory:provideItemsTo_AOSrv(...)
             productionSpotLocator           = productionSpotLocator,
 
             provideItems                    = ItemTable:newInstance({ [itemName] = itemCount, }),
-            productionRecipe                = productionRecipe,
 
             wasteItemDepotLocator           = wasteItemDepotLocator,
 
