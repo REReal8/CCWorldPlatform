@@ -254,7 +254,7 @@ end
 
 function ProductionSpot:produceItem_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, localInputItemsLocator, localOutputLocator, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, localInputItemsLocator, assignmentsPriorityKey, productionRecipe, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -264,18 +264,18 @@ function ProductionSpot:produceItem_AOSrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                localOutputItemsLocator - (ObjLocator) locating the items that where produced
-                                            (upon service succes the "host" component of this ObjLocator should be equal to localOutputLocator, and
-                                            the "query" should be equal to the "query" component of the localInputItemLocator)
+                destinationItemsLocator - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
+                                            (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
+                                             the "query" should be equal to orderItems)
                 wasteItemsLocator       - (ObjLocator) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
                 provideItems            + (ItemTable) with one or more items to provide
+                itemDepotLocator        + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 localInputItemsLocator  + (ObjLocator) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
-                localOutputLocator      + (ObjLocator) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
-                productionRecipe        + (table) production recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+                productionRecipe        + (table) production recipe
             callback                    + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:produceItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -290,7 +290,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     -- create project data
     local projectData = {
         localInputItemsLocator      = localInputItemsLocator,
-        localOutputLocator          = localOutputLocator,
+        itemDepotLocator            = itemDepotLocator,
 
         turtleInputLocator          = turtleInputLocator,
 
@@ -397,10 +397,10 @@ function ProductionSpot:produceItem_AOSrv(...)
 
     -- add remaining steps
     table.insert(projectSteps,
-        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localOutputLocator" }, stepDataDef = {
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
             { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-        }, description = "Storing items into "..localOutputLocator:getURI().." (local output)" }
+        }, description = "Storing items into "..itemDepotLocator:getURI().." (local output)" }
     )
 
     -- create (remaining) project definition
@@ -408,7 +408,7 @@ function ProductionSpot:produceItem_AOSrv(...)
         steps = projectSteps,
         returnData  = {
             { keyDef = "wasteItemsLocator"          , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
-            { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectServiceData = {

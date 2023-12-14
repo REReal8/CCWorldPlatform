@@ -866,15 +866,15 @@ function Factory:provideItemsTo_AOSrv(...)
                 }},
                 -- produce items
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "produceItem_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
-                    { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                    { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
-                    { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
+                    { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 }},
                 -- deliver items
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
+                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- store waste items
