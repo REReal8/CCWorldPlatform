@@ -259,7 +259,7 @@ function ProductionSpot:produceItem_AOSrv(...)
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                                 - (table)
