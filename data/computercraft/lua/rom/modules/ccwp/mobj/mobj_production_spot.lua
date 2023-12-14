@@ -62,7 +62,7 @@ function ProductionSpot:new(...)
 
         Parameters:
             o                       + (table, {}) with object fields
-                _id                 - (string, "unknown") id of the ProductionSpot
+                _id                 - (string) id of the ProductionSpot
                 _baseLocation       - (Location) base location of the ProductionSpot
                 _isCraftingSpot     - (boolean) if it is a crafting spot
     ]], ...)
