@@ -45,6 +45,7 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 local ObjHost = require "obj_host"
+local ItemTable = require "obj_item_table"
 
 local LObjLocator = require "lobj_locator"
 local IItemDepot = require "i_item_depot"
@@ -867,8 +868,7 @@ function Factory:provideItemsTo_AOSrv(...)
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "produceItem_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
                     { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
-                    { keyDef = "productItemName"                , sourceStep = 0, sourceKeyDef = "itemName" },
-                    { keyDef = "productItemCount"               , sourceStep = 0, sourceKeyDef = "itemCount" },
+                    { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
                     { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
@@ -897,8 +897,8 @@ function Factory:provideItemsTo_AOSrv(...)
             localOutputLocator              = localOutputLocator,
 
             productionSpotLocator           = productionSpotLocator,
-            itemName                        = itemName,
-            itemCount                       = itemCount,
+
+            provideItems                    = ItemTable:newInstance({ [itemName] = itemCount, }),
             productionRecipe                = productionRecipe,
 
             wasteItemDepotLocator           = wasteItemDepotLocator,

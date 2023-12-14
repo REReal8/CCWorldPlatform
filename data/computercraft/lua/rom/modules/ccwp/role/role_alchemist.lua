@@ -26,7 +26,7 @@ local enterprise_employment
 
 function role_alchemist.Craft_MetaData(...)
     -- get & check input from description
-    local checkSuccess, recipe, productItemCount, workingLocation, priorityKey = InputChecker.Check([[
+    local checkSuccess, provideItems, recipe, workingLocation, priorityKey = InputChecker.Check([[
         This function returns the MetaData for Craft_Task.
 
         Return value:
@@ -34,16 +34,16 @@ function role_alchemist.Craft_MetaData(...)
 
         Parameters:
             taskData                    - (table) data about the crafting task
+                provideItems            + (ItemTable) with one item to provide
                 recipe                  + (table) crafting recipe
                     yield               - (number) of items produced by recipe
-                productItemName         - (string) name of item to produce
-                productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
                 priorityKey             + (string, "") priorityKey for this assignment
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
+    local k, productItemCount = next(provideItems)
     local itemList = role_alchemist.Craft_ItemsNeeded(recipe, productItemCount)
     if not itemList then corelog.Error("role_alchemist.Craft_MetaData: Failed obtaining itemList") return {success = false} end
     local fuelNeeded = 0 -- task starts at workingLocation, 0 movement from there
@@ -211,7 +211,7 @@ end
 
 function role_alchemist.Craft_Task(...)
     -- get & check input from description
-    local checkSuccess, recipe, yield, productItemName, productItemCount, workingLocation, turtleLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, recipe, yield, workingLocation, turtleLocator = InputChecker.Check([[
         This Task function crafts items. The ingredients for crafting should be present in the turtle executing this task.
 
         Return value:
@@ -222,21 +222,13 @@ function role_alchemist.Craft_Task(...)
 
         Parameters:
             taskData                    - (table) data about the crafting task
+                provideItems            + (ItemTable) with one item to provide
                 recipe                  + (table) crafting recipe
                     yield               + (number) of items produced by recipe
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
                 workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
-
-    -- what should we provide?
-    -- ToDo: consider passing this in as task argument instead of productItemName and productItemCount
-    local provideItems = ItemTable:newInstance({ [productItemName] = productItemCount, })
-
-    -- calculate how many times we need to "do" the recipe
-    local times = math.ceil(productItemCount / yield)
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
@@ -252,6 +244,10 @@ function role_alchemist.Craft_Task(...)
 
     -- move to the crafting location
     coremove.GoTo(workingLocation)
+
+    -- calculate how many times we need to "do" the recipe
+    local k, productItemCount = next(provideItems)
+    local times = math.ceil(productItemCount / yield)
 
     -- do the magic!
     PrepareCraftingArea(recipe, times)
@@ -288,7 +284,7 @@ end
 
 function role_alchemist.Smelt_MetaData(...)
     -- get & check input from description
-    local checkSuccess, recipe, productItemCount, workingLocation, fuelItemName, fuelItemCount, priorityKey = InputChecker.Check([[
+    local checkSuccess, provideItems, recipe, workingLocation, fuelItemName, fuelItemCount, priorityKey = InputChecker.Check([[
         This function returns the MetaData for Smelt_Task.
 
         Return value:
@@ -296,10 +292,10 @@ function role_alchemist.Smelt_MetaData(...)
 
         Parameters:
             taskData                    - (table) data about the task
+                provideItems            + (ItemTable) with one item to provide
                 recipe                  + (table) smelting recipe
                     itemName            - (string) name of smelting ingredient to use
                     yield               - (number) of items produced by recipe
-                productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 fuelItemName            + (string) name of fuel item to use
                 fuelItemCount           + (number) of fuel items to use
@@ -308,6 +304,7 @@ function role_alchemist.Smelt_MetaData(...)
     if not checkSuccess then corelog.Error("role_alchemist.Smelt_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
+    local k, productItemCount = next(provideItems)
     local itemList = role_alchemist.Smelt_ItemsNeeded(recipe, productItemCount, fuelItemName, fuelItemCount)
     local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
 
@@ -351,7 +348,7 @@ end
 
 function role_alchemist.Smelt_Task(...)
     -- get & check input from description
-    local checkSuccess, itemName, yield, productItemCount, workingLocation, fuelItemName, fuelItemCount = InputChecker.Check([[
+    local checkSuccess, provideItems, ingredientName, yield, workingLocation, fuelItemName, fuelItemCount = InputChecker.Check([[
         This Task function smelts items. The ingredients for smelting should be present in the turtle executing this task.
 
         Return value:
@@ -361,10 +358,10 @@ function role_alchemist.Smelt_Task(...)
 
         Parameters:
             taskData                    - (table) data about the task
+                provideItems            + (ItemTable) with one item to provide
                 recipe                  - (table) smelting recipe
                     itemName            + (string) name of smelting ingredient to use
                     yield               + (number) of items produced by recipe
-                productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 fuelItemName            + (string) name of fuel item to use
                 fuelItemCount           + (number) of fuel items to use
@@ -372,6 +369,7 @@ function role_alchemist.Smelt_Task(...)
     if not checkSuccess then corelog.Error("role_alchemist.Smelt_Task: Invalid input") return {success = false} end
 
     -- prepare
+    local k, productItemCount = next(provideItems)
     local times = math.ceil(productItemCount / yield)
 
     -- go to the furnace
@@ -382,7 +380,7 @@ function role_alchemist.Smelt_Task(...)
     coremove.Forward()
 
     -- fill furnace with it's ingredient
-    coreinventory.SelectItem(itemName)
+    coreinventory.SelectItem(ingredientName)
     turtle.dropDown(times)
 
     -- move to the front of the furnace
@@ -411,8 +409,7 @@ function role_alchemist.Pickup_MetaData(...)
 
         Parameters:
             taskData                    - (table) data about the task
-                productItemName         - (string) name of item to produce
-                productItemCount        - (number) of items to produce
+                provideItems            - (ItemTable) with one item to provide
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 priorityKey             + (string, "") priorityKey for this assignment
     ]], ...)
@@ -436,7 +433,7 @@ end
 
 function role_alchemist.Pickup_Task(...)
     -- get & check input from description
-    local checkSuccess, productItemName, productItemCount, workingLocation, turtleLocator = InputChecker.Check([[
+    local checkSuccess, provideItems, workingLocation, turtleLocator = InputChecker.Check([[
         This Task picks up smelted items from a furnace.
 
         Return value:
@@ -447,16 +444,11 @@ function role_alchemist.Pickup_Task(...)
 
         Parameters:
             taskData                    - (table) data about the task
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) of items to produce
+                provideItems            + (ItemTable) with one item to provide
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
                 workerLocator           + (ObjLocator) locating the Turtle
     ]], ...)
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
-
-    -- what should we provide?
-    -- ToDo: consider passing this in as task argument instead of productItemName and productItemCount
-    local provideItems = ItemTable:newInstance({ [productItemName] = productItemCount, })
 
     -- get turtle we are doing task with
     enterprise_employment = enterprise_employment or require "enterprise_employment"
@@ -488,6 +480,7 @@ function role_alchemist.Pickup_Task(...)
 
     -- determine output locators
     local outputItems = serviceResults.outputItems
+    local productItemName, productItemCount = next(provideItems)
     local producedItems = outputItems[productItemName]
     if producedItems < productItemCount then
         corelog.Warning("role_alchemist.Pickup_Task: Only retrieved "..producedItems.." "..productItemName.." from furnace (expected was "..productItemCount..")")

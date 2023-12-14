@@ -1,5 +1,6 @@
 local t_alchemist = {}
 
+local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local Location = require "obj_location"
@@ -31,18 +32,17 @@ function t_alchemist.T_Craft_Task()
     corelog.WriteToLog("* role_alchemist.Craft_Task() tests")
     t_employment = t_employment or require "test.t_employment"
     local workerLocator = t_employment.GetCurrentTurtleLocator() assert(type(workerLocator) == "table", "Failed obtaining workerLocator")
+    local provideItems = ItemTable:newInstance({ ["minecraft:birch_planks"] = 4, })
     local craftData = {
         recipe = {
             [6]         = { itemName = "minecraft:birch_log", itemCount = 1 },
            yield        = 4
         },
-        productItemName = "minecraft:birch_planks",
-        productItemCount= 4,
+        provideItems    = provideItems,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -4),
 
         workerLocator   = workerLocator,
     }
-    local provideItems = ItemTable:newInstance({ [craftData.productItemName] = craftData.productItemCount, })
 
     local expectedTurtleOutputItemsLocator = workerLocator:copy()
     expectedTurtleOutputItemsLocator:setQuery(provideItems)
@@ -72,12 +72,13 @@ function t_alchemist.T_Smelt_Task()
     corelog.WriteToLog("* role_alchemist.Smelt_Task() tests")
     t_employment = t_employment or require "test.t_employment"
     local workerLocator = t_employment.GetCurrentTurtleLocator() assert(type(workerLocator) == "table", "Failed obtaining workerLocator")
+    local provideItems = ItemTable:newInstance({ ["minecraft:charcoal"] = 3, })
     local smeltData = {
         recipe = {
             itemName    = "minecraft:birch_log",
             yield       = 1
         },
-        productItemCount= 3,
+        provideItems    = provideItems,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = 3,
@@ -93,7 +94,14 @@ function t_alchemist.T_Smelt_Task()
     assert(result.success, "failed executing service")
 
     -- check: smeltReadyTime
-    assert(type(result.smeltReadyTime) == "number", "no smeltReadyTime returned")
+    local smeltReadyTime = result.smeltReadyTime
+    assert(type(smeltReadyTime) == "number", "no smeltReadyTime returned")
+
+    -- wait until smeltReadyTime
+    local now = coreutils.UniversalTime()
+    local waitSec = smeltReadyTime - now
+    if logOk then corelog.WriteToLog(" waiting "..waitSec.." s ...") end
+    os.sleep(waitSec*50) -- note: Each 'hour' on the os.time scale is 50 seconds in real-life
 
     -- cleanup test
     if logOk then corelog.WriteToLog(" ok") end
@@ -104,14 +112,13 @@ function t_alchemist.T_Pickup_Task()
     corelog.WriteToLog("* role_alchemist.Pickup_Task() tests")
     t_employment = t_employment or require "test.t_employment"
     local workerLocator = t_employment.GetCurrentTurtleLocator() assert(type(workerLocator) == "table", "Failed obtaining workerLocator")
+    local provideItems = ItemTable:newInstance({ ["minecraft:charcoal"] = 3, })
     local pickupData = {
-        productItemName = "minecraft:charcoal",
-        productItemCount= 3,
+        provideItems    = provideItems,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
 
         workerLocator   = workerLocator,
     }
-    local provideItems = ItemTable:newInstance({ [pickupData.productItemName] = pickupData.productItemCount, })
 
     local expectedTurtleOutputItemsLocator = workerLocator:copy()
     expectedTurtleOutputItemsLocator:setQuery(provideItems)

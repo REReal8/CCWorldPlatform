@@ -254,7 +254,7 @@ end
 
 function ProductionSpot:produceItem_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, localInputItemsLocator, localOutputLocator, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -271,15 +271,18 @@ function ProductionSpot:produceItem_AOSrv(...)
 
         Parameters:
             serviceData                 - (table) data for the service
+                provideItems            + (ItemTable) with one or more items to provide
                 localInputItemsLocator  + (ObjLocator) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input Chest)
                 localOutputLocator      + (ObjLocator) locating where the produced items need to be delivered locally "within" the site (e.g. an output Chest)
-                productItemName         + (string) name of item to produce
-                productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) production recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], ...)
     if not checkSuccess then corelog.Error("ProductionSpot:produceItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- check provideItems for 1 item type
+    local nEntries = provideItems:nEntries()
+    if nEntries ~= 1 then corelog.Error("ProductionSpot:produceItem_AOSrv: Not supported for "..tostring(nEntries).." provideItems entries") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
@@ -309,8 +312,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     if self:isCraftingSpot() then
         -- craftData
         local craftData = {
-            productItemName = productItemName,
-            productItemCount= productItemCount,
+            provideItems    = provideItems:copy(),
 
             recipe          = productionRecipe,
             workingLocation = self:getBaseLocation():copy(),
@@ -333,19 +335,21 @@ function ProductionSpot:produceItem_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "craftMetaData" },
                 { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "craftTaskCall" },
-            }, description = "Crafting "..productItemCount.." "..productItemName}
+            }, description = "Crafting "..textutils.serialise(provideItems, {compact = true})}
         )
     else
         -- smeltData
+        local fuelItemName  = "minecraft:birch_planks"
+        local k, fuelItemCount = next(provideItems)
+            -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         local smeltData = {
-            productItemCount= productItemCount,
+            provideItems    = provideItems:copy(),
             recipe          = productionRecipe,
 
             workingLocation = self:getBaseLocation():copy(),
 
-            -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
-            fuelItemName    = "minecraft:birch_planks",
-            fuelItemCount   = productItemCount,
+            fuelItemName    = fuelItemName,
+            fuelItemCount   = fuelItemCount,
 
             priorityKey     = assignmentsPriorityKey,
         }
@@ -364,13 +368,12 @@ function ProductionSpot:produceItem_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "smeltMetaData" },
                 { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "smeltTaskCall" },
-            }, description = "Smelting "..productItemCount.." "..productItemName}
+            }, description = "Smelting "..textutils.serialise(provideItems, {compact = true})}
         )
 
         -- pickupData
         local pickupData = {
-            productItemName = productItemName,
-            productItemCount= productItemCount,
+            provideItems    = provideItems:copy(),
 
             workingLocation = self:getBaseLocation():copy(),
 
@@ -386,7 +389,7 @@ function ProductionSpot:produceItem_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "pickupMetaData" },
                 { keyDef = "metaData.startTime"     , sourceStep = 3, sourceKeyDef = "smeltReadyTime" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "pickupTaskCall" },
-            }, description = "Pickup "..productItemCount.." "..productItemName}
+            }, description = "Pickup "..textutils.serialise(provideItems, {compact = true})}
         )
 
         extraStep = 2
@@ -411,7 +414,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make "..productItemCount.." "..productItemName}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
+        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make "..textutils.serialise(provideItems, {compact = true})}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
     }
 
     -- start project
