@@ -478,7 +478,7 @@ function Silo:provideItemsTo_AOSrv(...)
 
         Parameters:
             serviceData                         - (table) data for the service
-                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                provideItems                    + (ItemTable) with one or more items to provide
                 itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
@@ -536,7 +536,7 @@ function Silo:can_ProvideItems_QOSrv(...)
 
         Parameters:
             serviceData             - (table) data to the query
-                provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                provideItems        + (ItemTable) with one or more items to provide
     --]], ...)
     if not checkSuccess then corelog.Error("Silo:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
@@ -599,7 +599,7 @@ function Silo:needsTo_ProvideItemsTo_SOSrv(...)
 
         Parameters:
             serviceData                         - (table) data to the query
-                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                provideItems                    + (ItemTable) with one or more items to provide
                 itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (ObjLocator, nil) locating where ingredients can be retrieved
     --]], ...)
