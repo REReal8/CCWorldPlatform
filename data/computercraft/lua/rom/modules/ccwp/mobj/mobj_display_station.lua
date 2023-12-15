@@ -182,7 +182,7 @@ function DisplayStation:destruct()
     --[[
         This method destructs a DisplayStation instance.
 
-        The DisplayStation is not yet deleted from the MObjHost.
+        The DisplayStation is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the DisplayStation was succesfully destructed.

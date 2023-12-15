@@ -179,7 +179,7 @@ function MineShaft:destruct()
     --[[
         This method destructs a MineShaft instance.
 
-        The MineShaft is not yet deleted from the MObjHost.
+        The MineShaft is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the MineShaft was succesfully destructed.

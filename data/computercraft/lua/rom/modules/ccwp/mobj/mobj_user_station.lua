@@ -156,7 +156,7 @@ function UserStation:destruct()
 
         It also ensures all child MObj's the UserStation is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
-        The UserStation is not yet deleted from the MObjHost.
+        The UserStation is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the UserStation was succesfully destructed.

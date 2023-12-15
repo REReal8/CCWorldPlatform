@@ -175,7 +175,7 @@ function MineLayer:destruct()
     --[[
         This method destructs a MineLayer instance.
 
-        The MineLayer is not yet deleted from the MObjHost.
+        The MineLayer is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the MineLayer was succesfully destructed.

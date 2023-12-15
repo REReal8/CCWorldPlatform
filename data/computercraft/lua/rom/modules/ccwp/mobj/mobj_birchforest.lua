@@ -280,7 +280,7 @@ function BirchForest:destruct()
 
         It also ensures all child MObj's the BirchForest is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
-        The BirchForest is not yet deleted from the MObjHost.
+        The BirchForest is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the BirchForest was succesfully destructed.

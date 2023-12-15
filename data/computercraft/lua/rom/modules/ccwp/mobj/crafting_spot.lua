@@ -122,7 +122,7 @@ function CraftingSpot:destruct()
     --[[
         This method destructs a CraftingSpot instance.
 
-        The CraftingSpot is not yet deleted from the MObjHost.
+        The CraftingSpot is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the CraftingSpot was succesfully destructed.

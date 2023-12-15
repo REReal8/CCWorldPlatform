@@ -151,7 +151,7 @@ function LObjTest:destruct()
 
         It also ensures all child MObj's the LObjTest is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
-        The LObjTest is not yet deleted from the MObjHost.
+        The LObjTest is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the LObjTest was succesfully destructed.

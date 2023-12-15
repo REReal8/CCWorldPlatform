@@ -122,7 +122,7 @@ function SmeltingSpot:destruct()
     --[[
         This method destructs a SmeltingSpot instance.
 
-        The SmeltingSpot is not yet deleted from the MObjHost.
+        The SmeltingSpot is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the SmeltingSpot was succesfully destructed.

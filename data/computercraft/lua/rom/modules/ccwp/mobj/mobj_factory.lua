@@ -309,7 +309,7 @@ function Factory:destruct()
 
         It also ensures all child MObj's the Factory is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
-        The Factory is not yet deleted from the MObjHost.
+        The Factory is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the Factory was succesfully destructed.

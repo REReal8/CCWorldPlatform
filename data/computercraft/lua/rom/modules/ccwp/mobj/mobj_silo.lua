@@ -217,7 +217,7 @@ function Silo:destruct()
 
         It also ensures all child MObj's the Silo is the parent of are released from the appropriate MObjHost (by calling releaseLObj_SSrv).
 
-        The Silo is not yet deleted from the MObjHost.
+        The Silo is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the Silo was succesfully destructed.

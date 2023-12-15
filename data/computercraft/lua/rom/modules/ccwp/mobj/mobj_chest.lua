@@ -153,7 +153,7 @@ function Chest:destruct()
     --[[
         This method destructs a Chest instance.
 
-        The Chest is not yet deleted from the MObjHost.
+        The Chest is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the Chest was succesfully destructed.

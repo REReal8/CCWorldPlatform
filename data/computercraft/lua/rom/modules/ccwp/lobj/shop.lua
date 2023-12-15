@@ -134,7 +134,7 @@ function Shop:destruct()
     --[[
         This method destructs a Shop instance.
 
-        The Shop is not yet deleted from the MObjHost.
+        The Shop is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the Shop was succesfully destructed.

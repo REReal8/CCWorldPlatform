@@ -155,7 +155,7 @@ function Turtle:destruct()
     --[[
         This method destructs a Turtle instance.
 
-        The Turtle is not yet deleted from the MObjHost.
+        The Turtle is not yet deleted from the LObjHost.
 
         Return value:
                                         - (boolean) whether the Turtle was succesfully destructed.
