@@ -239,42 +239,6 @@ function T_Chest.T_IMObj_All()
     }, logOk)
 end
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
-function T_Chest.T_updateChestRecord_AOSrv()
-    -- prepare test
-    corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
-    local chestLocator = testHost:saveObj(obj)
-
-    local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
-        ["chestLocator"] = chestLocator,
-    })
-
-    -- test
-    local scheduleResult = obj:updateChestRecord_AOSrv({}, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
-
-function T_Chest.updateChestRecord_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-    local chestLocator = callbackData["chestLocator"]
-    local updatedChest = testHost:getObj(chestLocator)
-    assert (updatedChest, "Chest not saved")
-
-    -- cleanup test
-    testHost:deleteResource(chestLocator)
-
-    -- end
-    return true
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -419,6 +383,42 @@ function T_Chest.T_storeItemsFrom_AOSrv_FromChest()
     -- cleanup test
     testHost:releaseLObj_SSrv({ mobjLocator = itemSupplierLocator})
     testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
+end
+
+--     _____ _               _
+--    / ____| |             | |
+--   | |    | |__   ___  ___| |_
+--   | |    | '_ \ / _ \/ __| __|
+--   | |____| | | |  __/\__ \ |_
+--    \_____|_| |_|\___||___/\__|
+
+function T_Chest.T_updateChestRecord_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
+    local obj = T_Chest.CreateTestObj(nil, baseLocation0) assert(obj, "Failed obtaining "..testClassName)
+    local chestLocator = testHost:saveObj(obj)
+
+    local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
+        ["chestLocator"] = chestLocator,
+    })
+
+    -- test
+    local scheduleResult = obj:updateChestRecord_AOSrv({}, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_Chest.updateChestRecord_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local chestLocator = callbackData["chestLocator"]
+    local updatedChest = testHost:getObj(chestLocator)
+    assert (updatedChest, "Chest not saved")
+
+    -- cleanup test
+    testHost:deleteResource(chestLocator)
+
+    -- end
+    return true
 end
 
 return T_Chest

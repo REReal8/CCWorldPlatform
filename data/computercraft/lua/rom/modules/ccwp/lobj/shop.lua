@@ -158,249 +158,6 @@ function Shop:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
---                        _  __ _
---                       (_)/ _(_)
---    ___ _ __   ___  ___ _| |_ _  ___
---   / __| '_ \ / _ \/ __| |  _| |/ __|
---   \__ \ |_) |  __/ (__| | | | | (__
---   |___/ .__/ \___|\___|_|_| |_|\___|
---       | |
---       |_|
-
-function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, itemSupplierLocator1, itemSupplierLocator2)
-    --[[
-        This function returns the best ItemSupplier of two ItemSupplier's for a specific item.
-
-        Return value:
-            itemSupplierLocator                 - (ObjLocator) locating the best ItemSupplier of the items
-
-        Parameters:
-            serviceData                         - (table) data to the query
-                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
-                itemSupplierLocator1            + (ObjLocator) locating the 1st ItemSupplier
-                itemSupplierLocator2            + (ObjLocator) locating the 2nd ItemSupplier
-    --]]
-
-    -- check input
-    if not itemSupplierLocator1 then
-        return itemSupplierLocator2
-    end
-    if not itemSupplierLocator2 then
-        return itemSupplierLocator1
-    end
-
-    -- get needs 1
-    local itemSupplier1 = ObjHost.GetObj(itemSupplierLocator1)
-    if type(itemSupplier1) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier1 "..itemSupplierLocator1:getURI().." not found.") return nil end
-    local serviceResults1 = itemSupplier1:needsTo_ProvideItemsTo_SOSrv({
-        provideItems                    = item,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    })
-    if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator1(="..itemSupplierLocator1:getURI()..")") return nil end
-
-    -- get needs 2
-    local itemSupplier2 = ObjHost.GetObj(itemSupplierLocator2)
-    if type(itemSupplier2) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier2 "..itemSupplierLocator2:getURI().." not found.") return nil end
-    local serviceResults2 = itemSupplier2:needsTo_ProvideItemsTo_SOSrv({
-        provideItems                    = item,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    })
-    if not serviceResults2.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator2(="..itemSupplierLocator2:getURI()..")") return nil end
-
-    -- check lowest fuelNeed
-    local fuelNeed1 = serviceResults1.fuelNeed
-    local fuelNeed2 = serviceResults2.fuelNeed
-    if fuelNeed1 < fuelNeed2 then
-        return itemSupplierLocator1
-    elseif fuelNeed2 < fuelNeed1 then
-        return itemSupplierLocator2
-    else -- both are equal w.r.t. this condition
-    end
-
-    -- check ingredientsNeed
-    -- ToDo implement
-
-    -- nothing else distinquishes the candidates => take first
-    return itemSupplierLocator1
-end
-
-function Shop:getCanProvideItemSuppliers(item)
-    --[[
-        This function returns the ItemSupplier's that can provide a specific item.
-
-        Return value:
-            availableItemSupplierLocators   - (table) with locators of ItemSupplier's that can provide the item.
-
-        Parameters:
-            item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-    --]]
-
-    -- select ItemSuppliers than can provide items
-    local canProvideItemSupplierLocators = {}
-    for i, itemSupplierLocator in ipairs(self._itemSuppliersLocators) do
-        -- get ItemSupplier
-        local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
-        if type(itemSupplier) ~= "table" then corelog.Error("Shop:getCanProvideItemSuppliers: ItemSupplier "..itemSupplierLocator:getURI().." not found.") return canProvideItemSupplierLocators end
-
-        -- check ItemSupplier can provide items
-        if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
-            table.insert(canProvideItemSupplierLocators, itemSupplierLocator)
-        end
-    end
-
-    -- end
-    return canProvideItemSupplierLocators
-end
-
-function Shop:delistAllItemSuppliers()
-    -- remove all ItemSupplier's from Shop
-    local nLocators = #(self._itemSuppliersLocators)
-    for i=nLocators, 1, -1 do
-        -- cast
-        local itemSupplierLocator = self._itemSuppliersLocators[i]
-        -- remove from list
-        corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI().." from Shop "..self:getId()..".")
-        table.remove(self._itemSuppliersLocators, i)
-    end
-
-    -- save Shop
-    enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObj(self)
-    if not objLocator then corelog.Error("Shop:delistAllItemSuppliers: Failed saving Shop") return {success = false} end
-end
-
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
--- ToDo: consider adopting IRegistry interface + tests
-function Shop:registerItemSupplier_SOSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemSupplierLocator, suppressWarning = InputChecker.Check([[
-        This sync public service registers ("adds") an ItemSupplier in the Shop.
-
-        Note that the ItemSupplier should already be available in the world.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData             - (table) data for the service
-                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
-                suppressWarning     + (boolean, false) if Warning should be suppressed
-    --]], ...)
-    if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
-
-    -- check ItemSupplier
-    local objClass = itemSupplierLocator:getObjClass()
-    if not Class.IsInstanceOf(objClass, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: objClass of ObjLocator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
-
-    -- register the ItemSupplier
-    corelog.WriteToLog(">Registering ItemSupplier "..itemSupplierLocator:getURI().." at Shop "..self:getId()..".")
-    table.insert(self._itemSuppliersLocators, itemSupplierLocator)
-
-    -- save Shop
-    enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObj(self)
-    if not objLocator then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
-
-    -- end
-    local result = {
-        success = true,
-    }
-    return result
-end
-
-function Shop:delistItemSupplier_SOSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
-        This sync public service delists ("removes") an ItemSupplier from the Shop.
-
-        Note that the ItemSupplier is not removed from the world.
-
-        Return value:
-            success                 - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData             - (table) data for the service
-                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
-    ]], ...)
-    if not checkSuccess then corelog.Error("Shop:delistItemSupplier_SOSrv: Invalid input") return {success = false} end
-
-    -- get ItemSuppliers
-    local itemSupplierFound = false
---    corelog.WriteToLog("   itemSupplierLocator="..textutils.serialise(itemSupplierLocator))
-
-    for i, registeredItemSupplierLocator in ipairs(self._itemSuppliersLocators) do
-        -- check we found it
-        if itemSupplierLocator:getURI() == registeredItemSupplierLocator:getURI() then
-            -- remove from list
-            corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI().." from Shop "..self:getId()..".")
-            itemSupplierFound = true
-            table.remove(self._itemSuppliersLocators, i)
-
-            -- save Shop
-            enterprise_shop = require "enterprise_shop"
-            local objLocator = enterprise_shop:saveObj(self)
-            if not objLocator then corelog.Error("Shop:delistItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
-            break
-        end
-    end
-
-    -- end
-    local result = {
-        success = itemSupplierFound,
-    }
-    return result
-end
-
-function Shop:getBestItemSupplierLocator_SOSrv(...)
-    -- get & check input from description
-    local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
-        This sync services determibes the "best" ItemSupplier that can provide a specific item to an ItemDepot. It returns the
-        corresponding itemLocator.
-
-        Return value:
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                bestItemSupplierLocator         - (ObjLocator) locating the best ItemSupplier of the items
-
-        Parameters:
-            serviceData                         - (table) data for the service
-                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
-    --]], ...)
-    if not checkSuccess then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
-
-    -- check input
-    if type(item) ~= "table" then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
-
-    -- select ItemSuppliers than can provide items
-    local canProvideItemSupplierLocators = self:getCanProvideItemSuppliers(item)
-
-    -- select best ItemSupplier
-    local bestItemSupplierLocator = nil
-    for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
-        bestItemSupplierLocator = self:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
-    end
-    if not bestItemSupplierLocator then corelog.Warning("Shop:getBestItemSupplierLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
-
-    -- end
-    return {
-        success                 = true,
-        bestItemSupplierLocator = bestItemSupplierLocator:copy(),
-    }
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -631,6 +388,242 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
         success         = true,
         fuelNeed        = fuelNeed,
         ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of ItemSuppliers
+    }
+end
+
+--     _____ _
+--    / ____| |
+--   | (___ | |__   ___  _ __
+--    \___ \| '_ \ / _ \| '_ \
+--    ____) | | | | (_) | |_) |
+--   |_____/|_| |_|\___/| .__/
+--                      | |
+--                      |_|
+
+function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, itemSupplierLocator1, itemSupplierLocator2)
+    --[[
+        This function returns the best ItemSupplier of two ItemSupplier's for a specific item.
+
+        Return value:
+            itemSupplierLocator                 - (ObjLocator) locating the best ItemSupplier of the items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
+                itemSupplierLocator1            + (ObjLocator) locating the 1st ItemSupplier
+                itemSupplierLocator2            + (ObjLocator) locating the 2nd ItemSupplier
+    --]]
+
+    -- check input
+    if not itemSupplierLocator1 then
+        return itemSupplierLocator2
+    end
+    if not itemSupplierLocator2 then
+        return itemSupplierLocator1
+    end
+
+    -- get needs 1
+    local itemSupplier1 = ObjHost.GetObj(itemSupplierLocator1)
+    if type(itemSupplier1) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier1 "..itemSupplierLocator1:getURI().." not found.") return nil end
+    local serviceResults1 = itemSupplier1:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = item,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
+    if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator1(="..itemSupplierLocator1:getURI()..")") return nil end
+
+    -- get needs 2
+    local itemSupplier2 = ObjHost.GetObj(itemSupplierLocator2)
+    if type(itemSupplier2) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier2 "..itemSupplierLocator2:getURI().." not found.") return nil end
+    local serviceResults2 = itemSupplier2:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = item,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
+    if not serviceResults2.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator2(="..itemSupplierLocator2:getURI()..")") return nil end
+
+    -- check lowest fuelNeed
+    local fuelNeed1 = serviceResults1.fuelNeed
+    local fuelNeed2 = serviceResults2.fuelNeed
+    if fuelNeed1 < fuelNeed2 then
+        return itemSupplierLocator1
+    elseif fuelNeed2 < fuelNeed1 then
+        return itemSupplierLocator2
+    else -- both are equal w.r.t. this condition
+    end
+
+    -- check ingredientsNeed
+    -- ToDo implement
+
+    -- nothing else distinquishes the candidates => take first
+    return itemSupplierLocator1
+end
+
+function Shop:getCanProvideItemSuppliers(item)
+    --[[
+        This function returns the ItemSupplier's that can provide a specific item.
+
+        Return value:
+            availableItemSupplierLocators   - (table) with locators of ItemSupplier's that can provide the item.
+
+        Parameters:
+            item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+    --]]
+
+    -- select ItemSuppliers than can provide items
+    local canProvideItemSupplierLocators = {}
+    for i, itemSupplierLocator in ipairs(self._itemSuppliersLocators) do
+        -- get ItemSupplier
+        local itemSupplier = ObjHost.GetObj(itemSupplierLocator)
+        if type(itemSupplier) ~= "table" then corelog.Error("Shop:getCanProvideItemSuppliers: ItemSupplier "..itemSupplierLocator:getURI().." not found.") return canProvideItemSupplierLocators end
+
+        -- check ItemSupplier can provide items
+        if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
+            table.insert(canProvideItemSupplierLocators, itemSupplierLocator)
+        end
+    end
+
+    -- end
+    return canProvideItemSupplierLocators
+end
+
+function Shop:delistAllItemSuppliers()
+    -- remove all ItemSupplier's from Shop
+    local nLocators = #(self._itemSuppliersLocators)
+    for i=nLocators, 1, -1 do
+        -- cast
+        local itemSupplierLocator = self._itemSuppliersLocators[i]
+        -- remove from list
+        corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI().." from Shop "..self:getId()..".")
+        table.remove(self._itemSuppliersLocators, i)
+    end
+
+    -- save Shop
+    enterprise_shop = require "enterprise_shop"
+    local objLocator = enterprise_shop:saveObj(self)
+    if not objLocator then corelog.Error("Shop:delistAllItemSuppliers: Failed saving Shop") return {success = false} end
+end
+
+-- ToDo: consider adopting IRegistry interface + tests
+function Shop:registerItemSupplier_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemSupplierLocator, suppressWarning = InputChecker.Check([[
+        This sync public service registers ("adds") an ItemSupplier in the Shop.
+
+        Note that the ItemSupplier should already be available in the world.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData             - (table) data for the service
+                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
+                suppressWarning     + (boolean, false) if Warning should be suppressed
+    --]], ...)
+    if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
+
+    -- check ItemSupplier
+    local objClass = itemSupplierLocator:getObjClass()
+    if not Class.IsInstanceOf(objClass, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: objClass of ObjLocator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
+
+    -- register the ItemSupplier
+    corelog.WriteToLog(">Registering ItemSupplier "..itemSupplierLocator:getURI().." at Shop "..self:getId()..".")
+    table.insert(self._itemSuppliersLocators, itemSupplierLocator)
+
+    -- save Shop
+    enterprise_shop = require "enterprise_shop"
+    local objLocator = enterprise_shop:saveObj(self)
+    if not objLocator then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
+
+    -- end
+    local result = {
+        success = true,
+    }
+    return result
+end
+
+function Shop:delistItemSupplier_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
+        This sync public service delists ("removes") an ItemSupplier from the Shop.
+
+        Note that the ItemSupplier is not removed from the world.
+
+        Return value:
+            success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData             - (table) data for the service
+                itemSupplierLocator + (ObjLocator) locating the ItemSupplier
+    ]], ...)
+    if not checkSuccess then corelog.Error("Shop:delistItemSupplier_SOSrv: Invalid input") return {success = false} end
+
+    -- get ItemSuppliers
+    local itemSupplierFound = false
+--    corelog.WriteToLog("   itemSupplierLocator="..textutils.serialise(itemSupplierLocator))
+
+    for i, registeredItemSupplierLocator in ipairs(self._itemSuppliersLocators) do
+        -- check we found it
+        if itemSupplierLocator:getURI() == registeredItemSupplierLocator:getURI() then
+            -- remove from list
+            corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI().." from Shop "..self:getId()..".")
+            itemSupplierFound = true
+            table.remove(self._itemSuppliersLocators, i)
+
+            -- save Shop
+            enterprise_shop = require "enterprise_shop"
+            local objLocator = enterprise_shop:saveObj(self)
+            if not objLocator then corelog.Error("Shop:delistItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
+            break
+        end
+    end
+
+    -- end
+    local result = {
+        success = itemSupplierFound,
+    }
+    return result
+end
+
+function Shop:getBestItemSupplierLocator_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
+        This sync services determibes the "best" ItemSupplier that can provide a specific item to an ItemDepot. It returns the
+        corresponding itemLocator.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                bestItemSupplierLocator         - (ObjLocator) locating the best ItemSupplier of the items
+
+        Parameters:
+            serviceData                         - (table) data for the service
+                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+                itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (ObjLocator) locating where ingredients can be retrieved
+    --]], ...)
+    if not checkSuccess then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
+
+    -- check input
+    if type(item) ~= "table" then corelog.Error("Shop:getBestItemSupplierLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
+
+    -- select ItemSuppliers than can provide items
+    local canProvideItemSupplierLocators = self:getCanProvideItemSuppliers(item)
+
+    -- select best ItemSupplier
+    local bestItemSupplierLocator = nil
+    for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
+        bestItemSupplierLocator = self:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
+    end
+    if not bestItemSupplierLocator then corelog.Warning("Shop:getBestItemSupplierLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
+
+    -- end
+    return {
+        success                 = true,
+        bestItemSupplierLocator = bestItemSupplierLocator:copy(),
     }
 end
 

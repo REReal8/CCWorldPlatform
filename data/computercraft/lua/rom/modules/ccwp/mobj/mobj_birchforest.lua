@@ -685,57 +685,6 @@ function BirchForest:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
-function BirchForest:getFuelNeed_Harvest_Att()
-    --[[
-        Forest attribute with the current fuelNeed to do one harvesting round.
-    --]]
-
-    -- determine fuelNeed
-    local nTrees = self:getNTrees()
-    local fuelNeed = role_forester.FuelNeededPerRound(nTrees)
-
-    -- end
-    return fuelNeed
-end
-
-function BirchForest:getFuelNeedExtraTree_Att()
-    --[[
-        Forest attribute with the fuelNeed for harvesting one extra tree.
-        (i.e. it return the difference between the current getFuelNeed_Harvest_Att and the getFuelNeed_Harvest_Att if there would be 1 extra tree)
-    --]]
-
-    -- determine fuelNeed
-    local nTrees = self:getNTrees()
-    local fuelNeed_Current = role_forester.FuelNeededPerRound(nTrees)
-    local fuelNeed_OneTreeExtra = role_forester.FuelNeededPerRound(nTrees + 1)
-
-    -- end
-    return fuelNeed_OneTreeExtra - fuelNeed_Current
-end
-
-function BirchForest:getSaplingHarvestNorm_Att()
-    --[[
-        Attribute with the norm for the number of saplings to start a harvesting round with.
-    --]]
-
-    -- determine norm saplings
-    local nNormSaplings = 0
-    if self:getLevel() >= 1 then
-        nNormSaplings = 1
-    end
-
-    -- end
-    return nNormSaplings
-end
-
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -1036,14 +985,55 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
     }
 end
 
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
+--    ____  _          _     ______                  _
+--   |  _ \(_)        | |   |  ____|                | |
+--   | |_) |_ _ __ ___| |__ | |__ ___  _ __ ___  ___| |_
+--   |  _ <| | '__/ __| '_ \|  __/ _ \| '__/ _ \/ __| __|
+--   | |_) | | | | (__| | | | | | (_) | | |  __/\__ \ |_
+--   |____/|_|_|  \___|_| |_|_|  \___/|_|  \___||___/\__|
+
+function BirchForest:getFuelNeed_Harvest_Att()
+    --[[
+        Forest attribute with the current fuelNeed to do one harvesting round.
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed = role_forester.FuelNeededPerRound(nTrees)
+
+    -- end
+    return fuelNeed
+end
+
+function BirchForest:getFuelNeedExtraTree_Att()
+    --[[
+        Forest attribute with the fuelNeed for harvesting one extra tree.
+        (i.e. it return the difference between the current getFuelNeed_Harvest_Att and the getFuelNeed_Harvest_Att if there would be 1 extra tree)
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed_Current = role_forester.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_forester.FuelNeededPerRound(nTrees + 1)
+
+    -- end
+    return fuelNeed_OneTreeExtra - fuelNeed_Current
+end
+
+function BirchForest:getSaplingHarvestNorm_Att()
+    --[[
+        Attribute with the norm for the number of saplings to start a harvesting round with.
+    --]]
+
+    -- determine norm saplings
+    local nNormSaplings = 0
+    if self:getLevel() >= 1 then
+        nNormSaplings = 1
+    end
+
+    -- end
+    return nNormSaplings
+end
 
 function BirchForest:getFirstTreeLocation()
     return self:getBaseLocation():getRelativeLocation(3, 2, 0)

@@ -30,7 +30,7 @@ function T_ProductionSpot.T_All()
     -- ILObj
     T_ProductionSpot.T_ILObj_All()
 
-    -- specific
+    -- ProductionSpot
     T_ProductionSpot.T_getFuelNeed_Production_Att()
 end
 

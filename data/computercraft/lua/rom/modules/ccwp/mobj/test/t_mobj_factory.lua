@@ -51,15 +51,15 @@ function T_Factory.T_All()
     -- IMObj
     T_Factory.T_IMObj_All()
 
+    -- IItemSupplier
+    T_Factory.T_IItemSupplier_All()
+
     -- Factory
     T_Factory.T_getAvailableInputLocator()
     T_Factory.T_getAvailableOutputLocator()
     T_Factory.T_getAvailableCraftSpot()
     T_Factory.T_getAvailableSmeltSpot()
     T_Factory.T_getFuelNeed_Production_Att()
-
-    -- IItemSupplier
-    T_Factory.T_IItemSupplier_All()
 end
 
 function T_Factory.T_AllPhysical()
@@ -363,100 +363,6 @@ function T_Factory.T_IMObj_All()
     }, logOk)
 end
 
---    ______         _
---   |  ____|       | |
---   | |__ __ _  ___| |_ ___  _ __ _   _
---   |  __/ _` |/ __| __/ _ \| '__| | | |
---   | | | (_| | (__| || (_) | |  | |_| |
---   |_|  \__,_|\___|\__\___/|_|   \__, |
---                                  __/ |
---                                 |___/
-
-function T_Factory.T_getAvailableInputLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getAvailableInputLocator() tests")
-    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local locator = obj:getAvailableInputLocator()
-    assert(locator and locator:isEqual(inputLocator0), "gotten getAvailableInputLocator(="..textutils.serialise(locator or "nil", compact)..") not the same as expected(="..textutils.serialise(inputLocator0, compact)..")")
-
-    -- cleanup test
-end
-
-function T_Factory.T_getAvailableOutputLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getAvailableOutputLocator() tests")
-    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local locator = obj:getAvailableOutputLocator()
-    assert(locator:isEqual(outputLocator0), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator0, compact)..")")
-
-    -- cleanup test
-end
-
-function T_Factory.T_getAvailableCraftSpot()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getAvailableCraftSpot() tests")
-    local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
-    local objLocator = testHost:saveObj(obj)
-    local isCraftingSpot = true
-
-    -- test
-    local spot = obj:getAvailableCraftSpot()
-    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -4), isCraftingSpot)
-    test:test(spot, "craftSpot", "", logOk)
-
-    -- cleanup test
-    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
-end
-
-function T_Factory.T_getAvailableSmeltSpot()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getAvailableSmeltSpot() tests")
-    local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
-    local objLocator = testHost:saveObj(obj)
-    local isCraftingSpot = false
-
-    -- test
-    local spot = obj:getAvailableSmeltSpot()
-    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -3), isCraftingSpot)
-    test:test(spot, "smeltSpot", "", logOk)
-
-    -- cleanup test
-    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
-end
-
-function T_Factory.T_getFuelNeed_Production_Att()
-    -- prepare test L1
-    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 1 crafting)")
-    local expectedFuelNeedCraftingSpot = 0
-    local craftItems = { ["minecraft:birch_planks"] = 4 }
-
-    local objL1 = Factory:construct(constructParameters1) assert(objL1, "Failed obtaining "..testClassName)
-    local objLocatorL1 = testHost:saveObj(objL1)
-
-    -- test L1
-    local fuelNeed = objL1:getFuelNeed_Production_Att(craftItems)
-    local expectedFuelNeed = (3+3+4) + expectedFuelNeedCraftingSpot + (3+3+4)
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
-
-    -- prepare test L2
-    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
-    local objL2 = Factory:construct(constructParameters2) assert(objL2, "Failed obtaining "..testClassName)
-    local objLocatorL2 = testHost:saveObj(objL2)
-
-    -- test L2
-    fuelNeed = objL2:getFuelNeed_Production_Att(craftItems)
-    expectedFuelNeed = (2+5+0) + (1+2+4) + expectedFuelNeedCraftingSpot + (1+2+4) + (4+5+0)
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
-
-    -- cleanup test
-    testHost:releaseLObj_SSrv({ mobjLocator = objLocatorL1})
-    testHost:releaseLObj_SSrv({ mobjLocator = objLocatorL2})
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -596,6 +502,100 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- cleanup test
     testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
+end
+
+--    ______         _
+--   |  ____|       | |
+--   | |__ __ _  ___| |_ ___  _ __ _   _
+--   |  __/ _` |/ __| __/ _ \| '__| | | |
+--   | | | (_| | (__| || (_) | |  | |_| |
+--   |_|  \__,_|\___|\__\___/|_|   \__, |
+--                                  __/ |
+--                                 |___/
+
+function T_Factory.T_getAvailableInputLocator()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getAvailableInputLocator() tests")
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local locator = obj:getAvailableInputLocator()
+    assert(locator and locator:isEqual(inputLocator0), "gotten getAvailableInputLocator(="..textutils.serialise(locator or "nil", compact)..") not the same as expected(="..textutils.serialise(inputLocator0, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Factory.T_getAvailableOutputLocator()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getAvailableOutputLocator() tests")
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local locator = obj:getAvailableOutputLocator()
+    assert(locator:isEqual(outputLocator0), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator0, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Factory.T_getAvailableCraftSpot()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getAvailableCraftSpot() tests")
+    local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local objLocator = testHost:saveObj(obj)
+    local isCraftingSpot = true
+
+    -- test
+    local spot = obj:getAvailableCraftSpot()
+    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -4), isCraftingSpot)
+    test:test(spot, "craftSpot", "", logOk)
+
+    -- cleanup test
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
+end
+
+function T_Factory.T_getAvailableSmeltSpot()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getAvailableSmeltSpot() tests")
+    local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local objLocator = testHost:saveObj(obj)
+    local isCraftingSpot = false
+
+    -- test
+    local spot = obj:getAvailableSmeltSpot()
+    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -3), isCraftingSpot)
+    test:test(spot, "smeltSpot", "", logOk)
+
+    -- cleanup test
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocator})
+end
+
+function T_Factory.T_getFuelNeed_Production_Att()
+    -- prepare test L1
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 1 crafting)")
+    local expectedFuelNeedCraftingSpot = 0
+    local craftItems = { ["minecraft:birch_planks"] = 4 }
+
+    local objL1 = Factory:construct(constructParameters1) assert(objL1, "Failed obtaining "..testClassName)
+    local objLocatorL1 = testHost:saveObj(objL1)
+
+    -- test L1
+    local fuelNeed = objL1:getFuelNeed_Production_Att(craftItems)
+    local expectedFuelNeed = (3+3+4) + expectedFuelNeedCraftingSpot + (3+3+4)
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- prepare test L2
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() test (level 2 crafting)")
+    local objL2 = Factory:construct(constructParameters2) assert(objL2, "Failed obtaining "..testClassName)
+    local objLocatorL2 = testHost:saveObj(objL2)
+
+    -- test L2
+    fuelNeed = objL2:getFuelNeed_Production_Att(craftItems)
+    expectedFuelNeed = (2+5+0) + (1+2+4) + expectedFuelNeedCraftingSpot + (1+2+4) + (4+5+0)
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocatorL1})
+    testHost:releaseLObj_SSrv({ mobjLocator = objLocatorL2})
 end
 
 return T_Factory

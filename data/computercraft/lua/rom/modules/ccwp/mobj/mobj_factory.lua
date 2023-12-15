@@ -619,176 +619,6 @@ function Factory:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
---    ______         _
---   |  ____|       | |
---   | |__ __ _  ___| |_ ___  _ __ _   _
---   |  __/ _` |/ __| __/ _ \| '__| | | |
---   | | | (_| | (__| || (_) | |  | |_| |
---   |_|  \__,_|\___|\__\___/|_|   \__, |
---                                  __/ |
---                                 |___/
-
-function Factory:getAvailableInputLocator()
-    -- find first available locator
-    for i, locator in ipairs(self:getInputLocators()) do
-        -- ToDo: check actual availability
-
-        -- take first
-        return locator
-    end
-
-    -- end
-    return nil
-end
-
-function Factory:getAvailableOutputLocator()
-    -- find first available locator
-    for i, locator in ipairs(self:getOutputLocators()) do
-        -- ToDo: check actual availability
-
-        -- take first
-        return locator
-    end
-
-    -- end
-    return nil
-end
-
-function Factory:getAvailableCraftSpot()
-    -- find first available spot
-    for i, spotLocator in ipairs(self:getCraftingSpotLocators()) do
-        -- get spot
-        local spot = ObjHost.GetObj(spotLocator)
-        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
-
-        -- ToDo: check actual availability (make method of ProductionSpot?)
-
-        -- take first
-        return spot
-    end
-
-    -- end
-    return nil
-end
-
-function Factory:getAvailableSmeltSpot()
-    -- find first available spot
-    for i, spotLocator in ipairs(self:getSmeltingSpotLocators()) do
-        -- get spot
-        local spot = ObjHost.GetObj(spotLocator)
-        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
-
-        -- ToDo: check actual availability (make method of ProductionSpot?)
-
-        -- take first
-        return spot
-    end
-
-    -- end
-    return nil
-end
-
-function Factory:getAvailableProductionSpot(recipe)
-    --[[
-        This method finds and selects a ProductionSpot for producing items from a recipe.
-
-        Return value:
-            productionSpot          - (ProductionSpot) available ProductionSpot for recipe
-            productionRecipe        - (table) production recipe
-
-        Parameters:
-            recipe                  + (table) item base recipe (including possibly both a crafting as smelting recipe)
-    ]]
-
-    -- check it can craft or smelt recipe
-    local productionSpot = nil
-    local productionRecipe = nil
-    if recipe.crafting then
-        productionRecipe = recipe.crafting
-        productionSpot = self:getAvailableCraftSpot()
-    elseif recipe.smelting then
-        productionRecipe = recipe.smelting
-        productionSpot = self:getAvailableSmeltSpot()
-    else
-        corelog.Error("Factory:getAvailableProductionSpot: no valid production recipe provided.")
-    end
-
-    -- end
-    return productionSpot, productionRecipe
-end
-
-function Factory:getFuelNeed_Production_Att(...)
-    -- get & check input from description
-    local checkSuccess, items = InputChecker.Check([[
-        Factory attribute for the current fuelNeed for producing items.
-
-        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the Factory baseLocation
-        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the Factory.
-
-        Return value:
-            fuelNeed        - (number) amount of fuel needed to produce items
-
-        Parameters:
-            items           + (table) items to produce
-    --]], ...)
-    if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
-
-    -- cache Factory fields
-    local baseLocation = self:getBaseLocation()
-    local level = self:getLevel()
-
-    -- determine local inputLocation
-    local inputLocation = baseLocation
-    if level == 2 then
-         -- get local input Chest
-        local inputChestLocator = self:getAvailableInputLocator()
-        local inputChest = ObjHost.GetObj(inputChestLocator)
-        if not inputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No inputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
-        inputLocation = inputChest:getBaseLocation()
-    end
-
-    -- determine local inputLocation
-    local outputLocation = baseLocation
-    if level == 2 then
-        -- get local output Chest
-        local outputChestLocator = self:getAvailableOutputLocator()
-        local outputChest = ObjHost.GetObj(outputChestLocator)
-        if not outputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No outputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
-        outputLocation = outputChest:getBaseLocation()
-    end
-
-    -- loop on items
-    local fuelNeed_Production = 0
-    for itemName, itemCount in pairs(items) do
-        -- get recipe to provide item
-        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
-        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("Factory:getFuelNeed_Production_Att: Factory does not provide "..itemName.."'s") return enterprise_energy.GetLargeFuelAmount_Att() end
-
-        -- get productionSpot
-        local productionSpot = self:getAvailableProductionSpot(recipe)
-        if not productionSpot then corelog.Error("Factory:getFuelNeed_Production_Att: No ProductionSpot available.") return enterprise_energy.GetLargeFuelAmount_Att() end
-        local productionSpotlocation = productionSpot:getBaseLocation()
-
-        -- fuelNeed to productionSpot
-        local fuelNeed_ToProductionlocation = role_energizer.NeededFuelToFrom(inputLocation, baseLocation) + role_energizer.NeededFuelToFrom(productionSpotlocation, inputLocation)
-
-        -- fuelNeed for productionSpot
-        local item = { itemName = itemCount }
-        local fuelNeed_ProductionSpot = productionSpot:getFuelNeed_Production_Att(item)
-
-        -- fuelNeed from productionSpot
-        local fuelNeed_FromProductionLocation = role_energizer.NeededFuelToFrom(productionSpotlocation, outputLocation) + role_energizer.NeededFuelToFrom(baseLocation, outputLocation)
-
-        -- end
-        -- corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_ProductionSpot="..fuelNeed_ProductionSpot..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
-        fuelNeed_Production = fuelNeed_Production + fuelNeed_ToProductionlocation + fuelNeed_ProductionSpot + fuelNeed_FromProductionLocation
-    end
-
-    -- end
-    return fuelNeed_Production
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -1045,6 +875,176 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         fuelNeed        = fuelNeed,
         ingredientsNeed = ingredientsNeed,
     }
+end
+
+--    ______         _
+--   |  ____|       | |
+--   | |__ __ _  ___| |_ ___  _ __ _   _
+--   |  __/ _` |/ __| __/ _ \| '__| | | |
+--   | | | (_| | (__| || (_) | |  | |_| |
+--   |_|  \__,_|\___|\__\___/|_|   \__, |
+--                                  __/ |
+--                                 |___/
+
+function Factory:getAvailableInputLocator()
+    -- find first available locator
+    for i, locator in ipairs(self:getInputLocators()) do
+        -- ToDo: check actual availability
+
+        -- take first
+        return locator
+    end
+
+    -- end
+    return nil
+end
+
+function Factory:getAvailableOutputLocator()
+    -- find first available locator
+    for i, locator in ipairs(self:getOutputLocators()) do
+        -- ToDo: check actual availability
+
+        -- take first
+        return locator
+    end
+
+    -- end
+    return nil
+end
+
+function Factory:getAvailableCraftSpot()
+    -- find first available spot
+    for i, spotLocator in ipairs(self:getCraftingSpotLocators()) do
+        -- get spot
+        local spot = ObjHost.GetObj(spotLocator)
+        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+
+        -- ToDo: check actual availability (make method of ProductionSpot?)
+
+        -- take first
+        return spot
+    end
+
+    -- end
+    return nil
+end
+
+function Factory:getAvailableSmeltSpot()
+    -- find first available spot
+    for i, spotLocator in ipairs(self:getSmeltingSpotLocators()) do
+        -- get spot
+        local spot = ObjHost.GetObj(spotLocator)
+        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+
+        -- ToDo: check actual availability (make method of ProductionSpot?)
+
+        -- take first
+        return spot
+    end
+
+    -- end
+    return nil
+end
+
+function Factory:getAvailableProductionSpot(recipe)
+    --[[
+        This method finds and selects a ProductionSpot for producing items from a recipe.
+
+        Return value:
+            productionSpot          - (ProductionSpot) available ProductionSpot for recipe
+            productionRecipe        - (table) production recipe
+
+        Parameters:
+            recipe                  + (table) item base recipe (including possibly both a crafting as smelting recipe)
+    ]]
+
+    -- check it can craft or smelt recipe
+    local productionSpot = nil
+    local productionRecipe = nil
+    if recipe.crafting then
+        productionRecipe = recipe.crafting
+        productionSpot = self:getAvailableCraftSpot()
+    elseif recipe.smelting then
+        productionRecipe = recipe.smelting
+        productionSpot = self:getAvailableSmeltSpot()
+    else
+        corelog.Error("Factory:getAvailableProductionSpot: no valid production recipe provided.")
+    end
+
+    -- end
+    return productionSpot, productionRecipe
+end
+
+function Factory:getFuelNeed_Production_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        Factory attribute for the current fuelNeed for producing items.
+
+        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the Factory baseLocation
+        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the Factory.
+
+        Return value:
+            fuelNeed        - (number) amount of fuel needed to produce items
+
+        Parameters:
+            items           + (table) items to produce
+    --]], ...)
+    if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+    -- cache Factory fields
+    local baseLocation = self:getBaseLocation()
+    local level = self:getLevel()
+
+    -- determine local inputLocation
+    local inputLocation = baseLocation
+    if level == 2 then
+         -- get local input Chest
+        local inputChestLocator = self:getAvailableInputLocator()
+        local inputChest = ObjHost.GetObj(inputChestLocator)
+        if not inputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No inputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        inputLocation = inputChest:getBaseLocation()
+    end
+
+    -- determine local inputLocation
+    local outputLocation = baseLocation
+    if level == 2 then
+        -- get local output Chest
+        local outputChestLocator = self:getAvailableOutputLocator()
+        local outputChest = ObjHost.GetObj(outputChestLocator)
+        if not outputChest then corelog.Error("Factory:getFuelNeed_Production_Att: No outputChest available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        outputLocation = outputChest:getBaseLocation()
+    end
+
+    -- loop on items
+    local fuelNeed_Production = 0
+    for itemName, itemCount in pairs(items) do
+        -- get recipe to provide item
+        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
+        if type(recipe) ~= "table" then corelog.Error("Factory:getFuelNeed_Production_Att: Factory does not provide "..itemName.."'s") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+        -- get productionSpot
+        local productionSpot = self:getAvailableProductionSpot(recipe)
+        if not productionSpot then corelog.Error("Factory:getFuelNeed_Production_Att: No ProductionSpot available.") return enterprise_energy.GetLargeFuelAmount_Att() end
+        local productionSpotlocation = productionSpot:getBaseLocation()
+
+        -- fuelNeed to productionSpot
+        local fuelNeed_ToProductionlocation = role_energizer.NeededFuelToFrom(inputLocation, baseLocation) + role_energizer.NeededFuelToFrom(productionSpotlocation, inputLocation)
+
+        -- fuelNeed for productionSpot
+        local item = { itemName = itemCount }
+        local fuelNeed_ProductionSpot = productionSpot:getFuelNeed_Production_Att(item)
+
+        -- fuelNeed from productionSpot
+        local fuelNeed_FromProductionLocation = role_energizer.NeededFuelToFrom(productionSpotlocation, outputLocation) + role_energizer.NeededFuelToFrom(baseLocation, outputLocation)
+
+        -- end
+        -- corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_ProductionSpot="..fuelNeed_ProductionSpot..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
+        fuelNeed_Production = fuelNeed_Production + fuelNeed_ToProductionlocation + fuelNeed_ProductionSpot + fuelNeed_FromProductionLocation
+    end
+
+    -- end
+    return fuelNeed_Production
 end
 
 return Factory

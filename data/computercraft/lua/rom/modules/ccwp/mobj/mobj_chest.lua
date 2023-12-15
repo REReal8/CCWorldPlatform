@@ -281,81 +281,6 @@ function Chest:getDismantleBlueprint()
     return buildLocation, blueprint
 end
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
-local defaultHostName = "enterprise_storage"
-
-function Chest:updateChestRecord_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, callback = InputChecker.Check([[
-        This async service brings the records of the Chest up-to-date by fetching information and (re)setting the Chest records.
-
-        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
-        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the Chest records could have been corrupted.
-
-        Return value:
-                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-                chest           - (table) the Chest
-
-        Parameters:
-            serviceData         - (table) data about the service
-            callback            + (Callback) to call once service is ready
-    ]], ...)
-    if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- create project data
-    local taskData = {
-        location = self:getBaseLocation():copy(),
-        accessDirection = self:getAccessDirection(),
-    }
-    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
-    local projectData = {
-        hostLocator     = URL:newInstance(defaultHostName),
-        lobjLocator     = lobjLocator,
-
-        metaData        = role_conservator.FetchChestSlotsInventory_MetaData(taskData),
-        taskCall        = TaskCall:newInstance("role_conservator", "FetchChestSlotsInventory_Task", taskData),
-    }
-    -- create project definition
-    local projectDef = {
-        steps   = {
-            -- fetch inventory from Chest
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
-            }, description = "Fetching Chest "..self:getId().." inventory"},
-            -- get Chest
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "objLocator"             , sourceStep = 0, sourceKeyDef = "lobjLocator" },
-            }},
-            -- save Chest
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "obj"                    , sourceStep = 2, sourceKeyDef = "obj" },
-                { keyDef = "obj._inventory"         , sourceStep = 1, sourceKeyDef = "inventory" },
-            }, description = "Saving Chest "..self:getId()},
-        },
-        returnData  = {
-        }
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-        projectMeta = { title = "Updating record "..self:getWIPId(), description = "Sit back and relax", wipId = self:getWIPId() },
-    }
-
-    -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -364,6 +289,8 @@ end
 --   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|
 --                                              | |   | |
 --                                              |_|   |_|
+
+local defaultHostName = "enterprise_storage"
 
 function Chest:provideItemsTo_AOSrv(...)
     -- get & check input from description
@@ -678,6 +605,80 @@ end
 
 function Chest:getItemDepotLocation()
     return self:getBaseLocation()
+end
+
+--     _____ _               _
+--    / ____| |             | |
+--   | |    | |__   ___  ___| |_
+--   | |    | '_ \ / _ \/ __| __|
+--   | |____| | | |  __/\__ \ |_
+--    \_____|_| |_|\___||___/\__|
+
+
+function Chest:updateChestRecord_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, callback = InputChecker.Check([[
+        This async service brings the records of the Chest up-to-date by fetching information and (re)setting the Chest records.
+
+        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
+        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the Chest records could have been corrupted.
+
+        Return value:
+                                - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                chest           - (table) the Chest
+
+        Parameters:
+            serviceData         - (table) data about the service
+            callback            + (Callback) to call once service is ready
+    ]], ...)
+    if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- create project data
+    local taskData = {
+        location = self:getBaseLocation():copy(),
+        accessDirection = self:getAccessDirection(),
+    }
+    local lobjLocator = LObjLocator:newInstance(defaultHostName, self)
+    local projectData = {
+        hostLocator     = URL:newInstance(defaultHostName),
+        lobjLocator     = lobjLocator,
+
+        metaData        = role_conservator.FetchChestSlotsInventory_MetaData(taskData),
+        taskCall        = TaskCall:newInstance("role_conservator", "FetchChestSlotsInventory_Task", taskData),
+    }
+    -- create project definition
+    local projectDef = {
+        steps   = {
+            -- fetch inventory from Chest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
+            }, description = "Fetching Chest "..self:getId().." inventory"},
+            -- get Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "getObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "objLocator"             , sourceStep = 0, sourceKeyDef = "lobjLocator" },
+            }},
+            -- save Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "saveObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "obj"                    , sourceStep = 2, sourceKeyDef = "obj" },
+                { keyDef = "obj._inventory"         , sourceStep = 1, sourceKeyDef = "inventory" },
+            }, description = "Saving Chest "..self:getId()},
+        },
+        returnData  = {
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+        projectMeta = { title = "Updating record "..self:getWIPId(), description = "Sit back and relax", wipId = self:getWIPId() },
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 return Chest

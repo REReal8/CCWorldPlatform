@@ -50,12 +50,12 @@ function T_BirchForest.T_All()
     -- IMObj
     T_BirchForest.T_IMObj_All()
 
-    -- service
-    T_BirchForest.T_getFuelNeed_Harvest_Att()
-    T_BirchForest.T_getFuelNeedExtraTree_Att()
-
     -- IItemSupplier
     T_BirchForest.T_IItemSupplier_All()
+
+    -- BirchForest
+    T_BirchForest.T_getFuelNeed_Harvest_Att()
+    T_BirchForest.T_getFuelNeedExtraTree_Att()
 end
 
 function T_BirchForest.T_AllPhysical()
@@ -371,49 +371,6 @@ function T_BirchForest.T_IMObj_All()
     }, logOk)
 end
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \
---   \__ \  __/ |   \ V /| | (_|  __/
---   |___/\___|_|    \_/ |_|\___\___|
-
-function T_BirchForest.T_getFuelNeed_Harvest_Att()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Harvest_Att() tests")
-    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local fuelNeed = obj:getFuelNeed_Harvest_Att()
-    local expectedFuelNeed = 36
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees1.."trees not the same as expected(="..expectedFuelNeed..")")
-
-    obj:setNTrees(nTrees2)
-    fuelNeed = obj:getFuelNeed_Harvest_Att()
-    expectedFuelNeed = 2*36 + 2 * 6
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
-
-    -- cleanup test
-end
-
-function T_BirchForest.T_getFuelNeedExtraTree_Att()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getFuelNeedExtraTree_Att() tests")
-    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local fuelNeed = obj:getFuelNeedExtraTree_Att()
-    local expectedFuelNeed = 36 + 2*6
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees1.."trees not the same as expected(="..expectedFuelNeed..")")
-
-    obj:setNTrees(nTrees2)
-    fuelNeed = obj:getFuelNeedExtraTree_Att()
-    expectedFuelNeed = 36 + 2*6
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
-
-    -- cleanup test
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -502,6 +459,49 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:birch_log"] = 20}, true, logOk)
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:birch_sapling"] = 2}, true, logOk)
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, false, logOk)
+
+    -- cleanup test
+end
+
+--    ____  _          _     ______                  _
+--   |  _ \(_)        | |   |  ____|                | |
+--   | |_) |_ _ __ ___| |__ | |__ ___  _ __ ___  ___| |_
+--   |  _ <| | '__/ __| '_ \|  __/ _ \| '__/ _ \/ __| __|
+--   | |_) | | | | (__| | | | | | (_) | | |  __/\__ \ |_
+--   |____/|_|_|  \___|_| |_|_|  \___/|_|  \___||___/\__|
+
+function T_BirchForest.T_getFuelNeed_Harvest_Att()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getFuelNeed_Harvest_Att() tests")
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local fuelNeed = obj:getFuelNeed_Harvest_Att()
+    local expectedFuelNeed = 36
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees1.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    obj:setNTrees(nTrees2)
+    fuelNeed = obj:getFuelNeed_Harvest_Att()
+    expectedFuelNeed = 2*36 + 2 * 6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
+
+function T_BirchForest.T_getFuelNeedExtraTree_Att()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getFuelNeedExtraTree_Att() tests")
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local fuelNeed = obj:getFuelNeedExtraTree_Att()
+    local expectedFuelNeed = 36 + 2*6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees1.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    obj:setNTrees(nTrees2)
+    fuelNeed = obj:getFuelNeedExtraTree_Att()
+    expectedFuelNeed = 36 + 2*6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
 end
