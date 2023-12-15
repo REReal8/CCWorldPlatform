@@ -424,7 +424,7 @@ function ProductionSpot:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "ProductionSpot:provideItemsTo_AOSrv", description = "Time to make "..textutils.serialise(provideItems, {compact = true})}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
+        projectMeta = { title = "ProductionSpot:provideItemsTo_AOSrv", description = "Time to make "..textutils.serialise(provideItems, {compact = true}), wipId = self:getWIPId()},
     }
 
     -- start project

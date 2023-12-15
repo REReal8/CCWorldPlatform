@@ -943,7 +943,7 @@ function Factory:can_ProvideItems_QOSrv(...)
         if type(recipe) ~= "table" then return {success = false} end
 
         -- check it can produce recipe
-        local productionSpot = self:getAvailableProductionSpot(recipe)
+        local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
         if not productionSpot then return {success = false} end
 
         -- ToDo: consider how to handle production of more items than fitting a single spot
