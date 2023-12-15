@@ -62,6 +62,8 @@ R  Factory improvements                                                         
    R  Enhance ProductionSpot and make it similiar to an IItemSupplier                                                   (done)
    R  ensure no longer need to register it as a module in the mobj library                                              (done)
 
+R  split ProductionSpot into CraftingSpot & SmeltingSpot                                                                (done)
+
 ToDo List
 ---------
 --[[
@@ -104,9 +106,7 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
-R  split ProductionSpot into CraftingSpot & SmeltingSpot                                                                (done)
-
--  CraftingSpot & SmeltingSpot: make them ItemSupplier's
+-  CraftingSpot & SmeltingSpot: make them full ItemSupplier's
 
 -  ensure enterprise_shop implement LObjHost
    -  upgrade into an LObjHost
