@@ -104,9 +104,9 @@ GR DisplayStation                                                               
       -  ...
       -  ...
 
--  ProductionSpot improvements
-   -  split into CraftSpot & SmeltSpot
-   -  make into proper IItemSupplier
+R  split ProductionSpot into CraftingSpot & SmeltingSpot                                                                (done)
+
+-  CraftingSpot & SmeltingSpot: make them ItemSupplier's
 
 -  ensure enterprise_shop implement LObjHost
    -  upgrade into an LObjHost

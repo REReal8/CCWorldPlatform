@@ -11,7 +11,8 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local ObjLocator = require "obj_locator"
 
-local ProductionSpot = require "mobj_production_spot"
+local CraftingSpot = require "crafting_spot"
+local SmeltingSpot = require "smelting_spot"
 local Factory = require "mobj_factory"
 
 local enterprise_employment = require "enterprise_employment"
@@ -32,7 +33,8 @@ local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 
-local T_ProductionSpot = require "test.t_mobj_production_spot"
+local T_CraftingSpot = require "test.t_crafting_spot"
+local T_SmeltingSpot = require "test.t_smelting_spot"
 local T_Shop = require "test.t_shop"
 local t_employment
 
@@ -89,10 +91,10 @@ local inputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { inputLo
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(ObjLocator:getClassName(), { outputLocator0, })
 
-local craftingSpotLocator1 = ObjLocator:newInstance("enterprise_manufacturing", ProductionSpot:getClassName())
+local craftingSpotLocator1 = ObjLocator:newInstance("enterprise_manufacturing", CraftingSpot:getClassName())
 local craftingSpotLocators1 = ObjArray:newInstance(ObjLocator:getClassName(), { craftingSpotLocator1, })
 
-local smeltingSpotLocator1 = ObjLocator:newInstance("enterprise_manufacturing", ProductionSpot:getClassName())
+local smeltingSpotLocator1 = ObjLocator:newInstance("enterprise_manufacturing", SmeltingSpot:getClassName())
 local smeltingSpotLocators1 = ObjArray:newInstance(ObjLocator:getClassName(), { smeltingSpotLocator1, })
 
 local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
@@ -542,11 +544,10 @@ function T_Factory.T_getAvailableCraftSpot()
     corelog.WriteToLog("* "..testClassName..":getAvailableCraftSpot() tests")
     local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
     local objLocator = testHost:saveObj(obj)
-    local isCraftingSpot = true
 
     -- test
     local spot = obj:getAvailableCraftSpot()
-    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -4), isCraftingSpot)
+    local test = T_CraftingSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -4))
     test:test(spot, "craftSpot", "", logOk)
 
     -- cleanup test
@@ -558,11 +559,10 @@ function T_Factory.T_getAvailableSmeltSpot()
     corelog.WriteToLog("* "..testClassName..":getAvailableSmeltSpot() tests")
     local obj = Factory:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
     local objLocator = testHost:saveObj(obj)
-    local isCraftingSpot = false
 
     -- test
     local spot = obj:getAvailableSmeltSpot()
-    local test = T_ProductionSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -3), isCraftingSpot)
+    local test = T_SmeltingSpot.CreateInitialisedTest(nil, baseLocation0:getRelativeLocation(3, 3, -3))
     test:test(spot, "smeltSpot", "", logOk)
 
     -- cleanup test

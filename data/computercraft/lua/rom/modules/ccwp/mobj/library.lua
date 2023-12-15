@@ -23,7 +23,6 @@ function library.T_All()
     local T_Factory = require "test.t_mobj_factory"
     local T_MineLayer = require "test.t_mine_layer"
     local T_MineShaft = require "test.t_mine_shaft"
-    local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_SmeltingSpot = require "test.t_smelting_spot"
     local T_Silo = require "test.t_mobj_silo"
     local T_Turtle = require "test.t_mobj_turtle"
@@ -40,7 +39,6 @@ function library.T_All()
     T_Factory.T_All()
     T_MineLayer.T_All()
     T_MineShaft.T_All()
-    T_ProductionSpot.T_All()
     T_Silo.T_All()
     T_SmeltingSpot.T_All()
     T_Turtle.T_All()
@@ -62,7 +60,6 @@ function library.T_AllPhysical()
     local T_Factory = require "test.t_mobj_factory"
     local T_MineLayer = require "test.t_mine_layer"
     local T_MineShaft = require "test.t_mine_shaft"
-    local T_ProductionSpot = require "test.t_mobj_production_spot"
     local T_Silo = require "test.t_mobj_silo"
     local T_SmeltingSpot = require "test.t_smelting_spot"
     local T_Turtle = require "test.t_mobj_turtle"
@@ -79,7 +76,6 @@ function library.T_AllPhysical()
     T_Factory.T_AllPhysical()
     T_MineLayer.T_AllPhysical()
     T_MineShaft.T_AllPhysical()
-    T_ProductionSpot.T_AllPhysical()
     T_Silo.T_AllPhysical()
     T_SmeltingSpot.T_AllPhysical()
     T_Turtle.T_AllPhysical()
@@ -101,7 +97,6 @@ local function ExecuteLibraryTest(t)
         {key = "f", desc = "Factory",           func = ExecuteLibraryTest, param = {filename = "T_Factory"}},
         {key = "l", desc = "MineLayer",         func = ExecuteLibraryTest, param = {filename = "T_MineLayer"}},
         {key = "m", desc = "MineShaft",         func = ExecuteLibraryTest, param = {filename = "T_MineShaft"}},
-        {key = "p", desc = "ProductionSpot",    func = ExecuteLibraryTest, param = {filename = "T_ProductionSpot"}},
         {key = "s", desc = "Silo",              func = ExecuteLibraryTest, param = {filename = "T_Silo"}},
         {key = "4", desc = "SmeltingSpot",      func = ExecuteLibraryTest, param = {filename = "T_SmeltingSpot"}},
         {key = "t", desc = "Turtle",            func = ExecuteLibraryTest, param = {filename = "T_Turtle"}},
@@ -126,7 +121,6 @@ function library.Setup()
     objectFactory:registerClass("Factory",      require "mobj_factory")
     objectFactory:registerClass("MineLayer",    require "mine_layer")
     objectFactory:registerClass("MineShaft",    require "mine_shaft")
-    objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
     objectFactory:registerClass("Silo",         require "mobj_silo")
     objectFactory:registerClass("SmeltingSpot", require "smelting_spot")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
@@ -150,7 +144,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
     moduleRegistry:requireAndRegisterModule("T_MineLayer", "test.t_mine_layer")
     moduleRegistry:requireAndRegisterModule("T_MineShaft", "test.t_mine_shaft")
-    moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_SmeltingSpot", "test.t_smelting_spot")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")

@@ -50,7 +50,8 @@ local ItemTable = require "obj_item_table"
 local LObjLocator = require "lobj_locator"
 local IItemDepot = require "i_item_depot"
 
-local ProductionSpot = require "mobj_production_spot"
+local CraftingSpot = require "crafting_spot"
+local SmeltingSpot = require "smelting_spot"
 
 local role_energizer = require "role_energizer"
 
@@ -203,7 +204,7 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(0, 0, 0), isCraftingSpot=true}}).mobjLocator)
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className=CraftingSpot:getClassName(), constructParameters={baseLocation=baseLocation:getRelativeLocation(0, 0, 0)}}).mobjLocator)
 
         -- smeltingSpots
         -- note: none
@@ -215,10 +216,10 @@ function Factory:construct(...)
         table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
-        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4), isCraftingSpot=true}}).mobjLocator)
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className=CraftingSpot:getClassName(), constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4)}}).mobjLocator)
 
         -- smeltingSpots
-        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3), isCraftingSpot=false}}).mobjLocator)
+        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className=SmeltingSpot:getClassName(), constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3)}}).mobjLocator)
     elseif level == 2 then
         -- inputLocators
         local inputChestLocator = enterprise_storage:hostLObj_SSrv({ className = "Chest", constructParameters = {
@@ -235,10 +236,10 @@ function Factory:construct(...)
         table.insert(outputLocators, outputChestLocator)
 
         -- craftingSpots
-        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4), isCraftingSpot=true}}).mobjLocator)
+        table.insert(craftingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className=CraftingSpot:getClassName(), constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -4)}}).mobjLocator)
 
         -- smeltingSpots
-        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className="ProductionSpot", constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3), isCraftingSpot=false}}).mobjLocator)
+        table.insert(smeltingSpotLocators, enterprise_manufacturing:hostLObj_SSrv({className=SmeltingSpot:getClassName(), constructParameters={baseLocation=baseLocation:getRelativeLocation(3, 3, -3)}}).mobjLocator)
     else
         corelog.Error("Factory:construct: Don't know how to construct a Factory of level "..level) return nil
     end
@@ -917,9 +918,9 @@ function Factory:getAvailableCraftSpot()
     for i, spotLocator in ipairs(self:getCraftingSpotLocators()) do
         -- get spot
         local spot = ObjHost.GetObj(spotLocator)
-        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+        if not spot or not Class.IsInstanceOf(spot, CraftingSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a CraftingSpot from spotLocator "..spotLocator:getURI()) return nil end
 
-        -- ToDo: check actual availability (make method of ProductionSpot?)
+        -- ToDo: check actual availability (make method of CraftingSpot?)
 
         -- take first
         return spot
@@ -934,9 +935,9 @@ function Factory:getAvailableSmeltSpot()
     for i, spotLocator in ipairs(self:getSmeltingSpotLocators()) do
         -- get spot
         local spot = ObjHost.GetObj(spotLocator)
-        if not spot or not Class.IsInstanceOf(spot, ProductionSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a ProductionSpot from spotLocator "..spotLocator:getURI()) return nil end
+        if not spot or not Class.IsInstanceOf(spot, SmeltingSpot) then corelog.Error("Factory:getAvailableCraftSpot: Failed obtaining a SmeltingSpot from spotLocator "..spotLocator:getURI()) return nil end
 
-        -- ToDo: check actual availability (make method of ProductionSpot?)
+        -- ToDo: check actual availability (make method of SmeltingSpot?)
 
         -- take first
         return spot

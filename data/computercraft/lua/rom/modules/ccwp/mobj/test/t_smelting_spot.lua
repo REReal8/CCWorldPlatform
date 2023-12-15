@@ -12,7 +12,6 @@ local SmeltingSpot = require "smelting_spot"
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
-local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
