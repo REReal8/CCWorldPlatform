@@ -35,7 +35,6 @@ local T_IItemSupplier = require "test.t_i_item_supplier"
 
 local T_CraftingSpot = require "test.t_crafting_spot"
 local T_SmeltingSpot = require "test.t_smelting_spot"
-local T_Shop = require "test.t_shop"
 local t_employment
 
 function T_Factory.T_All()

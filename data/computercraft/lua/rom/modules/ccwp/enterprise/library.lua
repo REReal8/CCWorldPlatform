@@ -23,7 +23,6 @@ function library.T_All()
     local t_manufacturing = require "test.t_manufacturing"
     local t_projects = require "test.t_projects"
     local t_storage = require "test.t_storage"
-    local t_shop = require "test.t_shop"
 
     -- library tests
     t_test.T_All()
@@ -37,7 +36,6 @@ function library.T_All()
     t_manufacturing.T_All()
     t_projects.T_All()
     t_storage.T_All()
-    t_shop.T_All()
 end
 
 function library.T_AllPhysical()
@@ -63,7 +61,6 @@ function library.T_AllPhysical()
     t_manufacturing.T_AllPhysical()
     -- t_projects.T_AllPhysical()
     t_storage.T_AllPhysical()
-    -- t_shop.T_AllPhysical()
 end
 
 local function ExecuteLibraryTest(t)
@@ -82,7 +79,6 @@ local function ExecuteLibraryTest(t)
 		{key = "i", desc = "isp",               func = ExecuteLibraryTest, param = {filename = "t_isp"}},
 		{key = "m", desc = "manufacturing",     func = ExecuteLibraryTest, param = {filename = "t_manufacturing"}},
 		{key = "p", desc = "projects",          func = ExecuteLibraryTest, param = {filename = "t_projects"}},
-		{key = "o", desc = "shop",              func = ExecuteLibraryTest, param = {filename = "t_shop"}},
 		{key = "s", desc = "storage",           func = ExecuteLibraryTest, param = {filename = "t_storage"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
@@ -107,7 +103,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_gathering")
     moduleRegistry:requireAndRegisterModule("enterprise_isp")
     moduleRegistry:requireAndRegisterModule("enterprise_projects")
-    moduleRegistry:requireAndRegisterModule("enterprise_shop")
     moduleRegistry:requireAndRegisterModule("enterprise_storage")
     moduleRegistry:requireAndRegisterModule("enterprise_employment")
     moduleRegistry:requireAndRegisterModule("enterprise_administration")
@@ -124,7 +119,6 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("t_gathering")
     moduleRegistry:requireAndRegisterModuleTests("t_isp")
     moduleRegistry:requireAndRegisterModuleTests("t_projects")
-    moduleRegistry:requireAndRegisterModuleTests("t_shop")
     moduleRegistry:requireAndRegisterModuleTests("t_storage")
     moduleRegistry:requireAndRegisterModuleTests("enterprise_test")
     moduleRegistry:requireAndRegisterModuleTests("t_test")

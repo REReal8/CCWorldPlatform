@@ -15,15 +15,11 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local Location = require "obj_location"
-local ObjLocator = require "obj_locator"
-
-local Settlement = require "settlement"
 
 local role_settler = require "role_settler"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_employment
-local enterprise_shop = require "enterprise_shop"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_storage = require "enterprise_storage"
@@ -98,10 +94,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- ToDo: Controle of aan de voorwaarden is voldaan, modem, axe, crafting table, birch sapling
 
-
     -- get currentTurtleLocator
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
+
+    -- get Settlement from currentTurtleObj
+    local currentTurtleObj = enterprise_employment:getObj(currentTurtleLocator) if not currentTurtleObj then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current Turtle "..currentTurtleLocator:getURI()) return Callback.ErrorCall(callback) end
+    local settlementLocator = currentTurtleObj:getSettlementLocator() if not settlementLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining settlementLocator") return Callback.ErrorCall(callback) end
+    local settlementObj = enterprise_colonization:getObj(settlementLocator) if not settlementObj then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining Settlement "..settlementLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- construct arguments
     local startLocation             = Location:newInstance(3, 2, 1, 0, 1)
@@ -115,7 +115,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local nTreeswanted = 6
     local projectData = {
         currentTurtleLocator            = currentTurtleLocator:copy(),
-        shopLocator                     = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
+        shopLocator                     = settlementObj:getMainShopLocator(),
 
         wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
@@ -395,13 +395,22 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     --]], ...)
     if not checkSuccess then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Invalid input") return { success = false } end
 
+    -- get currentTurtleLocator
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_SSrv: Failed obtaining current turtleLocator") return { success = false } end
+
+    -- get Settlement from currentTurtleObj
+    local currentTurtleObj = enterprise_employment:getObj(currentTurtleLocator) if not currentTurtleObj then corelog.Error("enterprise_colonization.RecoverNewWorld_SSrv: Failed obtaining current Turtle "..currentTurtleLocator:getURI()) return { success = false } end
+    local settlementLocator = currentTurtleObj:getSettlementLocator() if not settlementLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_SSrv: Failed obtaining settlementLocator") return { success = false } end
+    local settlementObj = enterprise_colonization:getObj(settlementLocator) if not settlementObj then corelog.Error("enterprise_colonization.RecoverNewWorld_SSrv: Failed obtaining Settlement "..settlementLocator:getURI()) return { success = false } end
+
     -- construct arguments
     local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local mineLocation              = Location:newInstance(0, -12, 1, 0, 1):getRelativeLocation(3, 3, 0)
     local nTreeswanted = 6
     local projectData = {
-        shopLocator                     = enterprise_shop.GetShopLocator(),
+        shopLocator                     = settlementObj:getMainShopLocator(),
 
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",

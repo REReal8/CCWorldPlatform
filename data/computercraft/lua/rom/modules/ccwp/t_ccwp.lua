@@ -21,7 +21,6 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_employment = require "enterprise_employment"
-local enterprise_shop = require "enterprise_shop"
 local enterprise_dump = require "enterprise_dump"
 local enterprise_gathering = require "enterprise_gathering"
 local enterprise_forestry = require "enterprise_forestry"
@@ -62,7 +61,7 @@ function t_ccwp.T_DeleteWorld()
     enterprise_administration:reset()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
-    enterprise_shop:deleteShop()
+    enterprise_colonization:deleteObjects("Shop")
     enterprise_dump.Reset()
 
     -- L/MObj's

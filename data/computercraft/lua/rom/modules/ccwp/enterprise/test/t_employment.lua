@@ -92,19 +92,20 @@ local constructParameters_Turtle = {
     workerLocation      = workerLocation0,
 }
 local constructParameters_UserStation = {
-    workerId        = workerId0,
-    baseLocation    = baseLocation_UserStation,
-    workerLocation  = workerLocation_UserStation,
+    workerId            = workerId0,
+    settlementLocator   = settlementLocator0,
+    baseLocation        = baseLocation_UserStation,
+    workerLocation      = workerLocation_UserStation,
 }
 local constructParameters_DisplayStation0 = {
-    workerId        = workerId0,
-    baseLocation    = baseLocation_DisplayStation0,
-    workerLocation  = workerLocation_DisplayStation0,
+    workerId            = workerId0,
+    baseLocation        = baseLocation_DisplayStation0,
+    workerLocation      = workerLocation_DisplayStation0,
 }
 local constructParameters_DisplayStation1 = {
-    workerId        = workerId0,
-    baseLocation    = baseLocation_DisplayStation1,
-    workerLocation  = workerLocation_DisplayStation1,
+    workerId            = workerId0,
+    baseLocation        = baseLocation_DisplayStation1,
+    workerLocation      = workerLocation_DisplayStation1,
 }
 
 local compact = { compact = true }
@@ -184,7 +185,7 @@ function t_employment.T_hostLObj_SSrv_UtilStation()
         ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
 
-    local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
+    local fieldsTest = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, settlementLocator0, baseLocation_UserStation, inputLocatorTest, outputLocatorTest)
 
     -- test
     local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_employment, testUserStationClassName, constructParameters_UserStation, testUserStationName, fieldsTest, logOk)

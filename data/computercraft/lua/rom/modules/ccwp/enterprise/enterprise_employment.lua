@@ -35,7 +35,6 @@ local DisplayStation = require "mobj_display_station"
 local role_interactor = require "role_interactor"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_colonization
@@ -530,19 +529,38 @@ function enterprise_employment:resetWorkers()
     resetWorkerOfType(enterprise_employment, DisplayStation:getClassName())
 end
 
+local function GetASettlementLocator()
+    -- attempt to retrieve settlementLocator
+    local settlementLocator = nil
+    enterprise_colonization = enterprise_colonization or require "enterprise_colonization"
+    local settlements = enterprise_colonization:getObjects(Settlement:getClassName())
+    if not settlements then corelog.Error("enterprise_employment.GetASettlementLocator: Failed obtaining Settlement's") return nil end
+    for k, objTable in pairs(settlements) do
+        local obj = Settlement:new(objTable)
+        settlementLocator = LObjLocator:newInstance("enterprise_colonization", obj)
+    end
+
+    -- end
+    return settlementLocator
+end
+
 local function DummyWorkerMenu(t)
     if type(t) =="table" and type(t.workerClassName) =="string" then
         local className = t.workerClassName
         if className == "UserStation" then
             -- register birthCertificate
+            local settlementLocator = GetASettlementLocator() -- note: we are not sure this works
+            if not settlementLocator then corelog.Error("enterprise_employment.DummyWorkerMenu: Failed obtaining settlementLocator") return false end
+            corelog.Warning("enterprise_employment.DummyWorkerMenu: Note assuming settlementLocator: "..settlementLocator:getURI())
             local baseLocation = Location:newInstance(-6, -12, 1, 0, 1) -- note: we don't know this
             corelog.Warning("enterprise_employment.DummyWorkerMenu: Note assuming baseLocation: "..textutils.serialise(baseLocation))
             -- ToDo: see if there is a smarter way to retrieve baseLocation (e.g. from coremove.GetLocation())
             local workerId = os.getComputerID()
             local reconstructParameters = {
-                workerId        = workerId,
-                baseLocation    = baseLocation,
-                workerLocation  = baseLocation:getRelativeLocation(3, 3, 0),
+                workerId            = workerId,
+                settlementLocator   = settlementLocator,
+                baseLocation        = baseLocation,
+                workerLocation      = baseLocation:getRelativeLocation(3, 3, 0),
             }
             local serviceResults = enterprise_employment:registerBirthCertificate_SOSrv({
                 className           = className,
@@ -552,7 +570,7 @@ local function DummyWorkerMenu(t)
 
             -- reboot
             corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate:")
-            os.sleep(1.0)
+            os.sleep(5.0)
             corelog.WriteToLog("rebooting...")
             os.reboot()
         elseif className == "DisplayStation" then
@@ -574,7 +592,7 @@ local function DummyWorkerMenu(t)
 
             -- reboot
             corelog.WriteToLog("enterprise_employment.DummyWorkerMenu: Registering my own birthCertificate:")
-            os.sleep(1.0)
+            os.sleep(5.0)
             corelog.WriteToLog("rebooting...")
             os.reboot()
         else
@@ -750,11 +768,16 @@ function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
         turtleObj:setFuelPriorityKey(priorityKey)
         local turtleLocator = self:saveObj(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
 
+        -- get Settlement from currentTurtleObj
+        local settlementLocator = turtleObj:getSettlementLocator() if not settlementLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: Failed obtaining settlementLocator") return end
+        enterprise_colonization = enterprise_colonization or require "enterprise_colonization"
+        local settlementObj = enterprise_colonization:getObj(settlementLocator) if not settlementObj then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: Failed obtaining Settlement "..settlementLocator:getURI()) return end
+
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
         if refuelAmount == 0 then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: refuelAmount = 0 while turtleFuelLevel(="..turtleFuelLevel..") < fuelLevel_Assignment(="..fuelLevel_Assignment.."). Apparently enterprise_energy enterpriseLevel = 0. This should not happen here! => skip asking for this and fix this!") return end
-        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_employment
         local wasteItemDepotLocator = enterprise_employment.GetAnyTurtleLocator() -- ToDo: introduce and use proper WasteDump + somehow get this passed into enterprise_employment
+        local ingredientsItemSupplierLocator = settlementObj:getMainShopLocator()
         local serviceData = {
             turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,

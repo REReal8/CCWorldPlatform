@@ -32,7 +32,6 @@ local LayerRectangle = require "obj_layer_rectangle"
 local role_conservator = require "role_conservator"
 
 local enterprise_storage = require "enterprise_storage"
-local enterprise_shop = require "enterprise_shop"
 local enterprise_employment
 
 --    _       _ _   _       _ _           _   _
@@ -44,12 +43,13 @@ local enterprise_employment
 
 function UserStation:_init(...)
     -- get & check input from description
-    local checkSuccess, workerId, isActive, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
+    local checkSuccess, workerId, isActive, settlementLocator, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
         Initialise a UserStation.
 
         Parameters:
             workerId                + (number) workerId of the UserStation
             isActive                + (boolean) whether the UserStation is active
+            settlementLocator       + (ObjLocator) locating Settlement of the UserStation
             baseLocation            + (Location) base location of the UserStation
             inputLocator            + (ObjLocator) input Chest of the UserStation (where items will be picked up from)
             outputLocator           + (ObjLocator) output Chest of the UserStation (where items will be delivered)
@@ -60,6 +60,7 @@ function UserStation:_init(...)
     ObjBase._init(self)
     self._workerId          = workerId
     self._isActive          = isActive
+    self._settlementLocator = settlementLocator
     self._baseLocation      = baseLocation
     self._inputLocator      = inputLocator
     self._outputLocator     = outputLocator
@@ -75,6 +76,7 @@ function UserStation:new(...)
             o                           + (table, {}) with object fields
                 _workerId               - (number) workerId of the UserStation
                 _isActive               - (boolean, false) whether the UserStation is active
+                _settlementLocator      - (ObjLocator) locating Settlement of the UserStation
                 _baseLocation           - (Location) location of the UserStation
                 _inputLocator           - (ObjLocator) input Chest of the UserStation
                 _outputLocator          - (ObjLocator) output Chest of the UserStation
@@ -116,7 +118,7 @@ end
 
 function UserStation:construct(...)
     -- get & check input from description
-    local checkSuccess, workerId, baseLocation = InputChecker.Check([[
+    local checkSuccess, workerId, settlementLocator, baseLocation = InputChecker.Check([[
         This method constructs a UserStation instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also ensures all child MObj's the UserStation spawns are hosted on the appropriate MObjHost (by calling hostLObj_SSrv).
@@ -129,6 +131,7 @@ function UserStation:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the UserStation
                 workerId                + (number) workerId of the UserStation
+                settlementLocator       + (ObjLocator) locating Settlement of the Turtle
                 baseLocation            + (Location) base location of the UserStation
     ]], ...)
     if not checkSuccess then corelog.Error("UserStation:construct: Invalid input") return nil end
@@ -144,7 +147,7 @@ function UserStation:construct(...)
     }}).mobjLocator
 
     -- construct new UserStation
-    local obj = UserStation:newInstance(workerId, false, baseLocation:copy(), inputLocator, outputLocator)
+    local obj = UserStation:newInstance(workerId, false, settlementLocator, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return obj
@@ -205,6 +208,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function UserStation:getSettlementLocator()
+    return self._settlementLocator
+end
 
 function UserStation:getBaseLocation() return self._baseLocation end
 
@@ -492,9 +499,14 @@ local function UserStationMenuOrder(t, amount)
 
         if stack == "s" then stack = " stack" else stack = "" end
 
+        -- get Settlement
+        local settlementLocator = userStation:getSettlementLocator() if not settlementLocator then corelog.Error("UserStation.UserStationMenuOrder: Failed obtaining settlementLocator") return false end
+        local enterprise_colonization = require "enterprise_colonization"
+        local settlementObj = enterprise_colonization:getObj(settlementLocator) if not settlementObj then corelog.Error("enterprise_colonization.RecoverNewWorld_SSrv: Failed obtaining Settlement "..settlementLocator:getURI()) return false end
+
         -- get Shop
-        local shopLocator = enterprise_shop.GetShopLocator() -- ToDo: get this somehow into UserStation
-        local shop = enterprise_shop:getObj(shopLocator)
+        local shopLocator = settlementObj:getMainShopLocator()
+        local shop = enterprise_colonization:getObj(shopLocator)
         if not shop then coredisplay.UpdateToDisplay("No Shop!", 2) return false end
 
         -- make master happy

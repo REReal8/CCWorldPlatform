@@ -20,7 +20,7 @@ local role_forester = require "role_forester"
 
 local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
-local enterprise_shop = require "enterprise_shop"
+local enterprise_colonization = require "enterprise_colonization"
 
 local TestObj = require "test.obj_test"
 
@@ -72,7 +72,7 @@ end
 
 local testClassName = "Shop"
 local testObjName = "shop"
-local testHostName = "enterprise_shop"
+local testHostName = "enterprise_colonization"
 
 local logOk = false
 
@@ -233,7 +233,7 @@ end
 
 function T_Shop.T_provideItemsTo_AOSrv_MultipleItems_ToTurtle()
     -- prepare test
-    local objLocator = enterprise_shop.GetShopLocator()
+    local objLocator = enterprise_colonization.GetShopLocator()
 --    testHost:hostLObj_SSrv({ className = testClassName, constructParameters = constructParameters_L2T4 }).mobjLocator assert(objLocator, "failed hosting "..testClassName.." on "..testHost:getHostName())
     local provideItems = {
         ["minecraft:furnace"]   = 1,
@@ -254,7 +254,7 @@ end
 
 function T_Shop.T_provideItemsTo_AOSrv_Charcoal_ToTurtle()
     -- prepare test
-    local objLocator = enterprise_shop.GetShopLocator()
+    local objLocator = enterprise_colonization.GetShopLocator()
     local provideItems = {
         ["minecraft:charcoal"]  = 3,
     }
@@ -272,7 +272,7 @@ end
 
 function T_Shop.T_provideItemsTo_AOSrv_Torch_ToTurtle()
     -- prepare test
-    local objLocator = enterprise_shop.GetShopLocator()
+    local objLocator = enterprise_colonization.GetShopLocator()
     local provideItems = {
         ["minecraft:torch"]  = 4,
     }
@@ -314,7 +314,7 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     }, logOk)
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator)
+    enterprise_colonization:deleteResource(lobjLocator)
     enterprise_forestry:deleteResource(forestLocator)
 end
 
@@ -332,7 +332,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     T_IItemSupplier.pt_can_ProvideItems_QOSrv(testClassName, obj, testObjName, { ["minecraft:dirt"] = 10}, false, logOk)
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator)
+    enterprise_colonization:deleteResource(lobjLocator)
     enterprise_forestry:deleteResource(forestLocator)
 end
 
@@ -370,7 +370,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     assert(result.success == false, "registerItemSupplier_SOSrv services should fail with a non IItemSupplier")
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
+    enterprise_colonization:deleteResource(lobjLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
     moduleRegistry:delist(testObjHost:getHostName())
     testObjHost:deleteResource(nonItemSupplierLocator)
 end
@@ -392,7 +392,7 @@ function T_Shop.T_delistItemSupplier_SOSrv()
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator) -- note: delistItemSupplier_SOSrv saved the test Shop
+    enterprise_colonization:deleteResource(lobjLocator) -- note: delistItemSupplier_SOSrv saved the test Shop
 end
 
 function T_Shop.T_delistAllItemSuppliers()
@@ -418,7 +418,7 @@ function T_Shop.T_delistAllItemSuppliers()
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten # ItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator) -- note: delistAllItemSuppliers saved the test Shop
+    enterprise_colonization:deleteResource(lobjLocator) -- note: delistAllItemSuppliers saved the test Shop
     enterprise_storage:deleteResource(chestLocator)
 end
 
@@ -451,7 +451,7 @@ function T_Shop.T_bestItemSupplier()
     assert(bestItemSupplierLocator:isEqual(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
 
     -- cleanup test
-    enterprise_shop:deleteResource(lobjLocator)
+    enterprise_colonization:deleteResource(lobjLocator)
     enterprise_storage:deleteResource(itemDepotLocator)
     enterprise_storage:deleteResource(closeItemSupplierLocator)
     enterprise_storage:deleteResource(farItemSupplierLocator)

@@ -24,6 +24,7 @@ local T_IObj = require "test.t_i_obj"
 local T_ILObj = require "test.t_i_lobj"
 local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
+local T_Settlement = require "test.t_settlement"
 
 function T_UserStation.T_All()
     -- initialisation
@@ -54,14 +55,16 @@ local logOk = false
 
 local workerId0 = 111111
 local isActive_false = false
+local settlementLocator0 = T_Settlement.CreateTestObj()
 local baseLocation0 = Location:newInstance(-6, -12, 1, 0, 1)
 
 local inputLocator0 = enterprise_employment.GetAnyTurtleLocator() assert(inputLocator0, "Failed obtaining inputLocator0")
 local outputLocator0 = enterprise_employment.GetAnyTurtleLocator() assert(outputLocator0, "Failed obtaining outputLocator0")
 
 local constructParameters0 = {
-    workerId        = workerId0,
-    baseLocation    = baseLocation0,
+    workerId            = workerId0,
+    settlementLocator   = settlementLocator0,
+    baseLocation        = baseLocation0,
 }
 
 local compact = { compact = true }
@@ -73,28 +76,30 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_UserStation.CreateTestObj(workerId, isActive, baseLocation, inputLocator, outputLocator)
+function T_UserStation.CreateTestObj(workerId, isActive, settlementLocator, baseLocation, inputLocator, outputLocator)
     -- check input
     workerId = workerId or workerId0
     isActive = isActive or isActive_false
+    settlementLocator = settlementLocator or settlementLocator0
     baseLocation = baseLocation or baseLocation0
     inputLocator = inputLocator or inputLocator0
     outputLocator = outputLocator or outputLocator0
 
     -- create testObj
-    local testObj = UserStation:newInstance(workerId, isActive, baseLocation:copy(), inputLocator, outputLocator)
+    local testObj = UserStation:newInstance(workerId, isActive, settlementLocator, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return testObj
 end
 
-function T_UserStation.CreateInitialisedTest(workerId, isActive, baseLocation, inputLocatorTest, outputLocatorTest)
+function T_UserStation.CreateInitialisedTest(workerId, isActive, settlementLocator, baseLocation, inputLocatorTest, outputLocatorTest)
     -- check input
 
     -- create test
     local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_workerId", workerId),
         FieldValueEqualTest:newInstance("_isActive", isActive),
+        FieldValueEqualTest:newInstance("_settlementLocator", settlementLocator),
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         inputLocatorTest,
         outputLocatorTest
@@ -109,10 +114,10 @@ function T_UserStation.T__init()
     corelog.WriteToLog("* "..testClassName..":_init() tests")
 
     -- test
-    local obj = T_UserStation.CreateTestObj(workerId0, isActive_false, baseLocation0, inputLocator0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UserStation.CreateTestObj(workerId0, isActive_false, settlementLocator0, baseLocation0, inputLocator0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
     local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local test = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, settlementLocator0, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -124,16 +129,17 @@ function T_UserStation.T_new()
 
     -- test
     local obj = UserStation:new({
-        _workerId       = workerId0,
-        _isActive       = isActive_false,
-        _baseLocation   = baseLocation0:copy(),
+        _workerId           = workerId0,
+        _isActive           = isActive_false,
+        _settlementLocator  = settlementLocator0,
+        _baseLocation       = baseLocation0:copy(),
 
-        _inputLocator   = inputLocator0:copy(),
-        _outputLocator  = outputLocator0:copy(),
+        _inputLocator       = inputLocator0:copy(),
+        _outputLocator      = outputLocator0:copy(),
     })
     local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local test = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, settlementLocator0, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -180,7 +186,7 @@ function T_UserStation.T_ILObj_All()
     local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance(ObjLocator:getClassName())
     ))
-    local fieldsTest0 = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, baseLocation0, inputLocatorTest, outputLocatorTest)
+    local fieldsTest0 = T_UserStation.CreateInitialisedTest(workerId0, isActive_false, settlementLocator0, baseLocation0, inputLocatorTest, outputLocatorTest)
 
     -- test cases
     T_ILObj.pt_all(testClassName, UserStation, {

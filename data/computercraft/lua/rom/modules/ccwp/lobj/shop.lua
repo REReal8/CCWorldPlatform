@@ -31,7 +31,7 @@ local ObjHost = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
-local enterprise_shop
+local enterprise_colonization
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -501,8 +501,8 @@ function Shop:delistAllItemSuppliers()
     end
 
     -- save Shop
-    enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObj(self)
+    enterprise_colonization = require "enterprise_colonization"
+    local objLocator = enterprise_colonization:saveObj(self)
     if not objLocator then corelog.Error("Shop:delistAllItemSuppliers: Failed saving Shop") return {success = false} end
 end
 
@@ -534,8 +534,8 @@ function Shop:registerItemSupplier_SOSrv(...)
     table.insert(self._itemSuppliersLocators, itemSupplierLocator)
 
     -- save Shop
-    enterprise_shop = require "enterprise_shop"
-    local objLocator = enterprise_shop:saveObj(self)
+    enterprise_colonization = require "enterprise_colonization"
+    local objLocator = enterprise_colonization:saveObj(self)
     if not objLocator then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
 
     -- end
@@ -574,8 +574,8 @@ function Shop:delistItemSupplier_SOSrv(...)
             table.remove(self._itemSuppliersLocators, i)
 
             -- save Shop
-            enterprise_shop = require "enterprise_shop"
-            local objLocator = enterprise_shop:saveObj(self)
+            enterprise_colonization = require "enterprise_colonization"
+            local objLocator = enterprise_colonization:saveObj(self)
             if not objLocator then corelog.Error("Shop:delistItemSupplier_SOSrv: Failed saving Shop") return {success = false} end
             break
         end
