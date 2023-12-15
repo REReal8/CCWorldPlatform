@@ -1,7 +1,11 @@
--- define module
-local enterprise_colonization = {}
+-- define class
+local Class = require "class"
+local LObjHost = require "lobj_host"
+local enterprise_colonization = Class.NewClass(LObjHost)
 
 --[[
+    The enterprise_colonization is a LObjHost. It hosts essential Obj's like Settlement's, Shop's etc.
+
     The enterprise_colonization provides basic functionality for colonizing the world.
 --]]
 
@@ -11,6 +15,9 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
+
+local Settlement = require "settlement"
 
 local role_settler = require "role_settler"
 
@@ -21,6 +28,33 @@ local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_gathering = require "enterprise_gathering"
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_colonization._hostName   = "enterprise_colonization"
+
+--    _____ ____  _     _
+--   |_   _/ __ \| |   (_)
+--     | || |  | | |__  _
+--     | || |  | | '_ \| |
+--    _| || |__| | |_) | |
+--   |_____\____/|_.__/| |
+--                    _/ |
+--                   |__/
+
+function enterprise_colonization:getClassName()
+    return "enterprise_colonization"
+end
 
 --    ______       _                       _           _____      _             _          _   _
 --   |  ____|     | |                     (_)         / ____|    | |           (_)        | | (_)
@@ -64,7 +98,6 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- ToDo: Controle of aan de voorwaarden is voldaan, modem, axe, crafting table, birch sapling
 
-    -- ToDo: instelling van de 3,2,1 coordianten bij start, lijkt nu niet meer te werken
 
     -- get currentTurtleLocator
     enterprise_employment = enterprise_employment or require "enterprise_employment"
