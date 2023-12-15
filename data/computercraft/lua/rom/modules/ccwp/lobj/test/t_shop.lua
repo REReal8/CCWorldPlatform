@@ -151,7 +151,7 @@ function T_Shop.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators0) if not obj then corelog.Error("Failed obtaining Shop") return end
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators0) if not obj then corelog.Error("Failed obtaining "..testClassName) return end
 
     -- test
     local test = TestArrayTest:newInstance(

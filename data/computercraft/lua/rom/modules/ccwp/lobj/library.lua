@@ -18,6 +18,7 @@ function library.T_All()
 
     local T_LObjLocator = require "test.t_lobj_locator"
     local T_Shop = require "test.t_shop"
+    local T_Settlement = require "test.t_settlement"
 
     -- library tests
     T_LObjTest.T_All()
@@ -25,6 +26,7 @@ function library.T_All()
 
     T_LObjLocator.T_All()
     T_Shop.T_All()
+    T_Settlement.T_All()
 end
 
 function library.T_AllPhysical()
@@ -33,9 +35,11 @@ function library.T_AllPhysical()
     corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
 
     local T_Shop = require "test.t_shop"
+    local T_Settlement = require "test.t_settlement"
 
     -- library tests
     T_Shop.T_AllPhysical()
+    T_Settlement.T_AllPhysical()
 end
 
 local function ExecuteLibraryTest(t)
@@ -49,6 +53,7 @@ local function ExecuteLibraryTest(t)
         {key = "l", desc = "LObjLocator",		func = ExecuteLibraryTest, param = {filename = "T_LObjLocator"}},
 
         {key = "s", desc = "Shop",              func = ExecuteLibraryTest, param = {filename = "T_Shop"}},
+        {key = "v", desc = "Settlement",        func = ExecuteLibraryTest, param = {filename = "T_Settlement"}},
         {key = "x", desc = "Back to main menu", func = function () return true end }
     }
     return ExecuteXObjTest(t, "mobj", options, ExecuteLibraryTest)
@@ -63,6 +68,7 @@ function library.Setup()
 
     objectFactory:registerClass("LObjLocator",  require "lobj_locator")
     objectFactory:registerClass("Shop",         require "shop")
+    objectFactory:registerClass("Settlement",   require "settlement")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"
@@ -81,6 +87,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_IItemDepot", "test.t_i_item_depot")
     moduleRegistry:requireAndRegisterModule("T_LObjLocator", "test.t_lobj_locator")
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_shop")
+    moduleRegistry:requireAndRegisterModule("T_Settlement", "test.t_settlement")
 
     -- add library test menu
     local coredisplay = require "coredisplay"
