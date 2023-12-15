@@ -61,6 +61,7 @@ end
 --                             | |
 --                             |_|
 
+-- ToDo: consider renaming to enterprise_colonization:createNewSettlement_AOSrv
 function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
