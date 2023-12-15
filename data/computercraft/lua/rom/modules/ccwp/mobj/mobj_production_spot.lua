@@ -168,80 +168,6 @@ end
 
 -- ToDo: make ProductionSpot a full IMObj (i.e. inherit + add other methods)
 
---    _____               _            _   _              _____             _
---   |  __ \             | |          | | (_)            / ____|           | |
---   | |__) | __ ___   __| |_   _  ___| |_ _  ___  _ __ | (___  _ __   ___ | |_
---   |  ___/ '__/ _ \ / _` | | | |/ __| __| |/ _ \| '_ \ \___ \| '_ \ / _ \| __|
---   | |   | | | (_) | (_| | |_| | (__| |_| | (_) | | | |____) | |_) | (_) | |_
---   |_|   |_|  \___/ \__,_|\__,_|\___|\__|_|\___/|_| |_|_____/| .__/ \___/ \__|
---                                                             | |
---                                                             |_|
-
-function ProductionSpot:getFuelNeed_Production_Att(...)
-    -- get & check input from description
-    local checkSuccess, items = InputChecker.Check([[
-        ProductionSpot attribute for the current fuelNeed for producing items.
-
-        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the ProductionSpot baseLocation
-        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the ProductionSpot.
-
-        Return value:
-            fuelNeed        - (number) amount of fuel needed to produce items
-
-        Parameters:
-            items           + (table) items to produce
-    --]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
-
-    -- fuelNeed for production of items
-    local fuelNeed_Production = 0
-    for _, _ in pairs(items) do
-        if self:isCraftingSpot() then
-            fuelNeed_Production = fuelNeed_Production + 0 -- craft
-        else
-            fuelNeed_Production = fuelNeed_Production + 4 + 4 -- smelt + pickup
-        end
-    end
-
-    -- end
-    return fuelNeed_Production
-end
-
-function ProductionSpot:produceIngredientsNeeded(...)
-    -- get & check input from description
-    local checkSuccess, productionRecipe, productItemCount = InputChecker.Check([[
-        This method determines the ingredients needed to produce 'productItemCount' items with the 'productionRecipe'.
-
-        Return value:
-            ingredientsNeeded           - (table) ingredientsNeeded to produce items
-            productSurplus              - (number) number of surplus requested products
-
-        Parameters:
-            productionRecipe            + (table) production recipe
-            productItemCount            + (number) amount of items to produce
-    ]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:itemsNeeded: Invalid input") return nil end
-
-    -- determine ingredientsNeeded
-    local ingredientsNeeded = nil
-    local productSurplus = nil
-    if self:isCraftingSpot() then
-        ingredientsNeeded, productSurplus = role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount)
-        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
-    else
-        -- determine production fuel
-        -- ToDo: do this differently
-        local fuelItemName  = "minecraft:birch_planks"
-        local fuelItemCount = productItemCount
-
-        ingredientsNeeded, productSurplus = role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount)
-        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
-    end
-
-    -- end
-    return ingredientsNeeded, productSurplus
-end
-
 --    _____ _____ _                  _____                   _ _
 --   |_   _|_   _| |                / ____|                 | (_)
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __
@@ -429,6 +355,82 @@ function ProductionSpot:provideItemsTo_AOSrv(...)
 
     -- start project
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+-- ToDo: make ProductionSpot a full IItemSupplier (i.e. inherit + add other methods)
+
+--    _____               _            _   _              _____             _
+--   |  __ \             | |          | | (_)            / ____|           | |
+--   | |__) | __ ___   __| |_   _  ___| |_ _  ___  _ __ | (___  _ __   ___ | |_
+--   |  ___/ '__/ _ \ / _` | | | |/ __| __| |/ _ \| '_ \ \___ \| '_ \ / _ \| __|
+--   | |   | | | (_) | (_| | |_| | (__| |_| | (_) | | | |____) | |_) | (_) | |_
+--   |_|   |_|  \___/ \__,_|\__,_|\___|\__|_|\___/|_| |_|_____/| .__/ \___/ \__|
+--                                                             | |
+--                                                             |_|
+
+function ProductionSpot:getFuelNeed_Production_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        ProductionSpot attribute for the current fuelNeed for producing items.
+
+        It returns the fuelNeed for producing the items assuming the ingredients (incl possible production fuel) are available (in a Turtle located) at the ProductionSpot baseLocation
+        and the results are to be delivered to that Location. In other worths we ignore fuel needs to and from the ProductionSpot.
+
+        Return value:
+            fuelNeed        - (number) amount of fuel needed to produce items
+
+        Parameters:
+            items           + (table) items to produce
+    --]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+    -- fuelNeed for production of items
+    local fuelNeed_Production = 0
+    for _, _ in pairs(items) do
+        if self:isCraftingSpot() then
+            fuelNeed_Production = fuelNeed_Production + 0 -- craft
+        else
+            fuelNeed_Production = fuelNeed_Production + 4 + 4 -- smelt + pickup
+        end
+    end
+
+    -- end
+    return fuelNeed_Production
+end
+
+function ProductionSpot:produceIngredientsNeeded(...)
+    -- get & check input from description
+    local checkSuccess, productionRecipe, productItemCount = InputChecker.Check([[
+        This method determines the ingredients needed to produce 'productItemCount' items with the 'productionRecipe'.
+
+        Return value:
+            ingredientsNeeded           - (table) ingredientsNeeded to produce items
+            productSurplus              - (number) number of surplus requested products
+
+        Parameters:
+            productionRecipe            + (table) production recipe
+            productItemCount            + (number) amount of items to produce
+    ]], ...)
+    if not checkSuccess then corelog.Error("ProductionSpot:itemsNeeded: Invalid input") return nil end
+
+    -- determine ingredientsNeeded
+    local ingredientsNeeded = nil
+    local productSurplus = nil
+    if self:isCraftingSpot() then
+        ingredientsNeeded, productSurplus = role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount)
+        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
+    else
+        -- determine production fuel
+        -- ToDo: do this differently
+        local fuelItemName  = "minecraft:birch_planks"
+        local fuelItemCount = productItemCount
+
+        ingredientsNeeded, productSurplus = role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount)
+        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
+    end
+
+    -- end
+    return ingredientsNeeded, productSurplus
 end
 
 return ProductionSpot
