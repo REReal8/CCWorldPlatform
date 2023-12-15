@@ -869,16 +869,12 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- deliver items
                 { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                     { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
-                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                }},
-                -- store waste items
-                { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "wasteItemsLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
             },

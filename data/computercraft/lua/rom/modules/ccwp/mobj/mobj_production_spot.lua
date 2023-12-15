@@ -253,7 +253,7 @@ end
 
 function ProductionSpot:produceItem_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -266,13 +266,13 @@ function ProductionSpot:produceItem_AOSrv(...)
                 destinationItemsLocator         - (ObjLocator) locating the final ItemDepot and the items that where transferred to it
                                                     (upon service succes the "host" component of this ObjLocator should be equal to itemDepotLocator, and
                                                      the "query" should be equal to orderItems)
-                wasteItemsLocator               - (ObjLocator) locating waste items produced during production
 
         Parameters:
             serviceData                         - (table) data for the service
                 provideItems                    + (ItemTable) with one or more items to provide
                 itemDepotLocator                + (ObjLocator) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (ObjLocator) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           + (ObjLocator) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
@@ -293,12 +293,12 @@ function ProductionSpot:produceItem_AOSrv(...)
 
     -- create project data
     local projectData = {
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
 
         turtleInputLocator              = turtleInputLocator,
-
-        assignmentsPriorityKey          = assignmentsPriorityKey,
     }
 
     -- determine production steps
@@ -326,15 +326,15 @@ function ProductionSpot:produceItem_AOSrv(...)
         projectData.craftMetaData = role_alchemist.Craft_MetaData(craftData)
         projectData.craftTaskCall = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData)
 
-        -- add crafting steps
+        -- obtain workerId
         table.insert(projectSteps,
-            -- obtain workerId
             { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }}
         )
         extraStep = 1
+
+        -- craft items
         table.insert(projectSteps,
-            -- Craft_Task
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "craftMetaData" },
                 { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
@@ -360,14 +360,14 @@ function ProductionSpot:produceItem_AOSrv(...)
         projectData.smeltMetaData = role_alchemist.Smelt_MetaData(smeltData)
         projectData.smeltTaskCall = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData)
 
-        -- add smelting steps
+        -- obtain workerId
         table.insert(projectSteps,
-            -- obtain workerId
             { stepType = "LSOMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }}
         )
+
+        -- smelt items
         table.insert(projectSteps,
-            -- Smelt_Task
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "smeltMetaData" },
                 { keyDef = "metaData.needWorkerId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
@@ -386,9 +386,8 @@ function ProductionSpot:produceItem_AOSrv(...)
         projectData.pickupMetaData = role_alchemist.Pickup_MetaData(pickupData)
         projectData.pickupTaskCall = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData)
 
-        -- add pickup step
+        -- pickup items
         table.insert(projectSteps,
-            -- Pickup_Task
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "pickupMetaData" },
                 { keyDef = "metaData.startTime"     , sourceStep = 3, sourceKeyDef = "smeltReadyTime" },
@@ -399,7 +398,7 @@ function ProductionSpot:produceItem_AOSrv(...)
         extraStep = 2
     end
 
-    -- add remaining steps
+    -- store produced items
     table.insert(projectSteps,
         { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
             { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
@@ -407,11 +406,18 @@ function ProductionSpot:produceItem_AOSrv(...)
         }, description = "Storing items into "..itemDepotLocator:getURI().." (local Factory output)" }
     )
 
+    -- store gathered waste
+    table.insert(projectSteps,
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
+            { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
+            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+        }}
+    )
+
     -- create (remaining) project definition
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "wasteItemsLocator"          , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
     }
