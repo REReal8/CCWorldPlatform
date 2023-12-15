@@ -865,7 +865,7 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- produce items
-                { stepType = "LAOSrv", stepTypeDef = { serviceName = "produceItem_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "productionSpotLocator" }, stepDataDef = {
                     { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "provideItems" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },

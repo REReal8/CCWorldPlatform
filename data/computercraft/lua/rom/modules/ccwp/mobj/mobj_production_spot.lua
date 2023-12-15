@@ -251,7 +251,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function ProductionSpot:produceItem_AOSrv(...)
+function ProductionSpot:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
@@ -276,17 +276,17 @@ function ProductionSpot:produceItem_AOSrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], ...)
-    if not checkSuccess then corelog.Error("ProductionSpot:produceItem_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("ProductionSpot:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check provideItems for 1 item type
     local nEntries = provideItems:nEntries()
-    if nEntries ~= 1 then corelog.Error("ProductionSpot:produceItem_AOSrv: Not supported for "..tostring(nEntries).." provideItems entries") return Callback.ErrorCall(callback) end
+    if nEntries ~= 1 then corelog.Error("ProductionSpot:provideItemsTo_AOSrv: Not supported for "..tostring(nEntries).." provideItems entries") return Callback.ErrorCall(callback) end
 
     -- select recipe to produce item
     enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
     local productItemName, v = next(provideItems)
     local recipe = enterprise_manufacturing.GetRecipes()[ productItemName ]
-    if type(recipe) ~= "table" then corelog.Error("ProductionSpot:produceItem_AOSrv: No recipe for item "..productItemName) return Callback.ErrorCall(callback) end
+    if type(recipe) ~= "table" then corelog.Error("ProductionSpot:provideItemsTo_AOSrv: No recipe for item "..productItemName) return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
@@ -424,7 +424,7 @@ function ProductionSpot:produceItem_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "ProductionSpot:produceItem_AOSrv", description = "Time to make "..textutils.serialise(provideItems, {compact = true})}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
+        projectMeta = { title = "ProductionSpot:provideItemsTo_AOSrv", description = "Time to make "..textutils.serialise(provideItems, {compact = true})}, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
     }
 
     -- start project
