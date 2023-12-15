@@ -843,11 +843,10 @@ function Factory:provideItemsTo_AOSrv(...)
         if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
         local ingredientsNeeded, productSurplus = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
 
-        local productionSpotLocator = LObjLocator:newInstance(defaultHostName, productionSpot)
-
-        -- retrieve site input & output locator's
+        -- retrieve locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
         local localOutputLocator = self:getAvailableOutputLocator():copy()
+        local productionSpotLocator = LObjLocator:newInstance(defaultHostName, productionSpot)
 
         -- mark productionSpot as unavailable
         -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
