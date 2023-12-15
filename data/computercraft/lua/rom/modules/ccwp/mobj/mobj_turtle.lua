@@ -44,13 +44,14 @@ local enterprise_employment
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, workerId, isActive, baseLocation, workerLocation, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, workerId, isActive, settlementLocator, baseLocation, workerLocation, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
             id                      + (string) id of the Turtle
             workerId                + (number) workerId of the Turtle
             isActive                + (boolean) whether the Turtle is active
+            settlementLocator       + (ObjLocator) locating Settlement of the Turtle
             baseLocation            + (Location) base location of the Turtle
             workerLocation          + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
@@ -62,6 +63,7 @@ function Turtle:_init(...)
     self._id                = id
     self._workerId          = workerId
     self._isActive          = isActive
+    self._settlementLocator = settlementLocator
     self._baseLocation      = baseLocation
     self._location          = workerLocation
     self._fuelPriorityKey   = fuelPriorityKey
@@ -78,6 +80,7 @@ function Turtle:new(...)
                 _id                     - (string) id of the Turtle
                 _workerId               - (number) workerId of the Turtle
                 _isActive               - (boolean, false) whether the Turtle is active
+                _settlementLocator      - (ObjLocator) locating Settlement of the Turtle
                 _baseLocation           - (Location, {}) base location of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
@@ -127,7 +130,7 @@ end
 
 function Turtle:construct(...)
     -- get & check input from description
-    local checkSuccess, workerId, baseLocation, workerLocation = InputChecker.Check([[
+    local checkSuccess, workerId, settlementLocator, baseLocation, workerLocation = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         The constructed Turtle is not yet saved in the LObjHost.
@@ -138,6 +141,7 @@ function Turtle:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
                 workerId                + (number) workerId of the Turtle
+                settlementLocator       + (ObjLocator) locating Settlement of the Turtle
                 baseLocation            + (Location) base location of the Turtle
                 workerLocation          + (Location) location of the Turtle
     ]], ...)
@@ -145,7 +149,7 @@ function Turtle:construct(...)
 
     -- construct new Turtle
     local id = coreutils.NewId()
-    local obj = Turtle:newInstance(id, workerId, false, baseLocation, workerLocation)
+    local obj = Turtle:newInstance(id, workerId, false, settlementLocator, baseLocation, workerLocation)
 
     -- end
     return obj
@@ -188,6 +192,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| |
 --                            _/ |
 --                           |__/
+
+function Turtle:getSettlementLocator()
+    return self._settlementLocator
+end
 
 function Turtle:getBaseLocation()
     return self._baseLocation

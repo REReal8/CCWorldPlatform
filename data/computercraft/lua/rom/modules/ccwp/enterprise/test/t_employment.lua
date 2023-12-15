@@ -20,6 +20,7 @@ local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
+local T_Settlement = require "test.t_settlement"
 local T_UserStation = require "test.t_mobj_user_station"
 local T_DisplayStation = require "test.t_mobj_display_station"
 
@@ -73,6 +74,7 @@ local testDisplayStationName1 = testDisplayStationName.."1"
 local level0 = 0
 local workerId0 = 111111
 local isActive_false = false
+local settlementLocator0 = T_Settlement.CreateTestObj()
 local baseLocation0 = Location:newInstance(1, -1, 3, 0, 1)
 local baseLocation_UserStation = Location:newInstance(-6, -12, 1, 0, 1)
 local baseLocation_DisplayStation0 = Location:newInstance(-6, -12, 1, 0, 1)
@@ -84,9 +86,10 @@ local workerLocation_DisplayStation1 = baseLocation_DisplayStation1:getRelativeL
 local fuelPriorityKey = ""
 
 local constructParameters_Turtle = {
-    workerId        = workerId0,
-    baseLocation    = baseLocation0,
-    workerLocation  = workerLocation0,
+    workerId            = workerId0,
+    settlementLocator   = settlementLocator0,
+    baseLocation        = baseLocation0,
+    workerLocation      = workerLocation0,
 }
 local constructParameters_UserStation = {
     workerId        = workerId0,
@@ -151,7 +154,7 @@ end
 function t_employment.T_hostLObj_SSrv_Turtle()
     -- prepare test
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, baseLocation0, workerLocation0, fuelPriorityKey)
+    local fieldsTest = T_Turtle.CreateInitialisedTest(nil, workerId0, isActive_false, settlementLocator0, baseLocation0, workerLocation0, fuelPriorityKey)
 
     -- test
     local serviceResults = T_LObjHost.pt_hostLObj_SSrv(enterprise_employment, testTurtleClassName, constructParameters_Turtle, testTurtleName, fieldsTest, logOk)
@@ -246,14 +249,18 @@ local function GetNextTurtleBaseLocation()
 end
 
 local function GetNextTurtleConstructParameters()
-    -- get nextBaseLocation
+    -- determine some parameters
     local nextBaseLocation = GetNextTurtleBaseLocation()
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() assert(currentTurtleLocator, "Failed obtaining currentTurtleLocator")
+    local turtleObj = enterprise_employment:getObj(currentTurtleLocator) assert(turtleObj, "Failed obtaining Turtle "..currentTurtleLocator:getURI())
+    local settlementLocator = turtleObj:getSettlementLocator() assert(settlementLocator, "Failed obtaining settlementLocator")
 
-    --
+    -- constructParameters
     local constructParameters = {
-        workerId        = workerId0,
-        baseLocation    = nextBaseLocation,
-        workerLocation  = nextBaseLocation:copy(),
+        workerId            = workerId0,
+        settlementLocator   = settlementLocator,
+        baseLocation        = nextBaseLocation,
+        workerLocation      = nextBaseLocation:copy(),
     }
 
     -- end

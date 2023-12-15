@@ -27,6 +27,7 @@ local LObjLocator = require "lobj_locator"
 
 local IMObj = require "i_mobj"
 local IWorker = require "i_worker"
+local Settlement = require "settlement"
 local Turtle = require "mobj_turtle"
 local UserStation = require "mobj_user_station"
 local DisplayStation = require "mobj_display_station"
@@ -37,6 +38,7 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_projects = require "enterprise_projects"
+local enterprise_colonization
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -336,16 +338,22 @@ function enterprise_employment:getCurrentWorkerLocator()
         elseif self:getNumberOfObjects(Turtle:getClassName()) == 0 and turtle then -- are we the first Turtle?
             corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
             -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
-            --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
+            --          however for the first one this is a bit hard. Hence we do it here as an exception in this special case.
+
+            -- no settlement should exists as well: create it
+            enterprise_colonization = enterprise_colonization or require "enterprise_colonization"
+            local settlementLocator = enterprise_colonization:hostLObj_SSrv({ className = Settlement:getClassName(), constructParameters = { }}).mobjLocator
+            if not settlementLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed creating Settlement") return false end
 
             -- determine hosting information
             className = Turtle:getClassName()
             local baseLocation = Location:newInstance(0, -1, 3, 0, 1)
             local workerLocation = Location:newInstance(3, 2, 1, 0, 1)
             constructParameters = {
-                workerId        = workerId,
-                baseLocation    = baseLocation,
-                workerLocation  = workerLocation,
+                workerId            = workerId,
+                settlementLocator   = settlementLocator,
+                baseLocation        = baseLocation,
+                workerLocation      = workerLocation,
             }
 
             -- determine workerName
