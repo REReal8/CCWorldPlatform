@@ -193,6 +193,7 @@ end
 --                            _/ |
 --                           |__/
 
+-- ToDo: consider making this mandatory for all MObj's
 function Turtle:getSettlementLocator()
     return self._settlementLocator
 end
