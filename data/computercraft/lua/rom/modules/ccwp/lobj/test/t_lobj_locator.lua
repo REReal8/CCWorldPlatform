@@ -19,6 +19,7 @@ local MethodResultEqualTest = require "method_result_equal_test"
 local T_Class = require "test.t_class"
 local T_ObjLocator = require "test.t_obj_locator"
 local T_IObj = require "test.t_i_obj"
+local T_LObjTest = require "test.t_lobj_test"
 
 function T_LObjLocator.T_All()
     -- initialisation
@@ -35,7 +36,7 @@ local testObjName = "lobjLocator"
 local logOk = false
 
 local hostName0 = "TestObjHost"
-local locatedLObj0 = LObjTest:newInstance(coreutils.NewId(), "field1 0")
+local locatedLObj0 = T_LObjTest.CreateTestObj()
 
 local noQuery = {}
 local itemName0 = "minecraft:torch"
