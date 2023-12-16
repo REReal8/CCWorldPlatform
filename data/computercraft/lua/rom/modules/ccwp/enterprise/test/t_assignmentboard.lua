@@ -332,6 +332,9 @@ function t_assignmentboard.IncreaseTriggerCount()
 
     coredht.SaveData(triggerCount, triggerCountDHTName)
 
+    -- add this if we want to simulate a tooooo long trigger
+    -- os.sleep(0.20)
+
     -- end
     return {
         success = true,

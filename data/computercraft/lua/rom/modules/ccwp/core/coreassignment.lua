@@ -209,7 +209,7 @@ end
 
 function DoAssignment(...)
     -- get & check input from description
-    local checkSuccess, workerLocator, assignmentId, taskCall, callback  = InputChecker.Check([[
+    local checkSuccess, workerLocator, assignmentId, triggerId, taskCall, callback  = InputChecker.Check([[
         Execute an assignment on a Worker
 
         Return value:
@@ -218,6 +218,8 @@ function DoAssignment(...)
             workerLocator               + (ObjLocator) locating the Worker
             assignment                  - (table) location of first tree of the forest
                 assignmentId            + (string) with id of the assignment
+                metaData                - (table) with metadata on the Task
+                    triggerId           + (string, nil) optional internal trigger
                 taskCall                + (TaskCall) with the task to call
                 callback                + (Callback) with the callback to call
     ]], ...)
@@ -236,8 +238,16 @@ function DoAssignment(...)
 --    corelog.WriteToLog("Starting "..taskCall:getModuleName().."."..taskCall:getMethodName())
     DispayStation = require "mobj_display_station"
     DispayStation.SetStatus("assignment", "Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
+    local clockStart = os.clock()
     local taskResult = taskCall:call()
+    local clockEnd = os.clock()
     corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)
+
+    -- check trigger did not take to long
+    local duration = clockEnd - clockStart
+    if type(triggerId) ~= "nil" and duration > 0.16 then
+        corelog.Warning("coreassignment.DoAssignment: trigger "..triggerId.." took "..duration.." seconds")
+    end
 
     -- call callBack function
     corelog.WriteToAssignmentLog("Calling callback function", assignmentId)
