@@ -2,6 +2,7 @@ local t_assignmentboard = {}
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
+local coredht = require "coredht"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -321,11 +322,15 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     -- cleanup test
 end
 
-local triggerCount = 0
+local triggerCountDHTName = "test t_assignmentboard.T_De_ScheduleTrigger_SSrv"
 
 function t_assignmentboard.IncreaseTriggerCount()
+    local triggerCount = coredht.GetData(triggerCountDHTName)
+
     triggerCount = triggerCount + 1
     corelog.WriteToLog("workerId="..os.getComputerID()..", time="..coreutils.UniversalTime()..", triggerCount="..triggerCount)
+
+    coredht.SaveData(triggerCount, triggerCountDHTName)
 
     -- end
     return {
@@ -337,7 +342,7 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..".ScheduleTrigger_SSrv() + DescheduleTrigger tests")
 
-    triggerCount = 0
+    coredht.SaveData(0, triggerCountDHTName)
 
     local metaData = {
         periodTime = 1, -- seconds
@@ -354,23 +359,26 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     assert(type(triggerId) == "string", "triggerId not a string")
 
     -- wait a bit
-    os.sleep(6) --
+    os.sleep(6) -- seconds
 
     -- check enough times called
+    local triggerCount = coredht.GetData(triggerCountDHTName)
     assert(triggerCount >= 2, "Trigger was only called "..triggerCount.." times")
 
     -- test deschedule
     enterprise_assignmentboard.DescheduleTrigger(triggerId)
-    triggerCount = 0
+    coredht.SaveData(0, triggerCountDHTName)
 
     -- wait a bit
-    os.sleep(3) --
+    os.sleep(3) -- seconds
 
     -- check not anymore called
+    triggerCount = coredht.GetData(triggerCountDHTName)
     assert(triggerCount == 0, "Trigger was called "..triggerCount.." times")
 
     -- cleanup test
     if logOk then corelog.WriteToLog(" ok") end
+    coredht.SaveData(nil, triggerCountDHTName)
 end
 
 function t_assignmentboard.DoAssignment_ASrv_Callback(callbackData, taskResults)
