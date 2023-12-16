@@ -219,7 +219,7 @@ function DoAssignment(...)
             assignment                  - (table) location of first tree of the forest
                 assignmentId            + (string) with id of the assignment
                 metaData                - (table) with metadata on the Task
-                    triggerId           + (string, nil) optional internal trigger
+                    triggerId           + (string, "") optional internal trigger
                 taskCall                + (TaskCall) with the task to call
                 callback                + (Callback) with the callback to call
     ]], ...)
@@ -245,7 +245,7 @@ function DoAssignment(...)
 
     -- check trigger did not take to long
     local duration = clockEnd - clockStart
-    if type(triggerId) ~= "nil" and duration > 0.16 then
+    if triggerId ~= "" and duration > 0.16 then
         corelog.Warning("coreassignment.DoAssignment: trigger "..triggerId.." took "..duration.." seconds")
     end
 
