@@ -348,8 +348,12 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     corelog.WriteToLog("* "..testClassName..".ScheduleTrigger_SSrv() + DescheduleTrigger tests")
     coredht.SaveData("", triggerIdDHTName)
     coredht.SaveData(0, triggerCountDHTName)
+    local periodTime = 1 -- seconds
+    local maxApplyRoundtripTime = 2 -- seconds
+    local triggerCountMin = 2
+    -- corelog.WriteToLog("triggerCountMin="..triggerCountMin)
     local metaData = {
-        periodTime = 1, -- seconds
+        periodTime = periodTime,
     }
     local taskCall = TaskCall:newInstance("t_assignmentboard", "IncreaseTriggerCount", {} )
 
@@ -360,26 +364,30 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     })
     assert(result.success == true, "Failed scheduling trigger")
     local triggerId = result.triggerId
-    assert(type(result.triggerId) == "string", "triggerId not a string")
+    assert(type(result.triggerId) == "string", "triggerId (type="..type(result.triggerId)..") not a string")
     coredht.SaveData(triggerId, triggerIdDHTName)
 
     -- wait a bit
-    os.sleep(6) -- seconds
+    local waitAfterSchedule = (maxApplyRoundtripTime + periodTime)*triggerCountMin -- seconds
+    -- corelog.WriteToLog("sleep "..waitAfterSchedule.."sec")
+    os.sleep(waitAfterSchedule)
 
     -- check: enough times called
     local triggerCount = coredht.GetData(triggerCountDHTName)
-    assert(triggerCount >= 2, "Trigger was only called "..triggerCount.." times")
+    assert(triggerCount >= triggerCountMin, "Trigger "..triggerId.." was only called "..triggerCount.." times")
 
     -- test deschedule
     enterprise_assignmentboard.DescheduleTrigger(triggerId)
     coredht.SaveData(0, triggerCountDHTName)
 
     -- wait a bit more
-    os.sleep(3) -- seconds
+    local waitAfterDeschedule = maxApplyRoundtripTime -- seconds
+    -- corelog.WriteToLog("sleep "..waitAfterDeschedule.."sec")
+    os.sleep(waitAfterDeschedule)
 
     -- check: not anymore called
     triggerCount = coredht.GetData(triggerCountDHTName)
-    assert(triggerCount == 0, "Trigger was called "..triggerCount.." times")
+    assert(triggerCount == 0, "Trigger "..triggerId.." was called "..triggerCount.." times (while we expected 0)")
 
     -- cleanup test
     if logOk then corelog.WriteToLog(" ok") end
