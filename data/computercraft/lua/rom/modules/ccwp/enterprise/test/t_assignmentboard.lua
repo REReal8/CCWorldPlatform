@@ -322,13 +322,15 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     -- cleanup test
 end
 
-local triggerCountDHTName = "test t_assignmentboard.T_De_ScheduleTrigger_SSrv"
+local triggerIdDHTName = "test t_assignmentboard.T_De_ScheduleTrigger_SSrv triggerId"
+local triggerCountDHTName = "test t_assignmentboard.T_De_ScheduleTrigger_SSrv triggerCount"
 
 function t_assignmentboard.IncreaseTriggerCount()
+    local triggerId = coredht.GetData(triggerIdDHTName)
     local triggerCount = coredht.GetData(triggerCountDHTName)
 
     triggerCount = triggerCount + 1
-    corelog.WriteToLog("workerId="..os.getComputerID()..", time="..coreutils.UniversalTime()..", triggerCount="..triggerCount)
+    corelog.WriteToLog("t_assignmentboard.IncreaseTriggerCount: workerId="..os.getComputerID()..", triggerId="..triggerId..", time="..coreutils.UniversalTime()..", triggerCount="..triggerCount)
 
     coredht.SaveData(triggerCount, triggerCountDHTName)
 
@@ -344,9 +346,8 @@ end
 function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..".ScheduleTrigger_SSrv() + DescheduleTrigger tests")
-
+    coredht.SaveData("", triggerIdDHTName)
     coredht.SaveData(0, triggerCountDHTName)
-
     local metaData = {
         periodTime = 1, -- seconds
     }
@@ -359,12 +360,13 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     })
     assert(result.success == true, "Failed scheduling trigger")
     local triggerId = result.triggerId
-    assert(type(triggerId) == "string", "triggerId not a string")
+    assert(type(result.triggerId) == "string", "triggerId not a string")
+    coredht.SaveData(triggerId, triggerIdDHTName)
 
     -- wait a bit
     os.sleep(6) -- seconds
 
-    -- check enough times called
+    -- check: enough times called
     local triggerCount = coredht.GetData(triggerCountDHTName)
     assert(triggerCount >= 2, "Trigger was only called "..triggerCount.." times")
 
@@ -372,15 +374,16 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     enterprise_assignmentboard.DescheduleTrigger(triggerId)
     coredht.SaveData(0, triggerCountDHTName)
 
-    -- wait a bit
+    -- wait a bit more
     os.sleep(3) -- seconds
 
-    -- check not anymore called
+    -- check: not anymore called
     triggerCount = coredht.GetData(triggerCountDHTName)
     assert(triggerCount == 0, "Trigger was called "..triggerCount.." times")
 
     -- cleanup test
     if logOk then corelog.WriteToLog(" ok") end
+    coredht.SaveData(nil, triggerIdDHTName)
     coredht.SaveData(nil, triggerCountDHTName)
 end
 
