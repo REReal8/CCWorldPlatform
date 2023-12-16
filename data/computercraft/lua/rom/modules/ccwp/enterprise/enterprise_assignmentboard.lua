@@ -172,6 +172,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         Parameters:
             serviceData             - (table) data for this service
                 metaData            + (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
+                    needTurtle      - (boolean, true)
                 taskCall            + (TaskCall) to call to execute the assignment
             callback                + (Callback) to call once service (assignment) is ready
     ]], ...)
@@ -181,7 +182,6 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
     metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
     metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de Turtle zelf voor een tool moet zorgen
-    metaData.needTurtle     = metaData.needTurtle   or true
     metaData.needWorkerId   = metaData.needWorkerId or nil      --> nil-waarde voor needWorkerId geeft aan dat workerId geen rol speelt bij de selectie
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
