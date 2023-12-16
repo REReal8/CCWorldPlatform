@@ -46,7 +46,7 @@ local db = {
 
 function enterprise_assignmentboard.ScheduleTrigger(...)
         -- get & check input from description
-    local checkSuccess, periodTime, triggerId, taskCall = InputChecker.Check([[
+    local checkSuccess, periodTime, triggerId, timesRun, taskCall = InputChecker.Check([[
         This async public service posts an Assignment for execution via the enterprise.
 
         The Assignment is not necessarily directly executed. It is added to the list of assignments in the
@@ -62,12 +62,16 @@ function enterprise_assignmentboard.ScheduleTrigger(...)
                 metaData            - (table) with metadata on the trigger
                     periodTime      + (number) real life seconds between calls
                     triggerId       + (string) internal trigger
+                    timesRun        + (number) with # times trigger was run
                 taskCall            + (TaskCall) to call to execute the assignment
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger_SSrv: Invalid input") return { success = false } end
 
+    -- create serviceData
+    local startTime = coreutils.UniversalTime()
+    if timesRun > 0 then startTime = startTime + periodTime/50 end
     local assignementMetaData = {
-        startTime   = coreutils.UniversalTime(),
+        startTime   = startTime,
         needTool    = false,
         needTurtle  = false,
         fuelNeeded  = 0,
@@ -75,20 +79,21 @@ function enterprise_assignmentboard.ScheduleTrigger(...)
         periodTime  = periodTime,
         triggerId   = triggerId,
     }
-
     local callback = Callback:newInstance("enterprise_assignmentboard", "ScheduleTrigger", {
         metaData = {
             periodTime  = periodTime,
-            triggerId   = triggerId
+            triggerId   = triggerId,
+            timesRun    = timesRun + 1,
         },
         taskCall = taskCall:copy(),
     })
-
-    local assignmentServiceData = {
+    local serviceData = {
         metaData    = assignementMetaData,
         taskCall    = taskCall,
     }
-    local scheduleSuccess = enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+
+    -- schedule assignment
+    local scheduleSuccess = enterprise_assignmentboard.DoAssignment_ASrv(serviceData, callback)
 
     -- end
     return {
@@ -126,6 +131,7 @@ function enterprise_assignmentboard.ScheduleTrigger_SSrv(...)
         metaData = {
             periodTime  = periodTime,
             triggerId   = triggerId,
+            timesRun    = 0,
         },
         taskCall = taskCall:copy()
     })
