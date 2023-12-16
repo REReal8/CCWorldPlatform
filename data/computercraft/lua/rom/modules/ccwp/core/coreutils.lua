@@ -10,6 +10,7 @@ local corelog
 local coreenv		= require "coreenv"
 local coretask
 
+local initialised = false
 local db	= {
     dbFilename  	= "/db/coreutils.lua",
     protocol		= "coreutils",
@@ -37,6 +38,9 @@ function coreutils.Init()
 
     -- uniek random nummer
     math.randomseed(os.time())
+
+    -- remember we are initialised
+    initialised = true
 end
 
 -- niet nodig voor utils
@@ -47,15 +51,22 @@ end
 
 -- generates a new id
 function coreutils.NewId()
-
     -- eentje ophogen
-    db.serial = db.serial + 1
+    local serial = db.serial + 1
 
-    -- write to disk
-    coreutils.WriteToFile(db.dbFilename, db, "overwrite")
+    -- check already initialised
+    if initialised then
+        db.serial = serial
+
+        -- write to disk
+        coreutils.WriteToFile(db.dbFilename, db, "overwrite")
+    else
+        serial = "preInit"..serial
+        -- ToDo: try to prevent this in calling functions, i.e. don't cause calling from outside of a module function
+    end
 
     -- id is een altijd een string
-    return os.getComputerID() .. ":" .. db.serial
+    return os.getComputerID() .. ":" .. serial
 end
 --[[
 function IdCreator(id)
