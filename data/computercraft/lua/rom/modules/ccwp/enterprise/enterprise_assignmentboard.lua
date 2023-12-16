@@ -142,18 +142,23 @@ function enterprise_assignmentboard.DescheduleTrigger(triggerId)
     if type(triggerId) ~= "string" then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: Invalid input") return end
 
     -- search for trigger assignment
-    local triggerAssignmentId = nil
+    local triggerAssignmentId = ""
     local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
     if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: Invalid assignmentList") return end
-    for assignmentId, assignmentData in pairs(assignmentList) do
-        -- check assignment open
-        if assignmentData.metaData.triggerId == triggerId then
-            triggerAssignmentId = assignmentId
+    for assignmentRef, assignmentData in pairs(assignmentList) do
+        -- check assignmentRef
+        if type(assignmentRef) ~= "string" then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: assignmentRef not a string (type="..type(assignmentRef)..")") return end
+
+        -- check assignment is trigger
+        local metaData = assignmentData.metaData if not metaData then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: assignment "..assignmentRef.." has no metaData") return end
+        if metaData.triggerId == triggerId then
+            triggerAssignmentId = assignmentRef
+            break
         end
     end
 
     -- delete trigger assignment
-    if triggerAssignmentId then
+    if triggerAssignmentId ~= "" then
         enterprise_assignmentboard.EndAssignment(triggerAssignmentId)
     else
         corelog.Warning("enterprise_assignmentboard.DescheduleTrigger: triggerAssignmentId not found for triggerId="..triggerId)
