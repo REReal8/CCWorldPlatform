@@ -39,14 +39,6 @@ function coretest.AddTest(func, data, desc)
     end
 end
 
--- deze functie werkt nergens gebruikt, werkt ook niet naar mijn verwachting
-function coretest.TestComplete(taskId)
-	-- taskId should just be the index number
-	if type(taskId) == "number"	then return taskId < work.first
-								else return true
-	end
-end
-
 -- to do the actual work, (almost) endless loop
 function coretest.Run()
 	-- work forever
