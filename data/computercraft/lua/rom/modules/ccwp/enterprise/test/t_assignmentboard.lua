@@ -14,7 +14,11 @@ function t_assignmentboard.T_All()
     t_assignmentboard.T_BestCandidate()
 --    t_assignmentboard.T_GetStatistics_Att() -- ToDo: fix side-effects of this test (now all currently present (test) assignments are deleted)
     t_assignmentboard.T_DoAssignment_ASrv()
+    t_assignmentboard.T_De_ScheduleTrigger_SSrv()
 end
+
+local logOk = false
+local testClassName = "enterprise_assignmentboard"
 
 local compact = { compact = true }
 
@@ -24,7 +28,7 @@ end
 
 function t_assignmentboard.T_EndAssignments()
     -- prepare test
-    corelog.WriteToLog("* enterprise_assignmentboard.EndAssignments() tests")
+    corelog.WriteToLog("* "..testClassName..".EndAssignments() tests")
 
     -- test
     enterprise_assignmentboard.EndAssignments()
@@ -34,7 +38,7 @@ end
 
 function t_assignmentboard.T_MetaDataConditionsMet()
     -- prepare test
-    corelog.WriteToLog("* enterprise_assignmentboard.MetaDataConditionsMet() tests")
+    corelog.WriteToLog("* "..testClassName..".MetaDataConditionsMet() tests")
     local now = coreutils.UniversalTime()
     local workerId = os.getComputerID()
     local metaData = {
@@ -208,7 +212,7 @@ end
 
 function t_assignmentboard.T_BestCandidate()
     -- prepare test
-    corelog.WriteToLog("* enterprise_assignmentboard.BestCandidate() tests")
+    corelog.WriteToLog("* "..testClassName..".BestCandidate() tests")
     -- init candidate 1
     local now = coreutils.UniversalTime()
     local metaData1 = {
@@ -267,7 +271,7 @@ end
 
 function t_assignmentboard.T_GetStatistics_Att()
     -- prepare test
-    corelog.WriteToLog("* enterprise_assignmentboard.GetStatistics_Att() test")
+    corelog.WriteToLog("* "..testClassName..".GetStatistics_Att() test")
     enterprise_assignmentboard.Reset()
 
     -- test
@@ -289,7 +293,7 @@ local callbackTestValue = "some callback data"
 
 function t_assignmentboard.T_DoAssignment_ASrv()
     -- prepare test
-    corelog.WriteToLog("* enterprise_assignmentboard.DoAssignment_ASrv() tests")
+    corelog.WriteToLog("* "..testClassName..".DoAssignment_ASrv() tests")
 
     -- create assignment arguments
     local taskData = {
@@ -315,6 +319,58 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     assert(result == true, "failed scheduling assignment")
 
     -- cleanup test
+end
+
+local triggerCount = 0
+
+function t_assignmentboard.IncreaseTriggerCount()
+    triggerCount = triggerCount + 1
+    corelog.WriteToLog("workerId="..os.getComputerID()..", time="..coreutils.UniversalTime()..", triggerCount="..triggerCount)
+
+    -- end
+    return {
+        success = true,
+    }
+end
+
+function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..".ScheduleTrigger_SSrv() + DescheduleTrigger tests")
+
+    triggerCount = 0
+
+    local metaData = {
+        periodTime = 1, -- seconds
+    }
+    local taskCall = TaskCall:newInstance("t_assignmentboard", "IncreaseTriggerCount", {} )
+
+    -- test schedule
+    local result = enterprise_assignmentboard.ScheduleTrigger_SSrv({
+        metaData    = metaData,
+        taskCall    = taskCall,
+    })
+    assert(result.success == true, "Failed scheduling trigger")
+    local triggerId = result.triggerId
+    assert(type(triggerId) == "string", "triggerId not a string")
+
+    -- wait a bit
+    os.sleep(6) --
+
+    -- check enough times called
+    assert(triggerCount >= 2, "Trigger was only called "..triggerCount.." times")
+
+    -- test deschedule
+    enterprise_assignmentboard.DescheduleTrigger(triggerId)
+    triggerCount = 0
+
+    -- wait a bit
+    os.sleep(3) --
+
+    -- check not anymore called
+    assert(triggerCount == 0, "Trigger was called "..triggerCount.." times")
+
+    -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
 end
 
 function t_assignmentboard.DoAssignment_ASrv_Callback(callbackData, taskResults)

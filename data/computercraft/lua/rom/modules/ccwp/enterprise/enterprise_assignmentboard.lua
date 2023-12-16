@@ -44,6 +44,116 @@ local db = {
 --   | |
 --   |_|
 
+function enterprise_assignmentboard.ScheduleTrigger(...)
+        -- get & check input from description
+    local checkSuccess, periodTime, triggerId, taskCall = InputChecker.Check([[
+        This async public service posts an Assignment for execution via the enterprise.
+
+        The Assignment is not necessarily directly executed. It is added to the list of assignments in the
+        enterprise and serviced via it's services for eventual execution.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the scheduling was successfully
+                triggerId           - (string) id of the scheduled trigger, usefull for deleting the trigger in the future
+
+        Parameters:
+            serviceData             - (table) data for this service
+                metaData            - (table) with metadata on the trigger
+                    periodTime      + (number) real life seconds between calls
+                    triggerId       + (string) internal trigger
+                taskCall            + (TaskCall) to call to execute the assignment
+    ]], ...)
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger_SSrv: Invalid input") return { success = false } end
+
+    local assignementMetaData = {
+        startTime   = coreutils.UniversalTime(),
+        needTool    = false,
+        needTurtle  = false,
+        fuelNeeded  = 0,
+
+        periodTime  = periodTime,
+        triggerId   = triggerId,
+    }
+
+    local callback = Callback:newInstance("enterprise_assignmentboard", "ScheduleTrigger", {
+        metaData = {
+            periodTime  = periodTime,
+            triggerId   = triggerId
+        },
+        taskCall = taskCall:copy(),
+    })
+
+    local assignmentServiceData = {
+        metaData    = assignementMetaData,
+        taskCall    = taskCall,
+    }
+    local scheduleSuccess = enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+
+    -- end
+    return {
+        success     = scheduleSuccess,
+        triggerId   = triggerId,
+    }
+end
+
+function enterprise_assignmentboard.ScheduleTrigger_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, periodTime, taskCall = InputChecker.Check([[
+        This async public service posts an Assignment for execution via the enterprise.
+
+        The Assignment is not necessarily directly executed. It is added to the list of assignments in the
+        enterprise and serviced via it's services for eventual execution.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the scheduling was successfully
+                triggerId           - (string) id of the scheduled trigger, usefull for deleting the trigger in the future
+
+        Parameters:
+            serviceData             - (table) data for this service
+                metaData            - (table) with metadata on the trigger
+                    periodTime      + (number) real life seconds between calls
+                taskCall            + (TaskCall) to call to execute the assignment
+    ]], ...)
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger_SSrv: Invalid input") return { success = false } end
+
+    -- make sure we have an unique id for this trigger
+    local triggerId = coreutils.NewId()
+
+    -- schedule this trigger!
+    return enterprise_assignmentboard.ScheduleTrigger({
+        metaData = {
+            periodTime  = periodTime,
+            triggerId   = triggerId,
+        },
+        taskCall = taskCall:copy()
+    })
+end
+
+function enterprise_assignmentboard.DescheduleTrigger(triggerId)
+    -- check input
+    if type(triggerId) ~= "string" then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: Invalid input") return end
+
+    -- search for trigger assignment
+    local triggerAssignmentId = nil
+    local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
+    if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("enterprise_assignmentboard.DescheduleTrigger: Invalid assignmentList") return end
+    for assignmentId, assignmentData in pairs(assignmentList) do
+        -- check assignment open
+        if assignmentData.metaData.triggerId == triggerId then
+            triggerAssignmentId = assignmentId
+        end
+    end
+
+    -- delete trigger assignment
+    if triggerAssignmentId then
+        enterprise_assignmentboard.EndAssignment(triggerAssignmentId)
+    else
+        corelog.Warning("enterprise_assignmentboard.DescheduleTrigger: triggerAssignmentId not found for triggerId="..triggerId)
+    end
+end
+
 function enterprise_assignmentboard.DoAssignment_ASrv(...)
     -- get & check input from description
     local checkSuccess, metaData, taskCall, callback = InputChecker.Check([[
