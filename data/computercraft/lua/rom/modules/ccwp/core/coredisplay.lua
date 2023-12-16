@@ -107,6 +107,17 @@ function coredisplay.NextScreen(t)
     end
 end
 
+local function EndOfString(str, numberOfChars)
+    -- get the length of the string
+    local lengthOfString    = string.len(str)
+
+    -- we show the number of chars, unless the string is not long enough
+    local charsShown        = math.min(lengthOfString, numberOfChars)
+
+    -- done
+    return string.sub(str, lengthOfString - charsShown + 1, lengthOfString)
+end
+
 -- function to execute a screen from a screentable
 function DoScreen(t)
     local success
@@ -130,6 +141,7 @@ function DoScreen(t)
 
             -- fixed for now
             local rightOffset	= 10
+            local maxDesc       = 17
 
             -- might look nicer this way
             if #t.option > 10 and #t.option < 20 then rightOffset = math.floor((1 + #t.option) / 2) end
@@ -154,7 +166,7 @@ function DoScreen(t)
                 end
 
                 -- print the damn line
-                print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", keyLeft, textLeft, keyRight, textRight))
+                print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", keyLeft, EndOfString(textLeft, maxDesc), keyRight, EndOfString(textRight, maxDesc)))
             end
         end
 
