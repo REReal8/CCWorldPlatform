@@ -348,7 +348,7 @@ function t_assignmentboard.T_De_ScheduleTrigger_SSrv()
     corelog.WriteToLog("* "..testClassName..".ScheduleTrigger_SSrv() + DescheduleTrigger tests")
     coredht.SaveData("", triggerIdDHTName)
     coredht.SaveData(0, triggerCountDHTName)
-    local periodTime = 3 -- seconds
+    local periodTime = 3 -- seconds (should be bigger than maxApplyRoundtripTime)
     local maxApplyRoundtripTime = 2 -- seconds
     local triggerCountMin = 2
     -- corelog.WriteToLog("triggerCountMin="..triggerCountMin)
