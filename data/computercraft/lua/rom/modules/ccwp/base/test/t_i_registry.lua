@@ -3,7 +3,6 @@ local T_IRegistry = {}
 local corelog = require "corelog"
 local IRegistry = require "i_registry"
 local Class = require "class"
-local IObj = require "i_obj"
 
 local T_IInterface = require "test.t_i_interface"
 local T_Class = require "test.t_class"
@@ -86,6 +85,8 @@ function T_IRegistry.pt_getRegistered(registryName, registry, key, thing, key2, 
 
     assert(not registry:isRegistered(key2), thingName.." "..key2.." already registered")
     registry:register(key2, thing2)
+
+    local IObj = require "i_obj"
 
     -- test
     local retrievedThing1 = registry:getRegistered(key)
