@@ -25,8 +25,6 @@ local Location = require "obj_location"
 
 local role_energizer = require "role_energizer"
 
-local DisplayStation
-
 local db = {
     dhtRoot         = "enterprise_assignmentboard",
     dhtList         = "assignmentList",
