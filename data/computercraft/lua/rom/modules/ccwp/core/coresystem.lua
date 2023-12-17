@@ -28,6 +28,9 @@ function coresystem.DoQuit()
     -- just set the new status
     db.systemStatus = "shutting down"
 
+    -- nice!
+    print("")
+
     -- this went well
     return true
 end
