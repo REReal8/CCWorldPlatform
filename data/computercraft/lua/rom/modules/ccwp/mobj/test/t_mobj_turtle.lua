@@ -8,6 +8,7 @@ local IItemDepot = require "i_item_depot"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
+local ObjLocator = require "obj_locator"
 
 local Turtle = require "mobj_turtle"
 
@@ -75,7 +76,7 @@ local logOk = false
 
 local workerId0 = 111111
 local isActive_false = false
-local settlementLocator0 = T_Settlement.CreateTestObj()
+local settlementLocator0 = ObjLocator:newInstance("enterprise_colonization", "Settlement")
 local baseLocation0  = Location:newInstance(1, -1, 3, 0, 1)
 local baseLocationChest  = Location:newInstance(-6, 0, 1, 0, 1):getRelativeLocation(2, 5, 0)
 local workerLocation0  = baseLocation0:copy()

@@ -55,7 +55,7 @@ local logOk = false
 
 local workerId0 = 111111
 local isActive_false = false
-local settlementLocator0 = T_Settlement.CreateTestObj()
+local settlementLocator0 = ObjLocator:newInstance("enterprise_colonization", "Settlement")
 local baseLocation0 = Location:newInstance(-6, -12, 1, 0, 1)
 
 local inputLocator0 = enterprise_employment.GetAnyTurtleLocator() assert(inputLocator0, "Failed obtaining inputLocator0")
