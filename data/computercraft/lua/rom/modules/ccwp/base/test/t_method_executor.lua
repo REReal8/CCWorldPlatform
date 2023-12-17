@@ -8,8 +8,6 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local ObjTest = require "test.obj_test"
-
 local MethodExecutor = require "method_executor"
 
 function T_MethodExecutor.T_All()
@@ -62,6 +60,7 @@ function T_MethodExecutor.T_CallInstanceMethod()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.CallInstanceMethod() test")
     local field2Value = 3
+    local ObjTest = require "test.obj_test"
     local object = ObjTest:newInstance("field1_1", field2Value)
     local methodName = "field2Plus"
     local addValue = 5
@@ -153,6 +152,7 @@ function T_MethodExecutor.T_DoASyncObjService_Sync()
     local serviceData = {
         testArg = testValue,
     }
+    local ObjTest = require "test.obj_test"
     local obj = ObjTest:newInstance("field1_1", 1)
 
     -- test
