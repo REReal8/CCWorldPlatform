@@ -8,12 +8,13 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
 local Host = require "host"
-local ObjHost = require "obj_host"
 
 local ObjTest = require "test.obj_test"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_administration = require "enterprise_administration"
+
+local enterprise_test = require "test.enterprise_test"
 
 function t_projects.T_All()
 --    t_projects.T_AreAllTrue_QSrv()
@@ -65,10 +66,7 @@ local compact = { compact = true }
 function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
-    local hostName = "TestHost"
-    local host = ObjHost:newInstance(hostName)
-    moduleRegistry:register(hostName, host)
-    local objLocator = host:saveObj(testObj)
+    local objLocator = enterprise_test:saveObj(testObj)
 
     local projectDef = {
         steps   = {
@@ -147,7 +145,7 @@ function t_projects.T_StartProject_ASrv()
     }
     local callback = Callback:newInstance("t_projects", "StartProject_ASrv_Callback", {
         [0]             = callbackTestValue,
-        ["hostName"]    = hostName,
+        ["hostName"]    = "enterprise_test",
         ["objLocator"]  = objLocator,
     })
     local projectServiceData = {
@@ -214,7 +212,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     testBArg = serviceResults.test_LSOSrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
-    local testObjSelf = serviceResults.test_LSOSrv_SelfObj
+    testObjSelf = serviceResults.test_LSOSrv_SelfObj
     testObjSelf = ObjTest:new(testObjSelf)
     assert(Class.IsInstanceOf(testObjSelf, ObjTest), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type ObjTest")
     assert(testObjSelf:isEqual(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
@@ -233,7 +231,6 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     local hostName = callbackData["hostName"]
     local host = Host.GetHost(hostName) if not host then corelog.Error("host not found") return end
     host:deleteResource(objLocator)
-    moduleRegistry:delist(hostName)
 end
 
 function t_projects.T_StartProject_ASrv_registersWIP()

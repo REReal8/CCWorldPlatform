@@ -1,4 +1,11 @@
-local enterprise_test = {}
+-- define class
+local Class = require "class"
+local ObjHost = require "obj_host"
+local enterprise_test = Class.NewClass(ObjHost)
+
+--[[
+    The test enterprise offers test services for debugging/ testing purposes.
+--]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -11,9 +18,32 @@ local Location = require "obj_location"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
---[[
-    The test enterprise offers test services for debugging/ testing purposes.
---]]
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_test._hostName   = "enterprise_test"
+
+--    _____ ____  _     _
+--   |_   _/ __ \| |   (_)
+--     | || |  | | |__  _
+--     | || |  | | '_ \| |
+--    _| || |__| | |_) | |
+--   |_____\____/|_.__/| |
+--                    _/ |
+--                   |__/
+
+function enterprise_test:getClassName()
+    return "enterprise_test"
+end
 
 function enterprise_test.Test_SSrv(...)
     -- get & check input from description
