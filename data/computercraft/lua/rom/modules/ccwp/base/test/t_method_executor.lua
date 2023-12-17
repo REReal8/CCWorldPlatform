@@ -8,7 +8,7 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 
 local MethodExecutor = require "method_executor"
 
@@ -62,7 +62,7 @@ function T_MethodExecutor.T_CallInstanceMethod()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.CallInstanceMethod() test")
     local field2Value = 3
-    local object = TestObj:newInstance("field1_1", field2Value)
+    local object = ObjTest:newInstance("field1_1", field2Value)
     local methodName = "field2Plus"
     local addValue = 5
     local methodArguments = {
@@ -81,7 +81,7 @@ end
 function T_MethodExecutor.T_CallObjMethod()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.CallObjMethod() test")
-    local className = "TestObj"
+    local className = "ObjTest"
     local field2Value = 3
     local objFieldsTable = {
         _field1 = "field1_1",
@@ -125,7 +125,7 @@ end
 function T_MethodExecutor.T_DoSyncObjService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoSyncObjService() test")
-    local className = "TestObj"
+    local className = "ObjTest"
     local serviceName = "test_SOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local objData = {
@@ -147,13 +147,13 @@ end
 function T_MethodExecutor.T_DoASyncObjService_Sync()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoASyncObjService_Sync() test")
-    local className = "TestObj"
+    local className = "ObjTest"
     local serviceName = "test_AOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local serviceData = {
         testArg = testValue,
     }
-    local obj = TestObj:newInstance("field1_1", 1)
+    local obj = ObjTest:newInstance("field1_1", 1)
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, serviceName, serviceData)
@@ -198,7 +198,7 @@ end
 function T_MethodExecutor.T_DoASyncObjService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoASyncObjService() test")
-    local className = "TestObj"
+    local className = "ObjTest"
     local serviceName = "test_AOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local objData = {

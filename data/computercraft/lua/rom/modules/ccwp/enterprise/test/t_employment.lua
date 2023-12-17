@@ -15,7 +15,7 @@ local FieldTest = require "field_test"
 local ValueTypeTest = require "value_type_test"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 local T_LObjHost = require "test.t_lobj_host"
 local T_MObjHost = require "test.t_mobj_host"
 local T_IRegistry = require "test.t_i_registry"
@@ -122,7 +122,7 @@ local compact = { compact = true }
 function t_employment.T_getObj()
     -- prepare test
     corelog.WriteToLog("* enterprise_employment:getObj() tests")
-    local testObject = TestObj:newInstance("field1", 4)
+    local testObject = ObjTest:newInstance("field1", 4)
     local objLocator = enterprise_employment:saveObj(testObject)
     local currentTurtleLocator = t_employment.GetCurrentTurtleLocator()
     local currentTurtle = enterprise_employment:getObj(currentTurtleLocator)

@@ -9,7 +9,7 @@ local URL = require "obj_url"
 local Host = require "host"
 local ObjBase = require "obj_base"
 
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
@@ -240,7 +240,7 @@ function T_Host.T_GetHost()
     moduleRegistry:delist(hostName0)
 
     -- test other registered object
-    local otherTestObj = TestObj:newInstance("field1", 4)
+    local otherTestObj = ObjTest:newInstance("field1", 4)
     local otherTestObjName = "testObj"
     moduleRegistry:register(otherTestObjName, otherTestObj)
     obj = Host.GetHost(otherTestObjName, true)

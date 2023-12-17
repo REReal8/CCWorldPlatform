@@ -1,7 +1,7 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local TestObj = Class.NewClass(ObjBase)
+local ObjTest = Class.NewClass(ObjBase)
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -14,9 +14,9 @@ local Location = require "obj_location"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
 --[[
-    This module implements the class TestObj.
+    This module implements the class ObjTest.
 
-    A TestObj object can be used for testing object related functionality.
+    A ObjTest object can be used for testing object related functionality.
 --]]
 
 --    _       _ _   _       _ _           _   _
@@ -26,16 +26,16 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function TestObj:_init(...)
+function ObjTest:_init(...)
     -- get & check input from description
     local checkSuccess, field1, field2 = InputChecker.Check([[
-        Initialise a TestObj.
+        Initialise a ObjTest.
 
         Parameters:
             field1                  + (string) field
             field2                  + (number) field
     ]], ...)
-    if not checkSuccess then corelog.Error("TestObj:_init: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("ObjTest:_init: Invalid input") return nil end
 
     -- initialisation
     ObjBase._init(self)
@@ -44,17 +44,17 @@ function TestObj:_init(...)
 end
 
 -- ToDo: should be renamed to newFromTable at some point
-function TestObj:new(...)
+function ObjTest:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
-        Constructs a TestObj.
+        Constructs a ObjTest.
 
         Parameters:
             o               + (table, {}) table with object fields
                 _field1     - (string) field
                 _field2     - (number) field
     ]], ...)
-    if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("ObjTest:new: Invalid input") return {} end
 
     -- set class info
     setmetatable(o, self)
@@ -64,24 +64,24 @@ function TestObj:new(...)
     return o
 end
 
-function TestObj:getField1()
+function ObjTest:getField1()
     return self._field1
 end
 
-function TestObj:setField1(strValue)
+function ObjTest:setField1(strValue)
     -- check input
-    if type(strValue) ~= "string" then corelog.Error("TestObj:setField1: invalid strValue: "..type(strValue)) return end
+    if type(strValue) ~= "string" then corelog.Error("ObjTest:setField1: invalid strValue: "..type(strValue)) return end
 
     self._field1 = strValue
 end
 
-function TestObj:getField2()
+function ObjTest:getField2()
     return self._field2
 end
 
-function TestObj:setField2(fieldValue)
+function ObjTest:setField2(fieldValue)
     -- check input
-    if type(fieldValue) ~= "number" then corelog.Error("TestObj:setField2: invalid fieldValue: "..type(fieldValue)) return end
+    if type(fieldValue) ~= "number" then corelog.Error("ObjTest:setField2: invalid fieldValue: "..type(fieldValue)) return end
 
     self._field2 = fieldValue
 end
@@ -95,8 +95,8 @@ end
 --                    _/ |
 --                   |__/
 
-function TestObj:getClassName()
-    return "TestObj"
+function ObjTest:getClassName()
+    return "ObjTest"
 end
 
 --                        _  __ _                       _   _               _
@@ -108,7 +108,7 @@ end
 --       | |
 --       |_|
 
-function TestObj:field2Plus(...)
+function ObjTest:field2Plus(...)
     -- get & check input from description
     local checkSuccess, addValue = InputChecker.Check([[
         This method returns the sum of field2 and addValue.
@@ -119,7 +119,7 @@ function TestObj:field2Plus(...)
         Parameters:
             addValue            + (number) value to add
     --]], ...)
-    if not checkSuccess then corelog.Error("TestObj:field2Plus: Invalid input") return 99999 end
+    if not checkSuccess then corelog.Error("ObjTest:field2Plus: Invalid input") return 99999 end
 
     -- determine sum
     local sum = self:getField2() + addValue
@@ -128,7 +128,7 @@ function TestObj:field2Plus(...)
     return sum
 end
 
-function TestObj:getTestArg(...)
+function ObjTest:getTestArg(...)
     -- get & check input from description
     local checkSuccess, testArg = InputChecker.Check([[
         This public method returns a test argument.
@@ -140,10 +140,10 @@ function TestObj:getTestArg(...)
             serviceData         - (table) data about the service
                 testArg         + (?) as a test argument
     --]], ...)
-    if not checkSuccess then corelog.Error("TestObj:getTestArg: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("ObjTest:getTestArg: Invalid input") return {success = false} end
 
     -- verify true object
-    assert(Class.IsInstanceOf(self, TestObj), "TestObj:getTestArg: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, ObjTest), "ObjTest:getTestArg: self(="..textutils.serialise(self)..") not of type ObjTest")
 
     -- end
     return testArg
@@ -156,7 +156,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/\__ \
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
-function TestObj:test_SOSrv(...)
+function ObjTest:test_SOSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, testArg = InputChecker.Check([[
         This public sync service returns a test argument.
@@ -169,10 +169,10 @@ function TestObj:test_SOSrv(...)
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
     --]], ...)
-    if not checkSuccess then corelog.Error("TestObj:test_SOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("ObjTest:test_SOSrv: Invalid input") return {success = false} end
 
     -- verify true object
-    assert(Class.IsInstanceOf(self, TestObj), "TestObj:test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, ObjTest), "ObjTest:test_SOSrv: self(="..textutils.serialise(self)..") not of type ObjTest")
 
     -- determine result to return
     local serviceResult = {
@@ -187,7 +187,7 @@ function TestObj:test_SOSrv(...)
     return serviceResult
 end
 
-function TestObj:test_AOSrv(...)
+function ObjTest:test_AOSrv(...)
     -- get & check input from description
     local checkSuccess, testArg, callback = InputChecker.Check([[
         This public async service executes an assignment with a callback function and callback data.
@@ -205,10 +205,10 @@ function TestObj:test_AOSrv(...)
                 testArg         + (number) as a test argument
             callback            + (Callback) to call once service is ready
     --]], ...)
-    if not checkSuccess then corelog.Error("TestObj:test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("ObjTest:test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- verify true object
-    assert(Class.IsInstanceOf(self, TestObj), "TestObj:test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, ObjTest), "ObjTest:test_AOSrv: self(="..textutils.serialise(self)..") not of type ObjTest")
 
     -- create assignment arguments
     local taskData = {
@@ -233,4 +233,4 @@ function TestObj:test_AOSrv(...)
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
-return TestObj
+return ObjTest

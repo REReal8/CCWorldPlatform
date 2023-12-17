@@ -22,7 +22,7 @@ local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_colonization = require "enterprise_colonization"
 
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
@@ -353,7 +353,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
-    local testObject = TestObj:newInstance("field1", 4)
+    local testObject = ObjTest:newInstance("field1", 4)
     local testObjHost = T_ObjHost.CreateTestObj()
     moduleRegistry:register(testObjHost:getHostName(), testObjHost)
     local nonItemSupplierLocator = testObjHost:saveObj(testObject)

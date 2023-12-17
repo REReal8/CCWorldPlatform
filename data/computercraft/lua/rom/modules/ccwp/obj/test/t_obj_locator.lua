@@ -9,7 +9,7 @@ local ObjBase = require "obj_base"
 local URL = require "obj_url"
 local ObjLocator = require "obj_locator"
 
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 
 local TestArrayTest = require "test_array_test"
 local MethodResultEqualTest = require "method_result_equal_test"
@@ -33,7 +33,7 @@ local testObjName = "objLocator"
 local logOk = false
 
 local hostName0 = "TestObjHost"
-local objClassName0 = "TestObj"
+local objClassName0 = "ObjTest"
 local objRef0 = ""
 local objRef1 = "anObjRef:withColon"
 local noQuery = {}
@@ -127,14 +127,14 @@ function T_ObjLocator.T_Getters()
     -- test
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getObjClassName", objClassName0),
---        MethodResultEqualTest:newInstance("getObjClass", TestObj), -- ToDo:
+--        MethodResultEqualTest:newInstance("getObjClass", ObjTest), -- ToDo:
         MethodResultEqualTest:newInstance("getObjRef", objRef1)
     )
     test:test(obj, testObjName, "", logOk)
 
     -- test getObjClass seperate because std tests try serialise expectedResult but that fails because it has functions...
     local objClass = obj:getObjClass()
-    assert(objClass == TestObj, "objClass not of type "..objClassName0)
+    assert(objClass == ObjTest, "objClass not of type "..objClassName0)
 
     -- cleanup test
 end

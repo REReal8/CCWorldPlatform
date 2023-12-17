@@ -102,7 +102,7 @@ function library.Setup()
     objectFactory:registerClass("WIPQueue", require "obj_wip_queue")
     objectFactory:registerClass("WIPAdministrator", require "obj_wip_administrator")
 
-    objectFactory:registerClass("TestObj", require "test.obj_test")
+    objectFactory:registerClass("ObjTest", require "test.obj_test")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"

@@ -11,7 +11,7 @@ local ObjLocator = require "obj_locator"
 local ObjBase = require "obj_base"
 local ObjHost = require "obj_host"
 
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 
 local LObjTest = require "test.lobj_test"
 
@@ -131,8 +131,8 @@ end
 --               _/ |
 --              |__/
 
-local testObj = TestObj:newInstance("field1", 4)
-local testObjClassName = "TestObj"
+local testObj = ObjTest:newInstance("field1", 4)
+local testObjClassName = "ObjTest"
 
 function T_ObjHost.T_saveObj()
     -- prepare test

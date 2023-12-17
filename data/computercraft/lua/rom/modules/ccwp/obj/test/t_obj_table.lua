@@ -6,7 +6,7 @@ local Class = require "class"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ObjTable = require "obj_table"
-local TestObj = require "test.obj_test"
+local ObjTest = require "test.obj_test"
 local Location = require "obj_location"
 
 local TestArrayTest = require "test_array_test"
@@ -32,9 +32,9 @@ end
 
 local testClassName = "ObjTable"
 local logOk = false
-local objClassName1 = "TestObj"
-local testObj1 = TestObj:newInstance("field1_1", 1)
-local testObj2 = TestObj:newInstance("field1_2", 2)
+local objClassName1 = "ObjTest"
+local testObj1 = ObjTest:newInstance("field1_1", 1)
+local testObj2 = ObjTest:newInstance("field1_2", 2)
 local wrongTestObj1 = Location:newInstance()
 
 local compact = { compact = true }
@@ -197,8 +197,8 @@ function T_ObjTable.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not Class.IsInstanceOf(testObject1Table, TestObj), "testObject1Table incorrectly of type "..objClassName1)
-    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject1Table, ObjTest), "testObject1Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, ObjTest), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
     obj.testObj1Key = testObj1
@@ -238,7 +238,7 @@ function T_ObjTable.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, ObjTest), "testObject2Table incorrectly of type "..objClassName1)
 
     obj.testObj1Key = testObj1
     obj.testObj2Key = testObject2Table
