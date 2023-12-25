@@ -64,12 +64,12 @@ R  Factory improvements                                                         
 
 R  split ProductionSpot into CraftingSpot & SmeltingSpot                                                                (done)
 
-R  Settlement'S
-   R  introduce Settlement Obj
-   R  upgrade enterprise_colonization to a LObjHost
-   R  Turtle + UserStation: add settlementLocator field
-   R  host Shop's in enterprise_colonization (remove enterprise_shop)
-   R  use Settlement to get (main)Shop
+R  Settlement's                                                                                                         (done)
+   R  introduce Settlement Obj                                                                                          (done)
+   R  upgrade enterprise_colonization to a LObjHost                                                                     (done)
+   R  Turtle + UserStation: add settlementLocator field                                                                 (done)
+   R  host Shop's in enterprise_colonization (remove enterprise_shop)                                                   (done)
+   R  use Settlement to get (main)Shop                                                                                  (done)
 
 GR enterprise_assignmentboard: Introduce (system)triggers                                                               (done)
 
