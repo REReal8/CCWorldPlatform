@@ -64,6 +64,15 @@ R  Factory improvements                                                         
 
 R  split ProductionSpot into CraftingSpot & SmeltingSpot                                                                (done)
 
+R  Settlement'S
+   R  introduce Settlement Obj
+   R  upgrade enterprise_colonization to a LObjHost
+   R  Turtle + UserStation: add settlementLocator field
+   R  host Shop's in enterprise_colonization (remove enterprise_shop)
+   R  use Settlement to get (main)Shop
+
+GR enterprise_assignmentboard: Introduce (system)triggers                                                               (done)
+
 ToDo List
 ---------
 --[[
@@ -107,12 +116,6 @@ GR DisplayStation                                                               
       -  ...
 
 -  CraftingSpot & SmeltingSpot: make them full ItemSupplier's
-
--  ensure enterprise_shop implement LObjHost
-   -  upgrade into an LObjHost
-   -  use new LObjHost methods instead of current equivalent
-   -  use generalised test functions
-   -  rename enterprise_shop to better name: e.g. enterprise_govern
 
 -  Turtle(s) improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
