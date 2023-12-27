@@ -1,7 +1,7 @@
 -- define class
 local Class = require "class"
-local ObjHost = require "obj_host"
-local enterprise_test = Class.NewClass(ObjHost)
+local LObjHost = require "lobj_host"
+local enterprise_test = Class.NewClass(LObjHost)
 
 --[[
     The test enterprise offers test services for debugging/ testing purposes.

@@ -103,6 +103,24 @@ function ItemTable:nEntries()
     return nEntries
 end
 
+function ItemTable:nSlotsNeeded()
+    --[[
+        Return the number of free slots needed to store all items
+    ]]
+
+    local nSlotsNeeded = 0
+    for itemName, itemCount in pairs(self) do
+        -- use slots for item
+        local stackSize = 64 -- ToDo: use change this to use real stackSize
+        local nItemSlots = math.ceil(itemCount/ stackSize)
+
+        nSlotsNeeded = nSlotsNeeded + nItemSlots
+    end
+
+    -- end
+    return nSlotsNeeded
+end
+
 function ItemTable:add(itemName, itemCount)
     -- check parameters
     if type(itemName) ~= "string" or type(itemCount) ~= "number" then corelog.Warning("ItemTable:add(): bad parameter(s)") return end

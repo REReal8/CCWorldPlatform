@@ -14,6 +14,7 @@ function library.T_All()
     corelog.WriteToLog("*** "..libraryName.." library tests ***")
 
     local T_LObjTest = require "test.t_lobj_test"
+    local T_ItemStorageFake = require "test.t_item_storage_fake"
     local t_lobj_host = require "test.t_lobj_host"
 
     local T_LObjLocator = require "test.t_lobj_locator"
@@ -22,6 +23,7 @@ function library.T_All()
 
     -- library tests
     T_LObjTest.T_All()
+    T_ItemStorageFake.T_All()
     t_lobj_host.T_All()
 
     T_LObjLocator.T_All()
@@ -34,10 +36,14 @@ function library.T_AllPhysical()
     local corelog = require "corelog"
     corelog.WriteToLog("*** "..libraryName.." library physical tests ***")
 
+    local T_ItemStorageFake = require "test.t_item_storage_fake"
+
     local T_Shop = require "test.t_shop"
     local T_Settlement = require "test.t_settlement"
 
     -- library tests
+    T_ItemStorageFake.T_AllPhysical()
+
     T_Shop.T_AllPhysical()
     T_Settlement.T_AllPhysical()
 end
@@ -48,6 +54,7 @@ local function ExecuteLibraryTest(t)
         {key = "1", desc = "All",               func = ExecuteLibraryTest, param = {filename = "T_LObjLibrary"}},
 
         {key = "2", desc = "LObjTest",          func = ExecuteLibraryTest, param = {filename = "T_LObjTest"}},
+        {key = "3", desc = "ItemStorageFake",   func = ExecuteLibraryTest, param = {filename = "T_ItemStorageFake"}},
         {key = "h", desc = "LObjHost",          func = ExecuteLibraryTest, param = {filename = "T_LObjHost"}},
 
         {key = "l", desc = "LObjLocator",		func = ExecuteLibraryTest, param = {filename = "T_LObjLocator"}},
@@ -64,6 +71,7 @@ function library.Setup()
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
     objectFactory:registerClass("LObjTest",     require "test.lobj_test")
+    objectFactory:registerClass("ItemStorageFake",  require "test.item_storage_fake")
     objectFactory:registerClass("LObjHost",     require "lobj_host")
 
     objectFactory:registerClass("LObjLocator",  require "lobj_locator")
@@ -81,6 +89,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_LObjLibrary", libraryName..".library")
 
     moduleRegistry:requireAndRegisterModule("T_LObjTest", "test.t_lobj_test")
+    moduleRegistry:requireAndRegisterModule("T_ItemStorageFake", "test.t_item_storage_fake")
     moduleRegistry:requireAndRegisterModule("T_LObjHost", "test.t_lobj_host")
 
     moduleRegistry:requireAndRegisterModule("T_IItemSupplier", "test.t_i_item_supplier")
