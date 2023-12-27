@@ -43,12 +43,9 @@ local db = {
 --   |_|
 
 function enterprise_assignmentboard.ScheduleTrigger(...)
-        -- get & check input from description
+    -- get & check input from description
     local checkSuccess, periodTime, triggerId, timesRun, taskCall = InputChecker.Check([[
-        This async public service posts an Assignment for execution via the enterprise.
-
-        The Assignment is not necessarily directly executed. It is added to the list of assignments in the
-        enterprise and serviced via it's services for eventual execution.
+        This async private service ensures re-posting a periodic Trigger in the enterprise after it fired.
 
         Return value:
                                     - (table)
@@ -58,17 +55,17 @@ function enterprise_assignmentboard.ScheduleTrigger(...)
         Parameters:
             serviceData             - (table) data for this service
                 metaData            - (table) with metadata on the trigger
-                    periodTime      + (number) real life seconds between calls
-                    triggerId       + (string) internal trigger
+                    periodTime      + (number) real life seconds between triggers
+                    triggerId       + (string) internal triggerId
                     timesRun        + (number) with # times trigger was run
-                taskCall            + (TaskCall) to call to execute the assignment
+                taskCall            + (TaskCall) to call when trigger fires
     ]], ...)
-    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger_SSrv: Invalid input") return { success = false } end
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger: Invalid input") return { success = false } end
 
     -- create serviceData
     local startTime = coreutils.UniversalTime()
     if timesRun > 0 then startTime = startTime + periodTime/50 end
-    local assignementMetaData = {
+    local assignmentMetaData = {
         startTime   = startTime,
         needTool    = false,
         needTurtle  = false,
@@ -86,7 +83,7 @@ function enterprise_assignmentboard.ScheduleTrigger(...)
         taskCall = taskCall:copy(),
     })
     local serviceData = {
-        metaData    = assignementMetaData,
+        metaData    = assignmentMetaData,
         taskCall    = taskCall,
     }
 
@@ -103,10 +100,9 @@ end
 function enterprise_assignmentboard.ScheduleTrigger_SSrv(...)
     -- get & check input from description
     local checkSuccess, periodTime, taskCall = InputChecker.Check([[
-        This async public service posts an Assignment for execution via the enterprise.
+        This async public service schedules a periodic Trigger for execution via the enterprise.
 
-        The Assignment is not necessarily directly executed. It is added to the list of assignments in the
-        enterprise and serviced via it's services for eventual execution.
+        Every time the trigger fires a function (TaskCall) is called.
 
         Return value:
                                     - (table)
@@ -116,8 +112,8 @@ function enterprise_assignmentboard.ScheduleTrigger_SSrv(...)
         Parameters:
             serviceData             - (table) data for this service
                 metaData            - (table) with metadata on the trigger
-                    periodTime      + (number) real life seconds between calls
-                taskCall            + (TaskCall) to call to execute the assignment
+                    periodTime      + (number) real life seconds between triggers
+                taskCall            + (TaskCall) to call when trigger fires
     ]], ...)
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.ScheduleTrigger_SSrv: Invalid input") return { success = false } end
 
