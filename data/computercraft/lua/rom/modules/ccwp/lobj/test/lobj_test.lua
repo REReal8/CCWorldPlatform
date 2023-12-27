@@ -4,16 +4,16 @@ local ObjBase = require "obj_base"
 local ILObj = require "i_lobj"
 local LObjTest = Class.NewClass(ObjBase, ILObj)
 
-local corelog = require "corelog"
-local coreutils = require "coreutils"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class LObjTest.
 
     A LObjTest object can be used for testing LObj related functionality.
 --]]
+
+local corelog = require "corelog"
+local coreutils = require "coreutils"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

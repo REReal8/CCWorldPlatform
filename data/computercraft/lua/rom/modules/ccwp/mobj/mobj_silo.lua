@@ -702,7 +702,7 @@ end
 
 function Silo:can_StoreItems_QOSrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
+    local checkSuccess, storeItems = InputChecker.Check([[
         This sync public query service answers the question whether the ItemDepot can store specific items.
 
         Return value:
@@ -711,9 +711,7 @@ function Silo:can_StoreItems_QOSrv(...)
 
         Parameters:
             serviceData             - (table) data to the query
-                itemsLocator        + (ObjLocator) locating the items that need to be stored
-                                        (the "base" component of the ObjLocator specifies the ItemDepot to store the items in)
-                                        (the "query" component of the ObjLocator specifies the items to query for)
+                storeItems          + (ItemTable) with one or more items to be stored
     --]], ...)
     if not checkSuccess then corelog.Error("Silo:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
