@@ -7,7 +7,7 @@ local ILObj = {
 
     The ILObj interface defines methods for objects representing "logical" things we would
     like to programmically interact with. Objects of a class implementing the interface are referred to as LObj's.
-    LObj's are assumed to also ne an Obj. LObj's are hosted by a LObjHost who interacts with the defined methods in this interface.
+    LObj's are assumed to also be an Obj. LObj's are hosted by a LObjHost who interacts with the defined methods in this interface.
 
     LObj's should make sure that any async work is registered in the WIPAdministrator with the LObj id as wipId.
     For async work via projects this can be done by setting the 'wipId' key in the projectMeta to the LObj id.
