@@ -3,7 +3,8 @@ local coremove = {}
 
 -- ToDo: add proper module description
 --[[
-    This module ...
+    This module handles the movement of the turtle, keeping track of its location and direction.
+	It provides functions to move forward, backward, up, down, turn left and right,
 --]]
 
 local coreinventory = require "coreinventory"
@@ -566,6 +567,29 @@ function coremove.MoveTo(l, force, callback)
         l._z			= targetZ
         SimpleMoveTo(l, force, callback)
     end
+end
+
+
+function coremove.FancyMoveTo(l)
+
+	-- check input
+	if not l or type(l) ~= "table" or l._x == nil or l._y == nil or l._z == nil then
+		print("coremove.FancyMoveTo: Invalid location given")
+		return false
+	end
+
+	-- This function provides a more advanced movement strategy
+	-- It could involve pathfinding, obstacle avoidance, etc.
+
+	-- Basic strategy:
+	-- 1. create a map in memory of the area between current location and target location
+	-- 2. use (A* or) Dijkstra to find the best path
+	-- 3. follow the path
+	-- 4. when path is blocked, update the map and go to 2
+	-- 5. repeat until target location is reached
+	-- 6. when target is not reachable, increase the area
+
+	error("coremove.FancyMoveTo not yet implemented")
 end
 
 function coremove.TurnTo( t )
