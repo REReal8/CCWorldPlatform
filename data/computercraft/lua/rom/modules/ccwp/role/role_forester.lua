@@ -398,7 +398,7 @@ function OogstBladerenVolledig()
     coremove.Left()             -- 9
     coremove.Forward()
     coremove.Right()
-    coremove.Backward()         -- returg op 0
+    coremove.Backward()         -- return op 0
 end
 
 function OogstBladerenForward(ookBoven)
